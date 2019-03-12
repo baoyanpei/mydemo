@@ -1,0 +1,108 @@
+.jiaodi-dialog{
+  .el-dialog__body {
+    padding: 0px 0px 0px 0px;
+    color: #FFFFFF;
+    font-size: 14px;
+  }
+}
+.jiaodi-form {
+  margin-right: 0px;
+  margin-left: 0px;
+  padding-bottom: 10px;
+  color: #FFFFFF;
+
+  .jdhyForm-JHMC {
+    font-weight: 700;
+  }
+
+  .ryxx-dialog {
+    left: 32vw;
+
+    .el-dialog {
+      background-color: rgba(0, 0, 0, 0.9);
+      margin-left: 100px;
+    }
+  }
+
+  .el-form-item {
+    margin-bottom: 0px;
+  }
+
+  .el-form-item__label {
+    color: #ffffff;
+  }
+
+  .el-button--success {
+    color: #fff;
+    background-color: #29bb9c;
+    border-color: #29bb9c;
+  }
+
+  .el-form-item__error {
+    color: yellow;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 0px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+
+  .el-date-editor .el-range-separator {
+    width: 15%;
+  }
+
+  .ry-table {
+    padding: 5px;
+    .el-table th {
+      line-height: 14px;
+    }
+
+    .el-table,
+    .el-table__expanded-cell {
+      background-color: transparent;
+    }
+
+    .el-table th {
+      line-height: 14px;
+      font-size: 12px;
+      background-color: #FFFFFF;
+      color: #000000;
+    }
+
+    .el-table tr {
+      font-size: 12px;
+      background-color: transparent;
+      color: #FFFFFF;
+    }
+
+    .el-table tr:hover {
+      color: #000000;
+      cursor: pointer;
+    }
+
+    .el-table--medium td,
+    .el-table--medium th {
+      padding: 0px 0;
+    }
+
+    .el-table .cell,
+    .el-table th div,
+    .el-table--border td:first-child .cell,
+    .el-table--border th:first-child .cell {
+      padding-left: 0px;
+      text-align: center;
+    }
+
+    .el-table .cell,
+    .el-table th div {
+      padding-right: 0px;
+    }
+
+    .el-dialog__body {
+      padding: 5px 5px;
+      color: #FFFFFF;
+      font-size: 14px;
+    }
+  }
+}

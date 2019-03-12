@@ -1,0 +1,58 @@
+.login-tip-container {
+  background-image: url(../../assets/login_bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 1300px;
+  width: 100%;
+  position: absolute;
+
+  .wx-bind-border{
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .logo1 {
+    position: absolute;
+    float: left;
+    width: 100px;
+    left: 20px;
+    top: 20px;
+  }
+
+  .logo2 {
+    position: absolute;
+    float: left;
+    width: 180px;
+    right: 20px;
+    bottom: 20px;
+    filter: alpha(opacity=45);
+    opacity: 0.45;
+    -moz-opacity: 0.45;
+    -khtml-opacity: 0.45;
+    bottom: 10px;
+  }
+
+  .wx-bind-container {
+    background-color: #FFFFFF;
+    height: 100%;
+    width: 50%;
+    margin: 0px auto;
+    border-radius: 0px;
+    padding: 20px;
+
+  }
+
+  .loginTipForm {
+    padding-top: 10px;
+
+    .title {
+      text-align: center;
+      font-size: 30px;
+    }
+
+    div {
+      padding: 10px;
+    }
+
+  }
+}

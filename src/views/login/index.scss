@@ -1,0 +1,316 @@
+/* 修复input 背景不协调 和光标变色 */
+/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+$bg:#e5e5e5; //#283443;
+$light_gray:#eee;
+$cursor: #333333;
+
+@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+  .login-container .el-input input {
+    color: $cursor;
+
+    &::first-line {
+      color: $light_gray;
+    }
+  }
+}
+
+.title_name {
+  text-align: center;
+  font-size: 34px;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.loadLoginCss {
+  .el-loading-spinner .el-loading-text {
+    color: #FFFFFF;
+    margin: 3px 0;
+    font-size: 24px;
+  }
+}
+
+/* reset element-ui css */
+.login-container {
+  background-image: url(../../assets/login_bg.jpg);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  -moz-background-size: 100% 100%;
+  // min-width: 1024px;
+  // position: fixed;
+  height: 100%;
+  // width: 100%;
+  min-height: 480px;
+  min-width: 600px;
+  overflow-x: auto;
+  overflow-y: auto;
+
+  #qrcode_container {
+    text-align: center;
+    height: 240px;
+    overflow: hidden;
+  }
+
+  .qrcode_question {
+    color: #EEEEEE;
+    font-size: 14px;
+    padding-top: 10px;
+    text-align: right;
+
+  }
+
+  // background-color: $bg;
+  .logo1 {
+    position: absolute;
+    float: left;
+    width: 100px;
+    left: 20px;
+    top: 20px;
+  }
+
+  .logo2 {
+    position: absolute;
+    float: left;
+    width: 180px;
+    right: 20px;
+    bottom: 20px;
+    filter: alpha(opacity=45);
+    opacity: 0.45;
+    -moz-opacity: 0.45;
+    -khtml-opacity: 0.45;
+  }
+
+
+
+  .el-input {
+    display: inline-block;
+    height: 47px;
+    width: 85%;
+
+    input {
+      background: transparent;
+      border: 0px;
+      -webkit-appearance: none;
+      border-radius: 0px;
+      padding: 12px 5px 12px 15px;
+      // color: $light_gray;
+      color: #333333;
+      height: 47px;
+      caret-color: $cursor;
+
+      &:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
+        -webkit-text-fill-color: $cursor !important;
+      }
+    }
+  }
+
+  .el-form-item {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0px;
+    color: #454545;
+  }
+
+  .btnSmsCode {
+    line-height: 14px;
+    padding: 10px 14px;
+    border-radius: 2px;
+  }
+
+  .btnLogin {
+    border-radius: 2px;
+    font-size: 16px;
+    font-weight: 700px;
+  }
+
+  .el-input input::first-line {
+    color: #666666;
+  }
+}
+
+$bg:#29BB9C;
+$dark_gray:#889aa4;
+$light_gray:#eee;
+
+.login-container {
+
+
+  .loginFormBg {
+    background-color: #000000;
+    height: 350px;
+    width: 395px;
+    float: left;
+    filter: alpha(opacity=45);
+    opacity: 0.45;
+    -moz-opacity: 0.45;
+    -khtml-opacity: 0.45;
+    border-radius: 10px;
+  }
+
+  .loginFormType {
+    width: 400px;
+    float: left;
+    position: absolute;
+    padding-right: 12px;
+    padding-top: 5px;
+  }
+
+  .loginFormQrcode {
+    height: 300px;
+    width: 400px;
+    float: left;
+    position: absolute;
+    padding: 35px 10px 50px 10px;
+
+
+  }
+
+  #wx_default_tip {
+    display: none;
+  }
+
+  .loginFormContent {
+    height: 300px;
+    width: 400px;
+    float: left;
+    position: absolute;
+    padding: 35px 10px 50px 10px;
+    .el-form-item--medium .el-form-item__content,
+    .el-form-item--medium .el-form-item__label {
+      line-height: 16px;
+    }
+
+    .el-form-item {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #FFFFFF;
+      border-radius: 2px;
+      color: #454545;
+      margin-bottom: 25px;
+    }
+
+    .el-input {
+      display: inline-block;
+      height: 32px;
+      width: 85%;
+
+      input {
+        background: transparent;
+        border: 0px;
+        -webkit-appearance: none;
+        border-radius: 0px;
+        padding: 2px 5px 2px 5px;
+        color: #333333;
+        height: 35px;
+        caret-color: #333333;
+      }
+    }
+  }
+
+  .login-form {
+    width: 395px;
+    height: 50%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+
+  .el-button--primary {
+    color: #fff;
+    // background-color: #38c3fa;
+    border-color: #2cbcfb;
+
+    background: -moz-linear-gradient(top, #5dd7f9 0%, #2cbcfb 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #5dd7f9), color-stop(100%, #2cbcfb));
+    background: -webkit-linear-gradient(top, #5dd7f9 0%, #2cbcfb 100%);
+    background: -o-linear-gradient(top, #5dd7f9 0%, #2cbcfb 100%);
+    background: -ms-linear-gradient(top, #5dd7f9 0%, #2cbcfb 100%);
+    background: linear-gradient(to bottom, #5dd7f9 0%, #2cbcfb 100%);
+  }
+
+  .el-button--primary:hover {
+    color: #fff;
+    background-color: #bcdae5;
+    border-color: #5dd7f9;
+    background: -moz-linear-gradient(top, #2cbcfb 0%, #5dd7f9 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2cbcfb), color-stop(100%, #5dd7f9));
+    background: -webkit-linear-gradient(top, #2cbcfb 0%, #5dd7f9 100%);
+    background: -o-linear-gradient(top, #2cbcfb 0%, #5dd7f9 100%);
+    background: -ms-linear-gradient(top, #2cbcfb 0%, #5dd7f9 100%);
+    background: linear-gradient(to bottom, #2cbcfb 0%, #5dd7f9 100%);
+  }
+
+  .el-form-item__error {
+    color: #fffF00;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 8px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+
+  .tips {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 10px;
+
+    span {
+      &:first-of-type {
+        margin-right: 16px;
+      }
+    }
+  }
+
+  .svg-container {
+    padding: 6px 5px 6px 5px;
+    color: $dark_gray;
+    vertical-align: middle;
+    width: 30px;
+    display: inline-block;
+    text-align: center;
+
+    &_login {
+      font-size: 20px;
+    }
+  }
+
+  .title-container {
+    position: relative;
+    text-align: center;
+    padding-bottom: 50px;
+
+    .title {
+      font-size: 26px;
+      color: $light_gray;
+      margin: 0px auto 40px auto;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .set-language {
+      color: #fff;
+      position: absolute;
+      top: 5px;
+      right: 0px;
+    }
+  }
+
+  .show-pwd {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-size: 16px;
+    color: $dark_gray;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .thirdparty-button {
+    position: absolute;
+    right: 35px;
+    bottom: 28px;
+  }
+}

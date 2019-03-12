@@ -1,0 +1,38 @@
+.nowin-from {
+  .el-form-item {
+    margin-bottom: 10px;
+  }
+
+  .el-form-item__error {
+    color: #f56c6c;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 0px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+
+  .table-title {
+    font-weight: 600;
+    margin-left: 10px;
+  }
+
+  .table-total {
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 20px;
+  }
+
+  //未识别
+  .weishibie {
+    color: #E6A23C
+  }
+
+  //识别率低
+  .shibielvdi {
+    color: #F56C6C;
+    font-weight: 500;
+    font-size: 18px;
+  }
+}
