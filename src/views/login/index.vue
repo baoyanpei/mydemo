@@ -52,7 +52,7 @@
         </div>
 
       </div>
-      <div class="loginFormType">
+      <!-- <div class="loginFormType">
         <el-tooltip class="item" effect="dark" content="使用二维码登录" placement="top">
           <font-awesome-icon @click="switchLoginType('qrcode')" v-show="loginType==='mobile'" icon="qrcode" size="2x"
             pull="right" :style="{ color: 'white' ,cursor:'pointer'}" />
@@ -62,7 +62,7 @@
             pull="right" :style="{ color: 'white' ,cursor:'pointer'}" />
         </el-tooltip>
 
-      </div>
+      </div> -->
     </el-form>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
@@ -112,7 +112,7 @@
         }
       }
       return {
-        loginType: 'qrcode', // mobile
+        loginType: 'mobile', // mobile qrcode
         loginForm: {
           username: '',
           password: ''
@@ -224,7 +224,7 @@
         id: "qrcode_container",
         appid: "wx8b4f74263bc9ba20",
         scope: "snsapi_login",
-        redirect_uri: "http://admin.yidebim.com/",
+        redirect_uri: "http://admin.man.yidebim.com:8898/",
         state: "qrcode",
         style: "",
         href: "data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHsKICBkaXNwbGF5OiBub25lOwp9CgouaW1wb3dlckJveCAucXJjb2RlIHsKICB3aWR0aDogMTYwcHg7CiAgYm9yZGVyOiAwcHg7Cn0KCi5pbXBvd2VyQm94IC5zdGF0dXNfdHh0LAouaW1wb3dlckJveCAuc3RhdHVzIHAgewogIGNvbG9yOiB3aGl0ZTsKfQo="
