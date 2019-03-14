@@ -47,8 +47,8 @@
       <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
       <hr class="hr1" />
       <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="350px" :empty-text="personInoutTableEmptyText"
-        highlight-current-row  @row-click="handleRowClick" style="width: 100%" size="mini"
-        :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+        highlight-current-row @row-click="handleRowClick" style="width: 100%" size="mini" :show-header="true"
+        header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
         <el-table-column fixed type="index" width="40">
         </el-table-column>
         <el-table-column fixed property="name" sortable label="姓名" width="80" header-align="center">
@@ -402,6 +402,8 @@
         console.log('row1', row);
         const param = {
           show: true,
+          sTime: moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00'),
+          eTime: moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59'),
           ...row
         }
         this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {

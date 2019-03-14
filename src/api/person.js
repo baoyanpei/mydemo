@@ -220,3 +220,27 @@ export function queryPersonInfo(param) {
     data: param
   })
 }
+
+/*
+查询项目人员进出记录
+api/info/project method:query_inout_detail
+查询项目人员进出记录
+        method:query_inout_detail
+        参数: project_id
+             person_id:人员ID
+             可选：
+             bt:开始时间 格式 2016-6-5 00:00:00
+             et:结束时间 格式 2016-6-5 00:00:00
+
+created_time:进场时间
+direction: 1 进 2 出
+
+*/
+export function queryInOutDetail(param) {
+  // console.log('planTypeQuery')
+  return request({
+    url: '/api/info/project',
+    method: 'post',
+    data: param
+  })
+}

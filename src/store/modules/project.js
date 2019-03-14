@@ -7,7 +7,8 @@ import {
   queryProjectPersonInout,
   queryProjectPersonGoOut,
   queryLogsPersonComfirm,
-  queryProjectPersonInDay
+  queryProjectPersonInDay,
+  queryInOutDetail
 } from '@/api/person'
 import Cookies from 'js-cookie'
 import hasPermissionToOperation from '@/utils/permissionUrl' // 权限判断函数
@@ -503,6 +504,20 @@ const project = {
       return new Promise((resolve, reject) => {
         // console.log("paramparamparam", param)
         commit('SET_PROJECT_INFO', param)
+      })
+    },
+    // 查询项目人员进出记录
+    queryInOutDetail({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryInOutDetail(param).then(response => {
+          const _data = response.data
+          console.log('queryInOutDetail', _data)
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
       })
     },
   }

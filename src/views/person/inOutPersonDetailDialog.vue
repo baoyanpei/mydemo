@@ -11,7 +11,7 @@
         <el-row :gutter="24">
           <el-col :span="8" style="text-align: center;padding-right:0px;">
             <div><img :src="idcard_pic" style="height:120px;" /></div>
-            <div>(证件照)</div>
+            <div>(身份证照)</div>
 
           </el-col>
           <el-col :span="16" style="text-align: left;padding: 2px;">
@@ -38,7 +38,13 @@
           上工时间
         </div>
         <hr class="hr1" />
-
+        <el-table ref="personInoutDetailTable" v-loading="loading" :data="inoutDetailList" height="350px" :empty-text="personInoutDetailTableEmptyText"
+          highlight-current-row style="width: 100%" size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+          <el-table-column fixed property="in_date" sortable label="日期" header-align="center">
+          </el-table-column>
+          <el-table-column property="in_time" label="进场时间" header-align="center">
+          </el-table-column>
+        </el-table>
 
       </div>
     </el-dialog>
@@ -48,6 +54,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     components: {},
     directives: {},
@@ -68,11 +75,14 @@
     data() {
 
       return {
+        personInoutDetailTableEmptyText: '查询中...',
         idcard_pic: '/static/photo_no.jpg',
         name: '',
         mobile: '',
         bumen: '',
-        zhuanye: ''
+        zhuanye: '',
+        inoutDetailList: [],
+        loading: false
       }
     },
     created: function () {
@@ -115,6 +125,7 @@
         this.mobile = ""
         this.bumen = ''
         this.zhuanye = ''
+        this.inoutDetailList = []
 
       },
       getPersonInfo() {
@@ -139,6 +150,31 @@
         }).catch(() => {
           this.loading = false
         })
+
+        // const sTime = moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
+        // const eTime = moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
+        this.$store.dispatch('queryInOutDetail', {
+          method: 'query_inout_detail',
+          project_id: this.project_id,
+          person_id: this.personInOutPercentDialog.person_id,
+          bt: this.personInOutPercentDialog.sTime, //开始时间 格式 2016 - 6 - 5 00: 00: 00
+          et: this.personInOutPercentDialog.eTime //结束时间 格式 2016 - 6 - 5 00: 00: 00
+        }).then((data_list) => {
+          console.log("-data-1->", data_list)
+          data_list.forEach(item => {
+            console.log('item', item)
+            if (item.direction === 1){
+              const _data = {
+                in_date :moment(item.created_time).format('YYYY-MM-DD'),
+                in_time :moment(item.created_time).format('hh:mm')
+              }
+              this.inoutDetailList.push(_data)
+            }
+          })
+        }).catch(() => {
+          this.loading = false
+        })
+
         /*
           this.$store.dispatch('QueryProjectPersonsByFacePercent', param).then(() => {
             console.log("--->", this.projectPersonInfoByFacePercent)
