@@ -16,6 +16,7 @@
     </el-dialog>
     <NowinForm></NowinForm>
     <PersonFacePercentDetailForm></PersonFacePercentDetailForm>
+    <InOutPersonDetailDialog></InOutPersonDetailDialog>
     <PersonGoOutDialog></PersonGoOutDialog>
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
     <ModelDetail></ModelDetail>
@@ -31,6 +32,7 @@
   import NowinForm from './views/person/nowinForm'
   import PersonFullCalender from './views/person/fullCalender'
   import PersonFacePercentDetailForm from './views/person/facePercentDetailForm'
+  import InOutPersonDetailDialog from './views/person/inOutPersonDetailDialog'
   import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
   import PersonGoOutDialog from './views/person/personGoOutDialog'
   import LogsPersonComfirmDialog from './views/person/logsPersonComfirmDialog'
@@ -43,6 +45,7 @@
       NowinForm,
       PersonFullCalender,
       PersonFacePercentDetailForm,
+      InOutPersonDetailDialog,
       PersonGoOutDialog,
       LogsPersonComfirmDialog
     },

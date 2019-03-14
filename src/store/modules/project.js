@@ -99,6 +99,11 @@ const project = {
       show: false,
       data: {}
     },
+    personInOutPercentDialog: { //花名册person 窗口
+      refresh: 0,
+      show: false,
+      data: {}
+    }
   },
   mutations: {
     SET_PROJECT_INFO: (state, data) => {
@@ -107,7 +112,7 @@ const project = {
       state.project_list = projects
       let initProjectID = 0
       let initProjectName = ""
-      
+
       projects.forEach(project => {
         // console.log("__PROJECT_ID", __PROJECT_ID, project.project_id)
         // console.log("project", project)
@@ -208,11 +213,21 @@ const project = {
       state.personFacePercentDialog.refresh = genRandom(1, 1000)
       console.log('dasdasd', data)
     },
+
+    SET_IN_OUT_PERSON_DIALOG: (state, data) => {
+      //show:true false
+      console.log('SET_IN_OUT_PERSON_DIALOG', data)
+      state.personInOutPercentDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+
+      state.personInOutPercentDialog.refresh = genRandom(1, 1000)
+      console.log('dasdasd', data)
+    },
+
     SET_PERSON_NOW_IS_CHANGED: (state) => {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.personNowinChanged = genRandom(1, 1000)
     },
-
 
     SET_PROJECT_PERSION_INOUT_LIST: (state, data) => {
       state.projectPersonInoutList = data
@@ -368,6 +383,19 @@ const project = {
       return new Promise((resolve, reject) => {
 
         commit('SET_PERSON_FACE_PERSON_DIALOG', param)
+        console.log('param123123', param)
+        resolve()
+
+      })
+    },
+
+    // 花名册person详细窗口
+    SetInOutPersonDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+
+        commit('SET_IN_OUT_PERSON_DIALOG', param)
         console.log('param123123', param)
         resolve()
 

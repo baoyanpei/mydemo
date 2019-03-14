@@ -394,7 +394,15 @@
         })
       },
       handleCurrentChange(data) { //点击下级部门的分组
-        // console.log('data', data)
+        console.log('data', data)
+
+        const param = {
+          show: true,
+          ...data
+        }
+        this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
+
+        })
       },
       formatJson(filterVal, jsonData) {
         return jsonData.map(v => filterVal.map(j => {
