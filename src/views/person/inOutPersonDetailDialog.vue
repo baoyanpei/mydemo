@@ -34,15 +34,17 @@
         <el-row>
 
         </el-row>
-        <div style="margin-top: 5px;">
+        <div style="margin-top: 10px;">
           上工时间
         </div>
         <hr class="hr1" />
-        <el-table ref="personInoutDetailTable" v-loading="loading" :data="inoutDetailList" height="350px" :empty-text="personInoutDetailTableEmptyText"
-          highlight-current-row style="width: 100%" size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
-          <el-table-column fixed property="in_date" sortable label="日期" header-align="center">
+        <el-table ref="personInoutDetailTable" v-loading="loading" :data="inoutDetailList" height="300px" :empty-text="personInoutDetailTableEmptyText"
+          highlight-current-row style="width: 100%" size="mini" :show-header="true" header-align="left" :default-sort="{prop: 'in_date', order: 'ascending'}">
+          <el-table-column fixed type="index" width="40">
           </el-table-column>
-          <el-table-column property="in_time" label="进场时间" header-align="center">
+          <el-table-column fixed property="in_date" width="150" sortable label="日期" header-align="left">
+          </el-table-column>
+          <el-table-column property="in_time" label="进场时间" header-align="left">
           </el-table-column>
         </el-table>
 
@@ -163,10 +165,10 @@
           console.log("-data-1->", data_list)
           data_list.forEach(item => {
             console.log('item', item)
-            if (item.direction === 1){
+            if (item.direction === 1) {
               const _data = {
-                in_date :moment(item.created_time).format('YYYY-MM-DD'),
-                in_time :moment(item.created_time).format('hh:mm')
+                in_date: moment(item.created_time).format('YYYY-MM-DD'),
+                in_time: moment(item.created_time).format('hh:mm')
               }
               this.inoutDetailList.push(_data)
             }
