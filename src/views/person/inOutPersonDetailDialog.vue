@@ -77,7 +77,7 @@
     data() {
 
       return {
-        personInoutDetailTableEmptyText: '查询中...',
+        personInoutDetailTableEmptyText: '',
         idcard_pic: '/static/photo_no.jpg',
         name: '',
         mobile: '',
