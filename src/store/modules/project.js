@@ -243,6 +243,21 @@ const project = {
   },
 
   actions: {
+    // 查询人员
+    QueryProjectPerson({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryProjectPerson(param).then(response => {
+          // commit('SET_PROJECT_PERSON_LIST', response.data)
+          console.log('responseresponse', response)
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
     // 查询项目组人员
     QueryProjectPersons({
       commit
