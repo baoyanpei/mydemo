@@ -1,12 +1,19 @@
+<style lang="scss">
+  @import "./index";
+</style>
 <template>
-  <div v-on:mouseenter="mouseOver" v-on:mouseleave="mouseLeave">
+  <div v-on:mouseenter="mouseOver" v-on:mouseleave="mouseLeave" class="index-sidebar">
 
     <el-menu default-active="1-4-1" router :default-active="$route.path" class="el-menu-vertical-demo" @open="handleOpen"
       @close="handleClose" :collapse="isCollapse" :collapse-transition="collapseTransition" background-color="#29bb9c"
       text-color="#ffffff">
       <el-menu-item index="/main">
-        <i class="el-icon-menu"></i>
+        <font-awesome-icon icon="home" />
         <span slot="title">首页</span>
+      </el-menu-item>
+      <el-menu-item index="/tjfx">
+        <font-awesome-icon icon="chart-bar"/>
+        <span slot="title">统计分析</span>
       </el-menu-item>
       <!--
       <el-menu-item index="/main1">

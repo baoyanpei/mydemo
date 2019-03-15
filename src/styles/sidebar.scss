@@ -11,7 +11,7 @@
   // 侧边栏
   .sidebar-container {
     transition: width 0.28s;
-    padding-top: 0px;//32px
+    padding-top: 0px; //32px
     // width: 30px !important;
     height: 100%;
     position: fixed;
@@ -21,9 +21,11 @@
     left: 0;
     z-index: 1001;
     overflow: hidden;
-    ul{
+
+    ul {
       padding-top: 32px;
     }
+
     //reset element-ui css
     .horizontal-collapse-transition {
       transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
@@ -58,8 +60,10 @@
     }
 
     .el-tooltip {
-      padding-left: 10px !important;
-      padding-right: 10px !important;
+      padding-left: 10px;
+      /*!important*/
+      padding-right: 10px;
+      /*!important*/
     }
 
     .el-menu-item.is-active {
