@@ -76,6 +76,15 @@ export const constantRouterMap = [{
           icon: 'dashboard',
           noCache: true
         }
+      }, {
+        path: 'tjfx',
+        component: () => import('@/views/worktime/index'),
+        name: 'tjfx',
+        meta: {
+          title: 'tjfx',
+          icon: 'dashboard',
+          noCache: true
+        }
       },
       {
         path: 'main1',
