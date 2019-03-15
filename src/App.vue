@@ -189,6 +189,15 @@
     border-color: #29BB9C;
   }
 
+  .el-message-box__headerbtn {
+    top: 8px;
+  }
+
+  .el-message-box {
+    border-radius: 0px;
+    border: 0px;
+  }
+
   .el-message-box__status.el-icon-warning {
     color: #FF0000;
   }
@@ -205,15 +214,25 @@
 
   .el-message-box__content {
     position: relative;
-    padding: 60px 15px;
+    padding: 10px 15px;
     color: #606266;
     font-size: 14px;
   }
 
+  /* background-color: #2cbc9d;*/
   .el-message-box__header {
     position: relative;
-    padding: 15px 15px 10px;
+    padding: 8px 15px 8px;
     border-bottom: 1px solid #eeeeee;
+    background-color: #2cbc9d;
+  }
+
+  .el-message-box__headerbtn .el-message-box__close {
+    color: #FFFFFF;
+  }
+
+  .el-message-box__title {
+    color: #FFFFFF;
   }
 
   .el-message-box__btns {

@@ -3,7 +3,7 @@
 
 </style>
 <template>
-  <div>
+  <div class="in-out-person-detail-dialog">
     <el-dialog :modal="false" custom-class="ryxx-dialog" top="0.5vh" width="400px" :lock-scroll="true"
       :close-on-click-modal="false" @open="openPersonFacePercentDetailDialogHandle" :visible.sync="personInOutPercentDialog.show"
       :title="personInOutPercentDialog.name">
@@ -39,7 +39,8 @@
         </div>
         <hr class="hr1" />
         <el-table ref="personInoutDetailTable" v-loading="loading" :data="inoutDetailList" height="300px" :empty-text="personInoutDetailTableEmptyText"
-          highlight-current-row style="width: 100%" size="mini" :show-header="true" header-align="left" :default-sort="{prop: 'in_date', order: 'ascending'}">
+          highlight-current-row @row-click="handleRowClick" style="width: 100%" size="mini" :show-header="true"
+          header-align="left" :default-sort="{prop: 'in_date', order: 'ascending'}">
           <el-table-column fixed type="index" width="40">
           </el-table-column>
           <el-table-column fixed property="in_date" width="150" sortable label="日期" header-align="left">
@@ -95,10 +96,12 @@
       personInOutPercentDialog: {
         handler: function (newVal, oldVal) {
           console.info('value changed2 ', newVal)
-          // if (newVal === true) {
-          this.initData()
-          this.getPersonInfo()
-          // }
+          if (newVal.show === true) {
+            this.initData()
+            this.getPersonInfo()
+          } else {
+            this.initData()
+          }
 
         },
         deep: true
@@ -166,9 +169,11 @@
           data_list.forEach(item => {
             console.log('item', item)
             if (item.direction === 1) {
+              console.log('item', item)
               const _data = {
                 in_date: moment(item.created_time).format('YYYY-MM-DD'),
-                in_time: moment(item.created_time).format('hh:mm')
+                in_time: moment(item.created_time).format('hh:mm'),
+                entry_pic: item.pic
               }
               this.inoutDetailList.push(_data)
             }
@@ -205,7 +210,15 @@
           }).catch(() => {
             this.loading = false
           })*/
-      }
+      },
+      handleRowClick(row, event, column) {
+        console.log('row1', row);
+        let _content = '<div style="text-align:center;"><img src="' + row.entry_pic + '" style="height:400px;"></div>'
+        this.$alert(_content, '进场照片', {
+          dangerouslyUseHTMLString: true,
+        });
+
+      },
     },
     mounted() {
 
