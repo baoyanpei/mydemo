@@ -77,8 +77,17 @@ export const constantRouterMap = [{
           noCache: true
         }
       }, {
-        path: 'tjfx',
+        path: 'kqtj',
         component: () => import('@/views/worktime/index'),
+        name: 'kqtj',
+        meta: {
+          title: 'kqtj',
+          icon: 'dashboard',
+          noCache: true
+        }
+      }, {
+        path: 'tjfx',
+        component: () => import('@/views/tjfx/index'),
         name: 'tjfx',
         meta: {
           title: 'tjfx',

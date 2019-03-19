@@ -11,7 +11,7 @@
         <font-awesome-icon icon="home" />
         <span slot="title">首页</span>
       </el-menu-item>
-      <el-menu-item index="/tjfx">
+      <el-menu-item index="/kqtj">
         <font-awesome-icon icon="chart-bar"/>
         <span slot="title">统计分析</span>
       </el-menu-item>
