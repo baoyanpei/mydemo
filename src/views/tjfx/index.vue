@@ -28,8 +28,22 @@
             </el-form-item>
           </el-form>
           <hr class="hr1" />
-          <div style="padding:10px;">进场人员走势：</div>
-          <echart ref="echarts-jcryzs" :options="option" class="echarts-jcryzs" theme="infographic" style="width:100%"></echart>
+          <el-row :gutter="10">
+            <div style="padding:10px;">进场人员走势：</div>
+          </el-row>
+          <el-row :gutter="10">
+            <EchartsJcryzs></EchartsJcryzs>
+          </el-row>
+          <el-row :gutter="10" style="padding-top:20px;">
+            <el-col :span="12">
+              <div style="padding:10px;">年龄分析：</div>
+              <EchartsNlfx></EchartsNlfx>
+            </el-col>
+            <el-col :span="12">
+              <div style="padding:10px;">人员来源地区分布：</div>
+              <EchartsRylydqfb></EchartsRylydqfb>
+            </el-col>
+          </el-row>
         </div>
       </el-col>
     </el-row>
@@ -39,12 +53,18 @@
   import moment from 'moment'
   import lodash from 'lodash'
   import TJFXMenu from "../layout/components/TJFXMenu.vue"
+  import EchartsJcryzs from "./echart-jcryzs.vue"
+  import EchartsNlfx from "./echart-nlfx.vue"
+  import EchartsRylydqfb from "./echart-rylydqfb.vue"
   import {
     Loading
   } from 'element-ui';
   export default {
     components: {
-      TJFXMenu
+      TJFXMenu,
+      EchartsJcryzs,
+      EchartsNlfx,
+      EchartsRylydqfb
     },
     data() {
       const validateInoutDaterange = (rule, value, callback) => {
@@ -66,121 +86,8 @@
           trigger: 'blur',
           validator: validateInoutDaterange
         }],
-        option: {
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            top:'2%',
-            containLabel: true
-          },
-          tooltip: {
-            trigger: 'axis'
-          },
-          xAxis: {
-            type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          color: ['#D16AAB', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
-          series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: 'line',
-            smooth: true,
-            center: ['10%', '10%'],
-          }]
-        }
-        //   option: {
-        //     tooltip: {
-        //       trigger: 'item',
-        //       formatter: '{a} <br/>{b}: {c} ({d}%)'
-        //     },
-        //     legend: {
-        //       orient: 'vertical',
-        //       x: 'right',
-        //       y: '25%',
-        //       align: 'left',
-        //       itemGap: 35,
-        //       right: '10%'
-        //     },
-        //     color: ['#D16AAB', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
-        //     series: [{
-        //       name: '',
-        //       type: 'pie',
-        //       radius: ['58%', '85%'],
-        //       center: ['10%', '50%'],
-        //       avoidLabelOverlap: false,
-        //       label: {
-        //         normal: {
-        //           show: false,
-        //           position: 'center'
-        //         },
-        //         emphasis: {
-        //           show: true,
-        //           textStyle: {
-        //             fontSize: '15',
-        //             fontWeight: 'bold'
-        //           }
-        //         }
-        //       },
-        //       labelLine: {
-        //         normal: {
-        //           show: false
-        //         }
-        //       },
-        //       data: [{
-        //           value: 0,
-        //           name: '抽烟报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '接打电话报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '疲劳驾驶报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '前向碰撞报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '车道偏离报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '车距过近报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '行人碰撞报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '频繁变道报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '道路标识超限报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '障碍物报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '分神驾驶报警'
-        //         },
-        //         {
-        //           value: 0,
-        //           name: '驾驶员异常报警'
-        //         }
-        //       ]
-        //     }]
-        //   }
+        
+        
       };
     },
     computed: {
