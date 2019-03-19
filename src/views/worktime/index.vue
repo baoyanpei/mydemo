@@ -28,6 +28,24 @@
             </el-form-item>
           </el-form>
           <hr class="hr1" />
+          <el-table v-loading="loading" :data="personInoutList" height="350px" highlight-current-row @row-click="handleRowClick"
+            style="width: 100%" size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+            <el-table-column fixed type="index" width="40">
+            </el-table-column>
+            <el-table-column fixed property="name" sortable label="姓名"  header-align="center">
+            </el-table-column>
+
+            <el-table-column property="group_name_level[0]" sortable label="部门" header-align="center">
+            </el-table-column>
+            <el-table-column property="group_name_level[1]" sortable label="专业" header-align="center">
+            </el-table-column>
+            <el-table-column property="inDay" sortable label="出勤天数"  align="center" header-align="center">
+            </el-table-column>
+            <el-table-column property="countDay" sortable label="休息天数" align="center" header-align="center">
+            </el-table-column>
+            <el-table-column property="mobile" label="工作时长"  header-align="center">
+            </el-table-column>
+          </el-table>
         </div>
       </el-col>
     </el-row>
@@ -64,6 +82,7 @@
           trigger: 'blur',
           validator: validateInoutDaterange
         }],
+        personInoutList: []
       };
     },
     computed: {
@@ -178,6 +197,9 @@
 
           }
         })
+
+      },
+      handleRowClick(row, event, column) {
 
       },
     }
