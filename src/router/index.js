@@ -85,7 +85,8 @@ export const constantRouterMap = [{
           icon: 'dashboard',
           noCache: true
         }
-      }, {
+      },
+      {
         path: 'tjfx',
         component: () => import('@/views/tjfx/index'),
         name: 'tjfx',
@@ -94,7 +95,18 @@ export const constantRouterMap = [{
           icon: 'dashboard',
           noCache: true
         }
-      }, {
+      },
+      {
+        path: 'gztz',
+        component: () => import('@/views/gztz/index'),
+        name: 'gztz',
+        meta: {
+          title: 'gztz',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
         path: 'gzbsz',
         component: () => import('@/views/gzb/index'),
         name: 'gzbsz',

@@ -1,5 +1,6 @@
 <style lang="scss">
   @import "./index";
+
 </style>
 <template>
   <div v-on:mouseenter="mouseOver" v-on:mouseleave="mouseLeave" class="index-sidebar">
@@ -12,8 +13,12 @@
         <span slot="title">首页</span>
       </el-menu-item>
       <el-menu-item index="/kqtj">
-        <font-awesome-icon icon="chart-bar"/>
+        <font-awesome-icon icon="chart-bar" />
         <span slot="title">统计分析</span>
+      </el-menu-item>
+      <el-menu-item index="/gztz">
+        <font-awesome-icon icon="chart-bar" />
+        <span slot="title">工资台帐</span>
       </el-menu-item>
       <!--
       <el-menu-item index="/main1">
