@@ -439,6 +439,7 @@
       groupChangeHandle() {}
     },
     mounted() {
+      console.log('project_id', this.project_id)
       this.personInoutForm.InoutDaterange = [moment(), moment()]
       // console.log('inoutForm mount')
     }

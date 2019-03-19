@@ -3,6 +3,10 @@
   padding: 10px;
   background-color: #FFFFFF;
 
+  .el-form-item {
+    margin-bottom: 2px;
+  }
+
   .el-menu-item.is-active {
     /* color: #409EFF !important; */
     background-color: rgb(51, 186, 156);
