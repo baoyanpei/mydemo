@@ -28,6 +28,10 @@ import {
 import {
   library
 } from '@fortawesome/fontawesome-svg-core'
+import ECharts from 'vue-echarts/components/ECharts'
+
+import 'echarts'
+import 'echarts/theme/infographic'
 import {
   faCoffee,
   faUserSecret,
@@ -49,6 +53,7 @@ library.add(faQrcode, faHome, faChartBar, faMobileAlt, faCoffee, faUserSecret, f
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('icon', Icon)
 Vue.use(VueWorker)
+Vue.component('echart', ECharts)
 import FullCalendar from 'vue-full-calendar'
 Vue.use(FullCalendar)
 import 'fullcalendar/dist/fullcalendar.css';
