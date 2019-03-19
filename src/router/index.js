@@ -94,6 +94,15 @@ export const constantRouterMap = [{
           icon: 'dashboard',
           noCache: true
         }
+      }, {
+        path: 'gzbsz',
+        component: () => import('@/views/gzb/index'),
+        name: 'gzbsz',
+        meta: {
+          title: 'gzbsz',
+          icon: 'dashboard',
+          noCache: true
+        }
       },
       {
         path: 'main1',
