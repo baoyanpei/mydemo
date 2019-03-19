@@ -70,6 +70,7 @@
         loading: false,
         optionGroups: [], //部门选择的数据
         worktimeForm: {
+          GroupList: ['all'], // 计划名称
           InoutDaterange: [], // 时间范围
         },
         ruleInoutDaterange: [{ //计划时间验证
@@ -96,7 +97,10 @@
       },
     },
     mounted() {
-      // this.getProjectGroups()
+      if (this.project_id !== null) {
+        this.getProjectGroups()
+      }
+      // 
       const start = moment().add('month', 0).format('YYYY-MM') + '-01'
       this.worktimeForm.InoutDaterange = [start, moment()]
     },
@@ -157,7 +161,7 @@
       },
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
-        this.loading = true
+        // this.loading = true
         this.$refs.worktimeForm.validate(valid => {
           if (valid) {
             // console.log(this.worktimeForm)
@@ -168,16 +172,17 @@
             this.personInoutList = []
             this.totalPerson = 0
             const param = {
-              method: 'query_person_inday',
+              method: 'query_person_in_hours',
               project_id: this.project_id,
               bt: sTime,
               et: eTime
             }
             console.log('param', param)
-            // this.$store.dispatch('QueryProjectPersonInDay', param).then(() => {
+            // this.$store.dispatch('queryPersonWorktime', param).then((data) => {
+            //   console.log('datadata', data)
             //   // console.log(this.projectPersonInoutList)
-            //   console.log('QueryProjectPersonInDay', this.projectPersonInDay)
-            //   this.getProjectPersonInout(sTime, eTime, isExport)
+            //   // console.log('queryPersonWorktime', this.projectPersonInDay)
+            //   // this.getProjectPersonInout(sTime, eTime, isExport)
             //   // console.log('this.personInoutList', this.personInoutList)
             // }).catch(() => {
             //   this.loading = false

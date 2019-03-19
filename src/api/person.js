@@ -244,3 +244,24 @@ export function queryInOutDetail(param) {
     data: param
   })
 }
+
+/*
+/api/info/project  method query_person_worktime(self, params):
+        '''
+查询工作人员在场内时间(按天显示)
+        method:query_person_in_hours
+        参数: project_id
+             person_id:人员ID
+             可选：
+             bt:开始时间 格式 2016-6-5 00:00:00
+             et:结束时间 格式 2016-6-5 23:59:59
+        '''
+*/
+export function queryPersonWorktime(data) {
+  // console.log("queryProjectGroupAPI", data)
+  return request({
+    url: 'api/info/project',
+    method: 'post',
+    data: data
+  })
+}
