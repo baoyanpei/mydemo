@@ -20,7 +20,7 @@
             </el-form-item>
           </el-form>
           <hr class="hr1" />
-          <el-table v-loading="loading" :data="personInoutList" height="350px" highlight-current-row @row-click="handleRowClick"
+          <el-table v-loading="loading" :data="personInoutList" height="550px" highlight-current-row @row-click="handleRowClick"
             style="width: 100%" size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
             <el-table-column fixed type="index" width="40">
             </el-table-column>
