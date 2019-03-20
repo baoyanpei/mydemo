@@ -19,14 +19,14 @@
     <InOutPersonDetailDialog></InOutPersonDetailDialog>
     <PersonGoOutDialog></PersonGoOutDialog>
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
-    <ModelDetail></ModelDetail>
+    <!-- <ModelDetail></ModelDetail> -->
   </div>
 </template>
 
 <script>
   // 引入IndexedDB
   // import IndexedDB from './indexedDB/IndexedDB'
-  import ModelDetail from './views/model3D/modelDetail'
+  // import ModelDetail from './views/model3D/modelDetail'
   import RyxxForm from './views/main/components/ryxxForm'
   import InoutForm from './views/person/inoutForm'
   import NowinForm from './views/person/nowinForm'
@@ -39,7 +39,7 @@
   export default {
     name: 'App',
     components: {
-      ModelDetail,
+      // ModelDetail,
       RyxxForm,
       InoutForm,
       NowinForm,

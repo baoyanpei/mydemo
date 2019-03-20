@@ -17,7 +17,7 @@
         <span slot="title">统计分析</span>
       </el-menu-item>
       <el-menu-item index="/gztz">
-        <font-awesome-icon icon="chart-bar" />
+        <font-awesome-icon icon="calendar-alt" />
         <span slot="title">工资台帐</span>
       </el-menu-item>
       <!--

@@ -6,15 +6,15 @@
     <el-row type="flex" class="row-bg">
       <el-menu router :default-active="$route.path" active-text-color="#FFFFFF" class="el-menu-vertical-demo">
         <el-menu-item index="/kqtj">
-          <i class="el-icon-menu"></i>
+          <font-awesome-icon icon="calendar-check" class="fa-icon"/>
           <span slot="title">考勤统计</span>
         </el-menu-item>
         <el-menu-item index="/tjfx">
-          <i class="el-icon-document"></i>
+          <font-awesome-icon icon="chart-line" class="fa-icon"/>
           <span slot="title">统计分析</span>
         </el-menu-item>
         <el-menu-item index="/gzbsz">
-          <i class="el-icon-setting"></i>
+          <font-awesome-icon icon="user" class="fa-icon"/>
           <span slot="title">工资表设置</span>
         </el-menu-item>
       </el-menu>
