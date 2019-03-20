@@ -13,26 +13,38 @@
     data() {
       return {
         option: {
+          title: {
+            // text: '进场人员走势'
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            }
+          },
           grid: {
             left: '3%',
-            right: '4%',
+            right: '5%',
             bottom: '3%',
-            top: '2%',
+            top: '3%',
             containLabel: true
+          },
+          legend: {
+            data: ['人员数量'],
           },
           tooltip: {
             trigger: 'axis'
           },
           xAxis: {
             type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            data: []
           },
           yAxis: {
             type: 'value'
           },
           color: ['#D16AAB', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
           series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            name: '人员数量',
+            data: [],
             type: 'line',
             smooth: true,
             center: ['10%', '10%'],
@@ -154,9 +166,18 @@
       },
       getData(param) {
         param['method'] = 'query_online_max'
-        this.$store.dispatch('QueryPersonOnlineMaxList', param).then((data) => {
+        this.option.xAxis.data = []
+        this.option.series[0].data = []
+        this.$store.dispatch('QueryPersonOnlineMaxList', param).then((dataList) => {
 
-          console.log('data', data)
+          console.log('data', dataList)
+
+          dataList.forEach((item, index) => {
+            console.log('item', item)
+            this.option.xAxis.data.push(item.date)
+            this.option.series[0].data.push(item.in_count)
+          })
+
         })
       }
 
