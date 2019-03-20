@@ -30,7 +30,7 @@
             type: 'pie',
             radius: [30, 110],
             // center: ['75%', '50%'],
-            roseType: 'area',
+            roseType: 'radius',
             label: {
               formatter: '{b}:  ({c}人)'
             },
