@@ -161,21 +161,29 @@
 
     methods: {
       reloadData(param) {
-        console.log('param', param)
+        // console.log('param', param)
         this.getData(param)
       },
       getData(param) {
-        param['method'] = 'query_online_max'
+        const _param = {
+          method: 'query_online_max',
+          project_id: param.project_id,
+          bt: param.bt,
+          et: param.et
+        }
         this.option.xAxis.data = []
         this.option.series[0].data = []
-        this.$store.dispatch('QueryPersonOnlineMaxList', param).then((dataList) => {
+        this.$store.dispatch('QueryPersonOnlineMaxList', _param).then((dataList) => {
 
-          console.log('data', dataList)
+          console.log('data11122', dataList)
 
           dataList.forEach((item, index) => {
-            console.log('item', item)
-            this.option.xAxis.data.push(item.date)
-            this.option.series[0].data.push(item.in_count)
+            // console.log('item', item)
+            
+              this.option.xAxis.data.push(item.date)
+              this.option.series[0].data.push(item.in_count)
+            
+
           })
 
         })

@@ -23,7 +23,7 @@
           tooltip: {
             trigger: 'axis'
           },
-          
+
           color: ['#D16AAB', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
           series: [{
             name: '面积模式',
@@ -31,39 +31,10 @@
             radius: [30, 110],
             // center: ['75%', '50%'],
             roseType: 'area',
-            data: [{
-                value: 10,
-                name: 'rose1'
-              },
-              {
-                value: 5,
-                name: 'rose2'
-              },
-              {
-                value: 15,
-                name: 'rose3'
-              },
-              {
-                value: 25,
-                name: 'rose4'
-              },
-              {
-                value: 20,
-                name: 'rose5'
-              },
-              {
-                value: 35,
-                name: 'rose6'
-              },
-              {
-                value: 30,
-                name: 'rose7'
-              },
-              {
-                value: 40,
-                name: 'rose8'
-              }
-            ]
+            label: {
+              formatter: '{b}:  ({c}人)'
+            },
+            data: []
           }]
         }
       };
@@ -87,7 +58,34 @@
     },
 
     methods: {
+      reloadData(param) {
+        // console.log('param', param)
+        this.getData(param)
+      },
+      getData(param) {
+        const _param = {
+          method: 'tj_online_age_by_time',
+          project_id: param.project_id,
+          bt: param.bt,
+          et: param.et
+        }
+        this.option.series[0].data = []
+        this.$store.dispatch('QueryTjOnlineAgeByTime', _param).then((dataList) => {
 
+          console.log('data', dataList)
+
+          dataList.forEach((item, index) => {
+            if (item.value > 0) {
+              this.option.series[0].data.push({
+                value: item.value,
+                name: item.name
+              })
+            }
+
+          })
+
+        })
+      }
     }
 
   };

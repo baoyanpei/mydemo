@@ -265,3 +265,21 @@ export function queryPersonWorktime(data) {
     data: data
   })
 }
+
+/*
+按统计时段内区域人数
+tj_online_area_by_time
+        '''
+        按统计时段内区域人数
+        project_id: 项目编码
+        bt='yyyy-mm-dd'
+        et='yyyy-mm-dd'
+*/
+export function queryTjOnlineAgeByTime(data) {
+  // console.log("queryProjectGroupAPI", data)
+  return request({
+    url: 'api/rpt/project',
+    method: 'post',
+    data: data
+  })
+}

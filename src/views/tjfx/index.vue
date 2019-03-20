@@ -35,7 +35,7 @@
           <el-row :gutter="10" style="padding-top:20px;">
             <el-col :span="12">
               <div style="padding:10px;">年龄分析：</div>
-              <EchartsNlfx></EchartsNlfx>
+              <EchartsNlfx ref="EchartNlfx"></EchartsNlfx>
             </el-col>
             <el-col :span="12">
               <div style="padding:10px;">人员来源地区分布：</div>
@@ -188,6 +188,8 @@
             }
             console.log('param1', param)
             this.$refs.EchartJcryzs.reloadData(param); 
+            this.$refs.EchartNlfx.reloadData(param); 
+            
 
           }
         })
