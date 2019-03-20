@@ -148,6 +148,17 @@
     },
 
     methods: {
+      reloadData(param) {
+        console.log('param', param)
+        this.getData(param)
+      },
+      getData(param) {
+        param['method'] = 'query_online_max'
+        this.$store.dispatch('QueryPersonOnlineMaxList', param).then((data) => {
+
+          console.log('data', data)
+        })
+      }
 
     }
 

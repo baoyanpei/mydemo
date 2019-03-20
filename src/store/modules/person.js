@@ -6,7 +6,7 @@ import {
 const person = {
   state: {
     personInfo: null,
-    
+
     logsPersonComfirmDialog: { // 认证验证确认窗口
       show: false,
       data: {}
@@ -85,7 +85,7 @@ const person = {
         queryPersonOnlineMax(param).then(response => {
           console.log("QueryPersonOnlineMaxList", response.data)
           commit('SET_PERSON_ONLINE_MAX_LIST', response.data)
-          resolve()
+          resolve(response.data)
         }).catch(error => {
           reject(error)
         })

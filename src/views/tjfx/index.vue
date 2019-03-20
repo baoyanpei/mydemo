@@ -30,7 +30,7 @@
             <div style="padding:10px;">进场人员走势：</div>
           </el-row>
           <el-row :gutter="10">
-            <EchartsJcryzs></EchartsJcryzs>
+            <EchartsJcryzs ref="EchartJcryzs"></EchartsJcryzs>
           </el-row>
           <el-row :gutter="10" style="padding-top:20px;">
             <el-col :span="12">
@@ -171,33 +171,23 @@
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
         // this.loading = true
-        this.$refs.worktimeForm.validate(valid => {
+        this.$refs.tjfxForm.validate(valid => {
           if (valid) {
-            // console.log(this.worktimeForm)
-            const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
-            const eTime = moment(this.worktimeForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
+            // console.log(this.tjfxForm)
+            const sTime = moment(this.tjfxForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
+            const eTime = moment(this.tjfxForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
             // -> store module ->api
             // console.log(sTime, eTime)
             this.personInoutList = []
             this.totalPerson = 0
             const param = {
-              method: 'query_person_in_hours',
+              // method: 'query_person_in_hours',
               project_id: this.project_id,
               bt: sTime,
               et: eTime
             }
-            console.log('param', param)
-            // this.$store.dispatch('queryPersonWorktime', param).then((data) => {
-            //   console.log('datadata', data)
-            //   // console.log(this.projectPersonInoutList)
-            //   // console.log('queryPersonWorktime', this.projectPersonInDay)
-            //   // this.getProjectPersonInout(sTime, eTime, isExport)
-            //   // console.log('this.personInoutList', this.personInoutList)
-            // }).catch(() => {
-            //   this.loading = false
-            // })
-
-
+            console.log('param1', param)
+            this.$refs.EchartJcryzs.reloadData(param); 
 
           }
         })
