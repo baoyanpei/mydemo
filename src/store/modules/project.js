@@ -434,9 +434,11 @@ const project = {
     }, param) {
       return new Promise((resolve, reject) => {
         queryProjectPersonInout(param).then(response => {
+          console.log('paramparamparam', param)
           const _data = response.data
+          console.log('_data_data_data', _data)
           commit('SET_PROJECT_PERSION_INOUT_LIST', _data)
-          resolve()
+          resolve(_data)
         }).catch(error => {
           reject(error)
         })
@@ -464,7 +466,7 @@ const project = {
         queryProjectPersonInDay(param).then(response => {
           const _data = response.data
           commit('SET_PROJECT_PERSON_IN_DAY', _data)
-          resolve()
+          resolve(_data)
         }).catch(error => {
           reject(error)
         })

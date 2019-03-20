@@ -28,22 +28,21 @@
             </el-form-item>
           </el-form>
           <hr class="hr1" />
-          <el-table v-loading="loading" :data="personInoutList" height="350px" highlight-current-row @row-click="handleRowClick"
+          <el-table v-loading="loading" :data="personInoutList" height="550px" highlight-current-row @row-click="handleRowClick"
             style="width: 100%" size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
             <el-table-column fixed type="index" width="40">
             </el-table-column>
-            <el-table-column fixed property="name" sortable label="姓名"  header-align="center">
+            <el-table-column fixed property="name" sortable label="姓名" width="80" header-align="center">
             </el-table-column>
-
-            <el-table-column property="group_name_level[0]" sortable label="部门" header-align="center">
+            <el-table-column property="group_name_level[0]" sortable label="部门" width="90" header-align="center">
             </el-table-column>
-            <el-table-column property="group_name_level[1]" sortable label="专业" header-align="center">
+            <el-table-column property="group_name_level[1]" sortable label="专业" width="100" header-align="center">
             </el-table-column>
-            <el-table-column property="inDay" sortable label="出勤天数"  align="center" header-align="center">
+            <el-table-column property="inDay" sortable label="出勤天数" width="100" align="center" header-align="center">
             </el-table-column>
-            <el-table-column property="countDay" sortable label="休息天数" align="center" header-align="center">
+            <el-table-column property="countDay" sortable label="统计天数" width="100" align="center" header-align="center">
             </el-table-column>
-            <el-table-column property="mobile" label="工作时长"  header-align="center">
+            <el-table-column property="mobile1" label="工作时长" width="100" header-align="center">
             </el-table-column>
           </el-table>
         </div>
@@ -82,7 +81,10 @@
           trigger: 'blur',
           validator: validateInoutDaterange
         }],
-        personInoutList: []
+        personInoutList: [],
+        projectPersonInDay: [],
+        isMatchPerson: false, // 是否匹配人员名称
+        checkedPersonType: false, //false 只有项目部
       };
     },
     computed: {
@@ -164,6 +166,33 @@
         }
         console.log("this.optionGroups", this.optionGroups)
       },
+      checkPerson(person) {
+        this.isMatchPerson = false
+        if (this.worktimeForm.person_id !== undefined && this.worktimeForm.person_id !== '') {
+          if (person.person_id.toString() === this.worktimeForm.person_id.toString()) {
+            this.isMatchPerson = true
+          }
+        } else {
+          this.isMatchPerson = true
+        }
+        if (this.checkedPersonType === false) { // 不显示外部单位 只显示项目部，就是persontype=1的
+          //person_type 账号类型 1项目部2建设单位代表3监理单位代表,4VIP
+          if (person.person_type !== 1) {
+            this.isMatchPerson = false
+          }
+        }
+
+        if (this.isMatchPerson === true) {
+          let _inDay = this.projectPersonInDay[person.person_id]
+          // console.log('_inDay', _inDay)
+          if (_inDay === undefined) {
+            _inDay = 0
+          }
+          person.inDay = _inDay
+
+          this.personInoutList.push(person)
+        }
+      },
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
         // this.loading = true
@@ -176,28 +205,66 @@
             // console.log(sTime, eTime)
             this.personInoutList = []
             this.totalPerson = 0
+
             const param = {
-              method: 'query_person_in_hours',
+              method: 'query_person_inday',
               project_id: this.project_id,
               bt: sTime,
               et: eTime
             }
-            console.log('param', param)
-            // this.$store.dispatch('queryPersonWorktime', param).then((data) => {
-            //   console.log('datadata', data)
-            //   // console.log(this.projectPersonInoutList)
-            //   // console.log('queryPersonWorktime', this.projectPersonInDay)
-            //   // this.getProjectPersonInout(sTime, eTime, isExport)
-            //   // console.log('this.personInoutList', this.personInoutList)
-            // }).catch(() => {
-            //   this.loading = false
-            // })
-
-
-
+            this.$store.dispatch('QueryProjectPersonInDay', param).then((dataList) => {
+              // console.log(this.projectPersonInoutList)
+              this.projectPersonInDay = dataList
+              console.log('QueryProjectPersonInDay', this.projectPersonInDay)
+              this.getProjectPersonInout(sTime, eTime, isExport)
+              // console.log('this.personInoutList', this.personInoutList)
+            }).catch(() => {
+              this.loading = false
+            })
           }
         })
 
+      },
+      getProjectPersonInout(bt, et, isExport) {
+        const param = {
+          method: 'query_person_inout',
+          project_id: this.project_id,
+          in_status: 1,
+          bt: bt,
+          et: et
+        }
+        const countDay = moment(et).diff(moment(bt), 'days') + 1
+        this.$store.dispatch('QueryProjectPersonInout', param).then((dataList) => {
+          dataList.forEach(item => {
+            item.countDay = countDay
+            let groupMatch = []
+            if (this.worktimeForm.GroupList[0] === 'all') {
+              this.checkPerson(item)
+            } else if (this.worktimeForm.GroupList.length === 1) {
+              groupMatch = lodash.intersection(item.group_id_level, this.worktimeForm.GroupList)
+              if (groupMatch.length > 0) {
+                this.checkPerson(item)
+              }
+            } else if (this.worktimeForm.GroupList.length > 1) {
+              groupMatch = lodash.intersection(item.group_id_level, this.worktimeForm.GroupList)
+              const groupMatch2 = lodash.union(item.group_id_level, this.worktimeForm.GroupList)
+              if (groupMatch.length === groupMatch2.length) {
+                this.checkPerson(item)
+              }
+            }
+
+          })
+          this.totalPerson = this.personInoutList.length;
+          this.loading = false
+          if (this.personInoutList.length === 0) {
+            this.personInoutTableEmptyText = "没有查询到符合条件的数据，请更换条件后再进行查询"
+          }
+          if (isExport === true) {
+            this.exportExcelSubmit()
+          }
+        }).catch(() => {
+          this.loading = false
+        })
       },
       handleRowClick(row, event, column) {
 
