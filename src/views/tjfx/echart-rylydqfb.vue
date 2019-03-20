@@ -8,6 +8,7 @@
   </div>
 </template>
 <script>
+  import lodash from 'lodash'
   export default {
     components: {},
     data() {
@@ -25,19 +26,17 @@
           },
           xAxis: {
             type: 'value',
-            boundaryGap: [0, 0.01]
+            // boundaryGap: [0, 0.01]
           },
           yAxis: {
             type: 'category',
-            data: ['巴西', '印尼', '美国', '印度', '中国', '世界人口(万)']
+            data: []
           },
-          series: [
-            {
-              name: '2012年',
-              type: 'bar',
-              data: [19325, 23438, 31000, 121594, 134141, 681807]
-            }
-          ]
+          series: [{
+            name: '人员数量',
+            type: 'bar',
+            data: []
+          }]
         }
       };
     },
@@ -60,7 +59,35 @@
     },
 
     methods: {
+      reloadData(param) {
+        // console.log('param', param)
+        this.getData(param)
+      },
+      getData(param) {
+        const _param = {
+          method: 'tj_online_area_by_time',
+          project_id: param.project_id,
+          bt: param.bt,
+          et: param.et
+        }
+        this.option.yAxis.data = []
+        this.option.series[0].data = []
+        this.$store.dispatch('queryTjOnlineAreaByTime', _param).then((dataList) => {
 
+          // console.log('data-queryTjOnlineAreaByTime', dataList)
+
+          dataList = lodash.sortBy(dataList, function (item) {
+            return item.count;
+          });
+
+          dataList.forEach((item, index) => {
+            this.option.yAxis.data.push(item.province)
+            this.option.series[0].data.push(item.count)
+
+          })
+
+        })
+      }
     }
 
   };

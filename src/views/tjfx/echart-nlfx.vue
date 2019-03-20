@@ -72,7 +72,7 @@
         this.option.series[0].data = []
         this.$store.dispatch('QueryTjOnlineAgeByTime', _param).then((dataList) => {
 
-          console.log('data', dataList)
+          // console.log('data', dataList)
 
           dataList.forEach((item, index) => {
             if (item.value > 0) {

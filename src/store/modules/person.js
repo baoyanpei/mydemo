@@ -1,7 +1,8 @@
 import {
   queryPersonOnlineMax,
   queryPersonInfo,
-  queryTjOnlineAgeByTime
+  queryTjOnlineAgeByTime,
+  queryTjOnlineAreaByTime
 } from '@/api/person'
 
 const person = {
@@ -99,6 +100,19 @@ const person = {
       return new Promise((resolve, reject) => {
         queryTjOnlineAgeByTime(param).then(response => {
           console.log("queryTjOnlineAgeByTime", response.data)
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    //按统计时段内区域人数
+    queryTjOnlineAreaByTime({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryTjOnlineAreaByTime(param).then(response => {
+          console.log("queryTjOnlineAreaByTime", response.data)
           resolve(response.data)
         }).catch(error => {
           reject(error)

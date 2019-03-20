@@ -39,7 +39,7 @@
             </el-col>
             <el-col :span="12">
               <div style="padding:10px;">人员来源地区分布：</div>
-              <EchartsRylydqfb></EchartsRylydqfb>
+              <EchartsRylydqfb ref="EchartRylydqfb"></EchartsRylydqfb>
             </el-col>
           </el-row>
         </div>
@@ -101,33 +101,37 @@
       project_id(curVal, oldVal) {
         if (curVal !== null) {
           // this.reloadData()
+          this.reloadData()
         }
       },
     },
     mounted() {
-      if (this.project_id !== null) {
-        this.getProjectGroups()
-      }
-      // 
       const start = moment().add('month', 0).format('YYYY-MM') + '-01'
       this.tjfxForm.InoutDaterange = [start, moment()]
+      if (this.project_id !== null) {
+        this.reloadData()
+      }
+      // 
+
+
 
     },
 
     methods: {
       reloadData() {
         this.getProjectGroups()
+        this.loadEchart()
       },
       dateChangeHandle() {},
       groupChangeHandle() {},
       getProjectGroups() {
-        console.log('project_id1', this.project_id)
+        // console.log('project_id1', this.project_id)
         const param = {
           method: 'query_group',
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectGroups', param).then(() => {
-          console.log('this.projectGroupList1', this.projectGroupList)
+          // console.log('this.projectGroupList1', this.projectGroupList)
           this.appendGroupData()
         }).catch(() => {
 
@@ -166,35 +170,39 @@
             }
           });
         }
-        console.log("this.optionGroups", this.optionGroups)
       },
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
         // this.loading = true
         this.$refs.tjfxForm.validate(valid => {
           if (valid) {
-            // console.log(this.tjfxForm)
-            const sTime = moment(this.tjfxForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
-            const eTime = moment(this.tjfxForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
-            // -> store module ->api
-            // console.log(sTime, eTime)
-            this.personInoutList = []
-            this.totalPerson = 0
-            const param = {
-              // method: 'query_person_in_hours',
-              project_id: this.project_id,
-              bt: sTime,
-              et: eTime
-            }
-            console.log('param1', param)
-            this.$refs.EchartJcryzs.reloadData(param); 
-            this.$refs.EchartNlfx.reloadData(param); 
-            
+
+            this.loadEchart()
+
 
           }
         })
 
       },
+      loadEchart() {
+        // console.log(this.tjfxForm)
+        const sTime = moment(this.tjfxForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
+        const eTime = moment(this.tjfxForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
+        // -> store module ->api
+        // console.log(sTime, eTime)
+        this.personInoutList = []
+        this.totalPerson = 0
+        const param = {
+          // method: 'query_person_in_hours',
+          project_id: this.project_id,
+          bt: sTime,
+          et: eTime
+        }
+        console.log('param1', param)
+        this.$refs.EchartJcryzs.reloadData(param);
+        this.$refs.EchartNlfx.reloadData(param);
+        this.$refs.EchartRylydqfb.reloadData(param);
+      }
     }
 
   };

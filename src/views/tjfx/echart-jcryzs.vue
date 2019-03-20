@@ -174,18 +174,10 @@
         this.option.xAxis.data = []
         this.option.series[0].data = []
         this.$store.dispatch('QueryPersonOnlineMaxList', _param).then((dataList) => {
-
-          console.log('data11122', dataList)
-
           dataList.forEach((item, index) => {
-            // console.log('item', item)
-            
               this.option.xAxis.data.push(item.date)
               this.option.series[0].data.push(item.in_count)
-            
-
           })
-
         })
       }
 
