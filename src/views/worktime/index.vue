@@ -74,6 +74,8 @@
         optionGroups: [], //部门选择的数据
         worktimeForm: {
           GroupList: ['all'], // 计划名称
+          person_id: '', // 人员
+          person_name: '',
           InoutDaterange: [], // 时间范围
         },
         ruleInoutDaterange: [{ //计划时间验证
@@ -265,6 +267,77 @@
         }).catch(() => {
           this.loading = false
         })
+      },
+      exportExcelSubmit() {
+        let filename = '考勤统计'
+        const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY年MM月DD日')
+        const eTime = moment(this.worktimeForm.InoutDaterange[1]).format('YYYY年MM月DD日')
+        if (this.worktimeForm.GroupList[0] !== 'all') {
+          // console.log('GroupList', this.worktimeForm.GroupList)
+          if (this.worktimeForm.GroupList.length === 1) {
+            let group0 = getGroupFromGroupsByGroupID(this.projectGroupList, this.worktimeForm.GroupList[0])
+            // console.log('group0_name',group0_name)
+            filename = `${filename}_${group0.group_name}`
+          } else {
+            let group0 = getGroupFromGroupsByGroupID(this.projectGroupList, this.worktimeForm.GroupList[0])
+            let group1 = getGroupFromGroupsByGroupID(this.projectGroupList, this.worktimeForm.GroupList[1])
+            filename = `${filename}_${group0.group_name}_${group1.group_name}`
+          }
+        } else {
+          filename = `${filename}_所有部门`
+        }
+
+        if (this.worktimeForm.person_name !== '') {
+          filename = `${filename}_${this.worktimeForm.person_name}`
+        }
+
+        if (sTime === eTime) {
+          filename = `${filename}_${sTime}`
+        } else {
+          filename = `${filename}_${sTime}至${eTime}`
+        }
+        filename = `${filename}_${moment().format('YYYYMMDDHHmmss')}`
+
+        // if (this.worktimeForm.person_id !== '') {
+        //     filename = `${filename}_${this.worktimeForm.GroupList[0]}`
+        // }
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '统计开始日期', '统计结束日期']
+          const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'inDay', 'countDay', 'sTime', 'eTime']
+          let list = []
+          let xuhao = 0
+          this.personInoutList.forEach(person => {
+            list.push({
+              xuhao: ++xuhao, //序号
+              name: person.name,
+              mobile: person.mobile,
+              group0: person.group_name_level[0],
+              group1: person.group_name_level[1],
+              inDay: person.inDay,
+              countDay: person.countDay,
+              sTime: sTime,
+              eTime: eTime
+            })
+          })
+          // const list = this.personInoutList
+          const data = this.formatJson(filterVal, list)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: filename,
+            autoWidth: this.autoWidth
+          })
+          this.downloadLoading = false
+        })
+      },
+      formatJson(filterVal, jsonData) {
+        return jsonData.map(v => filterVal.map(j => {
+          if (j === 'timestamp') {
+            return parseTime(v[j])
+          } else {
+            return v[j]
+          }
+        }))
       },
       handleRowClick(row, event, column) {
 
