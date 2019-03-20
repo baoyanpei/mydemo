@@ -9,7 +9,8 @@ import {
   queryLogsPersonComfirm,
   queryProjectPersonInDay,
   queryInOutDetail,
-  queryPersonWorktime
+  queryPersonWorktime,
+  queryProjectWorktime
 } from '@/api/person'
 import Cookies from 'js-cookie'
 import hasPermissionToOperation from '@/utils/permissionUrl' // 权限判断函数
@@ -434,9 +435,9 @@ const project = {
     }, param) {
       return new Promise((resolve, reject) => {
         queryProjectPersonInout(param).then(response => {
-          console.log('paramparamparam', param)
+          // console.log('paramparamparam', param)
           const _data = response.data
-          console.log('_data_data_data', _data)
+          // console.log('_data_data_data', _data)
           commit('SET_PROJECT_PERSION_INOUT_LIST', _data)
           resolve(_data)
         }).catch(error => {
@@ -531,6 +532,20 @@ const project = {
         queryPersonWorktime(param).then(response => {
           const _data = response.data
           console.log('queryPersonWorktime', _data)
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 查询项目人员进出记录
+    queryProjectWorktime({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryProjectWorktime(param).then(response => {
+          const _data = response.data
+          // console.log('queryProjectWorktime', _data)
           resolve(_data)
         }).catch(error => {
           reject(error)

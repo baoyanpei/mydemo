@@ -42,7 +42,7 @@
             </el-table-column>
             <el-table-column property="countDay" sortable label="统计天数" width="100" align="center" header-align="center">
             </el-table-column>
-            <el-table-column property="mobile1" label="工作时长" width="100" header-align="center">
+            <el-table-column property="worktime" sortable label="工作时长(小时)" align="center" width="140" header-align="center">
             </el-table-column>
           </el-table>
         </div>
@@ -83,6 +83,7 @@
           trigger: 'blur',
           validator: validateInoutDaterange
         }],
+        projectWorktime: {},
         personInoutList: [],
         projectPersonInDay: [],
         isMatchPerson: false, // 是否匹配人员名称
@@ -107,7 +108,7 @@
     },
     mounted() {
       if (this.project_id !== null) {
-        this.getProjectGroups()
+        this.reloadData()
       }
       // 
       const start = moment().add('month', 0).format('YYYY-MM') + '-01'
@@ -127,7 +128,7 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectGroups', param).then(() => {
-          console.log('this.projectGroupList1', this.projectGroupList)
+          // console.log('this.projectGroupList1', this.projectGroupList)
           this.appendGroupData()
         }).catch(() => {
 
@@ -166,7 +167,7 @@
             }
           });
         }
-        console.log("this.optionGroups", this.optionGroups)
+        // console.log("this.optionGroups", this.optionGroups)
       },
       checkPerson(person) {
         this.isMatchPerson = false
@@ -191,82 +192,121 @@
             _inDay = 0
           }
           person.inDay = _inDay
+          const worktime = this.projectWorktime[person.person_id]
+          if (worktime !== undefined) {
+            const _hours = worktime / 60 / 60
+            person.worktime = _hours.toFixed(2)
+            // person.worktime = worktime
+          } else {
+            person.worktime = 0
+          }
 
+          // console.log('this.projectWorktime',)
           this.personInoutList.push(person)
         }
       },
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
         // this.loading = true
-        this.$refs.worktimeForm.validate(valid => {
+        this.$refs.worktimeForm.validate(async (valid) => {
           if (valid) {
-            // console.log(this.worktimeForm)
             const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
             const eTime = moment(this.worktimeForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
             // -> store module ->api
             // console.log(sTime, eTime)
-            this.personInoutList = []
-            this.totalPerson = 0
-
-            const param = {
-              method: 'query_person_inday',
-              project_id: this.project_id,
-              bt: sTime,
-              et: eTime
-            }
-            this.$store.dispatch('QueryProjectPersonInDay', param).then((dataList) => {
-              // console.log(this.projectPersonInoutList)
-              this.projectPersonInDay = dataList
-              console.log('QueryProjectPersonInDay', this.projectPersonInDay)
-              this.getProjectPersonInout(sTime, eTime, isExport)
-              // console.log('this.personInoutList', this.personInoutList)
-            }).catch(() => {
-              this.loading = false
-            })
+            await this.getProjectPersonInDay(sTime, eTime)
+            await this.getProjectWorktime(sTime, eTime)
+            await this.getProjectPersonInout(sTime, eTime, isExport)
           }
         })
 
       },
-      getProjectPersonInout(bt, et, isExport) {
-        const param = {
-          method: 'query_person_inout',
-          project_id: this.project_id,
-          in_status: 1,
-          bt: bt,
-          et: et
-        }
-        const countDay = moment(et).diff(moment(bt), 'days') + 1
-        this.$store.dispatch('QueryProjectPersonInout', param).then((dataList) => {
-          dataList.forEach(item => {
-            item.countDay = countDay
-            let groupMatch = []
-            if (this.worktimeForm.GroupList[0] === 'all') {
-              this.checkPerson(item)
-            } else if (this.worktimeForm.GroupList.length === 1) {
-              groupMatch = lodash.intersection(item.group_id_level, this.worktimeForm.GroupList)
-              if (groupMatch.length > 0) {
-                this.checkPerson(item)
-              }
-            } else if (this.worktimeForm.GroupList.length > 1) {
-              groupMatch = lodash.intersection(item.group_id_level, this.worktimeForm.GroupList)
-              const groupMatch2 = lodash.union(item.group_id_level, this.worktimeForm.GroupList)
-              if (groupMatch.length === groupMatch2.length) {
-                this.checkPerson(item)
-              }
-            }
+      getProjectPersonInDay(bt, et, isExport) {
+        return new Promise((resolve, reject) => {
+          this.personInoutList = []
+          this.totalPerson = 0
 
+          const param = {
+            method: 'query_person_inday',
+            project_id: this.project_id,
+            bt: bt,
+            et: et
+          }
+          this.$store.dispatch('QueryProjectPersonInDay', param).then((dataList) => {
+            // console.log("this.projectPersonInoutList", dataList)
+            this.projectPersonInDay = dataList
+            // console.log('QueryProjectPersonInDay', this.projectPersonInDay)
+
+            // this.getProjectPersonInout(sTime, eTime, isExport)
+            resolve()
+            // console.log('this.personInoutList', this.personInoutList)
+          }).catch(() => {
+            this.loading = false
           })
-          this.totalPerson = this.personInoutList.length;
-          this.loading = false
-          if (this.personInoutList.length === 0) {
-            this.personInoutTableEmptyText = "没有查询到符合条件的数据，请更换条件后再进行查询"
-          }
-          if (isExport === true) {
-            this.exportExcelSubmit()
-          }
-        }).catch(() => {
-          this.loading = false
+
         })
+
+      },
+      getProjectWorktime(bt, et) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'query_project_worktime',
+            project_id: this.project_id,
+            bt: bt,
+            et: et
+          }
+          this.$store.dispatch('queryProjectWorktime', param).then((dataList) => {
+            // console.log('queryProjectWorktime', dataList)
+            this.projectWorktime = dataList
+            resolve()
+          })
+        })
+
+      },
+      getProjectPersonInout(bt, et, isExport) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'query_person_inout',
+            project_id: this.project_id,
+            in_status: 1,
+            bt: bt,
+            et: et
+          }
+          const countDay = moment(et).diff(moment(bt), 'days') + 1
+          this.$store.dispatch('QueryProjectPersonInout', param).then((dataList) => {
+            dataList.forEach(item => {
+              item.countDay = countDay
+              let groupMatch = []
+              if (this.worktimeForm.GroupList[0] === 'all') {
+                this.checkPerson(item)
+              } else if (this.worktimeForm.GroupList.length === 1) {
+                groupMatch = lodash.intersection(item.group_id_level, this.worktimeForm.GroupList)
+                if (groupMatch.length > 0) {
+                  this.checkPerson(item)
+                }
+              } else if (this.worktimeForm.GroupList.length > 1) {
+                groupMatch = lodash.intersection(item.group_id_level, this.worktimeForm.GroupList)
+                const groupMatch2 = lodash.union(item.group_id_level, this.worktimeForm.GroupList)
+                if (groupMatch.length === groupMatch2.length) {
+                  this.checkPerson(item)
+                }
+              }
+
+            })
+            this.totalPerson = this.personInoutList.length;
+            this.loading = false
+            if (this.personInoutList.length === 0) {
+              this.personInoutTableEmptyText = "没有查询到符合条件的数据，请更换条件后再进行查询"
+            }
+            if (isExport === true) {
+              this.exportExcelSubmit()
+            }
+            resolve()
+          }).catch(() => {
+            this.loading = false
+          })
+        })
+
       },
       exportExcelSubmit() {
         let filename = '考勤统计'

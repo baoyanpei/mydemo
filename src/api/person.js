@@ -302,3 +302,21 @@ export function queryTjOnlineAreaByTime(data) {
     data: data
   })
 }
+
+/*
+/api/info/info_project
+query_project_worktime
+  '''
+  查询一段时间内项目用户在场时长（秒）
+  参数 project_id:
+      bt: 2018-09-27 00:00:00
+      et: 2018-09-27 23:59:59
+  '''
+*/
+export function queryProjectWorktime(data) {
+  return request({
+    url: 'api/info/project',
+    method: 'post',
+    data: data
+  })
+}
