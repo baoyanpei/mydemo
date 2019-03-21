@@ -4,7 +4,8 @@
 </style>
 <template>
   <div class="echart-jcryzs-container">
-    <echart ref="echarts-jcryzs" :options="option" class="echarts-jcryzs" theme="infographic" style="width:100%"></echart>
+    <echart ref="echarts-jcryzs" :options="option" class="echarts-jcryzs" theme="infographic" style="width:100%">
+    </echart>
   </div>
 </template>
 <script>
@@ -76,6 +77,13 @@
         this.getData(param)
       },
       getData(param) {
+        const loading = this.$loading({
+          lock: true,
+          text: '正在载入数据...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(255, 255, 255, 0.7)',
+          target: document.querySelector('.echart-jcryzs-container')
+        });
         const _param = {
           method: 'query_online_max',
           project_id: param.project_id,
@@ -86,8 +94,9 @@
         this.option.series[0].data = []
         this.$store.dispatch('QueryPersonOnlineMaxList', _param).then((dataList) => {
           dataList.forEach((item, index) => {
-              this.option.xAxis.data.push(item.date)
-              this.option.series[0].data.push(item.in_count)
+            this.option.xAxis.data.push(item.date)
+            this.option.series[0].data.push(item.in_count)
+            loading.close();
           })
         })
       }

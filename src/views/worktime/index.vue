@@ -207,7 +207,7 @@
       },
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
-        // this.loading = true
+        this.loading = true
         this.$refs.worktimeForm.validate(async (valid) => {
           if (valid) {
             const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
@@ -217,6 +217,7 @@
             await this.getProjectPersonInDay(sTime, eTime)
             await this.getProjectWorktime(sTime, eTime)
             await this.getProjectPersonInout(sTime, eTime, isExport)
+            this.loading = false
           }
         })
 
@@ -241,7 +242,7 @@
             resolve()
             // console.log('this.personInoutList', this.personInoutList)
           }).catch(() => {
-            this.loading = false
+            // this.loading = false
           })
 
         })
@@ -294,7 +295,7 @@
 
             })
             this.totalPerson = this.personInoutList.length;
-            this.loading = false
+            // this.loading = false
             if (this.personInoutList.length === 0) {
               this.personInoutTableEmptyText = "没有查询到符合条件的数据，请更换条件后再进行查询"
             }
@@ -303,12 +304,13 @@
             }
             resolve()
           }).catch(() => {
-            this.loading = false
+            // this.loading = false
           })
         })
 
       },
       exportExcelSubmit() {
+        console.log('exportExcelSubmit')
         let filename = '考勤统计'
         const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY年MM月DD日')
         const eTime = moment(this.worktimeForm.InoutDaterange[1]).format('YYYY年MM月DD日')

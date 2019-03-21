@@ -37,7 +37,7 @@
           <el-row :gutter="10" style="padding-top:20px;">
             <el-col :span="12">
               <div style="padding:10px;">年龄分析：</div>
-              <EchartsNlfx ref="EchartNlfx"></EchartsNlfx>
+              <EchartsNlfx ref="EchartNlfx" ></EchartsNlfx>
             </el-col>
             <el-col :span="12">
               <div style="padding:10px;">人员来源地区分布：</div>
@@ -175,7 +175,7 @@
       },
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
-        // this.loading = true
+        
         this.$refs.tjfxForm.validate(valid => {
           if (valid) {
 
@@ -187,6 +187,7 @@
 
       },
       loadEchart() {
+        this.loading = true
         // console.log(this.tjfxForm)
         const sTime = moment(this.tjfxForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
         const eTime = moment(this.tjfxForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
@@ -205,6 +206,7 @@
         this.$refs.EchartJcryzs.reloadData(param);
         this.$refs.EchartNlfx.reloadData(param);
         this.$refs.EchartRylydqfb.reloadData(param);
+        this.loading = false
       }
     }
 

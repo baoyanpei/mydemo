@@ -64,6 +64,13 @@
         this.getData(param)
       },
       getData(param) {
+        const loading = this.$loading({
+          lock: true,
+          text: '正在载入数据...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(255, 255, 255, 0.7)',
+          target: document.querySelector('.echart-rylydqfb-container')
+        });
         const _param = {
           method: 'tj_online_area_by_time',
           project_id: param.project_id,
@@ -85,6 +92,7 @@
             this.option.series[0].data.push(item.count)
 
           })
+          loading.close();
 
         })
       }
