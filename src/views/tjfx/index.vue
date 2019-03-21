@@ -1,5 +1,6 @@
 <style lang="scss">
   @import "./index";
+
 </style>
 <template>
   <div class="tjfx-container" style="margin: 0px;">
@@ -11,18 +12,19 @@
         <div class="grid-content bg-purple-light">
           <el-form ref="tjfxForm" :model="tjfxForm" label-width="80px" :inline="true">
             <el-form-item prop="InoutDaterange" label="时间范围" :rules="ruleInoutDaterange">
-              <el-date-picker type="daterange" @change="dateChangeHandle" v-model="tjfxForm.InoutDaterange" name="InoutDaterange"
-                :editable="false" :clearable="false" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-                size="mini">
+              <el-date-picker type="daterange" @change="dateChangeHandle" v-model="tjfxForm.InoutDaterange"
+                name="InoutDaterange" :editable="false" :clearable="false" range-separator="至" start-placeholder="开始日期"
+                end-placeholder="结束日期" size="mini">
               </el-date-picker>
             </el-form-item>
             <el-form-item prop="GroupList" label="部门">
-              <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle" v-model="tjfxForm.GroupList"
-                :options="optionGroups" filterable change-on-select size="mini"></el-cascader>
+              <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle"
+                v-model="tjfxForm.GroupList" :options="optionGroups" filterable change-on-select size="mini">
+              </el-cascader>
             </el-form-item>
             <el-form-item>
-              <el-button type="success" :loading="loading" icon="el-icon-search" @click.native.prevent="handleSubmit(false)"
-                size="mini">查询</el-button>
+              <el-button type="success" :loading="loading" icon="el-icon-search"
+                @click.native.prevent="handleSubmit(false)" size="mini">查询</el-button>
             </el-form-item>
           </el-form>
           <hr class="hr1" />
@@ -199,6 +201,7 @@
           et: eTime
         }
         // console.log('param1', param)
+        console.log('personInoutForm.GroupList', this.tjfxForm.GroupList)
         this.$refs.EchartJcryzs.reloadData(param);
         this.$refs.EchartNlfx.reloadData(param);
         this.$refs.EchartRylydqfb.reloadData(param);
