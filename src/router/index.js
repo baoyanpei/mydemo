@@ -115,56 +115,6 @@ export const constantRouterMap = [{
           icon: 'dashboard',
           noCache: true
         }
-      },
-      {
-        path: 'main1',
-        component: () => import('@/views/main/index01'),
-        name: 'Main1',
-        meta: {
-          title: 'main',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
-        path: 'main2',
-        component: () => import('@/views/main/index02'),
-        name: 'Main2',
-        meta: {
-          title: 'main2',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
-        path: 'main3',
-        component: () => import('@/views/main/index03'),
-        name: 'Main3',
-        meta: {
-          title: 'main3',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
-        path: '720yun01',
-        component: () => import('@/views/720yun/index01'),
-        name: '720yun01',
-        meta: {
-          title: '720yun01',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
-        path: '720yun02',
-        component: () => import('@/views/720yun/index02'),
-        name: '720yun02',
-        meta: {
-          title: '720yun02',
-          icon: 'dashboard',
-          noCache: true
-        }
       }
     ]
   },
@@ -185,40 +135,8 @@ export const constantRouterMap = [{
       }
     }]
   },
-  // {
-  //   path: '/model3d',
-  //   component: Layout,
-  //   redirect: '/model3d/index',
-  //   children: [{
-  //     path: 'index',
-  //     component: () => import('@/views/model3D/index'),
-  //     name: 'model3d-index',
-  //     meta: {
-  //       title: 'BIM模型',
-  //       icon: 'building',
-  //       noCache: true,
-  //       requireAuth: false, // 是否需要信息验证
-  //       CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
-  //     }
-  //   }]
-  // },
-  {
-    path: '/glTF',
-    component: Layout,
-    redirect: '/glTF/test',
-    children: [{
-      path: 'test',
-      component: () => import('@/views/glTF/test'),
-      name: 'glTF-test',
-      meta: {
-        title: 'glTFTest',
-        icon: 'building',
-        noCache: true,
-        requireAuth: false, // 是否需要信息验证
-        CheckCode: 'glTF_test', // 权限Code,通过服务器验证
-      }
-    }]
-  }
+
+
 ]
 
 export default new Router({
