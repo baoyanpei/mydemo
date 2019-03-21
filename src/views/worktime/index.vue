@@ -1,5 +1,6 @@
 <style lang="scss">
   @import "./index";
+
 </style>
 <template>
   <div class="worktime-container" style="margin: 0px;">
@@ -11,25 +12,27 @@
         <div class="grid-content bg-purple-light">
           <el-form ref="worktimeForm" :model="worktimeForm" label-width="80px" :inline="true">
             <el-form-item prop="InoutDaterange" label="时间范围" :rules="ruleInoutDaterange">
-              <el-date-picker type="daterange" @change="dateChangeHandle" v-model="worktimeForm.InoutDaterange" name="InoutDaterange"
-                :editable="false" :clearable="false" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-                size="mini">
+              <el-date-picker type="daterange" @change="dateChangeHandle" v-model="worktimeForm.InoutDaterange"
+                name="InoutDaterange" :editable="false" :clearable="false" range-separator="至" start-placeholder="开始日期"
+                end-placeholder="结束日期" size="mini">
               </el-date-picker>
             </el-form-item>
             <el-form-item prop="GroupList" label="部门">
-              <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle" v-model="worktimeForm.GroupList"
-                :options="optionGroups" filterable change-on-select size="mini"></el-cascader>
+              <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle"
+                v-model="worktimeForm.GroupList" :options="optionGroups" filterable change-on-select size="mini">
+              </el-cascader>
             </el-form-item>
             <el-form-item>
-              <el-button type="success" :loading="loading" icon="el-icon-search" @click.native.prevent="handleSubmit(false)"
-                size="mini">查询</el-button>
-              <el-button type="success" :loading="loading" icon="el-icon-download" @click.native.prevent="handleSubmit(true)"
-                size="mini">导出Excel</el-button>
+              <el-button type="success" :loading="loading" icon="el-icon-search"
+                @click.native.prevent="handleSubmit(false)" size="mini">查询</el-button>
+              <el-button type="success" :loading="loading" icon="el-icon-download"
+                @click.native.prevent="handleSubmit(true)" size="mini">导出Excel</el-button>
             </el-form-item>
           </el-form>
           <hr class="hr1" />
-          <el-table v-loading="loading" :data="personInoutList" height="550px" highlight-current-row @row-click="handleRowClick"
-            style="width: 100%" size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+          <el-table v-loading="loading" :data="personInoutList" height="550px" highlight-current-row
+            @row-click="handleRowClick" style="width: 100%" size="mini" :show-header="true" header-align="center"
+            :default-sort="{prop: 'name', order: 'ascending'}">
             <el-table-column fixed type="index" width="40">
             </el-table-column>
             <el-table-column fixed property="name" sortable label="姓名" width="80" header-align="center">
@@ -42,7 +45,8 @@
             </el-table-column>
             <el-table-column property="countDay" sortable label="统计天数" width="100" align="center" header-align="center">
             </el-table-column>
-            <el-table-column property="worktime" sortable label="工作时长(小时)" align="center" width="140" header-align="center">
+            <el-table-column property="worktime" sortable label="工作时长(小时)" align="center" width="140"
+              header-align="center">
             </el-table-column>
           </el-table>
         </div>
@@ -54,6 +58,9 @@
   import moment from 'moment'
   import lodash from 'lodash'
   import TJFXMenu from "../layout/components/TJFXMenu.vue"
+  import {
+    getGroupFromGroupsByGroupID
+  } from '@/utils/project'
   import {
     Loading
   } from 'element-ui';
@@ -344,8 +351,10 @@
         //     filename = `${filename}_${this.worktimeForm.GroupList[0]}`
         // }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '统计开始日期', '统计结束日期']
-          const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'inDay', 'countDay', 'sTime', 'eTime']
+          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '工作时长(小时)', '统计开始日期', '统计结束日期']
+          const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'inDay', 'countDay', 'worktime',
+            'sTime', 'eTime'
+          ]
           let list = []
           let xuhao = 0
           this.personInoutList.forEach(person => {
@@ -358,7 +367,8 @@
               inDay: person.inDay,
               countDay: person.countDay,
               sTime: sTime,
-              eTime: eTime
+              eTime: eTime,
+              worktime: person.worktime
             })
           })
           // const list = this.personInoutList
