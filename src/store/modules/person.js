@@ -85,7 +85,7 @@ const person = {
     }, param) {
       return new Promise((resolve, reject) => {
         queryPersonOnlineMax(param).then(response => {
-          console.log("QueryPersonOnlineMaxList", response.data)
+          // console.log("QueryPersonOnlineMaxList", response.data)
           commit('SET_PERSON_ONLINE_MAX_LIST', response.data)
           resolve(response.data)
         }).catch(error => {
@@ -99,7 +99,7 @@ const person = {
     }, param) {
       return new Promise((resolve, reject) => {
         queryTjOnlineAgeByTime(param).then(response => {
-          console.log("queryTjOnlineAgeByTime", response.data)
+          // console.log("queryTjOnlineAgeByTime", response.data)
           resolve(response.data)
         }).catch(error => {
           reject(error)
@@ -112,7 +112,7 @@ const person = {
     }, param) {
       return new Promise((resolve, reject) => {
         queryTjOnlineAreaByTime(param).then(response => {
-          console.log("queryTjOnlineAreaByTime", response.data)
+          // console.log("queryTjOnlineAreaByTime", response.data)
           resolve(response.data)
         }).catch(error => {
           reject(error)

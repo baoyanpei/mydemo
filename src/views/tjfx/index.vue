@@ -198,7 +198,7 @@
           bt: sTime,
           et: eTime
         }
-        console.log('param1', param)
+        // console.log('param1', param)
         this.$refs.EchartJcryzs.reloadData(param);
         this.$refs.EchartNlfx.reloadData(param);
         this.$refs.EchartRylydqfb.reloadData(param);
