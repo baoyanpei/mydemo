@@ -1,40 +1,47 @@
 <style lang="scss">
   @import "./nowinForm";
-  
-  </style>
+
+</style>
 <template>
   <div>
     <el-dialog :modal="false" custom-class="ryxx-dialog" width="800px" top="1vh" :lock-scroll="true"
-      :close-on-click-modal="false" @open="openPersonNowInDialogHandle" :visible.sync="personNowinDialog.show" title="场内人员清单">
+      :close-on-click-modal="false" @open="openPersonNowInDialogHandle" :visible.sync="personNowinDialog.show"
+      title="场内人员清单">
       <div id="nowin-from" class="nowin-from">
         <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
           <el-form-item prop="GroupList" label="部门">
-            <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle" v-model="personInoutForm.GroupList"
-              :options="optionGroups" filterable change-on-select size="mini"></el-cascader>
+            <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle"
+              v-model="personInoutForm.GroupList" :options="optionGroups" filterable change-on-select size="mini">
+            </el-cascader>
           </el-form-item>
           <br />
           <el-form-item prop="person_id" label="人员姓名">
             <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle" filterable
               clearable placeholder="请填写人员名字（可选）" size="mini">
-              <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`" :value="item.person_id">
+              <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`"
+                :value="item.person_id">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="success" :loading="loading" icon="el-icon-search" @click.native.prevent="handleSubmit()"
               size="mini">查询场内人员</el-button>
-            <el-button type="danger" :loading="loading" icon="el-icon-circle-close-outline" @click.native.prevent="personAllGoOutHandleSubmit()"
-              size="mini">全部出场</el-button>
+            <el-button type="danger" :loading="loading" icon="el-icon-circle-close-outline"
+              @click.native.prevent="personAllGoOutHandleSubmit()" size="mini">全部出场</el-button>
           </el-form-item>
         </el-form>
         <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
         <hr class="hr1" />
-        <el-table ref="personInoutTable" v-loading="loading" :data="personNowInList" height="400px" :empty-text="personInoutTableEmptyText"
-          highlight-current-row @current-change="handleCurrentChange" style="width: 100%" size="mini" :show-header="true"
-          header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+        <el-table ref="personInoutTable" v-loading="loading" :data="personNowInList" height="400px"
+          :empty-text="personInoutTableEmptyText" highlight-current-row @current-change="handleCurrentChange"
+          style="width: 100%" size="mini" :show-header="true" header-align="center"
+          :default-sort="{prop: 'name', order: 'ascending'}">
           <el-table-column type="index" width="40">
           </el-table-column>
           <el-table-column property="name" sortable label="姓名" width="80" header-align="center">
+            <template slot-scope="scope">
+              <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
+            </template>
           </el-table-column>
           <el-table-column property="mobile" label="电话" width="100" header-align="center">
           </el-table-column>
@@ -76,13 +83,14 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" type="warning" icon="el-icon-circle-close-outline" @click="handlePersonGoout(scope.$index, scope.row)">手动出场</el-button>
+              <el-button size="mini" type="warning" icon="el-icon-circle-close-outline"
+                @click="handlePersonGoout(scope.$index, scope.row)">手动出场</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </el-dialog>
-    
+
   </div>
 
 </template>
@@ -94,10 +102,10 @@
     Loading
   } from 'element-ui';
   // import Mock from 'mockjs'
-  
+
   export default {
     components: {
-      
+
     },
     directives: {},
     computed: {
@@ -238,6 +246,20 @@
       },
       handleCurrentChange(data) { //点击下级部门的分组
         // console.log('data', data)
+      },
+      handleNameClick(row) {
+        console.log('row', row)
+        const sTime = moment().add('day', -5).format('YYYY-MM-DD 00:00:00')
+        const eTime = moment().format('YYYY-MM-DD 23:59:59')
+        const param = {
+          show: true,
+          sTime: sTime,
+          eTime: eTime,
+          ...row
+        }
+        this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
+
+        })
       },
       getProjectPersonInout() {
         this.loading = true

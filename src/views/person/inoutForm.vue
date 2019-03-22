@@ -3,19 +3,20 @@
 
 </style>
 <template>
-  <el-dialog :modal="false" custom-class="ryxx-dialog" width="660px" top="1vh" :lock-scroll="true"
-    :close-on-click-modal="false" @open="openPersonInoutDialogHandle" :visible.sync="personInoutDialog.show" title="花名册">
+  <el-dialog :modal="false" width="660px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
+    @open="openPersonInoutDialogHandle" :visible.sync="personInoutDialog.show" title="花名册">
     <div id="inout-from" class="inout-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
         <el-form-item prop="InoutDaterange" label="时间范围" :rules="ruleInoutDaterange">
-          <el-date-picker type="daterange" @change="dateChangeHandle" v-model="personInoutForm.InoutDaterange" name="InoutDaterange"
-            :editable="false" :clearable="false" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-            size="mini">
+          <el-date-picker type="daterange" @change="dateChangeHandle" v-model="personInoutForm.InoutDaterange"
+            name="InoutDaterange" :editable="false" :clearable="false" range-separator="至" start-placeholder="开始日期"
+            end-placeholder="结束日期" size="mini">
           </el-date-picker>
         </el-form-item>
         <el-form-item prop="GroupList" label="部门">
-          <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle" v-model="personInoutForm.GroupList"
-            :options="optionGroups" filterable change-on-select size="mini"></el-cascader>
+          <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle"
+            v-model="personInoutForm.GroupList" :options="optionGroups" filterable change-on-select size="mini">
+          </el-cascader>
           <el-tooltip placement="right">
             <div slot="content">外部单位包括：<br />建设单位代表、监理单位代表、VIP等
               <br />不选择此项则只包含项目部人员
@@ -32,26 +33,30 @@
         <el-form-item prop="person_id" label="人员姓名">
           <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle" filterable
             clearable placeholder="请填写人员名字（可选）" size="mini">
-            <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`" :value="item.person_id">
+            <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`"
+              :value="item.person_id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="success" :loading="loading" icon="el-icon-search" @click.native.prevent="handleSubmit(false)"
             size="mini">查询</el-button>
-          <el-button type="success" :loading="loading" icon="el-icon-download" @click.native.prevent="handleSubmit(true)"
-            size="mini">导出Excel</el-button>
+          <el-button type="success" :loading="loading" icon="el-icon-download"
+            @click.native.prevent="handleSubmit(true)" size="mini">导出Excel</el-button>
         </el-form-item>
       </el-form>
       <!-- <hr class="hr1" /> -->
       <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
       <hr class="hr1" />
-      <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="350px" :empty-text="personInoutTableEmptyText"
-        highlight-current-row @row-click="handleRowClick" style="width: 100%" size="mini" :show-header="true"
-        header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+      <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="350px"
+        :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
+        size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
         <el-table-column fixed type="index" width="40">
         </el-table-column>
         <el-table-column fixed property="name" sortable label="姓名" width="80" header-align="center">
+          <template slot-scope="scope">
+            <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
+          </template>
         </el-table-column>
         <el-table-column property="mobile" label="电话" width="100" header-align="center">
         </el-table-column>
@@ -399,7 +404,18 @@
 
       },
       handleRowClick(row, event, column) {
-        console.log('row1', row);
+        // console.log('row1', row);
+        // const param = {
+        //   show: true,
+        //   sTime: moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00'),
+        //   eTime: moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59'),
+        //   ...row
+        // }
+        // this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
+
+        // })
+      },
+      handleNameClick(row) {
         const param = {
           show: true,
           sTime: moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00'),
@@ -410,6 +426,7 @@
 
         })
       },
+
       formatJson(filterVal, jsonData) {
         return jsonData.map(v => filterVal.map(j => {
           if (j === 'timestamp') {

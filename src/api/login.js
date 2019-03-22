@@ -36,7 +36,9 @@ export function logout() {
     method: 'post'
   })
 }
-
+/*
+methed:query
+*/
 export function getUserInfo(token) {
   return request({
     url: '/api/info/user',
