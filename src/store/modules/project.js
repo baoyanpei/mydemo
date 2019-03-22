@@ -88,7 +88,8 @@ const project = {
     worktimeFullCalendarDialog: { // 人员上工日历dialog
       refresh: 0,
       show: false,
-      data: {}
+      data: {},
+      dialogTitle: '上工时间'
     },
     personInoutDialog: { //person进出窗口
       show: false,
@@ -289,7 +290,7 @@ const project = {
       return new Promise((resolve, reject) => {
         queryProjectPerson(param).then(response => {
           commit('SET_PROJECT_PERSON_LIST', response.data)
-          resolve()
+          resolve(response.data)
         }).catch(error => {
           reject(error)
         })

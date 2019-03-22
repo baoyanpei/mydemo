@@ -8,6 +8,15 @@
       :visible.sync="personFullCalenderDialog.show" title="日历">
       <PersonFullCalender></PersonFullCalender>
     </el-dialog>
+    <el-dialog :modal="false" top="0.5vh" width="800px" :lock-scroll="true" :close-on-click-modal="false"
+      :visible.sync="worktimeFullCalendarDialog.show"
+      :title="worktimeFullCalendarDialog.dialogTitle">
+      <!--人员上工日历dialog-->
+      <WorktimeFullCalendarDialog></WorktimeFullCalendarDialog>
+
+
+    </el-dialog>
+
     <NowinForm></NowinForm>
     <PersonFacePercentDetailForm></PersonFacePercentDetailForm>
     <InOutPersonDetailDialog></InOutPersonDetailDialog>
@@ -15,8 +24,7 @@
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
     <!--人员详细信息对话框-->
     <PersonInfoDialog></PersonInfoDialog>
-    <!--人员上工日历dialog-->
-    <WorktimeFullCalendarDialog></WorktimeFullCalendarDialog>
+
   </div>
 </template>
 
@@ -71,6 +79,14 @@
         },
         set: function (newValue) {
           this.$store.state.project.personFullCalenderDialog = newValue
+        }
+      },
+      worktimeFullCalendarDialog: {
+        get: function () {
+          return this.$store.state.project.worktimeFullCalendarDialog
+        },
+        set: function (newValue) {
+          this.$store.state.project.worktimeFullCalendarDialog = newValue
         }
       },
       personInfo() {
@@ -131,6 +147,13 @@
   .hr1 {
     border-top: 1px solid #eeeeee;
     border-bottom: 0px;
+  }
+
+  .span-link1 {
+    padding-bottom: 1px;
+    border-bottom: 1px dashed #999999;
+    color: #E6A23C;
+    cursor: pointer;
   }
 
   .el-dialog__header {

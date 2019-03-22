@@ -63,11 +63,24 @@
             <div class="div-tab-item">
               <div>入职照片</div>
               <hr class="hr1">
-              <div style="text-align: center"><img :src="entry_pic" style="height:150px;margin: 0px auto" /></div>
+              <div style="text-align: center">
+                <a :href="entry_pic" target="_blank">
+                  <img :src="entry_pic" style="height:150px;margin: 0px auto" />
+                </a>
+              </div>
               <div>身份证扫描件</div>
               <hr class="hr1">
-              <div style="text-align: center"><img :src="idcard_1" style="height:150px;margin: 0px auto" /></div>
-              <div style="text-align: center"><img :src="idcard_2" style="height:150px;margin: 0px auto" /></div>
+              <div style="text-align: center">
+                <a :href="idcarda" target="_blank">
+                  <img :src="idcarda" style="height:150px;margin: 0px auto" />
+                </a>
+
+              </div>
+              <div style="text-align: center">
+                <a :href="idcardb" target="_blank">
+                  <img :src="idcardb" style="height:150px;margin: 0px auto" />
+                </a>
+              </div>
             </div>
 
           </el-tab-pane>
@@ -128,8 +141,8 @@
         mobile: '',
         bumen: '',
         zhuanye: '',
-        idcard_1: '',
-        idcard_2: '',
+        idcarda: '',
+        idcardb: '',
         loading: false
       }
     },
@@ -144,7 +157,7 @@
           if (newVal.show === true) {
             this.initData()
             this.getProjectPersonInfo()
-            this.getPerson()
+            // this.getPerson()
           } else {
             this.initData()
           }
@@ -167,8 +180,8 @@
       initData() {
         this.idcard_pic = '/static/photo_no.jpg'
         this.entry_pic = '/static/photo_no.jpg'
-        this.idcard_1 = '/static/noidcard.jpeg'
-        this.idcard_2 = '/static/noidcard.jpeg'
+        this.idcarda = '/static/noidcard.jpeg'
+        this.idcardb = '/static/noidcard.jpeg'
         this.name = ""
         this.age = ""
         this.mobile = ""
@@ -196,6 +209,8 @@
           this.bumen = _personInfo.group_name_level[0]
           this.zhuanye = _personInfo.group_name_level[1]
           this.entry_pic = _personInfo.entry_pic
+          this.idcarda = _personInfo.idcarda
+          this.idcardb = _personInfo.idcardb
           this.age = _personInfo.age
         }).catch(() => {
           this.loading = false
@@ -203,19 +218,20 @@
 
 
       },
-      getPerson() {
-        const param = {
-          method: 'query',
-          person_id: this.personInfoDialog.person_id
-        }
-        this.$store.dispatch('QueryPersonInfo', param).then((personInfo) => {
-          console.log('personInfo1', personInfo)
-          //   this.setProjectInfo();
+      // getPerson() {
+      //   const param = {
+      //     method: 'query_person_list',
+      //     project_id: this.project_id,
+      //     id: this.personInfoDialog.person_id
+      //   }
+      //   this.$store.dispatch('QueryProjectPersons', param).then((personInfo) => {
+      //     console.log('personInfo1', personInfo)
+      //     //   this.setProjectInfo();
 
-        }).catch(() => {
-          this.loading = false
-        })
-      },
+      //   }).catch(() => {
+      //     this.loading = false
+      //   })
+      // },
       handleWorktimeLogSubmit() {
         const param = {
           show: true,

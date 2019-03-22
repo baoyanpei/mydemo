@@ -4,15 +4,9 @@
 </style>
 <template>
   <div class="worktime-fullcalendar-dialog">
-    <el-dialog :modal="false" top="0.5vh" width="800px" :lock-scroll="true" :close-on-click-modal="false"
-      @open="openWorktimeFullCalendarDialogHandle" :visible.sync="worktimeFullCalendarDialog.show"
-      :title="worktimeFullCalendarDialog.dialogTitle">
-      <div id="worktime-full-calender" class="worktime-full-calender">
-        <div id="worktime-fullcalender"></div>
-      </div>
-
-
-    </el-dialog>
+    <div id="worktime-full-calender" class="worktime-full-calender">
+      <div id="worktime-fullcalender"></div>
+    </div>
 
   </div>
 
@@ -67,7 +61,6 @@
     methods: {
       // 打开窗口
       openWorktimeFullCalendarDialogHandle() {
-        // console.log("----22222---")
       },
 
       initData() {
@@ -88,6 +81,7 @@
           allDaySlot: false,
           eventLimit: 100,
           events: (start, end, timezone, callback) => {
+            console.log(start, end, timezone, callback)
             this.getFullCal(start, end, timezone, callback);
             // console.log(start, end)
 
@@ -114,7 +108,7 @@
         const param = {
           method: 'query_person_worktime',
           project_id: this.project_id,
-          person_id:this.worktimeFullCalendarDialog.person_id,
+          person_id: this.worktimeFullCalendarDialog.person_id,
           bt: _start,
           et: _end
         }
@@ -132,7 +126,7 @@
           this.loading.close();
           // console.log("this.personOnlineMaxList", this.personOnlineMaxList)
           personWorktimeList.forEach((item, index) => {
-            console.log('item', item)
+            // console.log('item', item)
             item.start = item.date + " 00:00:00"
             // item.end = item.date + " 23:59:59"
             item.title = "入场人数" + item.in_count
@@ -144,7 +138,7 @@
               borderColor: "#4a86e8", //red
               titleFormat: ""
             })
-            
+
             /*
             in_count: 135 // 今天一天
             online_count: 126 //最大同时峰值
@@ -169,7 +163,7 @@
     },
     mounted() {
 
-
+      this.renderFullCalender()
     }
   }
 

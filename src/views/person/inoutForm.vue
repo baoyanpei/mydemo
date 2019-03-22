@@ -61,8 +61,19 @@
         <el-table-column property="group_name_level[1]" sortable label="专业" width="100" header-align="center">
         </el-table-column>
         <el-table-column property="inDay" sortable label="上工天数" width="100" align="center" header-align="center">
+          <template slot-scope="scope">
+            <span class="span-link1" @click="handleInDayClick(scope.row)">
+              {{scope.row.inDay}}
+            </span>
+          </template>
+
         </el-table-column>
         <el-table-column property="countDay" sortable label="统计天数" width="100" align="center" header-align="center">
+          <template slot-scope="scope">
+            <span class="span-link1" @click="handleInDayClick(scope.row)">
+              {{scope.row.countDay}}
+            </span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -460,7 +471,16 @@
 
         })
       },
+      handleInDayClick(row) {
+        console.log(row)
+        const param = {
+          show: true,
+          ...row
+        }
+        this.$store.dispatch('SetWorktimeFullCalenderDialog', param).then(() => {}).catch(() => {
 
+        })
+      },
       formatJson(filterVal, jsonData) {
         return jsonData.map(v => filterVal.map(j => {
           if (j === 'timestamp') {
