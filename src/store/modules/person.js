@@ -52,7 +52,7 @@ const person = {
         queryPersonInfo(param).then(response => {
           // console.log("queryPersonInfo", response.data)
           commit('SET_PERSON_INFO', response.data)
-          resolve()
+          resolve(response.data)
         }).catch(error => {
           reject(error)
         })
