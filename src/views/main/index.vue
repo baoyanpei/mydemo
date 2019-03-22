@@ -44,6 +44,11 @@
               <font-awesome-icon icon="street-view" size="2x" />
             </el-button>
           </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="人员管理" placement="top">
+            <el-button @click="personListDialogHandle">
+              <font-awesome-icon icon="street-view" size="2x" />
+            </el-button>
+          </el-tooltip>
           <el-tooltip class="item" effect="dark" content="日历" placement="top">
             <el-button @click="personFullCalendarHandle" style="padding-top:4px;">
               <!-- <icon name="el-icon-date" scale="1.7"></icon> -->
@@ -68,19 +73,20 @@
     </div> -->
 
     <el-dialog v-el-drag-dialog custom-class="HuiyiDialog" :modal="false" width="400px" top="15vh" :lock-scroll="true"
-      :close-on-click-modal="false" v-if="dialogCJHYVisible" :visible.sync="dialogCJHYVisible" title="创建计划" @dragDialog="handleDrag">
+      :close-on-click-modal="false" v-if="dialogCJHYVisible" :visible.sync="dialogCJHYVisible" title="创建计划"
+      @dragDialog="handleDrag">
       <HuiYi></HuiYi>
     </el-dialog>
 
-    <el-dialog v-el-drag-dialog custom-class="HuiyiRiliDialog" :modal="false" width="800px" top="15vh" :lock-scroll="true"
-      :close-on-click-modal="false" v-if="dialogTableVisible" :visible.sync="dialogTableVisible" title="会议计划"
-      @dragDialog="handleDrag">
+    <el-dialog v-el-drag-dialog custom-class="HuiyiRiliDialog" :modal="false" width="800px" top="15vh"
+      :lock-scroll="true" :close-on-click-modal="false" v-if="dialogTableVisible" :visible.sync="dialogTableVisible"
+      title="会议计划" @dragDialog="handleDrag">
       <HuiyiRili></HuiyiRili>
     </el-dialog>
 
-    <el-dialog v-el-drag-dialog custom-class="HuiyiRiliDialog" :modal="false" width="800px" top="5.8vh" :lock-scroll="true"
-      :close-on-click-modal="false" v-if="showHuiyiFullCalendar" :visible.sync="showHuiyiFullCalendar" title="会议计划"
-      @dragDialog="handleDrag">
+    <el-dialog v-el-drag-dialog custom-class="HuiyiRiliDialog" :modal="false" width="800px" top="5.8vh"
+      :lock-scroll="true" :close-on-click-modal="false" v-if="showHuiyiFullCalendar"
+      :visible.sync="showHuiyiFullCalendar" title="会议计划" @dragDialog="handleDrag">
       <HuiyiFullCalendar></HuiyiFullCalendar>
     </el-dialog>
 
@@ -201,7 +207,7 @@
       // $("#aaaa").html('哈哈哈')
       // toggleClass(document.body, 'custom-theme')
       console.log("index mount")
-      
+
 
 
     },
@@ -303,6 +309,14 @@
           show: true,
         }
         this.$store.dispatch('SetPersonNowInDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
+      personListDialogHandle() {
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('SetPersonListDialog', param).then(() => {}).catch(() => {
 
         })
       },

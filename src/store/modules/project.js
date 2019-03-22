@@ -95,6 +95,10 @@ const project = {
       show: false,
       data: {}
     },
+    personListDialog: { //person管理窗口
+      show: false,
+      data: {}
+    },
     personNowinDialog: { //person在场内窗口
       show: false,
       data: {}
@@ -194,6 +198,20 @@ const project = {
         state.personInoutDialog = data
       }
     },
+    SET_PERSON_LIST_DIALOG: async (state, data) => { // 花名册
+      if (data.show === true) {
+        const _hasPermission = await hasPermissionToOperation({
+          project_id: state.project_id,
+          url: 'huamingce_admin'
+        })
+        // console.log("_hasPermission", _hasPermission)
+        if (_hasPermission.result === true) {
+          state.personListDialog = data
+        }
+      } else {
+        state.personListDialog = data
+      }
+    },
     SET_PERSON_NOW_IN_DIALOG: async (state, data) => { // 场内人员
       //show:true false
       if (data.show === true) {
@@ -290,6 +308,7 @@ const project = {
       return new Promise((resolve, reject) => {
         queryProjectPerson(param).then(response => {
           commit('SET_PROJECT_PERSON_LIST', response.data)
+          console.log('QueryProjectPersonsQueryProjectPersons', response.data)
           resolve(response.data)
         }).catch(error => {
           reject(error)
@@ -388,6 +407,22 @@ const project = {
 
       })
     },
+    SetPersonListDialog({
+      commit,
+      rootState
+    }, param) {
+      return new Promise((resolve, reject) => {
+        console.log('project_id', rootState.project.project_id)
+
+        console.log('_hasPermissionToOperation')
+        // return
+        commit('SET_PERSON_LIST_DIALOG', param)
+        resolve()
+
+      })
+    },
+
+
     SetPersonNowInDialog({
       commit
     }, param) {

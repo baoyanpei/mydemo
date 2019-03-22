@@ -24,6 +24,8 @@
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
     <!--人员详细信息对话框-->
     <PersonInfoDialog></PersonInfoDialog>
+    <!--人员管理对话框-->
+    <PersonListDialog></PersonListDialog>
 
   </div>
 </template>
@@ -43,6 +45,9 @@
   // 人员上工日历dialog
   import WorktimeFullCalendarDialog from './views/person/worktimeFullCalendarDialog'
 
+  // 人员管理dialog
+  import PersonListDialog from './views/person/personListDialog'
+
   import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
   import PersonGoOutDialog from './views/person/personGoOutDialog'
   import LogsPersonComfirmDialog from './views/person/logsPersonComfirmDialog'
@@ -59,6 +64,7 @@
       PersonGoOutDialog,
       LogsPersonComfirmDialog,
       PersonInfoDialog,
+      PersonListDialog,
       WorktimeFullCalendarDialog
     },
     directives: {
