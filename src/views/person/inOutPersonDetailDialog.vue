@@ -167,9 +167,9 @@
         }).then((data_list) => {
           console.log("-data-1->", data_list)
           data_list.forEach(item => {
-            console.log('item', item)
+            // console.log('item', item)
             if (item.direction === 1) {
-              console.log('item', item)
+              // console.log('item', item)
               const _data = {
                 in_date: moment(item.created_time).format('YYYY-MM-DD'),
                 in_time: moment(item.created_time).format('hh:mm'),

@@ -152,10 +152,45 @@
         if (curVal === false) {} else {
 
         }
-      }
+      },
+      personInoutDialog: {
+        handler: function (newVal, oldVal) {
+          console.info('value changed2 ', newVal)
+          if (newVal.show === true) {
+            console.log('personInoutDialog - show')
+            this.initDate()
+          }
+
+        },
+        deep: true
+      },
 
     },
     methods: {
+      initDate() {
+        // 每月的某一天，如每月10日
+        const monthDay = moment().add('month', 0).format('YYYY-MM') + '-21'
+        console.log('monthDay', monthDay)
+        // 是否在某月某天之前
+        const isBefore = moment().isBefore(monthDay);
+        console.log('isBefore', isBefore)
+        let _FirstDay = moment()
+        let _LastDay = moment()
+        if (isBefore) {
+          // 上个月的第一天
+          _FirstDay = moment().add('month', -1).format('YYYY-MM') + '-01'
+          // 上个月的最后一天
+          _LastDay = moment(_FirstDay).add('month', 1).add('days', -1).format('YYYY-MM-DD')
+
+        } else {
+          // 本月的第一天
+          _FirstDay = moment().add('month', 0).format('YYYY-MM') + '-01'
+          // 本月的最后一天
+          // _LastDay = moment(_FirstDay).add('month', 1).add('days', -1).format('YYYY-MM-DD')
+        }
+        this.personInoutForm.InoutDaterange = [_FirstDay, _LastDay]
+
+      },
       getProjectPersons() {
         const param = {
           method: 'query_person_list',
@@ -457,7 +492,11 @@
     },
     mounted() {
       console.log('project_id', this.project_id)
-      this.personInoutForm.InoutDaterange = [moment(), moment()]
+
+      // const thisMonthFirstDay = moment()
+      // const isBeforeDay = moment().isBetween();
+      // console.log(moment() - )
+      // this.personInoutForm.InoutDaterange = [moment(), moment()]
       // console.log('inoutForm mount')
     }
   }
