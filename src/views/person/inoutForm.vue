@@ -3,7 +3,7 @@
 
 </style>
 <template>
-  <el-dialog :modal="false" width="660px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
+  <el-dialog :modal="false" width="550px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
     @open="openPersonInoutDialogHandle" :visible.sync="personInoutDialog.show" title="花名册">
     <div id="inout-from" class="inout-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
