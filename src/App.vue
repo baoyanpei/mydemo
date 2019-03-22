@@ -4,8 +4,8 @@
     <InoutForm></InoutForm>
     <NowinForm></NowinForm>
     <el-dialog :modal="false" custom-class="ryxx-dialog" width="800px" top="1vh" :lock-scroll="true"
-      :close-on-click-modal="false" @open="openPersonFullCalendarDialogHandle" :visible.sync="personFullCalenderDialog.show"
-      title="日历">
+      :close-on-click-modal="false" @open="openPersonFullCalendarDialogHandle"
+      :visible.sync="personFullCalenderDialog.show" title="日历">
       <PersonFullCalender></PersonFullCalender>
     </el-dialog>
     <NowinForm></NowinForm>
@@ -15,6 +15,8 @@
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
     <!--人员详细信息对话框-->
     <PersonInfoDialog></PersonInfoDialog>
+    <!--人员上工日历dialog-->
+    <WorktimeFullCalendarDialog></WorktimeFullCalendarDialog>
   </div>
 </template>
 
@@ -30,6 +32,9 @@
   import InOutPersonDetailDialog from './views/person/inOutPersonDetailDialog'
   // 人员相信信息dialog
   import PersonInfoDialog from './views/person/personInfoDialog'
+  // 人员上工日历dialog
+  import WorktimeFullCalendarDialog from './views/person/worktimeFullCalendarDialog'
+
   import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
   import PersonGoOutDialog from './views/person/personGoOutDialog'
   import LogsPersonComfirmDialog from './views/person/logsPersonComfirmDialog'
@@ -45,7 +50,8 @@
       InOutPersonDetailDialog,
       PersonGoOutDialog,
       LogsPersonComfirmDialog,
-      PersonInfoDialog
+      PersonInfoDialog,
+      WorktimeFullCalendarDialog
     },
     directives: {
       elDragDialog

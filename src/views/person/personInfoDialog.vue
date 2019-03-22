@@ -41,10 +41,15 @@
               </el-col>
             </el-row>
             <el-row :gutter="24">
-              <el-col :span="24">
+              <el-col :span="14">
                 身份证号:{{mobile}}
               </el-col>
+              <el-col :span="10">
+
+              </el-col>
             </el-row>
+            <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
+              style="position:absolute;top:85px;right:20px;">上工日志</el-button>
             <!-- <el-form-item label="姓名:">
                 {{name}}
               </el-form-item> -->
@@ -209,6 +214,15 @@
 
         }).catch(() => {
           this.loading = false
+        })
+      },
+      handleWorktimeLogSubmit() {
+        const param = {
+          show: true,
+          ...this.personInfoDialog
+        }
+        this.$store.dispatch('SetWorktimeFullCalenderDialog', param).then(() => {}).catch(() => {
+
         })
       }
 

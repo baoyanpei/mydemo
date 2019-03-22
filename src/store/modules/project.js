@@ -85,6 +85,11 @@ const project = {
       show: false,
       data: {}
     },
+    worktimeFullCalendarDialog: { // 人员上工日历dialog
+      refresh: 0,
+      show: false,
+      data: {}
+    },
     personInoutDialog: { //person进出窗口
       show: false,
       data: {}
@@ -162,9 +167,18 @@ const project = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
 
       state.personInfoDialog.refresh = genRandom(1, 1000)
-      console.log('dasdasd', data)
+    },
+    SET_WORKTIME_FULLCALENDAR_DIALOG: (state, data) => {
+      // console.log('SET_WORKTIME_FULLCALENDAR_DIALOG', data)
+      state.worktimeFullCalendarDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.worktimeFullCalendarDialog.dialogTitle = data.name + ' - 上工时间'
+      state.worktimeFullCalendarDialog.refresh = genRandom(1, 1000)
+      console.log('SET_WORKTIME_FULLCALENDAR_DIALOG', data)
 
     },
+
+
     SET_PERSON_INOUT_DIALOG: async (state, data) => { // 花名册
       if (data.show === true) {
         const _hasPermission = await hasPermissionToOperation({
@@ -348,6 +362,14 @@ const project = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SET_PERSON_INFO_DIALOG', param)
+        resolve()
+      })
+    },
+    SetWorktimeFullCalenderDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SET_WORKTIME_FULLCALENDAR_DIALOG', param)
         resolve()
       })
     },
