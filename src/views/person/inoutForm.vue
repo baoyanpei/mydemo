@@ -25,10 +25,6 @@
               包括外部单位
             </el-checkbox>
           </el-tooltip>
-
-
-
-
         </el-form-item>
         <el-form-item prop="person_id" label="人员姓名">
           <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle" filterable
@@ -58,8 +54,8 @@
             <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column property="mobile" label="电话" width="100" header-align="center">
-        </el-table-column>
+        <!-- <el-table-column property="mobile" label="电话" width="100" header-align="center">
+        </el-table-column> -->
         <el-table-column property="group_name_level[0]" sortable label="部门" width="90" header-align="center">
         </el-table-column>
         <el-table-column property="group_name_level[1]" sortable label="专业" width="100" header-align="center">
@@ -169,11 +165,11 @@
     methods: {
       initDate() {
         // 每月的某一天，如每月10日
-        const monthDay = moment().add('month', 0).format('YYYY-MM') + '-21'
-        console.log('monthDay', monthDay)
+        const monthDay = moment().add('month', 0).format('YYYY-MM') + '-10'
+        // console.log('monthDay', monthDay)
         // 是否在某月某天之前
         const isBefore = moment().isBefore(monthDay);
-        console.log('isBefore', isBefore)
+        // console.log('isBefore', isBefore)
         let _FirstDay = moment()
         let _LastDay = moment()
         if (isBefore) {
@@ -457,7 +453,10 @@
           eTime: moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59'),
           ...row
         }
-        this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
+        // this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
+
+        // })
+        this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
 
         })
       },
@@ -492,7 +491,7 @@
     },
     mounted() {
       console.log('project_id', this.project_id)
-
+      this.initDate()
       // const thisMonthFirstDay = moment()
       // const isBeforeDay = moment().isBetween();
       // console.log(moment() - )

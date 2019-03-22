@@ -81,6 +81,7 @@ const project = {
     projectPersonNowInList: [], // 人员进清单
     projectPersonInDay: [], // 人员进清单
     personInfoDialog: { //personInfo窗口
+      refresh: 0,
       show: false,
       data: {}
     },
@@ -156,7 +157,13 @@ const project = {
       state.projectGatePerson = data
     },
     SET_PERSON_INFO_DIALOG: (state, data) => {
+      // console.log('SET_PERSON_INFO_DIALOG', data)
       state.personInfoDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+
+      state.personInfoDialog.refresh = genRandom(1, 1000)
+      console.log('dasdasd', data)
+
     },
     SET_PERSON_INOUT_DIALOG: async (state, data) => { // 花名册
       if (data.show === true) {
@@ -340,21 +347,8 @@ const project = {
       commit
     }, param) {
       return new Promise((resolve, reject) => {
-        console.log('param', param)
-        if (param.show === true) {
-          commit('SET_PERSON_INFO_DIALOG', {
-            show: true
-          })
-          queryProjectUser(param).then(response => {
-            const _data = response.data
-            _data.show = true
-            commit('SET_PERSON_INFO_DIALOG', _data)
-            resolve()
-          }).catch(error => {
-            reject(error)
-          })
-        }
-
+        commit('SET_PERSON_INFO_DIALOG', param)
+        resolve()
       })
     },
     SetPersonInoutDialog({

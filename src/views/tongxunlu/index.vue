@@ -183,9 +183,6 @@
       },
       projectPersonList() {
         return this.$store.state.project.projectPersonList
-      },
-      personInfoDialog() {
-        return this.$store.state.project.personInfoDialog
       }
     },
     watch: {
@@ -215,23 +212,8 @@
       },
       contactListHandleRowClick(data, event, column) {
         console.log("data", data)
-        return;
-        const param = {
-          show: true,
-          project_id: this.project_id,
-          method: 'query',
-          idcard_no: data.idcard_no
-          // data:[]
-        }
-        this.$store.dispatch('SetPersonInfoDialog', param).then(() => {
-          // console.log('this.personInfoDialog', this.personInfoDialog)
-          this.personData = this.personInfoDialog.person
-          // console.log("this.personData", this.personData)
-
-
-        }).catch(() => {
-
-        })
+        // return;
+        
       },
       reloadData() {
         this.treeListData = []

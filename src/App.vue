@@ -1,12 +1,6 @@
 <template>
   <div id="app">
     <router-view />
-    <el-dialog :modal="false" custom-class="ryxx-dialog" width="400px" top="8vh" :lock-scroll="true"
-      :close-on-click-modal="false" :visible.sync="personInfoDialog.show" title="人员信息">
-      <RyxxForm></RyxxForm>
-    </el-dialog>
-
-
     <InoutForm></InoutForm>
     <NowinForm></NowinForm>
     <el-dialog :modal="false" custom-class="ryxx-dialog" width="800px" top="1vh" :lock-scroll="true"
@@ -19,7 +13,8 @@
     <InOutPersonDetailDialog></InOutPersonDetailDialog>
     <PersonGoOutDialog></PersonGoOutDialog>
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
-    <!-- <ModelDetail></ModelDetail> -->
+    <!--人员详细信息对话框-->
+    <PersonInfoDialog></PersonInfoDialog>
   </div>
 </template>
 
@@ -27,12 +22,14 @@
   // 引入IndexedDB
   // import IndexedDB from './indexedDB/IndexedDB'
   // import ModelDetail from './views/model3D/modelDetail'
-  import RyxxForm from './views/main/components/ryxxForm'
+  // import RyxxForm from './views/main/components/ryxxForm'
   import InoutForm from './views/person/inoutForm'
   import NowinForm from './views/person/nowinForm'
   import PersonFullCalender from './views/person/fullCalender'
   import PersonFacePercentDetailForm from './views/person/facePercentDetailForm'
   import InOutPersonDetailDialog from './views/person/inOutPersonDetailDialog'
+  // 人员相信信息dialog
+  import PersonInfoDialog from './views/person/personInfoDialog'
   import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
   import PersonGoOutDialog from './views/person/personGoOutDialog'
   import LogsPersonComfirmDialog from './views/person/logsPersonComfirmDialog'
@@ -40,14 +37,15 @@
     name: 'App',
     components: {
       // ModelDetail,
-      RyxxForm,
+      // RyxxForm,
       InoutForm,
       NowinForm,
       PersonFullCalender,
       PersonFacePercentDetailForm,
       InOutPersonDetailDialog,
       PersonGoOutDialog,
-      LogsPersonComfirmDialog
+      LogsPersonComfirmDialog,
+      PersonInfoDialog
     },
     directives: {
       elDragDialog
@@ -60,14 +58,6 @@
     computed: {
       project_id() {
         return this.$store.state.project.project_id
-      },
-      personInfoDialog: {
-        get: function () {
-          return this.$store.state.project.personInfoDialog
-        },
-        set: function (newValue) {
-          this.$store.state.project.personInfoDialog = newValue
-        }
       },
       personFullCalenderDialog: {
         get: function () {
