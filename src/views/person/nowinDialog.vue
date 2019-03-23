@@ -32,6 +32,8 @@
         </el-form>
         <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
         <hr class="hr1" />
+        
+        <hr class="hr1" />
         <el-table ref="personInoutTable" v-loading="loading" :data="personNowInList" height="400px"
           :empty-text="personInoutTableEmptyText" highlight-current-row @current-change="handleCurrentChange"
           style="width: 100%" size="mini" :show-header="true" header-align="center"
@@ -312,54 +314,10 @@
           // compare: compare
         }
         this.$store.dispatch('SetPersonGoOutDialog', param).then(() => {}).catch(() => {})
-        /*
-              this.$confirm(`是否要将场${row.name}手动出场？`, '手动出场', {
-                  distinguishCancelAndClose: true,
-                  confirmButtonText: '确定出场',
-                  cancelButtonText: '取消'
-                })
-                .then(() => {
-      
-                  const param = {
-                    method: 'person_goout',
-                    project_id: this.project_id,
-                    person_id: row.person_id
-                  }
-                  this.personNowInList = []
-                  this.$store.dispatch('QueryProjectPersonGoOut', param).then(() => {
-                    this.getProjectPersonInout()
-                    this.$message({
-                      message: `${row.name}手动出场成功！`,
-                      type: 'success'
-                    })
-                  }).catch(() => {
-                    this.loading = false
-                  })
-      
-      
-      
-                })
-                .catch(action => {
-                  // this.$message({
-                  //   type: 'info',
-                  //   message: action === 'cancel' ?
-                  //     '放弃保存并离开页面' : '停留在当前页面'
-                  // })
-                });
-                */
+        
       },
       persionChangeHandle(value) {
-        // if (value !== '') {
-        //   let _person = {};
-        //   _person = this.projectPersonList.find((item) => { //这里的userList就是上面遍历的数据源
-        //     return item.person_id === value; //筛选出匹配数据
-        //   });
-        //   this.personInoutDialog.person_name = _person.name
-        //   // console.log('_person', _person)
-        //   // console.log(_person.name); //我这边的name就是对应label的
-        // } else {
-        //   this.personInoutDialog.person_name = ''
-        // }
+        
       },
       handleSubmit() {
         this.getProjectPersonInout()
@@ -374,42 +332,6 @@
           // compare: compare
         }
         this.$store.dispatch('SetPersonGoOutDialog', param).then(() => {}).catch(() => {})
-        /*
-              this.$confirm('是否要将场内的人员全部手动出场？', '全部出场', {
-                  distinguishCancelAndClose: true,
-                  confirmButtonText: '确定出场',
-                  cancelButtonText: '取消'
-                })
-                .then(() => {
-      
-      
-                  const param = {
-                    method: 'person_goout',
-                    project_id: this.project_id
-                  }
-                  this.personNowInList = []
-                  this.$store.dispatch('QueryProjectPersonGoOut', param).then(() => {
-                    this.getProjectPersonInout()
-                    this.$message({
-                      message: '全部出场成功！',
-                      type: 'success'
-                    })
-                  }).catch(() => {
-                    this.loading = false
-                  })
-      
-      
-      
-                })
-                .catch(action => {
-                  // this.$message({
-                  //   type: 'info',
-                  //   message: action === 'cancel' ?
-                  //     '放弃保存并离开页面' : '停留在当前页面'
-                  // })
-                });
-                */
-
       },
       groupChangeHandle() {},
       //识别率详细窗口
