@@ -74,12 +74,12 @@
         </el-table-column>
         <el-table-column property="status" sortable align="center" label="人员状态" width="100" header-align="center">
           <template slot-scope="scope">
-            {{scope.row.status}}
+            <p v-html="statusName(scope.row.status,true)"></p>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" type="warning">操作</el-button>
+            <el-button size="mini" type="warning" disabled>操作</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -100,6 +100,9 @@
   export default {
     components: {},
     directives: {},
+    filters: {
+
+    },
     computed: {
       project_id() {
         return this.$store.state.project.project_id
@@ -164,6 +167,37 @@
     methods: {
       trantime: (time) => {
         return moment(time).format('YYYY-MM-DD')
+      },
+      statusName: (value, isHTML) => {
+        // 人员状态 0正常2辞职4开除10是默认值
+        let _statusName = ''
+        switch (value) {
+          case 0:
+            _statusName = '正常'
+            if (isHTML) {
+              _statusName = '<span class="statu0">' + _statusName + '</span>'
+            }
+            break;
+          case 2:
+            _statusName = '辞职'
+            if (isHTML) {
+              _statusName = '<span class="statu2">' + _statusName + '</span>'
+            }
+            break;
+          case 4:
+            _statusName = '开除'
+            if (isHTML) {
+              _statusName = '<span class="statu4">' + _statusName + '</span>'
+            }
+            break;
+          case 10:
+            _statusName = ''
+            break;
+          default:
+            _statusName = value
+            break
+        }
+        return _statusName
       },
       getProjectPersons() {
         const param = {
@@ -317,9 +351,7 @@
         this.getProjectPersonInout(isExport)
       },
       exportExcelSubmit() {
-        let filename = '花名册'
-        const sTime = moment(this.personInoutForm.InoutDaterange[0]).format('YYYY年MM月DD日')
-        const eTime = moment(this.personInoutForm.InoutDaterange[1]).format('YYYY年MM月DD日')
+        let filename = '人员管理'
         if (this.personInoutForm.GroupList[0] !== 'all') {
           // console.log('GroupList', this.personInoutForm.GroupList)
           if (this.personInoutForm.GroupList.length === 1) {
@@ -339,19 +371,18 @@
           filename = `${filename}_${this.personInoutForm.person_name}`
         }
 
-        if (sTime === eTime) {
-          filename = `${filename}_${sTime}`
-        } else {
-          filename = `${filename}_${sTime}至${eTime}`
-        }
         filename = `${filename}_${moment().format('YYYYMMDDHHmmss')}`
 
         // if (this.personInoutForm.person_id !== '') {
         //     filename = `${filename}_${this.personInoutForm.GroupList[0]}`
         // }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '统计开始日期', '统计结束日期']
-          const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'inDay', 'countDay', 'sTime', 'eTime']
+          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '工种',
+            '学历', '入职时间', '人员状态'
+          ]
+          const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'project_pos_name', 'education',
+            'created_time', 'statusName'
+          ]
           let list = []
           let xuhao = 0
           this.personInoutList.forEach(person => {
@@ -361,10 +392,10 @@
               mobile: person.mobile,
               group0: person.group_name_level[0],
               group1: person.group_name_level[1],
-              inDay: person.inDay,
-              countDay: person.countDay,
-              sTime: sTime,
-              eTime: eTime
+              project_pos_name: person.project_pos_name,
+              education: person.education,
+              created_time: moment(person.created_time).format('YYYY-MM-DD'),
+              statusName: this.statusName(person.status)
             })
           })
           // const list = this.personInoutList
@@ -384,38 +415,14 @@
 
       },
       handleRowClick(row, event, column) {
-        // console.log('row1', row);
-        // const param = {
-        //   show: true,
-        //   sTime: moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00'),
-        //   eTime: moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59'),
-        //   ...row
-        // }
-        // this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
 
-        // })
       },
       handleNameClick(row) {
         const param = {
           show: true,
-          sTime: moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00'),
-          eTime: moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59'),
           ...row
         }
-        // this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
-
-        // })
         this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
-
-        })
-      },
-      handleInDayClick(row) {
-        console.log(row)
-        const param = {
-          show: true,
-          ...row
-        }
-        this.$store.dispatch('SetWorktimeFullCalenderDialog', param).then(() => {}).catch(() => {
 
         })
       },
