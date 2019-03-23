@@ -115,6 +115,7 @@
           person_name: '',
         },
         loading: false,
+        loadingDialog: null,
         optionGroups: [], //部门选择的数据
         optionsProjectPersion: [],
         personNowInList: [],
@@ -162,6 +163,14 @@
           console.info('value changed2 ', newVal)
           if (newVal.show === true) {
             console.log('personNowinDialog - show')
+            // this.loadingDialog = this.$loading({
+            //   // lock: true,
+            //   // text: '正在读取数据...',
+            //   // spinner: 'el-icon-loading',
+            //   // background: 'rgba(0, 0, 0, 0.5)',
+            //   // customClass: 'loading-class',
+            //   target: document.querySelector('.nowin-dialog')
+            // });
           } else {
             this.personInoutDialog = {
               GroupList: ['all'], // 计划名称
@@ -307,6 +316,14 @@
       getProjectPersonInout() {
         console.log('personNowinDialog', this.personNowinDialog)
         this.loading = true
+        this.loadingDialog = this.$loading({
+              // lock: true,
+              // text: '正在读取数据...',
+              // spinner: 'el-icon-loading',
+              // background: 'rgba(0, 0, 0, 0.5)',
+              // customClass: 'loading-class',
+              target: document.querySelector('.nowin-dialog')
+            });
         this.personNowInMap = new Map()
         this.personNowInMapList = []
         const param = {
@@ -357,6 +374,7 @@
           console.log('this.personNowInMap', this.personNowInMapList)
           this.totalPerson = this.personNowInList.length;
           this.loading = false
+          this.loadingDialog.close()
           // console.log('this.personInoutList', this.personInoutList)
         }).catch(() => {
           this.loading = false

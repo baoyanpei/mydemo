@@ -245,6 +245,7 @@
       },
       getProjectPersonInout(isExport) {
         this.loading = true
+        
         const param = {
           method: 'query_person_list',
           project_id: this.project_id,
