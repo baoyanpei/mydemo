@@ -24,7 +24,7 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="12">
-                年龄：{{bumen}}
+                年龄：{{age}}
               </el-col>
               <el-col :span="12">
                 学历：-
