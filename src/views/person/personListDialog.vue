@@ -157,6 +157,12 @@
           console.info('value changed2 ', newVal)
           if (newVal.show === true) {
             console.log('personListDialog - show')
+            this.initData()
+            this.getProjectGroups()
+            this.getProjectPersons()
+            this.getProjectPersonInout(false)
+          } else {
+            this.initData()
           }
 
         },
@@ -199,6 +205,19 @@
         }
         return _statusName
       },
+      initData() {
+        this.personInoutList = []
+        this.totalPerson = 0
+
+        this.optionGroups = [] //部门选择的数据
+        this.optionsProjectPersion = []
+        this.personInoutList = []
+        this.personInoutForm = {
+          GroupList: ['all'], // 计划名称
+          person_id: '', // 人员
+          person_name: '',
+        }
+      },
       getProjectPersons() {
         const param = {
           method: 'query_person_list',
@@ -225,6 +244,7 @@
         })
       },
       getProjectPersonInout(isExport) {
+        this.loading = true
         const param = {
           method: 'query_person_list',
           project_id: this.project_id,
@@ -302,8 +322,7 @@
         //   // fullscreen: true,
         //   target: '#person-list-from'
         // });
-        this.getProjectGroups()
-        this.getProjectPersons()
+
       },
       appendGroupData() {
         const rootGroup = this.projectGroupList.group
@@ -342,7 +361,7 @@
       },
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
-        this.loading = true
+
         // console.log(this.personInoutForm)
         // -> store module ->api
         // console.log(sTime, eTime)
