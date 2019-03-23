@@ -46,7 +46,7 @@
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="人员管理" placement="top">
             <el-button @click="personListDialogHandle">
-              <font-awesome-icon icon="street-view" size="2x" />
+              <font-awesome-icon icon="user-cog" size="2x" />
             </el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="日历" placement="top">

@@ -3,42 +3,48 @@
 
 </style>
 <template>
-  <el-dialog :modal="false" width="800px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
+  <el-dialog :modal="false" width="850px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
     @open="openPersonListDialogHandle" :visible.sync="personListDialog.show" title="人员管理">
     <div id="person-list-from" class="person-list-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
-        <el-form-item prop="GroupList" label="部门">
-          <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle"
-            v-model="personInoutForm.GroupList" :options="optionGroups" filterable change-on-select size="mini">
-          </el-cascader>
-          <el-tooltip placement="right">
-            <div slot="content">外部单位包括：<br />建设单位代表、监理单位代表、VIP等
-              <br />不选择此项则只包含项目部人员
-            </div>
-            <el-checkbox v-model="checkedPersonType" style="margin-left:10px; ">
-              包括外部单位
-            </el-checkbox>
-          </el-tooltip>
-        </el-form-item>
-        <el-form-item prop="person_id" label="人员姓名">
-          <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle" filterable
-            clearable placeholder="请填写人员名字（可选）" size="mini">
-            <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`"
-              :value="item.person_id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="success" :loading="loading" icon="el-icon-search" @click.native.prevent="handleSubmit(false)"
-            size="mini">查询</el-button>
-          <el-button type="success" :loading="loading" icon="el-icon-download"
-            @click.native.prevent="handleSubmit(true)" size="mini">导出Excel</el-button>
-        </el-form-item>
+        <div>
+          <el-form-item prop="GroupList" label="部门">
+            <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle"
+              v-model="personInoutForm.GroupList" :options="optionGroups" filterable change-on-select size="mini">
+            </el-cascader>
+            <el-tooltip placement="right">
+              <div slot="content">外部单位包括：<br />建设单位代表、监理单位代表、VIP等
+                <br />不选择此项则只包含项目部人员
+              </div>
+              <el-checkbox v-model="checkedPersonType" style="margin-left:10px; ">
+                包括外部单位
+              </el-checkbox>
+            </el-tooltip>
+          </el-form-item>
+        </div>
+        <div>
+          <el-form-item prop="person_id" label="人员姓名">
+            <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle" filterable
+              clearable placeholder="请填写人员名字（可选）" size="mini">
+              <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`"
+                :value="item.person_id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="success" :loading="loading" icon="el-icon-search"
+              @click.native.prevent="handleSubmit(false)" size="mini">查询</el-button>
+            <el-button type="success" :loading="loading" icon="el-icon-download"
+              @click.native.prevent="handleSubmit(true)" size="mini">导出Excel</el-button>
+          </el-form-item>
+        </div>
+
+
       </el-form>
       <!-- <hr class="hr1" /> -->
       <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
       <hr class="hr1" />
-      <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="350px"
+      <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="400px"
         :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
         size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
         <el-table-column type="index" width="40">
@@ -71,7 +77,11 @@
             {{scope.row.status}}
           </template>
         </el-table-column>
-
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" type="warning">操作</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </el-dialog>
