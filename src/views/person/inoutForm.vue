@@ -29,7 +29,7 @@
         <el-form-item prop="person_id" label="人员姓名">
           <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle" filterable
             clearable placeholder="请填写人员名字（可选）" size="mini">
-            <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`"
+            <el-option v-for="item in optionsProjectPerson" :key="item.person_id" :label="`${item.name}`"
               :value="item.person_id">
             </el-option>
           </el-select>
@@ -130,7 +130,7 @@
         loadingInstance: null,
         loading: false,
         optionGroups: [], //部门选择的数据
-        optionsProjectPersion: [],
+        optionsProjectPerson: [],
         personInoutList: [],
         personInoutForm: {
           GroupList: ['all'], // 计划名称
@@ -165,7 +165,13 @@
           console.info('value changed2 ', newVal)
           if (newVal.show === true) {
             console.log('personInoutDialog - show')
+            this.initData()
             this.initDate()
+            this.getProjectGroups()
+            this.getProjectPersons()
+            this.getData(false)
+          } else {
+            this.initData()
           }
 
         },
@@ -174,6 +180,18 @@
 
     },
     methods: {
+      initData() {
+        this.optionGroups = [], //部门选择的数据
+          this.optionsProjectPerson = [],
+          this.personInoutList = [],
+          this.personInoutForm = {
+            GroupList: ['all'], // 计划名称
+            person_id: '', // 人员
+            person_name: '',
+            InoutDaterange: [], // 时间范围
+          },
+          this.totalPerson = 0
+      },
       initDate() {
         // 每月的某一天，如每月10日
         const monthDay = moment().add('month', 0).format('YYYY-MM') + '-10'
@@ -205,7 +223,7 @@
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
           // console.log(this.projectPersonList)
-          this.optionsProjectPersion = this.projectPersonList
+          this.optionsProjectPerson = this.projectPersonList
           this.loadingInstance.close();
         }).catch(() => {
 
@@ -307,8 +325,7 @@
         //   // fullscreen: true,
         //   target: '#inout-from'
         // });
-        this.getProjectGroups()
-        this.getProjectPersons()
+
       },
       appendGroupData() {
         const rootGroup = this.projectGroupList.group
@@ -347,35 +364,42 @@
       },
       handleSubmit(isExport) {
         // console.log('isExport', isExport)
-        this.loading = true
         this.$refs.personInoutForm.validate(valid => {
           if (valid) {
-            // console.log(this.personInoutForm)
-            const sTime = moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
-            const eTime = moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
-            // -> store module ->api
-            // console.log(sTime, eTime)
-            this.personInoutList = []
-            this.totalPerson = 0
-            const param = {
-              method: 'query_person_inday',
-              project_id: this.project_id,
-              bt: sTime,
-              et: eTime
-            }
-            this.$store.dispatch('QueryProjectPersonInDay', param).then(() => {
-              // console.log(this.projectPersonInoutList)
-              console.log('QueryProjectPersonInDay', this.projectPersonInDay)
-              this.getProjectPersonInout(sTime, eTime, isExport)
-              // console.log('this.personInoutList', this.personInoutList)
-            }).catch(() => {
-              this.loading = false
-            })
-
-
-
+            this.getData(isExport)
           }
         })
+      },
+      getData(isExport) {
+        this.loading = true
+
+        // console.log(this.personInoutForm)
+        const sTime = moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
+        const eTime = moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
+        // -> store module ->api
+        // console.log(sTime, eTime)
+
+
+
+        this.personInoutList = []
+        this.totalPerson = 0
+        const param = {
+          method: 'query_person_inday',
+          project_id: this.project_id,
+          bt: sTime,
+          et: eTime
+        }
+        this.$store.dispatch('QueryProjectPersonInDay', param).then(() => {
+          // console.log(this.projectPersonInoutList)
+          console.log('QueryProjectPersonInDay', this.projectPersonInDay)
+          this.getProjectPersonInout(sTime, eTime, isExport)
+          // console.log('this.personInoutList', this.personInoutList)
+        }).catch(() => {
+          this.loading = false
+        })
+
+
+
 
       },
       exportExcelSubmit() {
