@@ -2,7 +2,7 @@
   <div id="app">
     <router-view />
     <InoutForm></InoutForm>
-    <NowinForm></NowinForm>
+    <!-- <NowinForm></NowinForm> -->
     <el-dialog :modal="false" custom-class="ryxx-dialog" width="800px" top="1vh" :lock-scroll="true"
       :close-on-click-modal="false" @open="openPersonFullCalendarDialogHandle"
       :visible.sync="personFullCalenderDialog.show" title="日历">
@@ -18,6 +18,7 @@
     </el-dialog>
 
     <!-- <NowinForm></NowinForm> -->
+    <!--场内人员清单对话框-->
     <NowinDialog></NowinDialog>
     <PersonFacePercentDetailForm></PersonFacePercentDetailForm>
     <InOutPersonDetailDialog></InOutPersonDetailDialog>
@@ -37,7 +38,7 @@
   // import ModelDetail from './views/model3D/modelDetail'
   // import RyxxForm from './views/main/components/ryxxForm'
   import InoutForm from './views/person/inoutForm'
-  import NowinForm from './views/person/nowinForm'
+  // import NowinForm from './views/person/nowinForm'
   import PersonFullCalender from './views/person/fullCalender'
   import PersonFacePercentDetailForm from './views/person/facePercentDetailForm'
   import InOutPersonDetailDialog from './views/person/inOutPersonDetailDialog'
