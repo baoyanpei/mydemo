@@ -257,7 +257,7 @@
           eTime: eTime,
           ...row
         }
-        this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
+        this.$store.dispatch('SetInOutPersonForm', param).then(() => {}).catch(() => {
 
         })
       },

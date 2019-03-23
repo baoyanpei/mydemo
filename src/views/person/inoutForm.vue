@@ -446,16 +446,7 @@
 
       },
       handleRowClick(row, event, column) {
-        // console.log('row1', row);
-        // const param = {
-        //   show: true,
-        //   sTime: moment(this.personInoutForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00'),
-        //   eTime: moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59'),
-        //   ...row
-        // }
-        // this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
 
-        // })
       },
       handleNameClick(row) {
         const param = {
@@ -464,9 +455,6 @@
           eTime: moment(this.personInoutForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59'),
           ...row
         }
-        // this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
-
-        // })
         this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
 
         })

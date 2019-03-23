@@ -460,7 +460,7 @@ const project = {
     },
 
     // 花名册person详细窗口
-    SetInOutPersonDialog({
+    SetInOutPersonForm({
       commit
     }, param) {
       return new Promise((resolve, reject) => {
