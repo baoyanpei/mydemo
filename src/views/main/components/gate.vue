@@ -6,7 +6,7 @@
   <div class="data-gate">
     <el-row>
       <el-col :span="12" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
-        <img v-show="persion_data.entry_pic !==''" :src="persion_data.entry_pic" class="photo">
+        <img v-show="persion_data.entry_pic !==''" :src="persion_data.entry_pic" @click="handleNameClick(persion_data)" class="photo info-name-link">
         <span v-show="persion_data.entry_pic ===''">&nbsp;</span>
         <div v-if="persion_data.card_type===4" class="person-type-desc">临时人员</div>
       </el-col>
