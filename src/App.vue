@@ -17,7 +17,8 @@
 
     </el-dialog>
 
-    <NowinForm></NowinForm>
+    <!-- <NowinForm></NowinForm> -->
+    <NowinDialog></NowinDialog>
     <PersonFacePercentDetailForm></PersonFacePercentDetailForm>
     <InOutPersonDetailDialog></InOutPersonDetailDialog>
     <PersonGoOutDialog></PersonGoOutDialog>
@@ -40,8 +41,12 @@
   import PersonFullCalender from './views/person/fullCalender'
   import PersonFacePercentDetailForm from './views/person/facePercentDetailForm'
   import InOutPersonDetailDialog from './views/person/inOutPersonDetailDialog'
-  // 人员相信信息dialog
+  // 人员信息信息dialog
   import PersonInfoDialog from './views/person/personInfoDialog'
+
+  // 场内人员dialog
+  import NowinDialog from './views/person/nowinDialog'
+
   // 人员上工日历dialog
   import WorktimeFullCalendarDialog from './views/person/worktimeFullCalendarDialog'
 
@@ -57,7 +62,8 @@
       // ModelDetail,
       // RyxxForm,
       InoutForm,
-      NowinForm,
+      // NowinForm,
+      NowinDialog,
       PersonFullCalender,
       PersonFacePercentDetailForm,
       InOutPersonDetailDialog,
