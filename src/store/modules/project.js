@@ -505,7 +505,7 @@ const project = {
         queryProjectPersonInout(param).then(response => {
           const _data = response.data
           commit('SET_PROJECT_PERSION_NOW_IN_LIST', _data)
-          resolve()
+          resolve(_data)
         }).catch(error => {
           reject(error)
         })

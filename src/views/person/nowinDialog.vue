@@ -4,7 +4,7 @@
 </style>
 <template>
   <div>
-    <el-dialog :modal="false" custom-class="ryxx-dialog" width="800px" top="1vh" :lock-scroll="true"
+    <el-dialog :modal="false" custom-class="ryxx-dialog" width="600px" top="1vh" :lock-scroll="true"
       :close-on-click-modal="false" @open="openPersonNowInDialogHandle" :visible.sync="personNowinDialog.show"
       title="场内人员清单">
       <div id="nowin-dialog" class="nowin-dialog">
@@ -32,64 +32,56 @@
         </el-form>
         <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
         <hr class="hr1" />
-        
-        <hr class="hr1" />
-        <el-table ref="personInoutTable" v-loading="loading" :data="personNowInList" height="400px"
-          :empty-text="personInoutTableEmptyText" highlight-current-row @current-change="handleCurrentChange"
-          style="width: 100%" size="mini" :show-header="true" header-align="center"
-          :default-sort="{prop: 'name', order: 'ascending'}">
-          <el-table-column type="index" width="40">
-          </el-table-column>
-          <el-table-column property="name" sortable label="姓名" width="80" header-align="center">
-            <template slot-scope="scope">
-              <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column property="mobile" label="电话" width="100" header-align="center">
-          </el-table-column>
-          <el-table-column property="group_name_level[0]" sortable label="部门" width="90" header-align="center">
-          </el-table-column>
-          <el-table-column property="group_name_level[1]" sortable label="专业" header-align="center">
-          </el-table-column>
-          <el-table-column property="last_in_time" sortable label="最后进场时间" width="140" header-align="center">
-          </el-table-column>
-          <el-table-column property="last_in_face_percent" sortable label="识别率" width="100" header-align="center">
-            <template slot-scope="scope">
-              <div style="text-align: center;cursor: pointer;" @click="openPersonFacePersonDialogHandle(scope.row)">
-                <el-tooltip v-if="scope.row.last_in_log.compare === 2" class="item" effect="dark" content="已经确认是本人"
-                  placement="top">
-                  <i class="el-icon-circle-check" style="color:green;"></i>
-                </el-tooltip>
+        <div class="personItemList">
+          <div v-for="(item,index) in personNowInMapList" class="group-item">
+            <div class="group-name">{{item.group_name}}</div>
+            <div class="group-content">
+              <div v-for="(person_item,index) in item.person_list" class="personItem">
+                <div><img :src="person_item.idcard_pic" style="height:100px;" /></div>
+                <div>{{person_item.name}}</div>
+                <div>入场时间:{{trantime(person_item.last_in_time)}}</div>
+                <div>识别率:
+                  <span style="text-align: center;cursor: pointer;"
+                    @click="openPersonFacePersonDialogHandle(person_item)">
+                    <el-tooltip v-if="person_item.last_in_log.compare === 2" class="item" effect="dark"
+                      content="已经确认是本人" placement="top">
+                      <i class="el-icon-circle-check" style="color:green;"></i>
+                    </el-tooltip>
 
-                <el-tooltip v-if="scope.row.last_in_log.compare === 3" class="item" effect="dark" content="已经确认不是本人"
-                  placement="top">
-                  <i class="el-icon-circle-close" style="color:red;"></i>
-                </el-tooltip>
-                <span style="padding-bottom: 1px;border-bottom: 1px dashed #999999;">
+                    <el-tooltip v-if="person_item.last_in_log.compare === 3" class="item" effect="dark"
+                      content="已经确认不是本人" placement="top">
+                      <i class="el-icon-circle-close" style="color:red;"></i>
+                    </el-tooltip>
+                    <span style="padding-bottom: 1px;border-bottom: 1px dashed #999999;">
 
-                  <span v-if="scope.row.last_in_face_percent>=50">
-                    {{scope.row.last_in_face_percent}}%
-                  </span>
-                  <span v-else-if="scope.row.last_in_face_percent>=0">
-                    <span class="shibielvdi">
-                      {{scope.row.last_in_face_percent}}%
+                      <span v-if="person_item.last_in_face_percent>=50">
+                        {{person_item.last_in_face_percent}}%
+                      </span>
+                      <span v-else-if="person_item.last_in_face_percent>=0">
+                        <span class="shibielvdi">
+                          {{person_item.last_in_face_percent}}%
+                        </span>
+                      </span>
+                      <span v-else>
+                        <span class="weishibie">未识别</span>
+                      </span>
                     </span>
                   </span>
-                  <span v-else>
-                    <span class="weishibie">未识别</span>
-                  </span>
-                </span>
-
+                </div>
+                <div style="margin-top: 5px;">
+                  <el-button size="mini" type="warning" icon="el-icon-circle-close-outline"
+                    @click="handlePersonGoout(person_item)">手动出场</el-button>
+                </div>
+                <div style="clear: both;"></div>
               </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button size="mini" type="warning" icon="el-icon-circle-close-outline"
-                @click="handlePersonGoout(scope.$index, scope.row)">手动出场</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+              <div style="clear: both;"></div>
+            </div>
+            <div style="clear: both;"></div>
+          </div>
+        </div>
+
+        <hr class="hr1" />
+        
       </div>
     </el-dialog>
 
@@ -110,6 +102,25 @@
 
     },
     directives: {},
+
+    data() {
+
+      return {
+        personInoutDialog: {
+          GroupList: ['all'], // 计划名称
+          person_id: '', // 人员
+          person_name: '',
+        },
+        loading: false,
+        optionGroups: [], //部门选择的数据
+        optionsProjectPersion: [],
+        personNowInList: [],
+        personInoutTableEmptyText: '请点击查询按钮进行查询',
+        totalPerson: 0,
+        personNowInMap: new Map(),
+        personNowInMapList: []
+      }
+    },
     computed: {
       project_id() {
         return this.$store.state.project.project_id
@@ -128,27 +139,11 @@
           this.$store.state.project.personNowinDialog = newValue
         }
       },
-      projectPersonNowInList() {
-        return this.$store.state.project.projectPersonNowInList
-      },
+      //   projectPersonNowInList() {
+      //     return this.$store.state.project.projectPersonNowInList
+      //   },
       personNowinChanged() {
         return this.$store.state.project.personNowinChanged
-      }
-    },
-    data() {
-
-      return {
-        personInoutDialog: {
-          GroupList: ['all'], // 计划名称
-          person_id: '', // 人员
-          person_name: '',
-        },
-        loading: false,
-        optionGroups: [], //部门选择的数据
-        optionsProjectPersion: [],
-        personNowInList: [],
-        personInoutTableEmptyText: '请点击查询按钮进行查询',
-        totalPerson: 0
       }
     },
     created: function () {
@@ -161,6 +156,9 @@
       }
     },
     methods: {
+      trantime: (time) => {
+        return moment(time).format('HH:mm:ss')
+      },
       // 打开窗口
       openPersonNowInDialogHandle() {
         // this.loadingInstance = Loading.service({
@@ -232,7 +230,7 @@
         // console.log("this.optionGroups", this.optionGroups)
       },
       checkPerson(person) {
-        // console.log('person', person)
+        console.log('person', person)
         this.isMatchPerson = false
         if (this.personInoutDialog.person_id !== '') {
           if (person.person_id.toString() === this.personInoutDialog.person_id.toString()) {
@@ -244,6 +242,31 @@
         // console.log('this.isMatchPerson', this.isMatchPerson)
         if (this.isMatchPerson === true) {
           this.personNowInList.push(person)
+
+          let group_id
+          let group_name
+
+          if (person.group_id_level.length > 1) {
+            group_id = person.group_id_level[1]
+            group_name = person.group_name_level[1]
+          } else if (person.group_id_level.length == 1) {
+            group_id = person.group_id_level[0]
+            group_name = person.group_name_level[0]
+          } else {
+            group_id = 0
+            group_name = '其他'
+          }
+          if (this.personNowInMap.has(group_id) === false) {
+            this.personNowInMap.set(group_id, {
+              group_id: group_id,
+              group_name: group_name,
+              person_list: [person]
+            })
+          } else {
+            let _groupInfo = this.personNowInMap.get(group_id)
+            _groupInfo.person_list.push(person)
+          }
+
         }
       },
       handleCurrentChange(data) { //点击下级部门的分组
@@ -265,6 +288,7 @@
       },
       getProjectPersonInout() {
         this.loading = true
+        this.personNowInMapList = []
         const param = {
           method: 'query_person_inout',
           project_id: this.project_id,
@@ -272,10 +296,8 @@
         }
         this.personNowInList = []
         this.totalPerson = 0
-        this.$store.dispatch('QueryProjectPersonNowIn', param).then(() => {
-          // console.log('this.projectPersonNowInList', this.projectPersonNowInList)
-          this.projectPersonNowInList.forEach(item => {
-            // console.log('item1', item)
+        this.$store.dispatch('QueryProjectPersonNowIn', param).then((personNowInDataList) => {
+          personNowInDataList.forEach(item => {
             let groupMatch = []
             if (this.personInoutDialog.GroupList[0] === 'all') {
               // console.log('this.personInoutDialog.GroupList[0]', this.personInoutDialog.GroupList[0])
@@ -297,6 +319,10 @@
 
 
           })
+          this.personNowInMap.forEach(item => {
+            this.personNowInMapList.push(item)
+          })
+          console.log('this.personNowInMap', this.personNowInMapList)
           this.totalPerson = this.personNowInList.length;
           this.loading = false
           // console.log('this.personInoutList', this.personInoutList)
@@ -304,8 +330,8 @@
           this.loading = false
         })
       },
-      handlePersonGoout(index, row) {
-        console.log(index, row);
+      handlePersonGoout(row) {
+        console.log(row);
         const param = {
           show: true,
           type: 'single',
@@ -314,10 +340,10 @@
           // compare: compare
         }
         this.$store.dispatch('SetPersonGoOutDialog', param).then(() => {}).catch(() => {})
-        
+
       },
       persionChangeHandle(value) {
-        
+
       },
       handleSubmit() {
         this.getProjectPersonInout()
