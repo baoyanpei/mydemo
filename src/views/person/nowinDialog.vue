@@ -41,7 +41,8 @@
                   <img :src="person_item.idcard_pic" style="height:100px;" />
                 </div>
                 <div>
-                  <el-button @click="handleNameClick(person_item)" class="btnName" type="text" size="small">{{person_item.name}}</el-button>
+                  <el-button @click="handleNameClick(person_item)" class="btnName" type="text" size="small">
+                    {{person_item.name}}</el-button>
                 </div>
                 <div>入场时间:{{trantime(person_item.last_in_time)}}</div>
                 <div>识别率:
@@ -179,6 +180,7 @@
         this.$store.dispatch('QueryProjectGroups', param).then(() => {
           // console.log('this.projectGroupList1', this.projectGroupList)
           this.appendGroupData()
+          // this.personInoutDialog.GroupList =[10030]
         }).catch(() => {
 
         })
@@ -306,6 +308,7 @@
               this.checkPerson(item)
             } else if (this.personInoutDialog.GroupList.length === 1) {
               // intersection取交集
+              console.log('this.personInoutDialog.GroupList', this.personInoutDialog.GroupList)
               groupMatch = lodash.intersection(item.group_id_level, this.personInoutDialog.GroupList)
               if (groupMatch.length > 0) {
                 this.checkPerson(item)
