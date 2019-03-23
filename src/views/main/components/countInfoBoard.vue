@@ -24,7 +24,8 @@
       </el-row>
       <el-row>
         <el-col v-for="(item,index) in projectGroupList" :key="index" :span="8">
-          <div class="grid-content info-name link" @click="personNowInDialogHandle">{{item.name}}: <span class="info-item-green">{{item.total_in}}</span>
+          <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':[item.name]})">
+            {{item.name}}: <span class="info-item-green">{{item.total_in}}</span>
             <span class="info-item-all" v-if="item.total_all>=0">/{{item.total_all}}</span>
           </div>
         </el-col>
@@ -162,11 +163,13 @@
 
         })
       },
-      personNowInDialogHandle() {
-        const param = {
+      personNowInDialogHandle(param) {
+        console.log('param', param)
+        const _param = {
           show: true,
+          ...param
         }
-        this.$store.dispatch('SetPersonNowInDialog', param).then(() => {}).catch(() => {
+        this.$store.dispatch('SetPersonNowInDialog', _param).then(() => {}).catch(() => {
 
         })
       },

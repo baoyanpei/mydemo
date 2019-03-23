@@ -156,7 +156,22 @@
       personNowinChanged(curVal, oldVal) {
         console.log("personNowinChanged")
         this.getProjectPersonInout()
-      }
+      },
+      personNowinDialog: {
+        handler: function (newVal, oldVal) {
+          console.info('value changed2 ', newVal)
+          if (newVal.show === true) {
+            console.log('personNowinDialog - show')
+          } else {
+            this.personInoutDialog = {
+              GroupList: ['all'], // 计划名称
+              person_id: '', // 人员
+              person_name: '',
+            }
+          }
+        },
+        deep: true
+      },
     },
     methods: {
       trantime: (time) => {
@@ -290,6 +305,7 @@
         })
       },
       getProjectPersonInout() {
+        console.log('personNowinDialog', this.personNowinDialog)
         this.loading = true
         this.personNowInMap = new Map()
         this.personNowInMapList = []
@@ -303,24 +319,35 @@
         this.$store.dispatch('QueryProjectPersonNowIn', param).then((personNowInDataList) => {
           personNowInDataList.forEach(item => {
             let groupMatch = []
-            if (this.personInoutDialog.GroupList[0] === 'all') {
-              // console.log('this.personInoutDialog.GroupList[0]', this.personInoutDialog.GroupList[0])
-              this.checkPerson(item)
-            } else if (this.personInoutDialog.GroupList.length === 1) {
-              // intersection取交集
-              console.log('this.personInoutDialog.GroupList', this.personInoutDialog.GroupList)
-              groupMatch = lodash.intersection(item.group_id_level, this.personInoutDialog.GroupList)
-              if (groupMatch.length > 0) {
-                this.checkPerson(item)
+            if (this.personNowinDialog.group_names !== undefined && this.personNowinDialog.group_names !== '') {
+              if (this.personNowinDialog.group_names.length === 1) {
+                groupMatch = lodash.intersection(item.group_name_level, this.personNowinDialog.group_names)
+                if (groupMatch.length > 0) {
+                  this.checkPerson(item)
+                }
               }
-            } else if (this.personInoutDialog.GroupList.length > 1) {
-              groupMatch = lodash.intersection(item.group_id_level, this.personInoutDialog.GroupList)
-              // union 取并集
-              const groupMatch2 = lodash.union(item.group_id_level, this.personInoutDialog.GroupList)
-              if (groupMatch.length === groupMatch2.length) {
+            } else {
+              if (this.personInoutDialog.GroupList[0] === 'all') {
+                // console.log('this.personInoutDialog.GroupList[0]', this.personInoutDialog.GroupList[0])
                 this.checkPerson(item)
+              } else if (this.personInoutDialog.GroupList.length === 1) {
+                // intersection取交集
+                // console.log('item', item)
+                groupMatch = lodash.intersection(item.group_id_level, this.personInoutDialog.GroupList)
+                if (groupMatch.length > 0) {
+                  this.checkPerson(item)
+                }
+              } else if (this.personInoutDialog.GroupList.length > 1) {
+                groupMatch = lodash.intersection(item.group_id_level, this.personInoutDialog.GroupList)
+                // union 取并集
+                const groupMatch2 = lodash.union(item.group_id_level, this.personInoutDialog.GroupList)
+                if (groupMatch.length === groupMatch2.length) {
+                  this.checkPerson(item)
+                }
               }
             }
+
+
 
 
           })
@@ -351,6 +378,7 @@
 
       },
       handleSubmit() {
+        this.personNowinDialog.group_names = undefined
         this.getProjectPersonInout()
       },
       personAllGoOutHandleSubmit() {
