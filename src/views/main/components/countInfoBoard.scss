@@ -1,28 +1,32 @@
 .count-info-board {
-    color: #FF0000;
-    padding: 20px;
-    font-size: 16px;
-    font-weight: 500;
-    width:520px;
-    height: 200px;
-    left: 10px;
-    top: 10px;
-    border: 6px solid #cccccc;
-    border-radius: 5px;
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 200;
+  color: #FF0000;
+  padding: 20px;
+  font-size: 16px;
+  font-weight: 500;
+  width: 520px;
+  height: 200px;
+  left: 10px;
+  top: 10px;
+  border: 6px solid #cccccc;
+  border-radius: 5px;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 200;
 
-    .grid-content {
-      line-height: 25px;
-    }
-
-    .el-col-6 {
-      padding-left: 3px !important;
-      padding-right: 3px !important;
-    }
-
-    .text-center {
-      text-align: center;
-    }
+  .grid-content {
+    line-height: 25px;
   }
+
+  .el-col-6 {
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .link {
+    cursor: pointer;
+  }
+}

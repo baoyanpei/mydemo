@@ -15,10 +15,11 @@
       </el-row> -->
       <el-row>
         <el-col :span="8">
-          <div class="grid-content bg-purple">登记总人数：{{projectCount.登记人数}}</div>
+          <div class="grid-content bg-purple link" @click="personListDialogHandle">登记总人数：{{projectCount.登记人数}}</div>
         </el-col>
         <el-col :span="8">
-          <div class="grid-content bg-purple">进场总人数：{{projectCount.all_count_in}}</div>
+          <div class="grid-content bg-purple link" @click="personNowInDialogHandle">进场总人数：{{projectCount.all_count_in}}
+          </div>
         </el-col>
       </el-row>
       <el-row>
@@ -152,7 +153,23 @@
 
         }
         // console.log("this.projectGroupList", this.projectGroupList)
-      }
+      },
+      personListDialogHandle() {
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('SetPersonListDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
+      personNowInDialogHandle() {
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('SetPersonNowInDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
     }
   }
 
