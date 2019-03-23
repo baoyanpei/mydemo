@@ -5,8 +5,9 @@
   // background-color: rgba(0, 0, 0, 0.1);
   // border: 1px solid rgba(0, 0, 0, 0.1);
   float: left;
-//   height: 17.5rem;
+  //   height: 17.5rem;
   width: 280px;
+
 
   .photo {
     width: 130px;
@@ -35,6 +36,11 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    .info-name-link {
+      content: '';
+      cursor: pointer;
+    }
   }
 
   .info-qita {

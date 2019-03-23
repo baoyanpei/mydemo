@@ -12,7 +12,9 @@
       </el-col>
       <el-col :span="12" style="padding-left:5px;">
         <el-row :gutter="24">
-          <div class="grid-content info-name">{{persion_data.name}}&nbsp;</div>
+          <div class="grid-content info-name">
+            <span @click="handleNameClick(persion_data)" class="info-name-link">{{persion_data.name}}</span>&nbsp;
+          </div>
         </el-row>
         <el-row :gutter="24">
           <div class="grid-content info-qita">部门：<span>{{persion_data.group_name_root}}</span></div>
@@ -30,7 +32,8 @@
     </el-row>
     <el-row>
       <div class="grid-content info-lichang">
-        <span v-if="onOffValue === 0 && persion_data.direction===1" style="color:chartreuse;">进场时间：{{nowInOutTime}}</span>
+        <span v-if="onOffValue === 0 && persion_data.direction===1"
+          style="color:chartreuse;">进场时间：{{nowInOutTime}}</span>
         <span v-if="onOffValue === 0 && persion_data.direction===2" style="color:red;">离场时间：{{nowInOutTime}}</span>
         <span v-if="onOffValue === 1" style="color:#FF66FF;font-weight: 700;">{{errorMessage}}</span>
         <span>&nbsp;</span>
@@ -125,6 +128,7 @@
     },
 
     methods: {
+
       updateData(data) {
         // const _data = JSON.parse(data)
         // console.log('userinfo1', data)
@@ -220,7 +224,16 @@
 
             break;
         }
-      }
+      },
+      handleNameClick(row) {
+        const param = {
+          show: true,
+          ...row
+        }
+        this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
       // getProjectGatePerson() {
       //   const param = {
       //     method: 'project_gateperson',
