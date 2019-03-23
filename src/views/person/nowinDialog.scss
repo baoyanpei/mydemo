@@ -6,6 +6,10 @@
     position: relative;
     clear: both;
 
+    .btnName {
+      padding: 0px 0px;
+      border-bottom: 1px dashed #66b1ff
+    }
 
     .group-item {
       clear: both;
@@ -18,8 +22,8 @@
       font-weight: 500;
       padding: 2px;
       border-bottom: 1px #eeeeee dashed;
-      margin-top:5px; 
-      margin-bottom:5px; 
+      margin-top: 5px;
+      margin-bottom: 5px;
       // line-height: 30px;
     }
 
@@ -37,6 +41,7 @@
       margin: 0px auto;
       padding-left: 20px;
       margin-top: 5px;
+
       div {
         padding-top: 2px;
         padding-bottom: 2px;

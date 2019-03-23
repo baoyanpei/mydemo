@@ -37,8 +37,12 @@
             <div class="group-name">{{item.group_name}}</div>
             <div class="group-content">
               <div v-for="(person_item,index) in item.person_list" class="personItem">
-                <div><img :src="person_item.idcard_pic" style="height:100px;" /></div>
-                <div>{{person_item.name}}</div>
+                <div>
+                  <img :src="person_item.idcard_pic" style="height:100px;" />
+                </div>
+                <div>
+                  <el-button @click="handleNameClick(person_item)" class="btnName" type="text" size="small">{{person_item.name}}</el-button>
+                </div>
                 <div>入场时间:{{trantime(person_item.last_in_time)}}</div>
                 <div>识别率:
                   <span style="text-align: center;cursor: pointer;"
@@ -79,9 +83,7 @@
             <div style="clear: both;"></div>
           </div>
         </div>
-
         <hr class="hr1" />
-        
       </div>
     </el-dialog>
 
@@ -230,7 +232,7 @@
         // console.log("this.optionGroups", this.optionGroups)
       },
       checkPerson(person) {
-        console.log('person', person)
+        // console.log('person', person)
         this.isMatchPerson = false
         if (this.personInoutDialog.person_id !== '') {
           if (person.person_id.toString() === this.personInoutDialog.person_id.toString()) {
@@ -241,6 +243,9 @@
         }
         // console.log('this.isMatchPerson', this.isMatchPerson)
         if (this.isMatchPerson === true) {
+          if (person.idcard_pic === null || person.idcard_pic === '') {
+            person.idcard_pic = '/static/photo_no.jpg'
+          }
           this.personNowInList.push(person)
 
           let group_id
@@ -274,20 +279,17 @@
       },
       handleNameClick(row) {
         console.log('row', row)
-        const sTime = moment().add('day', -5).format('YYYY-MM-DD 00:00:00')
-        const eTime = moment().format('YYYY-MM-DD 23:59:59')
         const param = {
           show: true,
-          sTime: sTime,
-          eTime: eTime,
           ...row
         }
-        this.$store.dispatch('SetInOutPersonDialog', param).then(() => {}).catch(() => {
+        this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
 
         })
       },
       getProjectPersonInout() {
         this.loading = true
+        this.personNowInMap = new Map()
         this.personNowInMapList = []
         const param = {
           method: 'query_person_inout',
