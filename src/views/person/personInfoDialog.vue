@@ -16,37 +16,35 @@
           <el-col :span="16" class="persion-info-txt" style="text-align: left;padding: 2px;">
             <el-row :gutter="24">
               <el-col :span="12">
-                部门:{{bumen}}
+                部门：{{bumen}}
               </el-col>
               <el-col :span="12">
-                专业:{{zhuanye}}
+                专业：{{zhuanye}}
               </el-col>
             </el-row>
             <el-row :gutter="24">
               <el-col :span="12">
-                年龄:{{bumen}}
+                年龄：{{bumen}}
               </el-col>
               <el-col :span="12">
-                学历:-
+                学历：-
               </el-col>
             </el-row>
             <el-row :gutter="24">
               <el-col :span="24">
-                电话: {{mobile}}
+                电话：{{mobile}}
               </el-col>
             </el-row>
             <el-row :gutter="24">
               <el-col :span="24">
-                入职时间:{{mobile}}
+                入职时间：{{trasRuZHiShiJian(created_time)}}
               </el-col>
             </el-row>
             <el-row :gutter="24">
-              <el-col :span="14">
-                身份证号:{{mobile}}
+              <el-col :span="24">
+                身份证号：{{idcard_no}}
               </el-col>
-              <el-col :span="10">
 
-              </el-col>
             </el-row>
             <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
               style="position:absolute;top:85px;right:20px;">上工日志</el-button>
@@ -139,10 +137,12 @@
         name: '',
         age: '',
         mobile: '',
+        created_time: '',
         bumen: '',
         zhuanye: '',
         idcarda: '',
         idcardb: '',
+        idcard_no: '',
         loading: false
       }
     },
@@ -167,6 +167,13 @@
       },
     },
     methods: {
+      trasRuZHiShiJian(time) {
+        let timeFormat = ''
+        if (time !== '') {
+          timeFormat = moment(time).format('YYYY年MM月DD日')
+        }
+        return timeFormat
+      },
       // 打开窗口
       openPersonFacePercentDetailDialogHandle() {
         // console.log("----22222---")
@@ -185,8 +192,10 @@
         this.name = ""
         this.age = ""
         this.mobile = ""
+        this.created_time = ""
         this.bumen = ''
         this.zhuanye = ''
+        this.idcard_no = ''
 
       },
       getProjectPersonInfo() {
@@ -206,6 +215,8 @@
           }
           this.name = _personInfo.name
           this.mobile = _personInfo.mobile
+          this.created_time = _personInfo.created_time
+          this.idcard_no = _personInfo.idcard_no
           this.bumen = _personInfo.group_name_level[0]
           this.zhuanye = _personInfo.group_name_level[1]
           this.entry_pic = _personInfo.entry_pic
