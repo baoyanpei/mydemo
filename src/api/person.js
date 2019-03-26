@@ -333,7 +333,7 @@ project_id:
 person_id:
 return {"status":"success","msg":'',"data":[]}
 
-datum_type：资料类型1安全责任书2劳动合同3安全交底4技术交底
+datum_type：资料类型1安全责任书2劳动合同3安全交底4技术交底5三级安全教育记录卡6考试试题及结果
 datum_file_url：资料文件地址
 '''
 */

@@ -4,7 +4,7 @@
 </style>
 <template>
   <div class="person-info-dialog">
-    <el-dialog :modal="false" top="0.5vh" width="450px" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="false" top="0.5vh" width="640px" :lock-scroll="true" :close-on-click-modal="false"
       @open="openPersonFacePercentDetailDialogHandle" :visible.sync="personInfoDialog.show"
       :title="personInfoDialog.name">
       <div id="person-face-person-detail-form" class="person-face-person-detail-form">
@@ -63,39 +63,83 @@
               <hr class="hr1">
               <div style="text-align: center">
                 <a :href="entry_pic" target="_blank">
-                  <img :src="entry_pic" style="height:150px;margin: 0px auto" />
+                  <img :src="entry_pic" style="width:80%;margin: 0px auto" />
                 </a>
               </div>
-              <div>身份证扫描件</div>
+              <div style="margin-top: 20px;">身份证扫描件</div>
               <hr class="hr1">
               <div style="text-align: center">
                 <a :href="idcarda" target="_blank">
-                  <img :src="idcarda" style="height:150px;margin: 0px auto" />
+                  <img :src="idcarda" style="width:80%;margin: 0px auto" />
                 </a>
 
               </div>
               <div style="text-align: center">
                 <a :href="idcardb" target="_blank">
-                  <img :src="idcardb" style="height:150px;margin: 0px auto" />
+                  <img :src="idcardb" style="width:80%;margin: 0px auto" />
                 </a>
               </div>
             </div>
 
           </el-tab-pane>
           <el-tab-pane label="安全责任书" name="aqzrs">
-            <div class="div-tab-item">
+            <div class="div-tab-item-pdf">
+              <iframe id='previewPdf1' v-if="datum_file.has(1)" frameborder="no" border="0" marginwidth="0"
+                marginheight="0" scrolling="no" allowtransparency="yes" :src="datum_file.get(1).pdfurl" width="100%">
+              </iframe>
+              <div v-if="!datum_file.has(1)" class="no-datum">
+                尚未上传资料
+              </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="劳动合同" name="ldht">
-            <div class="div-tab-item">
+            <div class="div-tab-item-pdf">
+              <iframe id='previewPdf2' v-if="datum_file.has(2)" :src="datum_file.get(2).pdfurl" frameborder="no"
+                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+              </iframe>
+              <div v-if="!datum_file.has(2)" class="no-datum">
+                尚未上传资料
+              </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="安全交底" name="aqjd">
-            <div class="div-tab-item">
+            <div class="div-tab-item-pdf">
+              <iframe id='previewPdf3' v-if="datum_file.has(3)" :src="datum_file.get(3).pdfurl" frameborder="no"
+                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+              </iframe>
+              <div v-if="!datum_file.has(3)" class="no-datum">
+                尚未上传资料
+              </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="技术交底" name="jsjd">
-            <div class="div-tab-item">
+            <div class="div-tab-item-pdf">
+              <iframe id='previewPdf4' v-if="datum_file.has(4)" :src="datum_file.get(4).pdfurl" frameborder="no"
+                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+              </iframe>
+              <div v-if="!datum_file.has(4)" class="no-datum">
+                尚未上传资料
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="三级安全教育记录卡" name="sjaqjyjlk">
+            <div class="div-tab-item-pdf">
+              <iframe id='previewPdf5' v-if="datum_file.has(5)" :src="datum_file.get(5).pdfurl" frameborder="no"
+                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+              </iframe>
+              <div v-if="!datum_file.has(5)" class="no-datum">
+                尚未上传资料
+              </div>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="考试试题及结果" name="ksstjjg">
+            <div class="div-tab-item-pdf">
+              <iframe id='previewPdf6' v-if="datum_file.has(6)" :src="datum_file.get(6).pdfurl" frameborder="no"
+                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+              </iframe>
+              <div v-if="!datum_file.has(6)" class="no-datum">
+                尚未上传资料
+              </div>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -110,23 +154,16 @@
 
 <script>
   import moment from 'moment'
+  // import vpdf from 'vpdf'
+  // import pdf from 'vue-pdf'
+  // import vueshowpdf from 'vueshowpdf'
   export default {
-    components: {},
-    directives: {},
-    computed: {
-      project_id() {
-        return this.$store.state.project.project_id
-      },
-      personInfoDialog: {
-        get: function () {
-          return this.$store.state.project.personInfoDialog
-        },
-        set: function (newValue) {
-          this.$store.state.project.personInfoDialog = newValue
-        }
-      }
-
+    components: {
+      // pdf
+      // vueshowpdf
     },
+    directives: {},
+
     data() {
 
       return {
@@ -143,12 +180,30 @@
         idcarda: '',
         idcardb: '',
         idcard_no: '',
-        loading: false
+        loading: false,
+        currentPage: 0,
+        pageCount: 0,
+        isshowpdf: true,
+        datum_file: new Map()
       }
+    },
+    computed: {
+      project_id() {
+        return this.$store.state.project.project_id
+      },
+      personInfoDialog: {
+        get: function () {
+          return this.$store.state.project.personInfoDialog
+        },
+        set: function (newValue) {
+          this.$store.state.project.personInfoDialog = newValue
+        }
+      }
+
     },
     created: function () {
 
-
+      // this.src = pdf.createLoadingTask(this.src)
     },
     watch: {
       personInfoDialog: {
@@ -197,6 +252,7 @@
         this.bumen = ''
         this.zhuanye = ''
         this.idcard_no = ''
+        this.datum_file = new Map()
 
       },
       getProjectPersonInfo() {
@@ -238,8 +294,12 @@
         }
         console.log('this.personInfoDialog', this.personInfoDialog)
         this.$store.dispatch('QueryPersonDatum', param).then((data_list) => {
-          console.log("-data-->", data_list)
-          
+          console.log("QueryPersonDatum-data-->", data_list)
+          data_list.forEach(item => {
+            this.datum_file.set(item.datum_type, item)
+            item.pdfurl = "/static/pdf/web/viewer.html?file=" + item.datum_file_url
+          });
+          console.log('this.datum_file', this.datum_file)
         }).catch((e) => {
           console.log('e', e)
           // this.loading = false
@@ -253,6 +313,12 @@
         this.$store.dispatch('SetWorktimeFullCalenderDialog', param).then(() => {}).catch(() => {
 
         })
+      },
+      closepdf() {
+        this.isshowpdf = false
+      },
+      pdferr(errurl) {
+        console.log(errurl);
       }
 
     },

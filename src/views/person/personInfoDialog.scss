@@ -21,10 +21,19 @@
     height: 380px;
     overflow-y: auto;
   }
+  .div-tab-item-pdf {
+    height: 380px;
+    overflow: none;
+    iframe{
+      overflow: none;
+      height: 100%;
+    }
+  }
 
   .persion-info-txt {
     font-size: 12px;
     font-weight: 500;
+
     .el-col {
       padding: 0px;
       line-height: 24px;
@@ -37,4 +46,11 @@
 
   }
 
+  //资料不存在提示
+  .no-datum {
+    text-align: center;
+    padding: 20px;
+    line-height: 200px;
+    color: #aaaaaa;
+  }
 }
