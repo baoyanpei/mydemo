@@ -3,8 +3,10 @@
     padding: 0px;
   }
 
+
   .el-tabs__item {
     padding: 0 10px;
+    padding-left: 10px !important;
     height: 30px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -21,10 +23,12 @@
     height: 380px;
     overflow-y: auto;
   }
+
   .div-tab-item-pdf {
     height: 380px;
     overflow: none;
-    iframe{
+
+    iframe {
       overflow: none;
       height: 100%;
     }
@@ -57,7 +61,16 @@
   .no-pic {
     text-align: center;
     padding: 20px;
+    line-height: 200px;
+    color: #aaaaaa;
+  }
+
+  .no-idcard {
+    text-align: center;
+    padding: 20px;
+    margin: 20px;
     line-height: 100px;
     color: #aaaaaa;
+    border: 1px dashed #aaaaaa
   }
 }

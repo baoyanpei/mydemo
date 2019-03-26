@@ -4,11 +4,11 @@
 </style>
 <template>
   <div class="person-info-dialog">
-    <el-dialog :modal="false" top="0.5vh" width="640px" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="false" top="0.5vh" width="770px" :lock-scroll="true" :close-on-click-modal="false"
       @open="openPersonFacePercentDetailDialogHandle" :visible.sync="personInfoDialog.show"
       :title="personInfoDialog.name">
       <div id="person-face-person-detail-form" class="person-face-person-detail-form">
-        <el-row :gutter="24">
+        <el-row :gutter="24" style="width: 500px;">
           <el-col :span="8" style="text-align: center;padding-right:0px;">
             <div><img :src="idcard_pic" style="height:120px;" /></div>
             <!-- <div>(身份证照)</div> -->
@@ -57,29 +57,28 @@
 
         </el-row>
         <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
-          <el-tab-pane label="照片资料" name="zpzl">
+          <el-tab-pane label="入职照片" name="rzzp">
             <div class="div-tab-item">
-              <div>入职照片</div>
-              <hr class="hr1">
               <div style="text-align: center">
                 <a :href="entry_pic" target="_blank">
-
                   <div v-if="entry_pic===''" class="no-pic">{{loadingEntryPic}}</div>
                   <a v-if="entry_pic!==''" :href="entry_pic" target="_blank">
-                    <img :src="entry_pic" style="width:80%;margin: 0px auto" />
+                    <img :src="entry_pic" style="width:500px;;margin: 0px auto" />
                   </a>
                 </a>
               </div>
-              <div style="margin-top: 20px;">身份证扫描件</div>
-              <hr class="hr1">
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="身份证扫描件" name="sfzzp">
+            <div class="div-tab-item">
               <div style="text-align: center">
-                <div v-if="idcarda===''" class="no-pic">{{loadingIdCarda}}</div>
+                <div v-if="idcarda===''" class="no-idcard">{{loadingIdCarda}}</div>
                 <a v-if="idcarda!==''" :href="idcarda" target="_blank">
                   <img :src="idcarda" style="width:80%;margin: 0px auto" />
                 </a>
               </div>
               <div style="text-align: center">
-                <div v-if="idcardb===''" class="no-pic">{{loadingIdCardb}}</div>
+                <div v-if="idcardb===''" class="no-idcard">{{loadingIdCardb}}</div>
                 <a v-if="idcardb!==''" :href="idcardb" target="_blank">
                   <img :src="idcardb" style="width:80%;margin: 0px auto" />
                 </a>
@@ -172,7 +171,7 @@
     data() {
 
       return {
-        activeTabName: 'zpzl',
+        activeTabName: 'rzzp',
         idcard_pic: '',
         entry_pic: '',
         name: '',
@@ -249,6 +248,7 @@
         // console.log('this.activeTabName', this.activeTabName)
       },
       initData() {
+        this.activeTabName = 'rzzp'
         this.idcard_pic = '/static/photo_no.jpg'
         this.entry_pic = ''
         this.idcarda = ''
