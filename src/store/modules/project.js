@@ -10,7 +10,8 @@ import {
   queryProjectPersonInDay,
   queryInOutDetail,
   queryPersonWorktime,
-  queryProjectWorktime
+  queryProjectWorktime,
+  queryPersonDatum
 } from '@/api/person'
 import Cookies from 'js-cookie'
 import hasPermissionToOperation from '@/utils/permissionUrl' // 权限判断函数
@@ -598,6 +599,20 @@ const project = {
         queryProjectWorktime(param).then(response => {
           const _data = response.data
           // console.log('queryProjectWorktime', _data)
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 根据用户ID信息查询档案资料
+    QueryPersonDatum({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryPersonDatum(param).then(response => {
+          const _data = response.data
+          console.log('queryPersonDatum', _data)
           resolve(_data)
         }).catch(error => {
           reject(error)

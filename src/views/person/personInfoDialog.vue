@@ -157,6 +157,7 @@
           if (newVal.show === true) {
             this.initData()
             this.getProjectPersonInfo()
+            this.getPersonDatum()
             // this.getPerson()
           } else {
             this.initData()
@@ -229,20 +230,21 @@
 
 
       },
-      // getPerson() {
-      //   const param = {
-      //     method: 'query_person_list',
-      //     project_id: this.project_id,
-      //     id: this.personInfoDialog.person_id
-      //   }
-      //   this.$store.dispatch('QueryProjectPersons', param).then((personInfo) => {
-      //     console.log('personInfo1', personInfo)
-      //     //   this.setProjectInfo();
-
-      //   }).catch(() => {
-      //     this.loading = false
-      //   })
-      // },
+      getPersonDatum() {
+        const param = {
+          method: 'query',
+          project_id: this.project_id,
+          person_id: this.personInfoDialog.person_id
+        }
+        console.log('this.personInfoDialog', this.personInfoDialog)
+        this.$store.dispatch('QueryPersonDatum', param).then((data_list) => {
+          console.log("-data-->", data_list)
+          
+        }).catch((e) => {
+          console.log('e', e)
+          // this.loading = false
+        })
+      },
       handleWorktimeLogSubmit() {
         const param = {
           show: true,

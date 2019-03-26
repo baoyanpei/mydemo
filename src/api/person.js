@@ -320,3 +320,27 @@ export function queryProjectWorktime(data) {
     data: data
   })
 }
+
+/*
+/api/datum/person:
+
+query(self, params):
+'''
+根据用户ID信息查询档案资料
+一个用户保留最新一套4类资料，上传文件的pdf地址
+参数：
+project_id:
+person_id:
+return {"status":"success","msg":'',"data":[]}
+
+datum_type：资料类型1安全责任书2劳动合同3安全交底4技术交底
+datum_file_url：资料文件地址
+'''
+*/
+export function queryPersonDatum(data) {
+  return request({
+    url: 'api/datum/person',
+    method: 'post',
+    data: data
+  })
+}
