@@ -63,19 +63,24 @@
               <hr class="hr1">
               <div style="text-align: center">
                 <a :href="entry_pic" target="_blank">
-                  <img :src="entry_pic" style="width:80%;margin: 0px auto" />
+
+                  <div v-if="entry_pic===''" class="no-pic">{{loadingEntryPic}}</div>
+                  <a v-if="entry_pic!==''" :href="entry_pic" target="_blank">
+                    <img :src="entry_pic" style="width:80%;margin: 0px auto" />
+                  </a>
                 </a>
               </div>
               <div style="margin-top: 20px;">身份证扫描件</div>
               <hr class="hr1">
               <div style="text-align: center">
-                <a :href="idcarda" target="_blank">
+                <div v-if="idcarda===''" class="no-pic">{{loadingIdCarda}}</div>
+                <a v-if="idcarda!==''" :href="idcarda" target="_blank">
                   <img :src="idcarda" style="width:80%;margin: 0px auto" />
                 </a>
-
               </div>
               <div style="text-align: center">
-                <a :href="idcardb" target="_blank">
+                <div v-if="idcardb===''" class="no-pic">{{loadingIdCardb}}</div>
+                <a v-if="idcardb!==''" :href="idcardb" target="_blank">
                   <img :src="idcardb" style="width:80%;margin: 0px auto" />
                 </a>
               </div>
@@ -168,7 +173,6 @@
 
       return {
         activeTabName: 'zpzl',
-
         idcard_pic: '',
         entry_pic: '',
         name: '',
@@ -184,7 +188,11 @@
         currentPage: 0,
         pageCount: 0,
         isshowpdf: true,
-        datum_file: new Map()
+        datum_file: new Map(),
+        loadingEntryPic: '',
+        loadingIdCarda: '',
+        loadingIdCardb: '',
+
       }
     },
     computed: {
@@ -242,9 +250,9 @@
       },
       initData() {
         this.idcard_pic = '/static/photo_no.jpg'
-        this.entry_pic = '/static/photo_no.jpg'
-        this.idcarda = '/static/noidcard.jpeg'
-        this.idcardb = '/static/noidcard.jpeg'
+        this.entry_pic = ''
+        this.idcarda = ''
+        this.idcardb = ''
         this.name = ""
         this.age = ""
         this.mobile = ""
@@ -253,7 +261,9 @@
         this.zhuanye = ''
         this.idcard_no = ''
         this.datum_file = new Map()
-
+        this.loadingEntryPic = '正在查询入职照片'
+        this.loadingIdCarda = '正在查询身份证正面照片'
+        this.loadingIdCardb = '正在查询身份证反面照片'
       },
       getProjectPersonInfo() {
         const param = {
@@ -276,9 +286,22 @@
           this.idcard_no = _personInfo.idcard_no
           this.bumen = _personInfo.group_name_level[0]
           this.zhuanye = _personInfo.group_name_level[1]
-          this.entry_pic = _personInfo.entry_pic
-          this.idcarda = _personInfo.idcarda
-          this.idcardb = _personInfo.idcardb
+          if (_personInfo.entry_pic !== undefined && _personInfo.entry_pic !== '') {
+            this.entry_pic = _personInfo.entry_pic
+          } else {
+            this.loadingEntryPic = '尚未拍摄入职照片'
+          }
+          if (_personInfo.idcarda !== undefined && _personInfo.idcarda !== '') {
+            this.idcarda = _personInfo.idcarda
+          } else {
+            this.loadingIdCarda = '尚未上传身份证正面照片'
+          }
+          if (_personInfo.idcardb !== undefined && _personInfo.idcardb !== '') {
+            this.idcardb = _personInfo.idcardb
+          } else {
+            this.loadingIdCardb = '尚未上传身份证反面照片'
+          }
+
           this.age = _personInfo.age
         }).catch(() => {
           this.loading = false
