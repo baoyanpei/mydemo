@@ -7,7 +7,7 @@
 
 ```bash
 # 克隆项目
-git clone http://git.buskey.cn/hanxiang/bim-web.git
+git clone http://git.buskey.cn/hanxiang/yide-smz.git
 
 # 安装依赖
 npm install
