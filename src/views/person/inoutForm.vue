@@ -436,13 +436,18 @@
         //     filename = `${filename}_${this.personInoutForm.GroupList[0]}`
         // }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '统计开始日期', '统计结束日期']
-          const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'inDay', 'countDay', 'sTime', 'eTime']
+          let gz = "      "
+          let ff = "      "
+          let qz = "      "
+          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '统计开始日期', '统计结束日期', '工资', '发放', '签字']
+          const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'inDay', 'countDay', 'sTime', 'eTime',
+            'gz', 'ff', 'qz'
+          ]
           let list = []
           let xuhao = 0
           this.personInoutList.forEach(person => {
             list.push({
-              xuhao: ++xuhao, //序号
+              // xuhao: ++xuhao, //序号
               name: person.name,
               mobile: person.mobile,
               group0: person.group_name_level[0],
@@ -450,8 +455,15 @@
               inDay: person.inDay,
               countDay: person.countDay,
               sTime: sTime,
-              eTime: eTime
+              eTime: eTime,
+              gz: gz,
+              ff: ff,
+              qz: qz
             })
+          })
+          list = lodash.orderBy(list, ['group0', 'group1', 'name'], ['asc', 'asc', 'asc']);
+          list.forEach(data => {
+            data.xuhao = ++xuhao
           })
           // const list = this.personInoutList
           const data = this.formatJson(filterVal, list)

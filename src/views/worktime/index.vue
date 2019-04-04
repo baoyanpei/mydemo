@@ -118,8 +118,32 @@
         this.reloadData()
       }
       // 
-      const start = moment().add('month', 0).format('YYYY-MM') + '-01'
-      this.worktimeForm.InoutDaterange = [start, moment()]
+      // const start = moment().add('month', 0).format('YYYY-MM') + '-01'
+      // this.worktimeForm.InoutDaterange = [start, moment()]
+
+
+
+      // 每月的某一天，如每月10日
+      const monthDay = moment().add('month', 0).format('YYYY-MM') + '-10'
+      // console.log('monthDay', monthDay)
+      // 是否在某月某天之前
+      const isBefore = moment().isBefore(monthDay);
+      // console.log('isBefore', isBefore)
+      let _FirstDay = moment()
+      let _LastDay = moment()
+      if (isBefore) {
+        // 上个月的第一天
+        _FirstDay = moment().add('month', -1).format('YYYY-MM') + '-01'
+        // 上个月的最后一天
+        _LastDay = moment(_FirstDay).add('month', 1).add('days', -1).format('YYYY-MM-DD')
+
+      } else {
+        // 本月的第一天
+        _FirstDay = moment().add('month', 0).format('YYYY-MM') + '-01'
+        // 本月的最后一天
+        // _LastDay = moment(_FirstDay).add('month', 1).add('days', -1).format('YYYY-MM-DD')
+      }
+      this.worktimeForm.InoutDaterange = [_FirstDay, _LastDay]
     },
 
     methods: {
@@ -351,15 +375,20 @@
         //     filename = `${filename}_${this.worktimeForm.GroupList[0]}`
         // }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '工作时长(小时)', '统计开始日期', '统计结束日期']
+          let gz = "      "
+          let ff = "      "
+          let qz = "      "
+          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '工作时长(小时)', '统计开始日期', '统计结束日期', '工资', '发放',
+            '签字'
+          ]
           const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'inDay', 'countDay', 'worktime',
-            'sTime', 'eTime'
+            'sTime', 'eTime', 'gz', 'ff', 'qz'
           ]
           let list = []
           let xuhao = 0
           this.personInoutList.forEach(person => {
             list.push({
-              xuhao: ++xuhao, //序号
+              // xuhao: ++xuhao, //序号
               name: person.name,
               mobile: person.mobile,
               group0: person.group_name_level[0],
@@ -368,8 +397,16 @@
               countDay: person.countDay,
               sTime: sTime,
               eTime: eTime,
-              worktime: person.worktime
+              worktime: person.worktime,
+              gz: gz,
+              ff: ff,
+              qz: qz
             })
+          })
+
+          list = lodash.orderBy(list, ['group0', 'group1', 'name'], ['asc', 'asc', 'asc']);
+          list.forEach(data => {
+            data.xuhao = ++xuhao
           })
           // const list = this.personInoutList
           const data = this.formatJson(filterVal, list)
