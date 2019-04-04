@@ -31,11 +31,11 @@
           </el-form>
           <hr class="hr1" />
           <el-table v-loading="loading" :data="personInoutList" height="550px" highlight-current-row
-            @row-click="handleRowClick" style="width: 100%" size="mini" :show-header="true" header-align="center"
-            :default-sort="{prop: 'name', order: 'ascending'}">
-            <el-table-column fixed type="index" width="40">
+            @row-click="handleRowClick" @sort-change="handleSortChange" style="width: 100%" size="mini"
+            :show-header="true" header-align="center" :default-sort="{prop: 'group_name_level[0]', order: 'ascending'}">
+            <el-table-column type="index" width="40">
             </el-table-column>
-            <el-table-column fixed property="name" sortable label="姓名" width="80" header-align="center">
+            <el-table-column property="name" sortable label="姓名" width="80" header-align="center">
             </el-table-column>
             <el-table-column property="group_name_level[0]" sortable label="部门" width="90" header-align="center">
             </el-table-column>
@@ -231,7 +231,7 @@
           } else {
             person.worktime = 0
           }
-
+          person.worktime = parseFloat(person.worktime)
           // console.log('this.projectWorktime',)
           this.personInoutList.push(person)
         }
@@ -431,6 +431,27 @@
       handleRowClick(row, event, column) {
 
       },
+      handleSortChange(column) {
+        // console.log('column', column)
+        // console.log('this.personInoutList', this.personInoutList)
+
+        this.personInoutList = lodash.orderBy(this.personInoutList, ['group_name_level[0]', 'group_name_level[1]',
+          'name'
+        ], ['asc', 'asc', 'asc']);
+
+      },
+      // changesort(a, b) {
+      //   // console.log('ab', a.worktime, b.worktime)
+      //   console.log(parseFloat(a.worktime), parseFloat(b.worktime), parseFloat(a.worktime) >= parseFloat(b.worktime))
+      //   if (parseFloat(a.worktime) >= parseFloat(b.worktime)) {
+
+      //     return true;
+      //   } else {
+      //     // console.log(b.date)
+      //     return false;
+      //   }
+
+      // }
     }
 
   };

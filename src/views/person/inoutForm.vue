@@ -46,6 +46,7 @@
       <hr class="hr1" />
       <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="350px"
         :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
+        @sort-change="handleSortChange"
         size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
         <el-table-column fixed type="index" width="40">
         </el-table-column>
@@ -531,7 +532,16 @@
         // console.log('this.personInoutForm.person_name', this.personInoutForm.person_name)
       },
       dateChangeHandle() {},
-      groupChangeHandle() {}
+      groupChangeHandle() {},
+      handleSortChange(column) {
+        // console.log('column', column)
+        // console.log('this.personInoutList', this.personInoutList)
+
+        this.personInoutList = lodash.orderBy(this.personInoutList, ['group_name_level[0]', 'group_name_level[1]',
+          'name'
+        ], ['asc', 'asc', 'asc']);
+
+      },
     },
     mounted() {
       console.log('project_id', this.project_id)
