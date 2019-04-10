@@ -122,7 +122,7 @@
         this.$confirm('是否确定修改当前的公告?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
+          type: 'info',
           // center: true
         }).then(() => {
           const param = {
