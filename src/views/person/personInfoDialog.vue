@@ -48,107 +48,114 @@
             </el-row>
             <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
               style="position:absolute;top:85px;right:20px;">上工日志</el-button>
+
             <!-- <el-form-item label="姓名:">
                 {{name}}
               </el-form-item> -->
           </el-col>
         </el-row>
+        <div v-if="personInfoDialog.opShow">
+          <el-button type="danger" @click.native.prevent="handleWorktimeLogSubmit()"
+            style="position:absolute;top:45px;right:160px;" size="mini">开除</el-button>
+          <el-button type="warning" @click.native.prevent="handleWorktimeLogSubmit()"
+            style="position:absolute;top:45px;right:90px;" size="mini">注销</el-button>
+          <el-button type="warning" @click.native.prevent="handleWorktimeLogSubmit()"
+            style="position:absolute;top:45px;right:20px;" size="mini">辞职</el-button>
+        </div>
+
         <el-row>
-
-        </el-row>
-        <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
-          <el-tab-pane label="入职照片" name="rzzp">
-            <div class="div-tab-item">
-              <div style="text-align: center">
-                <a :href="entry_pic" target="_blank">
-                  <div v-if="entry_pic===''" class="no-pic">{{loadingEntryPic}}</div>
-                  <a v-if="entry_pic!==''" :href="entry_pic" target="_blank">
-                    <img :src="entry_pic" style="width:500px;;margin: 0px auto" />
+          <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
+            <el-tab-pane label="入职照片" name="rzzp">
+              <div class="div-tab-item">
+                <div style="text-align: center">
+                  <a :href="entry_pic" target="_blank">
+                    <div v-if="entry_pic===''" class="no-pic">{{loadingEntryPic}}</div>
+                    <a v-if="entry_pic!==''" :href="entry_pic" target="_blank">
+                      <img :src="entry_pic" style="width:500px;;margin: 0px auto" />
+                    </a>
                   </a>
-                </a>
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="身份证扫描件" name="sfzzp">
-            <div class="div-tab-item">
-              <div style="text-align: center">
-                <div v-if="idcarda===''" class="no-idcard">{{loadingIdCarda}}</div>
-                <a v-if="idcarda!==''" :href="idcarda" target="_blank">
-                  <img :src="idcarda" style="width:80%;margin: 0px auto" />
-                </a>
+            </el-tab-pane>
+            <el-tab-pane label="身份证扫描件" name="sfzzp">
+              <div class="div-tab-item">
+                <div style="text-align: center">
+                  <div v-if="idcarda===''" class="no-idcard">{{loadingIdCarda}}</div>
+                  <a v-if="idcarda!==''" :href="idcarda" target="_blank">
+                    <img :src="idcarda" style="width:80%;margin: 0px auto" />
+                  </a>
+                </div>
+                <div style="text-align: center">
+                  <div v-if="idcardb===''" class="no-idcard">{{loadingIdCardb}}</div>
+                  <a v-if="idcardb!==''" :href="idcardb" target="_blank">
+                    <img :src="idcardb" style="width:80%;margin: 0px auto" />
+                  </a>
+                </div>
               </div>
-              <div style="text-align: center">
-                <div v-if="idcardb===''" class="no-idcard">{{loadingIdCardb}}</div>
-                <a v-if="idcardb!==''" :href="idcardb" target="_blank">
-                  <img :src="idcardb" style="width:80%;margin: 0px auto" />
-                </a>
-              </div>
-            </div>
 
-          </el-tab-pane>
-          <el-tab-pane label="安全责任书" name="aqzrs">
-            <div class="div-tab-item-pdf">
-              <iframe id='previewPdf1' v-if="datum_file.has(1)" frameborder="no" border="0" marginwidth="0"
-                marginheight="0" scrolling="no" allowtransparency="yes" :src="datum_file.get(1).pdfurl" width="100%">
-              </iframe>
-              <div v-if="!datum_file.has(1)" class="no-datum">
-                尚未上传资料
+            </el-tab-pane>
+            <el-tab-pane label="安全责任书" name="aqzrs">
+              <div class="div-tab-item-pdf">
+                <iframe id='previewPdf1' v-if="datum_file.has(1)" frameborder="no" border="0" marginwidth="0"
+                  marginheight="0" scrolling="no" allowtransparency="yes" :src="datum_file.get(1).pdfurl" width="100%">
+                </iframe>
+                <div v-if="!datum_file.has(1)" class="no-datum">
+                  尚未上传资料
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="劳动合同" name="ldht">
-            <div class="div-tab-item-pdf">
-              <iframe id='previewPdf2' v-if="datum_file.has(2)" :src="datum_file.get(2).pdfurl" frameborder="no"
-                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
-              </iframe>
-              <div v-if="!datum_file.has(2)" class="no-datum">
-                尚未上传资料
+            </el-tab-pane>
+            <el-tab-pane label="劳动合同" name="ldht">
+              <div class="div-tab-item-pdf">
+                <iframe id='previewPdf2' v-if="datum_file.has(2)" :src="datum_file.get(2).pdfurl" frameborder="no"
+                  border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+                </iframe>
+                <div v-if="!datum_file.has(2)" class="no-datum">
+                  尚未上传资料
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="安全交底" name="aqjd">
-            <div class="div-tab-item-pdf">
-              <iframe id='previewPdf3' v-if="datum_file.has(3)" :src="datum_file.get(3).pdfurl" frameborder="no"
-                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
-              </iframe>
-              <div v-if="!datum_file.has(3)" class="no-datum">
-                尚未上传资料
+            </el-tab-pane>
+            <el-tab-pane label="安全交底" name="aqjd">
+              <div class="div-tab-item-pdf">
+                <iframe id='previewPdf3' v-if="datum_file.has(3)" :src="datum_file.get(3).pdfurl" frameborder="no"
+                  border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+                </iframe>
+                <div v-if="!datum_file.has(3)" class="no-datum">
+                  尚未上传资料
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="技术交底" name="jsjd">
-            <div class="div-tab-item-pdf">
-              <iframe id='previewPdf4' v-if="datum_file.has(4)" :src="datum_file.get(4).pdfurl" frameborder="no"
-                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
-              </iframe>
-              <div v-if="!datum_file.has(4)" class="no-datum">
-                尚未上传资料
+            </el-tab-pane>
+            <el-tab-pane label="技术交底" name="jsjd">
+              <div class="div-tab-item-pdf">
+                <iframe id='previewPdf4' v-if="datum_file.has(4)" :src="datum_file.get(4).pdfurl" frameborder="no"
+                  border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+                </iframe>
+                <div v-if="!datum_file.has(4)" class="no-datum">
+                  尚未上传资料
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="三级安全教育记录卡" name="sjaqjyjlk">
-            <div class="div-tab-item-pdf">
-              <iframe id='previewPdf5' v-if="datum_file.has(5)" :src="datum_file.get(5).pdfurl" frameborder="no"
-                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
-              </iframe>
-              <div v-if="!datum_file.has(5)" class="no-datum">
-                尚未上传资料
+            </el-tab-pane>
+            <el-tab-pane label="三级安全教育记录卡" name="sjaqjyjlk">
+              <div class="div-tab-item-pdf">
+                <iframe id='previewPdf5' v-if="datum_file.has(5)" :src="datum_file.get(5).pdfurl" frameborder="no"
+                  border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+                </iframe>
+                <div v-if="!datum_file.has(5)" class="no-datum">
+                  尚未上传资料
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="考试试题及结果" name="ksstjjg">
-            <div class="div-tab-item-pdf">
-              <iframe id='previewPdf6' v-if="datum_file.has(6)" :src="datum_file.get(6).pdfurl" frameborder="no"
-                border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
-              </iframe>
-              <div v-if="!datum_file.has(6)" class="no-datum">
-                尚未上传资料
+            </el-tab-pane>
+            <el-tab-pane label="考试试题及结果" name="ksstjjg">
+              <div class="div-tab-item-pdf">
+                <iframe id='previewPdf6' v-if="datum_file.has(6)" :src="datum_file.get(6).pdfurl" frameborder="no"
+                  border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" width="100%">
+                </iframe>
+                <div v-if="!datum_file.has(6)" class="no-datum">
+                  尚未上传资料
+                </div>
               </div>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-
-
+            </el-tab-pane>
+          </el-tabs>
+        </el-row>
       </div>
     </el-dialog>
 

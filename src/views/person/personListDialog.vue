@@ -3,7 +3,7 @@
 
 </style>
 <template>
-  <el-dialog :modal="false" width="750px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
+  <el-dialog :modal="false" width="820px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
     @open="openPersonListDialogHandle" :visible.sync="personListDialog.show" title="人员信息">
     <div id="person-list-from" class="person-list-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
@@ -77,11 +77,11 @@
             <p v-html="statusName(scope.row.status,true)"></p>
           </template>
         </el-table-column>
-        <!-- <el-table-column align="center" label="操作">
+        <el-table-column align="center" label="操作">
           <template slot-scope="scope">
-            <el-button size="mini" type="warning" disabled>操作</el-button>
+            <el-button size="mini" type="warning" @click="handleOperClick(scope.row)">操作</el-button>
           </template>
-        </el-table-column> -->
+        </el-table-column>
       </el-table>
     </div>
   </el-dialog>
@@ -245,7 +245,7 @@
       },
       getProjectPersonInout(isExport) {
         this.loading = true
-        
+
         const param = {
           method: 'query_person_list',
           project_id: this.project_id,
@@ -440,6 +440,16 @@
       handleNameClick(row) {
         const param = {
           show: true,
+          ...row
+        }
+        this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
+      handleOperClick(row) {
+        const param = {
+          show: true,
+          opShow: true,
           ...row
         }
         this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {

@@ -171,7 +171,11 @@ const project = {
       // console.log('SET_PERSON_INFO_DIALOG', data)
       state.personInfoDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
-
+      console.log('opShow', data.opShow)
+      if (data.opShow === undefined) {
+        // 是否显示操作按钮
+        state.personInfoDialog.opShow = false
+      }
       state.personInfoDialog.refresh = genRandom(1, 1000)
     },
     SET_WORKTIME_FULLCALENDAR_DIALOG: (state, data) => {
