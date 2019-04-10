@@ -35,7 +35,7 @@ const model3d = {
     }
   },
   mutations: {
-    SET_MODEL_DETAIL_DIALOG: async (state, data) => { // 花名册
+    SET_MODEL_DETAIL_DIALOG: async (state, data) => { // 人员考勤
       state.modelDetailDialog = data
       console.log("datadatadata", data)
     },

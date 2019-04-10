@@ -4,7 +4,7 @@
 </style>
 <template>
   <el-dialog :modal="false" width="750px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
-    @open="openPersonListDialogHandle" :visible.sync="personListDialog.show" title="人员管理">
+    @open="openPersonListDialogHandle" :visible.sync="personListDialog.show" title="人员信息">
     <div id="person-list-from" class="person-list-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
         <div>
@@ -371,7 +371,7 @@
         this.getProjectPersonInout(isExport)
       },
       exportExcelSubmit() {
-        let filename = '人员管理'
+        let filename = '人员信息'
         if (this.personInoutForm.GroupList[0] !== 'all') {
           // console.log('GroupList', this.personInoutForm.GroupList)
           if (this.personInoutForm.GroupList.length === 1) {

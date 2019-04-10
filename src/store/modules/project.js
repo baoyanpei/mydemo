@@ -114,7 +114,7 @@ const project = {
       show: false,
       data: {}
     },
-    personInOutPercentDialog: { //花名册person 窗口
+    personInOutPercentDialog: { //人员考勤person 窗口
       refresh: 0,
       show: false,
       data: {}
@@ -185,7 +185,7 @@ const project = {
     },
 
 
-    SET_PERSON_INOUT_DIALOG: async (state, data) => { // 花名册
+    SET_PERSON_INOUT_DIALOG: async (state, data) => { // 人员考勤
       if (data.show === true) {
         const _hasPermission = await hasPermissionToOperation({
           project_id: state.project_id,
@@ -199,7 +199,7 @@ const project = {
         state.personInoutDialog = data
       }
     },
-    SET_PERSON_LIST_DIALOG: async (state, data) => { // 花名册
+    SET_PERSON_LIST_DIALOG: async (state, data) => { // 人员考勤
       if (data.show === true) {
         const _hasPermission = await hasPermissionToOperation({
           project_id: state.project_id,
@@ -460,7 +460,7 @@ const project = {
       })
     },
 
-    // 花名册person详细窗口
+    // 人员考勤person详细窗口
     SetInOutPersonDialog({
       commit
     }, param) {

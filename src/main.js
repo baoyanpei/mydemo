@@ -48,11 +48,12 @@ import {
   faMobileAlt,
   faHome,
   faChartLine,
-  faUserCog
+  faUserCog,
+  faDesktop
 } from '@fortawesome/free-solid-svg-icons'
 // 图标来源
 // https://fontawesome.com/icons?d=gallery&s=solid&m=free
-library.add(faQrcode, faUser, faHome, faUserCog, faChartLine, faChartBar, faMobileAlt, faCoffee, faUserSecret, faCalendarAlt, faBookOpen, faAddressCard, faCalendarCheck, faCalendarPlus, faStreetView, faListAlt)
+library.add(faQrcode, faDesktop, faUser, faHome, faUserCog, faChartLine, faChartBar, faMobileAlt, faCoffee, faUserSecret, faCalendarAlt, faBookOpen, faAddressCard, faCalendarCheck, faCalendarPlus, faStreetView, faListAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('icon', Icon)
 Vue.use(VueWorker)

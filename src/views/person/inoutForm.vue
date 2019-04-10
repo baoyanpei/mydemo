@@ -4,7 +4,7 @@
 </style>
 <template>
   <el-dialog :modal="false" width="550px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
-    @open="openPersonInoutDialogHandle" :visible.sync="personInoutDialog.show" title="花名册">
+    @open="openPersonInoutDialogHandle" :visible.sync="personInoutDialog.show" title="人员考勤">
     <div id="inout-from" class="inout-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
         <el-form-item prop="InoutDaterange" label="时间范围" :rules="ruleInoutDaterange">
@@ -404,7 +404,7 @@
 
       },
       exportExcelSubmit() {
-        let filename = '花名册'
+        let filename = '人员考勤'
         const sTime = moment(this.personInoutForm.InoutDaterange[0]).format('YYYY年MM月DD日')
         const eTime = moment(this.personInoutForm.InoutDaterange[1]).format('YYYY年MM月DD日')
         if (this.personInoutForm.GroupList[0] !== 'all') {

@@ -172,7 +172,7 @@ url:
 天气 tianqi_mobile
 门禁 menjin_mobile
 
-花名册 huamingce_admin
+人员考勤 huamingce_admin
 场内人员 changneiyuanyuan_admin
 通讯录 tongxunlu_admin
 日历 rili_admin

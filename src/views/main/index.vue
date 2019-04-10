@@ -34,7 +34,7 @@
       </div> -->
       <div class="bim-toolbar2">
         <div>
-          <el-tooltip class="item" effect="dark" content="花名册" placement="top">
+          <el-tooltip class="item" effect="dark" content="人员考勤" placement="top">
             <el-button @click="personInoutDialogHandle">
               <font-awesome-icon icon="book-open" size="2x" />
             </el-button>
@@ -44,7 +44,7 @@
               <font-awesome-icon icon="street-view" size="2x" />
             </el-button>
           </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="人员管理" placement="top">
+          <el-tooltip class="item" effect="dark" content="人员信息" placement="top">
             <el-button @click="personListDialogHandle">
               <font-awesome-icon icon="user-cog" size="2x" />
             </el-button>
@@ -53,6 +53,12 @@
             <el-button @click="personFullCalendarHandle" style="padding-top:4px;">
               <!-- <icon name="el-icon-date" scale="1.7"></icon> -->
               <font-awesome-icon icon="calendar-alt" size="2x" />
+            </el-button>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="发布管理" placement="top">
+            <el-button @click="publishHandle" style="padding-top:4px;">
+              <!-- <icon name="el-icon-date" scale="1.7"></icon> -->
+              <font-awesome-icon icon="desktop" size="2x" />
             </el-button>
           </el-tooltip>
         </div>
