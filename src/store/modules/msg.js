@@ -1,5 +1,6 @@
 import {
   queryInfoMsg,
+  addInfoMsg
 } from '@/api/msg'
 
 const msg = {
@@ -24,7 +25,7 @@ const msg = {
   },
 
   actions: {
-    // 人员考勤person详细窗口
+    // Publish窗口
     SetPublishDialog({
       commit
     }, param) {
@@ -35,7 +36,32 @@ const msg = {
         resolve()
 
       })
-    }
+    },
+    // 查询
+    QueryInfoMsg({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryInfoMsg(param).then(response => {
+          const _data = response.data
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 修改信息
+    AddInfoMsg({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        addInfoMsg(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
   }
 }
 

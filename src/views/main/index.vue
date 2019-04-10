@@ -261,6 +261,8 @@
 
         if (message.destinationName === this.topicCount) {
           this.mqttUserCount(message.payloadString)
+        } else if (message.destinationName === 'BIM/door/' + this.project_id + '/cmd') {
+          console.log('msg', message.destinationName + message.payloadString)
         } else {
           this.$refs.gateArea.receiveData(message)
         }

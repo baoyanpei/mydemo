@@ -88,10 +88,26 @@
     },
     methods: {
       initData() {
-
+        this.publishForm = {
+          msg: ''
+        }
       },
       getMsg() {
-
+        const param = {
+          method: 'query',
+          project_id: this.project_id,
+          rows: 1,
+          show_led: 1
+        }
+        this.$store.dispatch('QueryInfoMsg', param).then((msgList) => {
+          //   console.log('msgList', msgList)
+          if (msgList.length > 0) {
+            let _msg = msgList[0]
+            if (_msg.show_led === 1) {
+              this.publishForm.msg = _msg.msg_cont
+            }
+          }
+        })
       },
       // 打开窗口
       openPublishDialog() {
@@ -103,7 +119,35 @@
 
       },
       handleMsgSubmit() {
-        console.log('12312312')
+        this.$confirm('是否确定修改当前的公告?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          // center: true
+        }).then(() => {
+          const param = {
+            method: 'add',
+            project_id: this.project_id,
+            msg_cont: this.publishForm.msg,
+            start_time: moment().format('YYYY-MM-DD HH:mm:ss'),
+            end_time: moment().add('day', 365).format('YYYY-MM-DD HH:mm:ss'),
+
+            show_led: 1
+          }
+          this.$store.dispatch('AddInfoMsg', param).then((data) => {
+            console.log('data', data)
+            if (data.status === 'success') {
+              this.$message({
+                message: '公告修改成功',
+                type: 'success'
+              })
+            }
+          })
+
+        }).catch(() => {
+
+        });
+
 
 
       },
