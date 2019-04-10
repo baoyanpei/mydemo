@@ -29,6 +29,9 @@
     <!--人员信息对话框-->
     <PersonListDialog></PersonListDialog>
 
+    <!--发布信息对话框-->
+    <PublishDialog></PublishDialog>
+
   </div>
 </template>
 
@@ -57,6 +60,8 @@
   import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
   import PersonGoOutDialog from './views/person/personGoOutDialog'
   import LogsPersonComfirmDialog from './views/person/logsPersonComfirmDialog'
+
+  import PublishDialog from './views/publish/publishDialog'
   export default {
     name: 'App',
     components: {
@@ -72,7 +77,8 @@
       LogsPersonComfirmDialog,
       PersonInfoDialog,
       PersonListDialog,
-      WorktimeFullCalendarDialog
+      WorktimeFullCalendarDialog,
+      PublishDialog
     },
     directives: {
       elDragDialog

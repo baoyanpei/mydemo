@@ -334,6 +334,14 @@
 
         })
       },
+      publishHandle() {
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('SetPublishDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
       subscribe() {
         if (this.isConnectMqtt === true && this.project_id !== null) {
           this.topicUserInfo = `BIM/door/${this.project_id}/#` //订阅用户信息

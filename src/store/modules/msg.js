@@ -29,7 +29,7 @@ const msg = {
       commit
     }, param) {
       return new Promise((resolve, reject) => {
-
+        console.log('asd')
         commit('SET_PUBLISH_DIALOG', param)
         console.log('param123123', param)
         resolve()
