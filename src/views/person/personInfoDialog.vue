@@ -55,7 +55,7 @@
           </el-col>
         </el-row>
         <div v-if="personInfoDialog.opShow">
-          <el-button type="danger" @click.native.prevent="handleWorktimeLogSubmit()"
+          <el-button type="danger" @click.native.prevent="handlePersonQuitLeftLogSubmit()"
             style="position:absolute;top:45px;right:160px;" size="mini">开除</el-button>
           <el-button type="warning" @click.native.prevent="handleWorktimeLogSubmit()"
             style="position:absolute;top:45px;right:90px;" size="mini">注销</el-button>
@@ -349,8 +349,17 @@
       },
       pdferr(errurl) {
         console.log(errurl);
-      }
+      },
+      handlePersonQuitLeftLogSubmit() {
+        const param = {
+          show: true,
+          op_status:4,//人员状态 -1注销0正常1需要激活2离职3手动注销4开除10是默认值
+          ...this.personInfoDialog
+        }
+        this.$store.dispatch('SetPersonQuitLeftDialog', param).then(() => {}).catch(() => {
 
+        })
+      }
     },
     mounted() {
 

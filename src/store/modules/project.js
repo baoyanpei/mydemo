@@ -86,6 +86,11 @@ const project = {
       show: false,
       data: {}
     },
+    personQuitLeftDialog: { //person辞退、辞职窗口
+      refresh: 0,
+      show: false,
+      data: {}
+    },
     worktimeFullCalendarDialog: { // 人员上工日历dialog
       refresh: 0,
       show: false,
@@ -177,6 +182,17 @@ const project = {
         state.personInfoDialog.opShow = false
       }
       state.personInfoDialog.refresh = genRandom(1, 1000)
+    },
+    SET_PERSON_QUIT_LEFT_DIALOG: (state, data) => {
+      // console.log('SET_PERSON_INFO_DIALOG', data)
+      state.personQuitLeftDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      console.log('opShow', data.opShow)
+      if (data.opShow === undefined) {
+        // 是否显示操作按钮
+        state.personQuitLeftDialog.opShow = false
+      }
+      state.personQuitLeftDialog.refresh = genRandom(1, 1000)
     },
     SET_WORKTIME_FULLCALENDAR_DIALOG: (state, data) => {
       // console.log('SET_WORKTIME_FULLCALENDAR_DIALOG', data)
@@ -387,6 +403,14 @@ const project = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SET_PERSON_INFO_DIALOG', param)
+        resolve()
+      })
+    },
+    SetPersonQuitLeftDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PERSON_QUIT_LEFT_DIALOG', param)
         resolve()
       })
     },
