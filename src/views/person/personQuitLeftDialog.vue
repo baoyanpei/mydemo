@@ -36,7 +36,7 @@
           <el-input type="textarea" v-model="personQuitLeftData.beizhu" :rows="6"></el-input>
           <hr class="hr1" />
           <div style="text-align: center">
-            <el-button @click="submitlHandle" type="primary" @click="" size="mini">确定</el-button>
+            <el-button @click="submitlHandle" type="primary" size="mini">确定</el-button>
             <el-button @click="cancelHandle" size="mini" style="margin-left: 100px;">取消</el-button>
           </div>
 
@@ -128,7 +128,7 @@
         })
       },
       submitlHandle(){
-          
+
       }
 
     },
