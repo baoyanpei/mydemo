@@ -108,6 +108,7 @@ const project = {
       data: {}
     },
     personListChanged: 0, // 数据发生变化
+    personInfoChanged: 0, // 数据发生变化
     personNowinDialog: { //person在场内窗口
       show: false,
       data: {}
@@ -299,7 +300,10 @@ const project = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.personListChanged = genRandom(1, 1000)
     },
-
+    SET_PERSON_INFO_CHANGED: (state) => {
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.personInfoChanged = genRandom(1, 1000)
+    },
     
     SET_PROJECT_PERSION_INOUT_LIST: (state, data) => {
       state.projectPersonInoutList = data
@@ -525,7 +529,14 @@ const project = {
         resolve()
       })
     },
-    
+    SetPersonInfoChanged({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PERSON_INFO_CHANGED')
+        resolve()
+      })
+    },
     // 查询项目进出人员列表
     QueryProjectPersonInout({
       commit

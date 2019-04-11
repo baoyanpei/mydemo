@@ -74,7 +74,7 @@
         </el-table-column>
         <el-table-column property="status" sortable align="center" label="人员状态" width="100" header-align="center">
           <template slot-scope="scope">
-            <p v-html="statusName(scope.row.status,true)"></p>
+            <span v-html="statusName(scope.row,true)"></span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
@@ -178,14 +178,22 @@
       trantime: (time) => {
         return moment(time).format('YYYY-MM-DD')
       },
-      statusName: (value, isHTML) => {
+      statusName: (data, isHTML) => {
         // 人员状态 0正常2辞职4开除10是默认值
+        let status = data.status
         let _statusName = ''
-        switch (value) {
+        switch (status) {
           case 0:
             _statusName = '正常'
+            if (data.rfid_wg === '') {
+              _statusName = "未开卡"
+            }
             if (isHTML) {
-              _statusName = '<span class="statu0">' + _statusName + '</span>'
+              if (data.rfid_wg === '') {
+                _statusName = '<span class="statu2">' + _statusName + '</span>'
+              } else {
+                _statusName = '<span class="statu0">' + _statusName + '</span>'
+              }
             }
             break;
           case 2:
@@ -204,7 +212,7 @@
             _statusName = ''
             break;
           default:
-            _statusName = value
+            _statusName = status
             break
         }
         return _statusName

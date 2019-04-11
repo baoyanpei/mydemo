@@ -55,12 +55,20 @@
           </el-col>
         </el-row>
         <div v-if="personInfoDialog.opShow">
-          <el-button type="danger" @click.native.prevent="handlePersonQuitLeftLogSubmit()"
-            style="position:absolute;top:45px;right:170px;" size="mini">开除</el-button>
-          <el-button type="warning" @click.native.prevent="handleZhuXiaoKaSubmit()"
-            style="position:absolute;top:45px;right:90px;" size="mini">注销卡</el-button>
-          <el-button type="warning" @click.native.prevent="handleChiZhiSubmit()"
-            style="position:absolute;top:45px;right:20px;" size="mini">辞职</el-button>
+          <el-button v-if="BtnKaiChuDisable===false" type="danger"
+            @click.native.prevent="handlePersonQuitLeftLogSubmit()" class="btn-kaichu" size="mini">开除</el-button>
+          <el-button v-if="BtnKaiChuDisable===true" type="danger" class="btn-kaichu" size="mini" disabled>开除</el-button>
+
+          <el-button v-if="BtnZhuXiaoKaDisable===false" type="warning" @click.native.prevent="handleZhuXiaoKaSubmit()"
+            class="btn-zhuxiaoka" size="mini">注销卡</el-button>
+          <el-button v-if="BtnZhuXiaoKaDisable===true" type="warning" class="btn-zhuxiaoka" size="mini" disabled>注销卡
+          </el-button>
+
+          <el-button v-if="BtnKaiChu===false" type="warning" @click.native.prevent="handleChiZhiSubmit()"
+            class="btn-chizhi" size="mini">辞职
+          </el-button>
+          <el-button v-if="BtnKaiChu===true" type="warning" class="btn-chizhi" disabled size="mini">辞职
+          </el-button>
         </div>
 
         <el-row>
@@ -198,6 +206,9 @@
         loadingEntryPic: '',
         loadingIdCarda: '',
         loadingIdCardb: '',
+        BtnKaiChuDisable: true,
+        BtnZhuXiaoKaDisable: true,
+        BtnKaiChu: true
 
       }
     },
@@ -212,6 +223,9 @@
         set: function (newValue) {
           this.$store.state.project.personInfoDialog = newValue
         }
+      },
+      personInfoChanged() {
+        return this.$store.state.project.personInfoChanged
       }
 
     },
@@ -234,6 +248,10 @@
 
         },
         deep: true
+      },
+      personInfoChanged(curVal, oldVal) {
+        this.initData()
+        this.getProjectPersonInfo()
       },
     },
     methods: {
@@ -271,6 +289,10 @@
         this.loadingEntryPic = '正在查询入职照片'
         this.loadingIdCarda = '正在查询身份证正面照片'
         this.loadingIdCardb = '正在查询身份证反面照片'
+
+        this.BtnZhuXiaoKaDisable = true
+        this.BtnKaiChuDisable = true
+        this.BtnKaiChu = true
       },
       getProjectPersonInfo() {
         const param = {
@@ -310,6 +332,14 @@
           }
 
           this.age = _personInfo.age
+
+          if (_personInfo.status === 0) {
+            if (_personInfo.rfid_wg !== '') {
+              this.BtnZhuXiaoKaDisable = false
+            }
+            this.BtnKaiChuDisable = false
+            this.BtnKaiChu = false
+          }
         }).catch(() => {
           this.loading = false
         })
@@ -374,15 +404,19 @@
             status: -1
           }
           console.log('param', param)
-          // this.$store.dispatch('SetCardOpera', param).then((data) => {
-          //   console.log('data', data)
-          //   if (data.status === 'success') {
-          //     this.$message({
-          //       message: '注销卡成功',
-          //       type: 'success'
-          //     })
-          //   }
-          // })
+          this.$store.dispatch('SetCardOpera', param).then((data) => {
+            console.log('data', data)
+            if (data.status === 'success') {
+              this.$message({
+                message: '注销卡成功',
+                type: 'success'
+              })
+              this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
+              this.$store.dispatch('SetPersonInfoChanged', {}).then(() => {})
+
+
+            }
+          })
 
         }).catch(() => {
 
@@ -405,13 +439,15 @@
           this.$store.dispatch('SetQuitLeft', param).then((data) => {
             console.log('data', data)
             if (data.status === 'success') {
-              
+
 
               this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
+              this.$store.dispatch('SetPersonInfoChanged', {}).then(() => {})
               this.$message({
                 message: '已经完成辞职操作！',
                 type: 'success'
               })
+
             }
           })
 

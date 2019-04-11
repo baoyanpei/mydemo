@@ -194,7 +194,7 @@
           if (valid) {
             let _tipName = ''
             if (this.personQuitLeftDialog.op_status === 4) {
-                _tipName = `是否确定要开除${this.personQuitLeftDialog.name} ？`
+              _tipName = `是否确定要开除${this.personQuitLeftDialog.name} ？`
             }
             this.$confirm(_tipName, '提示', {
               confirmButtonText: '确定',
@@ -202,24 +202,33 @@
               type: 'warning',
               // center: true
             }).then(() => {
-              //   const param = {
-              //     method: 'add',
-              //     project_id: this.project_id,
-              //     msg_cont: this.publishForm.msg,
-              //     start_time: moment().format('YYYY-MM-DD HH:mm:ss'),
-              //     end_time: moment().add('day', 365).format('YYYY-MM-DD HH:mm:ss'),
+              const param = {
+                method: 'quit_left',
+                project_id: this.project_id,
+                person_id: this.personQuitLeftDialog.person_id,
+                status: 4, //-1注销0正常1需要激活2离职(辞职)3手动注销4开除10是默认值
+                remark: this.personQuitLeftData.beizhu
+              }
+              console.log('param', param)
+              this.$store.dispatch('SetQuitLeft', param).then((data) => {
+                console.log('data', data)
+                if (data.status === 'success') {
 
-              //     show_led: 1
-              //   }
-              //   this.$store.dispatch('AddInfoMsg', param).then((data) => {
-              //     console.log('data', data)
-              //     if (data.status === 'success') {
-              //       this.$message({
-              //         message: '公告修改成功',
-              //         type: 'success'
-              //       })
-              //     }
-              //   })
+
+                  this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
+                  this.$store.dispatch('SetPersonInfoChanged', {}).then(() => {})
+                  this.$message({
+                    message: `已经将 ${this.personQuitLeftDialog.name} 开除`,
+                    type: 'success'
+                  })
+
+                  const param = {
+                    show: false,
+                  }
+                  this.$store.dispatch('SetPersonQuitLeftDialog', param).then(() => {}).catch(() => {
+                  })
+                }
+              })
 
             }).catch(() => {
 
