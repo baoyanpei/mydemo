@@ -156,7 +156,7 @@
         handler: function (newVal, oldVal) {
           console.info('value changed2 ', newVal)
           if (newVal.show === true) {
-            console.log('personListDialog - show')
+            // console.log('personListDialog - show')
             this.initData()
             this.getProjectGroups()
             this.getProjectPersons()

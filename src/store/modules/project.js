@@ -403,9 +403,9 @@ const project = {
       rootState
     }, param) {
       return new Promise((resolve, reject) => {
-        console.log('project_id', rootState.project.project_id)
+        // console.log('project_id', rootState.project.project_id)
 
-        console.log('_hasPermissionToOperation')
+        // console.log('_hasPermissionToOperation')
         // return
         commit('SET_PERSON_INOUT_DIALOG', param)
         resolve()
