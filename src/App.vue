@@ -258,7 +258,7 @@
 
   .el-message-box__content {
     position: relative;
-    padding: 10px 15px;
+    padding: 30px 15px;
     color: #606266;
     font-size: 14px;
   }

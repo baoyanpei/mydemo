@@ -56,10 +56,10 @@
         </el-row>
         <div v-if="personInfoDialog.opShow">
           <el-button type="danger" @click.native.prevent="handlePersonQuitLeftLogSubmit()"
-            style="position:absolute;top:45px;right:160px;" size="mini">开除</el-button>
-          <el-button type="warning" @click.native.prevent="handleWorktimeLogSubmit()"
-            style="position:absolute;top:45px;right:90px;" size="mini">注销</el-button>
-          <el-button type="warning" @click.native.prevent="handleWorktimeLogSubmit()"
+            style="position:absolute;top:45px;right:170px;" size="mini">开除</el-button>
+          <el-button type="warning" @click.native.prevent="handleZhuXiaoKaSubmit()"
+            style="position:absolute;top:45px;right:90px;" size="mini">注销卡</el-button>
+          <el-button type="warning" @click.native.prevent="handleChiZhiSubmit()"
             style="position:absolute;top:45px;right:20px;" size="mini">辞职</el-button>
         </div>
 
@@ -353,12 +353,71 @@
       handlePersonQuitLeftLogSubmit() {
         const param = {
           show: true,
-          op_status:4,//人员状态 -1注销0正常1需要激活2离职3手动注销4开除10是默认值
+          op_status: 4, //人员状态 -1注销0正常1需要激活2离职3手动注销4开除10是默认值
           ...this.personInfoDialog
         }
         this.$store.dispatch('SetPersonQuitLeftDialog', param).then(() => {}).catch(() => {
 
         })
+      },
+      handleZhuXiaoKaSubmit() {
+        this.$confirm('是否确定要注销卡?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          // center: true
+        }).then(() => {
+          const param = {
+            method: 'card_opera',
+            project_id: this.project_id,
+            rfid_wg: this.personInfoDialog.rfid_wg,
+            status: -1
+          }
+          console.log('param', param)
+          // this.$store.dispatch('SetCardOpera', param).then((data) => {
+          //   console.log('data', data)
+          //   if (data.status === 'success') {
+          //     this.$message({
+          //       message: '注销卡成功',
+          //       type: 'success'
+          //     })
+          //   }
+          // })
+
+        }).catch(() => {
+
+        });
+      },
+      handleChiZhiSubmit() {
+        this.$confirm('是否确定要辞职?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          // center: true
+        }).then(() => {
+          const param = {
+            method: 'quit_left',
+            project_id: this.project_id,
+            person_id: this.personInfoDialog.person_id,
+            status: 2 //-1注销0正常1需要激活2离职(辞职)3手动注销4开除10是默认值
+          }
+          console.log('param', param)
+          this.$store.dispatch('SetQuitLeft', param).then((data) => {
+            console.log('data', data)
+            if (data.status === 'success') {
+              
+
+              this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
+              this.$message({
+                message: '已经完成辞职操作！',
+                type: 'success'
+              })
+            }
+          })
+
+        }).catch(() => {
+
+        });
       }
     },
     mounted() {

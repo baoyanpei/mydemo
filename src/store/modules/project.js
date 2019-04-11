@@ -11,7 +11,9 @@ import {
   queryInOutDetail,
   queryPersonWorktime,
   queryProjectWorktime,
-  queryPersonDatum
+  queryPersonDatum,
+  setCardOpera,
+  setQuitLeft
 } from '@/api/person'
 import Cookies from 'js-cookie'
 import hasPermissionToOperation from '@/utils/permissionUrl' // 权限判断函数
@@ -105,6 +107,7 @@ const project = {
       show: false,
       data: {}
     },
+    personListChanged: 0, // 数据发生变化
     personNowinDialog: { //person在场内窗口
       show: false,
       data: {}
@@ -292,7 +295,12 @@ const project = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.personNowinChanged = genRandom(1, 1000)
     },
+    SET_PERSON_LIST_CHANGED: (state) => {
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.personListChanged = genRandom(1, 1000)
+    },
 
+    
     SET_PROJECT_PERSION_INOUT_LIST: (state, data) => {
       state.projectPersonInoutList = data
     },
@@ -509,7 +517,15 @@ const project = {
         resolve()
       })
     },
-
+    SetPersonListChanged({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PERSON_LIST_CHANGED')
+        resolve()
+      })
+    },
+    
     // 查询项目进出人员列表
     QueryProjectPersonInout({
       commit
@@ -642,6 +658,32 @@ const project = {
           const _data = response.data
           console.log('queryPersonDatum', _data)
           resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    SetCardOpera({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        setCardOpera(param).then(response => {
+          // const _data = response.data
+          console.log('setCardOpera', response)
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    SetQuitLeft({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        setQuitLeft(param).then(response => {
+          // const _data = response.data
+          console.log('setQuitLeft', response)
+          resolve(response)
         }).catch(error => {
           reject(error)
         })

@@ -346,3 +346,45 @@ export function queryPersonDatum(data) {
     data: data
   })
 }
+
+/*
+接口：/api/info/user
+注销卡：
+card_opera
+'''
+method:card_opera
+卡操作，主要就行卡注销，激活，等操作
+参数: project_id,
+      rfid_ori
+      #status: 人员状态 -1注销0正常1需要激活2离职3手动注销10是默认值
+      status：人员状态 -1注销0正常1需要激活2离职3手动注销4开除10是默认值
+'''
+*/
+export function setCardOpera(data) {
+  return request({
+    url: 'api/info/user',
+    method: 'post',
+    data: data
+  })
+}
+
+/*
+接口：/api/info/user
+开除：辞职：
+quit_left：
+'''
+用户离职，辞退，开除
+project_id,
+idcard_no:身份证号码（person_id）
+name : 用户姓名
+status 人员状态 -1注销0正常1需要激活2离职3手动注销4开除10是默认值
+remark ：离职备注原因
+'''
+*/
+export function setQuitLeft(data) {
+  return request({
+    url: 'api/info/user',
+    method: 'post',
+    data: data
+  })
+}

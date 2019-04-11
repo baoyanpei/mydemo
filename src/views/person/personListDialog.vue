@@ -121,7 +121,9 @@
       projectPersonList() {
         return this.$store.state.project.projectPersonList
       },
-
+      personListChanged() {
+        return this.$store.state.project.personListChanged
+      }
     },
     data() {
       return {
@@ -168,7 +170,9 @@
         },
         deep: true
       },
-
+      personListChanged(curVal, oldVal) {
+        this.handleSubmit(false)
+      },
     },
     methods: {
       trantime: (time) => {
@@ -211,7 +215,6 @@
 
         this.optionGroups = [] //部门选择的数据
         this.optionsProjectPersion = []
-        this.personInoutList = []
         this.personInoutForm = {
           GroupList: ['all'], // 计划名称
           person_id: '', // 人员
