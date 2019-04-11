@@ -313,7 +313,7 @@ const project = {
       return new Promise((resolve, reject) => {
         queryProjectPerson(param).then(response => {
           commit('SET_PROJECT_PERSON_LIST', response.data)
-          console.log('QueryProjectPersonsQueryProjectPersons', response.data)
+          // console.log('QueryProjectPersonsQueryProjectPersons', response.data)
           resolve(response.data)
         }).catch(error => {
           reject(error)

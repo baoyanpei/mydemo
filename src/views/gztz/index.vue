@@ -182,7 +182,7 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectGroups', param).then(() => {
-          console.log('this.projectGroupList1', this.projectGroupList)
+          // console.log('this.projectGroupList1', this.projectGroupList)
           this.getProjectPersons()
 
 
@@ -204,7 +204,7 @@
             person.pinyin = pinyin.convertToPinyin(person.name)
           })
           this.appendPersonMount()
-          console.log('this.projectGroupList', this.projectGroupList)
+          // console.log('this.projectGroupList', this.projectGroupList)
           this.appendTreeData(this.projectGroupList)
           if (this.treeListData.length === 0) {
             this.emptyTextTree = "未查询到符合的人员"
