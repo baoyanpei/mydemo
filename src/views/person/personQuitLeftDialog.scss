@@ -4,12 +4,12 @@
   }
 
   .el-form-item {
-    margin-bottom: 0px;
+    margin-bottom: 10px;
   }
 
   .el-form-item--medium .el-form-item__content,
   .el-form-item--medium .el-form-item__label {
-    line-height: 30px;
+    line-height: 22px;
   }
 
   .el-radio__input.is-checked+.el-radio__label {
@@ -23,5 +23,9 @@
 
   .el-radio+.el-radio {
     margin-left: 10px;
+  }
+
+  .el-form-item__error{
+    padding-top: 0px;
   }
 }
