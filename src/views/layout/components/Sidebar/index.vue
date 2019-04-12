@@ -5,9 +5,9 @@
 <template>
   <div v-on:mouseenter="mouseOver" v-on:mouseleave="mouseLeave" class="index-sidebar">
 
-    <el-menu default-active="1-4-1" router :default-active="$route.path" class="el-menu-vertical-demo" @open="handleOpen"
-      @close="handleClose" :collapse="isCollapse" :collapse-transition="collapseTransition" background-color="#29bb9c"
-      text-color="#ffffff">
+    <el-menu default-active="1-4-1" router :default-active="$route.path" class="el-menu-vertical-demo"
+      @open="handleOpen" @close="handleClose" :collapse="isCollapse" :collapse-transition="collapseTransition"
+      background-color="#29bb9c" text-color="#ffffff">
       <el-menu-item index="/main">
         <font-awesome-icon icon="home" />
         <span slot="title">首页</span>
@@ -19,6 +19,10 @@
       <el-menu-item index="/gztz">
         <font-awesome-icon icon="calendar-alt" />
         <span slot="title">工资台帐</span>
+      </el-menu-item>
+      <el-menu-item index="/lot/index">
+        <font-awesome-icon icon="network-wired" />
+        <span slot="title">物联设备</span>
       </el-menu-item>
       <!--
       <el-menu-item index="/main1">

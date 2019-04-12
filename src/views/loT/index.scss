@@ -1,0 +1,187 @@
+.loT-index {
+  height: calc(100vh - 34px);
+
+  .el-tabs__content {
+    padding: 0px;
+  }
+
+  .divDataTadiao {
+    height: 100px;
+    width: 130px;
+    background-color: #000000;
+    position: absolute;
+    left: 50px;
+    top: 40px;
+    border-radius: 5px;
+    opacity: 0.7;
+    padding: 5px;
+    font-size: 12px;
+    color: #eeeeee;
+    div{
+      line-height: 14px;
+    }
+  }
+  .divDataShenJiangJi {
+    height: 100px;
+    width: 150px;
+    background-color: #000000;
+    position: absolute;
+    left: 50px;
+    top: 150px;
+    border-radius: 5px;
+    opacity: 0.7;
+    padding: 5px;
+    font-size: 12px;
+    color: #eeeeee;
+    div{
+      line-height: 16px;
+    }
+  }
+  
+  .bim-toolbar {
+    // margin: 0 auto;
+    position: fixed;
+    bottom: 10px;
+    left: 30%;
+    // right: 0;
+    width: 500px;
+    height: 40px;
+    text-align: center;
+    // border: 1px solid #cccccc;
+    // background-color: #29BB9C;
+    z-index: 200;
+
+    .bim-toolbar1 {
+      float: left;
+      width: 100px;
+      height: 40px;
+      border: 1px solid #cccccc;
+      background-color: #4f4f54;
+      border-radius: 5px;
+      text-align: left;
+      padding: 0px 10px;
+    }
+
+    .bim-toolbar2 {
+      float: left;
+      width: 360px;
+      height: 40px;
+      border: 1px solid #cccccc;
+      background-color: #4f4f54;
+      border-radius: 5px;
+      text-align: left;
+      padding: 0px 10px;
+      margin-left: 20px;
+    }
+  }
+
+  .bim-toolbar1 {
+    line-height: 47px;
+
+    .el-button {
+      background-color: transparent;
+      color: #ffffff;
+    }
+
+    .el-button--medium {
+      padding: 2px 2px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 0px;
+    }
+  }
+
+  .bim-toolbar2 {
+    line-height: 47px;
+
+    .el-button {
+      background-color: transparent;
+      color: #ffffff;
+    }
+
+    .el-button--medium {
+      padding: 2px 2px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 0px;
+    }
+  }
+
+  .model3d-progress {
+    position: absolute;
+    color: #FFFFFF;
+    float: left;
+    width: 400px;
+    left: 50px;
+    bottom: 60px;
+  }
+
+  .el-progress__text {
+    color: #FFFFFF;
+  }
+
+  .stat-div-loT {
+
+    div {
+      position: absolute !important;
+      width: 80px;
+      float: right !important;
+      ;
+      left: 92vw !important;
+
+      // right: 100px !important;
+    }
+
+  }
+
+  .loTLabel {
+    cursor: pointer;
+    opacity: 0.7;
+    width: 30px;
+  }
+
+  .loTLabelNoData {
+    cursor: pointer;
+    opacity: 0.2;
+    width: 30px;
+  }
+
+  .css2-txt-flag {
+    .css2-txt-box {
+      width: 130px;
+      color: #ffffff;
+      padding: 8px;
+      background-color: #4f4f54;
+      font-size: 12px;
+      // font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+
+    .css2-txt-box2 {
+      width: 200px;
+      color: #ffffff;
+      padding: 8px;
+      background-color: #4f4f54;
+      font-size: 12px;
+      // font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      opacity: 0.7;
+      line-height:15px;
+    }
+
+    .corner {
+      width: 20px;
+      height: 0px;
+      border: 10px solid #4f4f54;
+      border-bottom-color: transparent;
+      border-left-color: transparent;
+      border-right-color: transparent;
+      margin-left: 50px;
+    }
+  }
+
+
+}

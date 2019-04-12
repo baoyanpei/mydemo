@@ -9,8 +9,7 @@
       <PersonFullCalender></PersonFullCalender>
     </el-dialog>
     <el-dialog :modal="false" top="0.5vh" width="800px" :lock-scroll="true" :close-on-click-modal="false"
-      :visible.sync="worktimeFullCalendarDialog.show"
-      :title="worktimeFullCalendarDialog.dialogTitle">
+      :visible.sync="worktimeFullCalendarDialog.show" :title="worktimeFullCalendarDialog.dialogTitle">
       <!--人员上工日历dialog-->
       <WorktimeFullCalendarDialog></WorktimeFullCalendarDialog>
 
@@ -34,6 +33,9 @@
     <!--发布信息对话框-->
     <PublishDialog></PublishDialog>
 
+
+    <!--摄像头画面dialog-->
+    <VideoDialog></VideoDialog>
   </div>
 </template>
 
@@ -67,6 +69,10 @@
   import LogsPersonComfirmDialog from './views/person/logsPersonComfirmDialog'
 
   import PublishDialog from './views/publish/publishDialog'
+
+  // 摄像头画面dialog
+  import VideoDialog from './views/loT/videoDialog'
+
   export default {
     name: 'App',
     components: {
@@ -84,7 +90,8 @@
       PersonQuitLeftDialog,
       PersonListDialog,
       WorktimeFullCalendarDialog,
-      PublishDialog
+      PublishDialog,
+      VideoDialog
     },
     directives: {
       elDragDialog

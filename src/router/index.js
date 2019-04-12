@@ -135,6 +135,24 @@ export const constantRouterMap = [{
       }
     }]
   },
+  {
+    path: '/lot',
+    name: 'lot',
+    component: Layout,
+    redirect: '/loT/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/loT/index'),
+      name: 'lot-index',
+      meta: {
+        title: '物联网',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  }
 
 
 ]

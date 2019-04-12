@@ -10,6 +10,8 @@ import project from './modules/project' // 项目
 import person from './modules/person' // person
 import model3d from './modules/model3d' // person
 import msg from './modules/msg' // person
+import loT from './modules/loT' // 物联网
+import datum from './modules/datum' // 物联网
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -25,7 +27,9 @@ const store = new Vuex.Store({
     project,
     person,
     model3d,
-    msg
+    msg,
+    loT,
+    datum
   },
   getters
 })
