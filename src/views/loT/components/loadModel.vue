@@ -107,7 +107,7 @@
           }
           this.$store.dispatch('QueryBuildingListByProID', param).then(() => {
             this.buildListByProID.forEach(async build => {
-              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89) {
+              if (build.ID === 87 || build.ID === 86 ) {//|| build.ID === 88 || build.ID === 89
                 const _floorList = await this.getFloorListByBuildingID(build.ID)
                 console.log('this.modIDList', this.modIDList)
 
@@ -145,7 +145,7 @@
               // this.$emit('unitTotalAdd', _modList.length)
               let idList = []
               _modList.forEach(mod => {
-                if (building_id === 86 || building_id === 88 || building_id === 89) {
+                if (building_id === 86 || building_id === 88 || building_id === 89) {//
                   let _PARAMS_TYPE = []
                   if (mod.PARAMS !== "") {
                     _PARAMS_TYPE = mod.PARAMS.split(',')
@@ -165,6 +165,7 @@
               })
               this.$emit('unitTotalAdd', idList.length)
               idList.forEach(id => {
+                // 加载模型
                 this.getModdelByID(id)
               })
               // }
@@ -217,41 +218,46 @@
             // this.$emit('unitTotalAdd', 1)
             this.$emit('unitGroupAddMesh', result.mesh, result.modelID, result.unit)
           } else {
-            const param = {
-              method: 'GetModelByID',
-              project_id: this.project_id,
-              model_id: model_id
-            }
-            this.$store.dispatch('QueryModdelByID', param).then((data) => {
-              data.forEach(unit => {
-                // console.log('unit', unit)
-                if (unit.MESH_JSON !== '') {
-                  // this.$emit('unitTotalAdd', 1)
-                  let meshJson = getOriMesh(unit.MESH_JSON)
-                  let modelData = {
-                    modelID: unit.ID,
-                    unit: unit,
-                    mesh: meshJson
-                  }
-                  this.$emit('unitGroupAddMesh', meshJson, unit.ID, unit)
-                  let worker = new Worker("/static/workIndexedDB.js");
-                  worker.postMessage(modelData); //向worker发送数据
-                  worker.onmessage = function (evt) { //接收worker传过来的数据函数
-                    worker.terminate();
-                  }
-                } else {
-                  this.$emit('unitGroupAddMesh', null, null, null)
-                }
 
-              });
-            }).catch((e) => {
-              console.log(e)
-            })
+            this.getModelFromAPI(model_id)
+
           }
         });
         // });
 
       },
+      getModelFromAPI(model_id) {
+        const param = {
+          method: 'GetModelByID',
+          project_id: this.project_id,
+          model_id: model_id
+        }
+        this.$store.dispatch('QueryModdelByID', param).then((data) => {
+          data.forEach(unit => {
+            // console.log('unit', unit)
+            if (unit.MESH_JSON !== '') {
+              // this.$emit('unitTotalAdd', 1)
+              let meshJson = getOriMesh(unit.MESH_JSON)
+              let modelData = {
+                modelID: unit.ID,
+                unit: unit,
+                mesh: meshJson
+              }
+              this.$emit('unitGroupAddMesh', meshJson, unit.ID, unit)
+              let worker = new Worker("/static/workIndexedDB.js");
+              worker.postMessage(modelData); //向worker发送数据
+              worker.onmessage = function (evt) { //接收worker传过来的数据函数
+                worker.terminate();
+              }
+            } else {
+              this.$emit('unitGroupAddMesh', null, null, null)
+            }
+
+          });
+        }).catch((e) => {
+          console.log(e)
+        })
+      }
     }
   }
 
