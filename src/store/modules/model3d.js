@@ -410,7 +410,7 @@ const model3d = {
     }, param) {
       return new Promise((resolve, reject) => {
         queryModelByID(param).then(response => {
-          console.log('QueryModdelByID', response.data)
+          // console.log('QueryModdelByID', response.data)
           // commit('SET_MODEL_FROM_API', response.data)
           resolve(response.data)
         }).catch(error => {
