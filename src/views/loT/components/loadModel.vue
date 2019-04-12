@@ -107,7 +107,7 @@
           }
           this.$store.dispatch('QueryBuildingListByProID', param).then(() => {
             this.buildListByProID.forEach(async build => {
-              if (build.ID === 87 || build.ID === 86) {
+              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89) {
                 const _floorList = await this.getFloorListByBuildingID(build.ID)
                 console.log('this.modIDList', this.modIDList)
 
@@ -145,7 +145,7 @@
               // this.$emit('unitTotalAdd', _modList.length)
               let idList = []
               _modList.forEach(mod => {
-                if (building_id === 86) {
+                if (building_id === 86 || building_id === 88 || building_id === 89) {
                   let _PARAMS_TYPE = []
                   if (mod.PARAMS !== "") {
                     _PARAMS_TYPE = mod.PARAMS.split(',')

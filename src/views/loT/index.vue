@@ -310,6 +310,7 @@
       this.initControls()
       // this.initAxes()
       // this.initRaycaster()
+      this.initMouse()
       this.removeUnit()
 
       // this.loadUnit()
@@ -780,6 +781,38 @@
         axesHelper.name = "axesHelper";
         this.scene.add(axesHelper);
       },
+      initMouse() {
+        document.addEventListener('mousedown', (event) => {
+          THREE.Cache.clear()
+          // this.unitGroup.visible = false
+          console.log('123')
+          for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+            if (i !== 0 ) {
+              this.unitGroups[i].visible = false
+            }
+          }
+          if (this.projectiveObj) {
+            let _model = this.modelMap.get(this.projectiveObj.name)
+            const param = {
+              show: true,
+              model: _model
+            }
+            // this.$store.dispatch('SetModelDetailDialog', param).then(() => {}).catch(() => {
+            // })
+          }
+        }, false)
+
+        
+
+        document.addEventListener('mouseup', (event) => {
+          // console.log('mouseup')
+          for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+            if (i !== 0) {
+              this.unitGroups[i].visible = true
+            }
+          }
+        }, false)
+      },
       // 初始化 光线投射器
       initRaycaster() {
         // this.raycaster = new THREE.Raycaster(); //光线投射器
@@ -849,33 +882,7 @@
           // }
 
         }, false)
-        document.addEventListener('mousedown', (event) => {
-          THREE.Cache.clear()
-          // this.unitGroup.visible = false
-          // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-          //   if (i !== 0) {
-          //     this.unitGroups[i].visible = false
-          //   }
-          // }
-          if (this.projectiveObj) {
-            let _model = this.modelMap.get(this.projectiveObj.name)
-            const param = {
-              show: true,
-              model: _model
-            }
-            // this.$store.dispatch('SetModelDetailDialog', param).then(() => {}).catch(() => {
-            // })
-          }
-        }, false)
 
-        document.addEventListener('mouseup', (event) => {
-          // console.log('mouseup')
-          for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-            if (i !== 0) {
-              this.unitGroups[i].visible = true
-            }
-          }
-        }, false)
       },
       initLight() {
         let directionalLight = new THREE.DirectionalLight(0xF6CB90, 2); //模拟远处类似太阳的光源
