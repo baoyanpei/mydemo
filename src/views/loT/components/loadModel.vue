@@ -14,6 +14,7 @@
     getOriMesh
   } from '@/utils/model3d'
   import IndexedDB from '../../../indexedDB/IndexedDB'
+  // let worker = new Worker("/static/workIndexedDB.js");
   export default {
     name: 'model3d-tree-area',
     directives: {},
@@ -41,7 +42,7 @@
         mod_id_list_array: [],
         mod_id_list_queue: [],
         isLoadMods: false,
-        worker: null,
+        worker: new Worker("/static/workIndexedDB.js"),
 
         treeAttachParamsListData: [],
 
@@ -50,7 +51,8 @@
         modIDAPIList: [],
         modIDList: [],
         totalNeedModel: 0,
-        totalOKModel: 0
+        totalOKModel: 0,
+        indexedDBWaitList: []
       }
     },
     computed: {
@@ -87,17 +89,18 @@
       this.worker = null
     },
     watch: {
-      async totalOKModel(curVal, oldVal) {
+      totalOKModel(curVal, oldVal) {
         // console.log('curVal', curVal)
         if (curVal === this.totalNeedModel) {
-          console.log('-- this.modIDAPIList', this.modIDAPIList)
+          // console.log('-- this.modIDAPIList', this.modIDAPIList)
+          let _chunkList = lodash.chunk(this.modIDAPIList, this.modIDAPIList.length / 5)
+          // console.log('_chunkList', _chunkList)
 
-          let _chunkList = lodash.chunk(this.modIDAPIList, 100)
-          console.log('_chunkList', _chunkList)
           for (let i = 0, len = _chunkList.length; i < len; i++) {
-            let ids = _chunkList[i].join(',')
+            let ids = _chunkList[i]
+            this.getAPI(ids)
             // console.log('ids',ids)
-            await this.getModelFromAPI(ids)
+            // await this.getModelFromAPI(ids)
           }
 
         }
@@ -139,6 +142,15 @@
 
     },
     methods: {
+      async getAPI(idList) {
+        console.log('----')
+        let _chunkList = lodash.chunk(idList, 130)
+        for (let i = 0, len = _chunkList.length; i < len; i++) {
+          let ids = _chunkList[i].join(',')
+          await this.getModelFromAPI(ids)
+          // console.log('ids', ids)
+        }
+      },
       getBuildingListByProID() {
         return new Promise((resolve, reject) => {
           this.treeListData = []
@@ -147,11 +159,12 @@
             project_id: this.project_id
           }
           this.$store.dispatch('QueryBuildingListByProID', param).then(async () => {
-            // console.log('buildList', buildList)
+
             for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
               let build = this.buildListByProID[i]
-              if (build.ID === 87 || build.ID === 86) { //|| build.ID === 88 || build.ID === 89
-                const _floorIDList = await this.getFloorListByBuildingID(build.ID)
+              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89) { //  
+                this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
+                const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)
                 this.modIDList = [...this.modIDList, ..._floorIDList]
                 // this.modIDList.push(model_id)
@@ -173,7 +186,8 @@
         })
 
       },
-      getFloorListByBuildingID(building_id) {
+      getFloorListByBuildingID(building) {
+        let building_id = building.ID
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetFloorListByBudID',
@@ -196,7 +210,8 @@
             let idList = []
             for (let i = 0, len = this.floorListByBudID.length; i < len; i++) {
               let floor = this.floorListByBudID[i]
-              // console.log('floor', floor)
+              console.log('floor', floor)
+              this.$emit('addLoadingText', `正在加载 ${building.NAME} 的 ${floor.NAME} 的模型列表`)
               // if (floor.NAME === '2F(4.200-8.400)' || floor.NAME === '3F(8.400-12.600)') {
               floor.BUILDID = building_id
               const _modList = await this.getModListByFloorID(floor)
@@ -302,11 +317,12 @@
                   mesh: meshJson
                 }
                 this.$emit('unitGroupAddMesh', meshJson, unit.ID, unit)
-                let worker = new Worker("/static/workIndexedDB.js");
-                worker.postMessage(modelData); //向worker发送数据
-                worker.onmessage = function (evt) { //接收worker传过来的数据函数
-                  worker.terminate();
-                }
+                this.$emit('unitGroupAddDB', modelData)
+                // let worker = new Worker("/static/workIndexedDB.js");
+                // this.worker.postMessage(modelData); //向worker发送数据
+                // worker.onmessage = function (evt) { //接收worker传过来的数据函数
+                //   worker.terminate();
+                // }
               } else {
                 this.$emit('unitGroupAddMesh', null, null, null)
               }

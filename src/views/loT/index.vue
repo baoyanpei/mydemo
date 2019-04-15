@@ -6,8 +6,9 @@
   <div id="loT-index" class="loT-index" style="margin: 0px;">
     <div id="loT-index-canvas3d" class="child-host"></div>
     <div id="stat-div-loT" class="stat-div-loT"></div>
-    <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh" v-on:unitRemove="unitRemove"
-      v-on:unitTotalAdd="unitTotalAdd" v-on:unitTotalRemove="unitTotalRemove"></loadModel>
+    <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
+      v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText" v-on:unitTotalAdd="unitTotalAdd"
+      v-on:unitTotalRemove="unitTotalRemove"></loadModel>
 
     <div class="model3d-progress">
       <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div>
@@ -90,7 +91,7 @@
     data() {
       return {
         labelRenderer: null,
-
+        loadtext:'开始加载模型....',
         client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
         timerReconnectMqtt: null,
         isConnectMqtt: null, //是否已经连接
@@ -112,18 +113,7 @@
         renderer: null,
         controls: null,
         unitLoadingSet: new Set(), // 模型加载数组 
-        unitGroups: [
-          new THREE.Group(),
-          new THREE.Group(),
-          new THREE.Group(),
-          new THREE.Group(),
-          new THREE.Group(),
-          new THREE.Group(),
-          new THREE.Group(),
-          new THREE.Group(),
-          new THREE.Group(),
-          new THREE.Group()
-        ],
+        unitGroups: new Array(50),
         personGroup: new THREE.Group(),
 
         unitRemoveSet: new Set(), // 删除队列
@@ -170,6 +160,8 @@
           sbsj: '-',
           mzt: '-'
         },
+        indexedDBWaitList: new Map(),
+        worker: new Worker("/static/workIndexedDB.js"),
       }
     },
     computed: {
@@ -224,6 +216,14 @@
     },
 
     async mounted() {
+      this.loadingDialog = this.$loading({
+        lock: false,
+        text: this.loadtext,
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.3)',
+        customClass: 'loading-class',
+        // target: document.querySelector('.treeDiv')
+      });
       if (typeof (Worker) !== "undefined") {
         // console.log(12343)
       } else {
@@ -253,6 +253,9 @@
 
       // 初始化GUI
       // this.initGUI()
+      for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+        this.unitGroups[i] = new THREE.Group()
+      }
 
       //初始化变量
       // let fov = this.gui.fov //拍摄距离  视野角值越大，场景中的物体越小
@@ -317,16 +320,16 @@
 
       window.onresize = this.onWindowResize;
       this.animate();
-      this.scene.add(this.unitGroups[0])
-      this.scene.add(this.unitGroups[1])
-      this.scene.add(this.unitGroups[2])
-      this.scene.add(this.unitGroups[3])
-      this.scene.add(this.unitGroups[4])
-      this.scene.add(this.unitGroups[5])
-      this.scene.add(this.unitGroups[6])
-      this.scene.add(this.unitGroups[7])
-      this.scene.add(this.unitGroups[8])
-      this.scene.add(this.unitGroups[9])
+      for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+        this.scene.add(this.unitGroups[i])
+
+        if (i !== 0) {
+          this.unitGroups[i].visible = false
+        }
+      }
+
+
+
       this.scene.add(this.personGroup)
 
       this.mqttConnect()
@@ -346,6 +349,8 @@
       };
       // 获取数据之后调用方法初始化或者调整状态
       modifyElevator(this.elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
+
+      this.addDataToDB()
     },
     beforeDestroy() {
       console.log("beforeDestroy")
@@ -643,6 +648,34 @@
 
       },
       unitAllRemove() {},
+      unitGroupAddDB(modelData) {
+        // console.log('modelData', modelData)
+        this.indexedDBWaitList.set(modelData.modelID, modelData)
+        // this.indexedDBWaitList.set(modelData)
+      },
+      addDataToDB() {
+        setTimeout(() => {
+          console.log('===>===>===>===>===>', this.indexedDBWaitList.size)
+          let i = 0
+          for (let data of this.indexedDBWaitList.values()) {
+            i++
+            // console.log('===>', data)
+            this.worker.postMessage(data); //向worker发送数据
+            // worker.onmessage = function (evt) { //接收worker传过来的数据函数
+            //   worker.terminate();
+            // }
+            this.indexedDBWaitList.delete(data.modelID)
+            if (i >= 100) {
+              break;
+            }
+          }
+          this.addDataToDB()
+        }, 5000)
+      },
+      addLoadingText(loadingTxt){
+        this.loadingDialog.text = loadingTxt
+        // this.loadtext = loadingTxt
+      },
       unitGroupAddMesh(meshJson, modelID, unit) {
 
 
@@ -666,13 +699,13 @@
         // console.log('mod', mod)
         // this.modMap.set(_param.modelID, _data)
         this.percentage = Math.ceil((this.addedUnit / this.totalUnit) * 100)
-        let _mod = Math.floor(Math.random() * 10) //_data.modelID % 10
+        let _mod = Math.floor(Math.random() * this.unitGroups.length) //_data.modelID % 10
         let _mesh = this.loader.parse(meshJson)
         // console.log('mod', mod)
         // this.modMap.set(_mesh.id, mod)
         // console.log('result.mesh', _mesh.material.opacity)
         // 模型的透明度
-        if (unit.BUILDING_ID === 86) {
+        if (unit.BUILDING_ID === 86 || unit.BUILDING_ID === 88 || unit.BUILDING_ID === 89) {
           if (_mesh.material.opacity === 1) {
             _mesh.material.opacity = 0.3
           }
@@ -695,7 +728,22 @@
         })
 
         if (this.addedUnit == this.totalUnit) {
+          for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+            this.unitGroups[i].visible = true
+          }
           this.addDeviceData()
+          document.addEventListener('mouseup', (event) => {
+            // console.log('mouseup')
+            for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+              if (i !== 0) {
+                this.unitGroups[i].visible = true
+              }
+            }
+          }, false)
+          this.loadingDialog.close()
+          // console.log('this.indexedDBWaitList', this.indexedDBWaitList.length)
+          // 全部显示
+
 
 
         }
@@ -783,35 +831,35 @@
       },
       initMouse() {
         document.addEventListener('mousedown', (event) => {
-          THREE.Cache.clear()
+          // THREE.Cache.clear()
           // this.unitGroup.visible = false
-          console.log('123')
+          // console.log('123')
           for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-            if (i !== 0 ) {
+            if (i !== 0) {
               this.unitGroups[i].visible = false
             }
           }
-          if (this.projectiveObj) {
-            let _model = this.modelMap.get(this.projectiveObj.name)
-            const param = {
-              show: true,
-              model: _model
-            }
-            // this.$store.dispatch('SetModelDetailDialog', param).then(() => {}).catch(() => {
-            // })
-          }
+          // if (this.projectiveObj) {
+          //   let _model = this.modelMap.get(this.projectiveObj.name)
+          //   const param = {
+          //     show: true,
+          //     model: _model
+          //   }
+          //   // this.$store.dispatch('SetModelDetailDialog', param).then(() => {}).catch(() => {
+          //   // })
+          // }
         }, false)
 
-        
 
-        document.addEventListener('mouseup', (event) => {
-          // console.log('mouseup')
-          for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-            if (i !== 0) {
-              this.unitGroups[i].visible = true
-            }
-          }
-        }, false)
+
+        // document.addEventListener('mouseup', (event) => {
+        //   // console.log('mouseup')
+        //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+        //     if (i !== 0) {
+        //       this.unitGroups[i].visible = true
+        //     }
+        //   }
+        // }, false)
       },
       // 初始化 光线投射器
       initRaycaster() {
