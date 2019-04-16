@@ -214,7 +214,7 @@
               this.$emit('addLoadingText', `正在加载 ${building.NAME} 的 ${floor.NAME} 的模型列表`)
               // if (floor.NAME === '2F(4.200-8.400)' || floor.NAME === '3F(8.400-12.600)') {
               floor.BUILDID = building_id
-              const _modList = await this.getModListByFloorID(floor)
+              const _modList = await this.getModListByFloorID(building,floor)
               // console.log('_modList', _modList)
               // this.$emit('unitTotalAdd', _modList.length)
 
@@ -252,7 +252,7 @@
         })
 
       },
-      getModListByFloorID(floor) {
+      getModListByFloorID(build,floor) {
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetModListByFloorID',
@@ -263,6 +263,7 @@
           let _modList = []
           // console.log('GetModListByFloorID', param)
           this.$store.dispatch('QueryModListByFloorID', param).then(() => {
+            
             this.modListByFloorID.forEach(d => {
               // flag=1 可以画
               if (d.FLAG === 1) {

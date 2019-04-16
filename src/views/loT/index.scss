@@ -1,10 +1,19 @@
+.el-loading-spinner .el-loading-text {
+  color: #FFFFFF !important;
+  /* margin: 3px 0; */
+  /* font-size: 14px; */
+}
+.el-loading-spinner i {
+  color: #FFFFFF;
+}
 .loT-index {
   height: calc(100vh - 34px);
 
   .el-tabs__content {
     padding: 0px;
   }
-
+  
+  
   .divDataTadiao {
     height: 100px;
     width: 130px;

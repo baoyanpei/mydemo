@@ -7,8 +7,8 @@
     <div id="loT-index-canvas3d" class="child-host"></div>
     <div id="stat-div-loT" class="stat-div-loT"></div>
     <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
-      v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText" v-on:unitTotalAdd="unitTotalAdd"
-      v-on:unitTotalRemove="unitTotalRemove"></loadModel>
+      v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
+      v-on:unitTotalAdd="unitTotalAdd" v-on:unitTotalRemove="unitTotalRemove"></loadModel>
 
     <div class="model3d-progress">
       <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div>
@@ -91,7 +91,7 @@
     data() {
       return {
         labelRenderer: null,
-        loadtext:'开始加载模型....',
+        loadtext: '开始加载模型....',
         client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
         timerReconnectMqtt: null,
         isConnectMqtt: null, //是否已经连接
@@ -672,7 +672,7 @@
           this.addDataToDB()
         }, 5000)
       },
-      addLoadingText(loadingTxt){
+      addLoadingText(loadingTxt) {
         this.loadingDialog.text = loadingTxt
         // this.loadtext = loadingTxt
       },
@@ -688,6 +688,7 @@
         // }
 
         this.addedUnit = this.addedUnit + 1
+        this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
         if (meshJson === null) {
           return
         }
@@ -698,7 +699,7 @@
         // }
         // console.log('mod', mod)
         // this.modMap.set(_param.modelID, _data)
-        this.percentage = Math.ceil((this.addedUnit / this.totalUnit) * 100)
+        // this.percentage = Math.ceil((this.addedUnit / this.totalUnit) * 100)
         let _mod = Math.floor(Math.random() * this.unitGroups.length) //_data.modelID % 10
         let _mesh = this.loader.parse(meshJson)
         // console.log('mod', mod)
