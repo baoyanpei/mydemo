@@ -132,13 +132,26 @@
             item.title = "入场人数" + item.in_count
             item.titleFormat = ""
             events.push({
-              title: "进场时间" + moment(item.in_time).format('HH:mm:ss'),
-              start: moment(item.in_time).format('YYYY-MM-DD'),
+              title: "进场时间:" + moment(item.in_time).format('HH:mm:ss'),
+              start: moment(item.in_time).format('YYYY-MM-DD 00:00:00'),
               backgroundColor: "#4a86e8", //red
               borderColor: "#4a86e8", //red
               titleFormat: ""
             })
-
+            events.push({
+              title: "最后出场:" + moment(item.out_time).format('HH:mm:ss'),
+              start: moment(item.out_time).format('YYYY-MM-DD 00:00:01'),
+              backgroundColor: "#29bb9c", //red
+              borderColor: "#29bb9c", //red
+              titleFormat: ""
+            })
+            events.push({
+              title: "工作时长:" + item.work_hours + "小时",
+              start: moment(item.out_time).format('YYYY-MM-DD 00:00:03'),
+              backgroundColor: "#fc6720", //red
+              borderColor: "#fc6720", //red
+              titleFormat: ""
+            })
             /*
             in_count: 135 // 今天一天
             online_count: 126 //最大同时峰值
