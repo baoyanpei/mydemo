@@ -6,7 +6,6 @@ import {
   } from 'element-ui'
 
 export default async function hasPermissionToOperation(param) {
-  console.log("paramparam", param)
   return new Promise(function (resolve, reject) {
     checkPersonAccess(param).then(response => {
 

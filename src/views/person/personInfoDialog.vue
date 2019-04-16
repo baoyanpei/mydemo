@@ -359,7 +359,7 @@
             this.datum_file.set(item.datum_type, item)
             item.pdfurl = "/static/pdf/web/viewer.html?file=" + item.datum_file_url
           });
-          console.log('this.datum_file', this.datum_file)
+          // console.log('this.datum_file', this.datum_file)
         }).catch((e) => {
           console.log('e', e)
           // this.loading = false

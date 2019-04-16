@@ -181,7 +181,7 @@ const project = {
       // console.log('SET_PERSON_INFO_DIALOG', data)
       state.personInfoDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
-      console.log('opShow', data.opShow)
+      // console.log('opShow', data.opShow)
       if (data.opShow === undefined) {
         // 是否显示操作按钮
         state.personInfoDialog.opShow = false
@@ -192,7 +192,7 @@ const project = {
       // console.log('SET_PERSON_INFO_DIALOG', data)
       state.personQuitLeftDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
-      console.log('opShow', data.opShow)
+      // console.log('opShow', data.opShow)
       if (data.opShow === undefined) {
         // 是否显示操作按钮
         state.personQuitLeftDialog.opShow = false
@@ -205,7 +205,7 @@ const project = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.worktimeFullCalendarDialog.dialogTitle = data.name + ' - 上工时间'
       state.worktimeFullCalendarDialog.refresh = genRandom(1, 1000)
-      console.log('SET_WORKTIME_FULLCALENDAR_DIALOG', data)
+      // console.log('SET_WORKTIME_FULLCALENDAR_DIALOG', data)
 
     },
 
@@ -327,7 +327,7 @@ const project = {
       return new Promise((resolve, reject) => {
         queryProjectPerson(param).then(response => {
           // commit('SET_PROJECT_PERSON_LIST', response.data)
-          console.log('responseresponse', response)
+          // console.log('responseresponse', response)
           resolve(response.data)
         }).catch(error => {
           reject(error)
@@ -668,7 +668,7 @@ const project = {
       return new Promise((resolve, reject) => {
         queryPersonDatum(param).then(response => {
           const _data = response.data
-          console.log('queryPersonDatum', _data)
+          // console.log('queryPersonDatum', _data)
           resolve(_data)
         }).catch(error => {
           reject(error)

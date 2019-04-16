@@ -70,9 +70,9 @@
       },
       publishDialog: {
         handler: function (newVal, oldVal) {
-          console.info('value changed2 ', newVal)
+          // console.info('value changed2 ', newVal)
           if (newVal.show === true) {
-            console.log('publishDialog - show')
+            // console.log('publishDialog - show')
             this.initData()
             this.getMsg()
             //   this.getProjectPersons()

@@ -153,7 +153,7 @@
           }
 
         }
-        console.log("this.projectGroupList", this.projectGroupList)
+        // console.log("this.projectGroupList", this.projectGroupList)
       },
       personListDialogHandle() {
         const param = {

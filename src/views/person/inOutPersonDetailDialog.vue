@@ -95,7 +95,7 @@
     watch: {
       personInOutPercentDialog: {
         handler: function (newVal, oldVal) {
-          console.info('value changed2 ', newVal)
+          // console.info('value changed2 ', newVal)
           if (newVal.show === true) {
             this.initData()
             this.getPersonInfo()

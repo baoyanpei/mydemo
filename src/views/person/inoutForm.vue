@@ -163,9 +163,9 @@
       },
       personInoutDialog: {
         handler: function (newVal, oldVal) {
-          console.info('value changed2 ', newVal)
+          // console.info('value changed2 ', newVal)
           if (newVal.show === true) {
-            console.log('personInoutDialog - show')
+            // console.log('personInoutDialog - show')
             this.initData()
             this.initDate()
             this.getProjectGroups()

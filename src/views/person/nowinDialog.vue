@@ -160,7 +160,7 @@
       },
       personNowinDialog: {
         handler: function (newVal, oldVal) {
-          console.info('value changed2 ', newVal)
+          // console.info('value changed2 ', newVal)
           if (newVal.show === true) {
             console.log('personNowinDialog - show')
             // this.loadingDialog = this.$loading({

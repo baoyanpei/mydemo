@@ -156,7 +156,7 @@
       },
       personListDialog: {
         handler: function (newVal, oldVal) {
-          console.info('value changed2 ', newVal)
+          // console.info('value changed2 ', newVal)
           if (newVal.show === true) {
             // console.log('personListDialog - show')
             this.initData()
@@ -288,7 +288,7 @@
             }
 
           })
-          console.log('this.personInoutList', this.personInoutList)
+          // console.log('this.personInoutList', this.personInoutList)
           this.totalPerson = this.personInoutList.length;
           this.loading = false
           if (this.personInoutList.length === 0) {
