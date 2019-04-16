@@ -371,14 +371,23 @@ export function setCardOpera(data) {
 /*
 接口：/api/info/user
 开除：辞职：
-quit_left：
-'''
+
+quit_left(self, params):
+
 用户离职，辞退，开除
 project_id,
-idcard_no:身份证号码（person_id）
+idcard_no:身份证号码
 name : 用户姓名
 status 人员状态 -1注销0正常1需要激活2离职3手动注销4开除10是默认值
+      status:2,4 增加一下字段：
+      cancel_card：是否注销卡0/1
+      return_datum：是否归还资料0/1
+      turn_over：是否交结工作0/1
+      eturn_safety_helmet：是否归还安全帽
+      score：评分
+      resume_reason：离职原因10个人原因11项目结束12开除13更换部门
 remark ：离职备注原因
+人员离职，开除操作 信息增加到个人person_resume表中
 '''
 */
 export function setQuitLeft(data) {

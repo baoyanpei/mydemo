@@ -11,24 +11,24 @@
           :inline="false" :validate-on-rule-change="true">
           <el-form-item prop="sfghaqm" label="是否归还安全帽：" :rules="ruleSfghaqm">
             <el-radio v-model="personQuitLeftData.sfghaqm" label="1">已归还</el-radio>
-            <el-radio v-model="personQuitLeftData.sfghaqm" label="2">未归还</el-radio>
+            <el-radio v-model="personQuitLeftData.sfghaqm" label="0">未归还</el-radio>
           </el-form-item>
           <el-form-item prop="sfzxk" label="是否注销卡：" :rules="ruleSfzxk">
             <el-radio v-model="personQuitLeftData.sfzxk" label="1">已注销</el-radio>
-            <el-radio v-model="personQuitLeftData.sfzxk" label="2">未注销</el-radio>
+            <el-radio v-model="personQuitLeftData.sfzxk" label="0">未注销</el-radio>
           </el-form-item>
           <el-form-item prop="sfghzl" label="是否归还资料：" :rules="ruleSfghzl">
             <el-radio v-model="personQuitLeftData.sfghzl" label="1">已归还</el-radio>
-            <el-radio v-model="personQuitLeftData.sfghzl" label="2">未归还</el-radio>
+            <el-radio v-model="personQuitLeftData.sfghzl" label="0">未归还</el-radio>
           </el-form-item>
           <el-form-item prop="sfwcjj" label="是否完成交接：" :rules="ruleSfwcjj">
             <el-radio v-model="personQuitLeftData.sfwcjj" label="1">已交接</el-radio>
-            <el-radio v-model="personQuitLeftData.sfwcjj" label="2">未交接</el-radio>
+            <el-radio v-model="personQuitLeftData.sfwcjj" label="0">未交接</el-radio>
           </el-form-item>
           <el-form-item prop="yy" label="原因：" :rules="ruleYy">
-            <el-radio v-model="personQuitLeftData.yy" label="1">技术能力不足</el-radio>
-            <el-radio v-model="personQuitLeftData.yy" label="2">出勤率不足</el-radio>
-            <el-radio v-model="personQuitLeftData.yy" label="3">其他</el-radio>
+            <el-radio v-model="personQuitLeftData.yy" label="技术能力不足">技术能力不足</el-radio>
+            <el-radio v-model="personQuitLeftData.yy" label="出勤率不足">出勤率不足</el-radio>
+            <el-radio v-model="personQuitLeftData.yy" label="其他">其他</el-radio>
           </el-form-item>
           <!-- <div>备注：</div> -->
           <el-form-item label="备注：" inline="true">
@@ -202,12 +202,25 @@
               type: 'warning',
               // center: true
             }).then(() => {
+              // cancel_card：是否注销卡0/1
+              //   return_datum：是否归还资料0/1
+              //   turn_over：是否交结工作0/1
+              //   eturn_safety_helmet：是否归还安全帽
+              //   score：评分
+              //   resume_reason：离职原因10个人原因11项目结束12开除13更换部门
               const param = {
                 method: 'quit_left',
                 project_id: this.project_id,
                 person_id: this.personQuitLeftDialog.person_id,
                 status: 4, //-1注销0正常1需要激活2离职(辞职)3手动注销4开除10是默认值
-                remark: this.personQuitLeftData.beizhu
+                remark: this.personQuitLeftData.beizhu,
+                return_safety_helmet: this.personQuitLeftData.sfghaqm,
+                cancel_card: this.personQuitLeftData.sfzxk, //是否注销卡0/1
+                return_datum: this.personQuitLeftData.sfghzl, //是否归还资料0/1
+                turn_over: this.personQuitLeftData.sfwcjj, // 是否交结工作0/1
+                resume_reason: this.personQuitLeftData.yy //离职原因10个人原因11项目结束12开除13更换部门
+
+
               }
               console.log('param', param)
               this.$store.dispatch('SetQuitLeft', param).then((data) => {
@@ -225,8 +238,7 @@
                   const param = {
                     show: false,
                   }
-                  this.$store.dispatch('SetPersonQuitLeftDialog', param).then(() => {}).catch(() => {
-                  })
+                  this.$store.dispatch('SetPersonQuitLeftDialog', param).then(() => {}).catch(() => {})
                 }
               })
 

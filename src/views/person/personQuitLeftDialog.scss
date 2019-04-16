@@ -25,7 +25,14 @@
     margin-left: 10px;
   }
 
-  .el-form-item__error{
+  .el-form-item__error {
     padding-top: 0px;
+  }
+
+  .el-radio {
+    margin-right: 0px;
+  }
+  .el-form-item__label{
+    padding: 0 0px 0 0;
   }
 }
