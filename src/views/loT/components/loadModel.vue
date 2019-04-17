@@ -93,7 +93,7 @@
         // console.log('curVal', curVal)
         if (curVal === this.totalNeedModel) {
           // console.log('-- this.modIDAPIList', this.modIDAPIList)
-          let _chunkList = lodash.chunk(this.modIDAPIList, this.modIDAPIList.length / 5)
+          let _chunkList = lodash.chunk(this.modIDAPIList, this.modIDAPIList.length / 1)
           // console.log('_chunkList', _chunkList)
 
           for (let i = 0, len = _chunkList.length; i < len; i++) {
@@ -144,7 +144,7 @@
     methods: {
       async getAPI(idList) {
         console.log('----')
-        let _chunkList = lodash.chunk(idList, 130)
+        let _chunkList = lodash.chunk(idList, 1)
         for (let i = 0, len = _chunkList.length; i < len; i++) {
           let ids = _chunkList[i].join(',')
           await this.getModelFromAPI(ids)
@@ -162,7 +162,7 @@
 
             for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
               let build = this.buildListByProID[i]
-              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89) { //  
+              if (build.ID === 87 ) { //|| build.ID === 86   || build.ID === 88 || build.ID === 89
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
                 const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)
@@ -219,20 +219,22 @@
               // this.$emit('unitTotalAdd', _modList.length)
 
               _modList.forEach(mod => {
-                if (building_id === 86 || building_id === 88 || building_id === 89) { //
-                  let _PARAMS_TYPE = []
-                  if (mod.PARAMS !== "") {
-                    _PARAMS_TYPE = mod.PARAMS.split(',')
-                    let _match = lodash.intersection(_PARAMS_TYPE, ['ST']) //ST 主体
-                    if (_match.length > 0) {
-                      // console.log('mod', mod)
-                      idList.push(mod.ID)
-                    }
-                  }
 
-                } else {
-                  idList.push(mod.ID)
-                }
+                idList.push(mod.ID)
+                // if (building_id === 86 || building_id === 88 || building_id === 89) { //
+                //   let _PARAMS_TYPE = []
+                //   if (mod.PARAMS !== "") {
+                //     _PARAMS_TYPE = mod.PARAMS.split(',')
+                //     let _match = lodash.intersection(_PARAMS_TYPE, ['ST']) //ST 主体
+                //     if (_match.length > 0) {
+                //       // console.log('mod', mod)
+                //       idList.push(mod.ID)
+                //     }
+                //   }
+
+                // } else {
+                //   idList.push(mod.ID)
+                // }
               })
 
 
@@ -255,7 +257,8 @@
       getModListByFloorID(build,floor) {
         return new Promise((resolve, reject) => {
           const param = {
-            method: 'GetModListByFloorID',
+            // method: 'GetModListByFloorID',
+            method: 'GetMergedModListByFloorID',
             project_id: this.project_id,
             floor_id: floor.ID,
             build_id: floor.BUILDID
@@ -266,9 +269,9 @@
             
             this.modListByFloorID.forEach(d => {
               // flag=1 可以画
-              if (d.FLAG === 1) {
+              // if (d.FLAG === 1) {
                 _modList.push(d)
-              }
+              // }
             });
             resolve(_modList)
           }).catch((e) => {
@@ -302,7 +305,8 @@
       getModelFromAPI(model_id) {
         return new Promise((resolve, reject) => {
           const param = {
-            method: 'GetModelByID',
+            // method: 'GetModelByID',
+            method: 'GetMergedModelByID',
             project_id: this.project_id,
             model_id: model_id
           }
@@ -312,13 +316,13 @@
               if (unit.MESH_JSON !== '') {
                 // this.$emit('unitTotalAdd', 1)
                 let meshJson = getOriMesh(unit.MESH_JSON)
-                let modelData = {
-                  modelID: unit.ID,
-                  unit: unit,
-                  mesh: meshJson
-                }
+                // let modelData = {
+                //   modelID: unit.ID,
+                //   unit: unit,
+                //   mesh: meshJson
+                // }
                 this.$emit('unitGroupAddMesh', meshJson, unit.ID, unit)
-                this.$emit('unitGroupAddDB', modelData)
+                // this.$emit('unitGroupAddDB', modelData)
                 // let worker = new Worker("/static/workIndexedDB.js");
                 // this.worker.postMessage(modelData); //向worker发送数据
                 // worker.onmessage = function (evt) { //接收worker传过来的数据函数

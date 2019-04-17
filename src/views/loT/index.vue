@@ -113,7 +113,7 @@
         renderer: null,
         controls: null,
         unitLoadingSet: new Set(), // 模型加载数组 
-        unitGroups: new Array(50),
+        unitGroups: new Array(20),
         personGroup: new THREE.Group(),
 
         unitRemoveSet: new Set(), // 删除队列
@@ -313,7 +313,7 @@
       this.initControls()
       // this.initAxes()
       // this.initRaycaster()
-      this.initMouse()
+      // this.initMouse()
       this.removeUnit()
 
       // this.loadUnit()
@@ -323,9 +323,9 @@
       for (let i = 0, len = this.unitGroups.length; i < len; i++) {
         this.scene.add(this.unitGroups[i])
 
-        if (i !== 0) {
-          this.unitGroups[i].visible = false
-        }
+        // if (i !== 0) {
+        //   this.unitGroups[i].visible = false
+        // }
       }
 
 
@@ -350,7 +350,7 @@
       // 获取数据之后调用方法初始化或者调整状态
       modifyElevator(this.elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
 
-      this.addDataToDB()
+      // this.addDataToDB()
     },
     beforeDestroy() {
       console.log("beforeDestroy")
@@ -650,7 +650,7 @@
       unitAllRemove() {},
       unitGroupAddDB(modelData) {
         // console.log('modelData', modelData)
-        this.indexedDBWaitList.set(modelData.modelID, modelData)
+        // this.indexedDBWaitList.set(modelData.modelID, modelData)
         // this.indexedDBWaitList.set(modelData)
       },
       addDataToDB() {
@@ -679,10 +679,10 @@
       unitGroupAddMesh(meshJson, modelID, unit) {
 
 
-        if (unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit.DEVICE_ID !== '') {
-          // console.log('unitunitunitunit', unit)
-          this.deviceMap.set(unit.COMPONENT_NAME, unit)
-        }
+        // if (unit!==null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit.DEVICE_ID !== '') {
+        //   // console.log('unitunitunitunit', unit)
+        //   this.deviceMap.set(unit.COMPONENT_NAME, unit)
+        // }
         // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
         //   this.unitGroups[i].visible = false
         // }
@@ -722,25 +722,25 @@
           meshID: _mesh.id,
           groupIndex: _mod
         }
-        this.$store.dispatch('SetModelIDlist', param).then(() => {
-          // console.log("this.treeListData", this.treeListData)
-        }).catch((e) => {
-          console.log("e", e)
-        })
+        // this.$store.dispatch('SetModelIDlist', param).then(() => {
+        //   // console.log("this.treeListData", this.treeListData)
+        // }).catch((e) => {
+        //   console.log("e", e)
+        // })
 
         if (this.addedUnit == this.totalUnit) {
-          for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-            this.unitGroups[i].visible = true
-          }
-          this.addDeviceData()
-          document.addEventListener('mouseup', (event) => {
-            // console.log('mouseup')
-            for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-              if (i !== 0) {
-                this.unitGroups[i].visible = true
-              }
-            }
-          }, false)
+          // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+          //   this.unitGroups[i].visible = true
+          // }
+          // this.addDeviceData()
+          // document.addEventListener('mouseup', (event) => {
+          //   // console.log('mouseup')
+          //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+          //     if (i !== 0) {
+          //       this.unitGroups[i].visible = true
+          //     }
+          //   }
+          // }, false)
           this.loadingDialog.close()
           // console.log('this.indexedDBWaitList', this.indexedDBWaitList.length)
           // 全部显示

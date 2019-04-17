@@ -51,13 +51,13 @@
   var logDomain = 'https://log.ys7.com/statistics.do';
 
   // var ckplayerJS =  './ckplayer/ckplayer.js';
-  // var ckplayerSWF =  './ckplayer/ckplayer.swf';
+  var ckplayerSWF =  './ckplayer.swf';
   // var m3u8SWF =   './ckplayer/m3u8.swf';
   // var hlsJS ='./hls.min.js';
   var mpegJS = Domain + '/sdk/js/1.4/jsmpeg.min.js';
 
   var ckplayerJS = Domain + '/sdk/js/1.4/ckplayer/ckplayer.js';
-  var ckplayerSWF = Domain + '/sdk/js/1.4/ckplayer/ckplayer.swf';
+  // var ckplayerSWF = Domain + '/sdk/js/1.4/ckplayer/ckplayer.swf';
   var m3u8SWF = Domain + '/sdk/js/1.4/ckplayer/m3u8.swf';
   var hlsJS = Domain + '/sdk/js/1.4/hls.min.js';
 

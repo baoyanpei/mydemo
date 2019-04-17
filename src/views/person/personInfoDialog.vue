@@ -38,6 +38,11 @@
             <el-row :gutter="24">
               <el-col :span="24">
                 入职时间：{{trasRuZHiShiJian(created_time)}}
+                （状态：<span v-html="transStatus(status)"></span>
+                <span v-if="status===4" style="color:#FF0000;">开除时间：</span>
+                <span v-if="status===2" style="color:#FF0000;">辞职时间：</span>
+                ）
+
               </el-col>
             </el-row>
             <el-row :gutter="24">
@@ -46,8 +51,7 @@
               </el-col>
 
             </el-row>
-            <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
-              style="position:absolute;top:85px;right:20px;">上工日志</el-button>
+            
 
             <!-- <el-form-item label="姓名:">
                 {{name}}
@@ -69,7 +73,11 @@
           </el-button>
           <el-button v-if="BtnKaiChu===true" type="warning" class="btn-chizhi" disabled size="mini">辞职
           </el-button>
+
+          
         </div>
+        <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
+              style="position:absolute;top:85px;right:20px;">上工日志</el-button>
 
         <el-row>
           <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
@@ -193,6 +201,7 @@
         age: '',
         mobile: '',
         created_time: '',
+        status: '',
         bumen: '',
         zhuanye: '',
         idcarda: '',
@@ -262,6 +271,33 @@
         }
         return timeFormat
       },
+      transStatus(status) {
+        let _text = ''
+        switch (status) {
+          case -1:
+            _text = '注销'
+            break
+          case 1:
+            _text = '需要激活'
+            break
+          case 2:
+            _text = '<span style="color:#FF0000;">辞职</span>'
+            break
+          case 3:
+            _text = '手动注销'
+            break
+          case 4:
+            _text = '<span style="color:#FF0000;">开除</span>'
+            break
+          case 10:
+            _text = '默认值'
+            break
+          case 0:
+            _text = '<span style="color:#009900;">正常</span>'
+            break
+        }
+        return _text
+      },
       // 打开窗口
       openPersonFacePercentDetailDialogHandle() {
         // console.log("----22222---")
@@ -282,6 +318,7 @@
         this.age = ""
         this.mobile = ""
         this.created_time = ""
+        this.status = ""
         this.bumen = ''
         this.zhuanye = ''
         this.idcard_no = ''
@@ -312,6 +349,7 @@
           this.name = _personInfo.name
           this.mobile = _personInfo.mobile
           this.created_time = _personInfo.created_time
+          this.status = _personInfo.status
           this.idcard_no = _personInfo.idcard_no
           this.bumen = _personInfo.group_name_level[0]
           this.zhuanye = _personInfo.group_name_level[1]
