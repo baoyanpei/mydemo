@@ -102,6 +102,7 @@
 <script>
   import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
   // import VueDragResize from 'vue-drag-resize';
+  import moment from 'moment'
   import {
     Loading
   } from 'element-ui';
@@ -315,6 +316,8 @@
       personNowInDialogHandle() {
         const param = {
           show: true,
+          // bt:moment().format('YYYY-MM-DD 00:00:00'),
+          // et:moment().format('YYYY-MM-DD 23:59:59')//HH:mm:ss
         }
         this.$store.dispatch('SetPersonNowInDialog', param).then(() => {}).catch(() => {
 

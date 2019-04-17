@@ -4,9 +4,9 @@
 </style>
 <template>
   <div>
-    <el-dialog :modal="false" custom-class="ryxx-dialog" width="600px" top="1vh" :lock-scroll="true"
+    <el-dialog :modal="false" custom-class="ryxx-dialog" width="700px" top="1vh" :lock-scroll="true"
       :close-on-click-modal="false" @open="openPersonNowInDialogHandle" :visible.sync="personNowinDialog.show"
-      title="场内人员清单">
+      :title="dialogTitle">
       <div id="nowin-dialog" class="nowin-dialog">
         <el-form ref="personInoutDialog" :model="personInoutDialog" label-width="80px" :inline="true">
           <el-form-item prop="GroupList" label="部门">
@@ -44,7 +44,8 @@
                   <el-button @click="handleNameClick(person_item)" class="btnName" type="text" size="small">
                     {{person_item.name}}</el-button>
                 </div>
-                <div>入场时间:{{trantime(person_item.last_in_time)}}</div>
+                <div v-if="isToday===1">入场时间:{{trantime(person_item.last_in_time)}}</div>
+                <div v-if="isToday===0">最后入场时间:{{trantime(person_item.last_in_log.created_time)}}</div>
                 <div>识别率:
                   <span style="text-align: center;cursor: pointer;"
                     @click="openPersonFacePersonDialogHandle(person_item)">
@@ -99,7 +100,7 @@
     Loading
   } from 'element-ui';
   // import Mock from 'mockjs'
-
+  const DIALOG_TITLE = "场内人员清单"
   export default {
     components: {
 
@@ -109,6 +110,8 @@
     data() {
 
       return {
+        dialogTitle: DIALOG_TITLE,
+        isToday: 1,
         personInoutDialog: {
           GroupList: ['all'], // 计划名称
           person_id: '', // 人员
@@ -317,19 +320,31 @@
         console.log('personNowinDialog', this.personNowinDialog)
         this.loading = true
         this.loadingDialog = this.$loading({
-              // lock: true,
-              // text: '正在读取数据...',
-              // spinner: 'el-icon-loading',
-              // background: 'rgba(0, 0, 0, 0.5)',
-              // customClass: 'loading-class',
-              target: document.querySelector('.nowin-dialog')
-            });
+          // lock: true,
+          // text: '正在读取数据...',
+          // spinner: 'el-icon-loading',
+          // background: 'rgba(0, 0, 0, 0.5)',
+          // customClass: 'loading-class',
+          target: document.querySelector('.nowin-dialog')
+        });
         this.personNowInMap = new Map()
         this.personNowInMapList = []
-        const param = {
+        let param = {
           method: 'query_person_inout',
           project_id: this.project_id,
-          in_status: 1
+          in_status: 1,
+          // bt:this.personNowinDialog.bt,
+          // et:this.personNowinDialog.et
+        }
+        // console.log('123', )
+        if (this.personNowinDialog.bt !== undefined && this.personNowinDialog.et !== undefined) {
+          param['bt'] = this.personNowinDialog.bt
+          param['et'] = this.personNowinDialog.et
+          this.dialogTitle = moment(this.personNowinDialog.bt).format('YYYY-MM-DD') + " " + DIALOG_TITLE
+          this.isToday = 0
+        } else {
+          this.dialogTitle = moment().format('YYYY-MM-DD') + " " + DIALOG_TITLE
+          this.isToday = 1
         }
         this.personNowInList = []
         this.totalPerson = 0

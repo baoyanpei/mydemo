@@ -97,10 +97,18 @@
           //   return false;
           // },
           // timeFormat: 'HH:mm{ - HH:mm}',
-          // eventClick: function (event) {
+          eventClick: (event) => {
+            // console.log('123', event, event.start.format('YYYY-MM-DD'))
+            const param = {
+              show: true,
+              bt: event.start.format('YYYY-MM-DD 00:00:00'),
+              et: event.start.format('YYYY-MM-DD 23:59:59') //HH:mm:ss
+            }
+            this.$store.dispatch('SetPersonNowInDialog', param).then(() => {}).catch(() => {
 
-          //   return false;
-          // },
+            })
+            return false;
+          },
           // loading: function (bool) {},
 
         });
