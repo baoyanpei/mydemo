@@ -6,13 +6,13 @@
   <div id="loT-index" class="loT-index" style="margin: 0px;">
     <div id="loT-index-canvas3d" class="child-host"></div>
     <div id="stat-div-loT" class="stat-div-loT"></div>
-    <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
-      v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
-      v-on:unitTotalAdd="unitTotalAdd"></loadModel>
+    <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh1="unitGroupAddMesh1"
+      v-on:unitGroupAddMesh="unitGroupAddMesh" v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove"
+      v-on:addLoadingText="addLoadingText" v-on:unitTotalAdd="unitTotalAdd" v-on:unitTotalRemove="unitTotalRemove">
+    </loadModel>
 
     <div class="model3d-progress">
       <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div>
-      <!-- <el-progress :percentage="percentage" color="#6ac044" :show-text="showText"></el-progress> -->
 
     </div>
     <div class="divDataTadiao">
@@ -31,7 +31,6 @@
       <div>上报时间：<span id="sjj_sbsj">{{sjjData.sbsj}}</span></div>
     </div>
     <div class="bim-toolbar">
-      <!--v-draggable-->
       <div class="bim-toolbar1">
         <div>
           <el-tooltip class="item" effect="dark" content="清理数据缓存" placement="top">
@@ -44,9 +43,7 @@
 
       <div class="bim-toolbar2">
         <div>
-          <!-- <el-button @click="addDeviceData">
-            <font-awesome-icon icon="magic" size="2x" />
-          </el-button> -->
+
         </div>
       </div>
     </div>
@@ -69,10 +66,10 @@
   import {
     Loading
   } from 'element-ui';
-  import {
-    CSS2DRenderer,
-    CSS2DObject
-  } from 'three-css2drender';
+  // import {
+  //   CSS2DRenderer,
+  //   CSS2DObject
+  // } from 'three-css2drender';
   import $ from 'jquery'
   // const MQTT_USERNAME = 'LOC_messager' // mqtt连接用户名
   // const MQTT_PASSWORD = 'LOC_12342234' // mqtt连接密码 
@@ -81,68 +78,29 @@
   const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
 
   const TOWER_HEIGHT = 75 //塔吊高度
+  let scene = null
+  let camera = null
+  let renderer = null
 
 
 
 
-  window.onresize = onWindowResize;
-
-
-  let fov = 35 //75 this.gui.fov //拍摄距离  视野角值越大，场景中的物体越小
-  let near = 1 //相机离视体积最近的距离
-  let far = 800 //相机离视体积最远的距离
-  let aspect = (window.innerWidth) / (window.innerHeight); //纵横比
-  let scene = new THREE.Scene();
-  let camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.up = new THREE.Vector3(0, 0, 1); //相机以哪个方向为上方
-  camera.position.set(-130, -0, 80);
-  camera.position.set(150, 200, 190);
-  scene.add(camera);
-  let stats = new Stats()
-  stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-  // document.body.appendChild(this.stats.dom);
-
-
-  let renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    alpha: true
-  });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-  let labelRenderer = null
-  labelRenderer = new CSS2DRenderer();
-  labelRenderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
-  labelRenderer.domElement.style.position = 'absolute';
-  labelRenderer.domElement.style.pointerEvents = 'none';
-  labelRenderer.domElement.style.top = 0;
-
-
-
-  let controls = new THREE.MapControls(camera, renderer.domElement);
-  // var walls = new THREE.Group();
-  let unitGroups = new Array(20)
-
-  let personGroup = new THREE.Group()
-  let towerGroup = new THREE.Group() // 塔机
-  let elevatorGroup = new THREE.Group() // 升降机
-  let animate = function () {
-    stats.begin();
-    render();
-    stats.end();
-    requestAnimationFrame(animate);
-    controls.update();
-    scene.updateMatrixWorld(true);
-  };
 
   //光源
   function initLight() {
-    let directionalLight = new THREE.DirectionalLight(0xF6CB90, 2); //模拟远处类似太阳的光源
-    directionalLight.position.set(30, 50, 70).normalize();
-    directionalLight.castShadow = true;
-    scene.add(directionalLight);
-    let ambient = new THREE.AmbientLight(0xffffff, 2); //AmbientLight,影响整个场景的光源
+    // 位置不同，方向光作用于物体的面也不同，看到的物体各个面的颜色也不同 
+    // A start, 第二个参数是光源强度
+    // var directionalLight = new THREE.DirectionalLight(0xF6CB90, 5);//模拟远处类似太阳的光源
+    //directionalLight.position.set(0, 100, 0).normalize();
+    // directionalLight.position.set(0, 0, 110);
+    // directionalLight.castShadow = true;
+    // scene.add(directionalLight);
+    //A end
+    var ambient = new THREE.AmbientLight(0xffffff, 2); //AmbientLight,影响整个场景的光源
     ambient.position.set(0, 0, 0);
     scene.add(ambient);
+    //var pointlight = new THREE.PointLight(0x000000,1.5,2000);
+    //scene.add(pointlight); 
   }
 
   function initControls() {
@@ -155,14 +113,12 @@
     controls.maxDistance = 500;
 
     controls.maxPolarAngle = Math.PI / 2;
-
   }
 
   //辅助坐标轴
   function initAxes() {
-    let size = 1000; // - （可选）表示轴的线的大小。默认值为1
-    let axesHelper = new THREE.AxesHelper(size);
-    axesHelper.name = "axesHelper";
+    var size = 1000; // - （可选）表示轴的线的大小。默认值为1
+    var axesHelper = new THREE.AxesHelper(size);
     scene.add(axesHelper);
   }
 
@@ -174,47 +130,84 @@
     renderer.render(scene, camera);
   }
 
+  window.onresize = onWindowResize;
+
+  var animate = function () {
+    render();
+    requestAnimationFrame(animate);
+    controls.update();
+    scene.updateMatrixWorld(true);
+  };
+
   function render() {
     renderer.render(scene, camera);
-    labelRenderer.render(scene, camera);
   }
   //go
 
 
+  function LoadJsons(ids) {
+    if (typeof (ids) == 'undefined') {
+      ids = [17293, 17344, 17420, 17427, 17444, 17509, 17539, 17581, 17922, 17928, 17989, 18056, 18128, 18133, 18144,
+        18218, 18251, 18252, 18253, 18254, 18258, 18356, 18384, 18446, 18449, 18454, 18576, 18581, 18616, 18617,
+        18618, 18619, 18623, 18691, 18756, 18807, 18810, 18814, 18905, 18914, 18920, 18944, 18996, 19033, 19034,
+        19035, 19068, 19071, 19098, 19104, 19112, 19115, 5524, 5530, 5542, 5731, 5782, 5786, 5787, 5802, 5803, 5804,
+        5805, 5806, 5827, 5833, 5838, 5846, 6080, 6083, 6085, 6101
+      ];
+    }
+    var _loader = new THREE.ObjectLoader();
+    for (let index = 0; index < ids.length; index++) {
+      const id = ids[index];
+      _loader.load("/static/Jsons/" + id + ".json", function (obj) {
+        obj.name = id + "";
+        // obj.updateMatrix();
+        walls.add(obj)
+      })
+    }
+  }
+  var fov = 75, //拍摄距离  视野角值越大，场景中的物体越小
+    near = 1, //相机离视体积最近的距离
+    far = 1000, //相机离视体积最远的距离
+    aspect = window.innerWidth / window.innerHeight; //纵横比
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+  camera.up = new THREE.Vector3(0, 0, 1); //相机以哪个方向为上方
+  camera.position.set(-130, -0, 80);
+  scene.add(camera);
 
-  let mainCanvas = null
 
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  var controls = new THREE.MapControls(camera, renderer.domElement);
+  var walls = new THREE.Group();
   function aaa() {
     //初始化变量
-    console.log()
-    mainCanvas = document.getElementById('loT-index-canvas3d')
+
+    let mainCanvas = document.getElementById('loT-index-canvas3d')
     mainCanvas.appendChild(renderer.domElement);
     // document.body.appendChild(renderer.domElement);
-    // renderer.setClearColor(0x4682B4, 1.0);
-    renderer.setClearColor(0xcccccc, 0.3);
-
-    mainCanvas.appendChild(labelRenderer.domElement);
-    // this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x4682B4, 1.0);
 
 
-    // var buildingGroup = {}
+
+    var buildingGroup = {}
+    var personGroup = new THREE.Group();
     personGroup.name = "personGroup";
     scene.add(personGroup)
 
+    
+    scene.add(walls)
 
-    // scene.add(walls)
-    for (let i = 0, len = unitGroups.length; i < len; i++) {
-      unitGroups[i] = new THREE.Group()
-      scene.add(unitGroups[i])
-    }
-
-
-    document.getElementById('stat-div-loT').appendChild(stats.dom);
     initLight()
     initControls()
-    // initAxes()
+    initAxes()
 
     animate();
+
+    // LoadJsons();
+
   }
   export default {
     directives: {},
@@ -225,7 +218,7 @@
     },
     data() {
       return {
-
+        labelRenderer: null,
         loadtext: '开始加载模型....',
         client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
         timerReconnectMqtt: null,
@@ -236,14 +229,21 @@
 
         loader: new THREE.ObjectLoader(),
         modelDB: null,
-
+        stats: new Stats(),
         renderEnabled: true,
         projectiveObj: null,
         mainCanvas: null,
         raycaster: null,
+        objects: [],
+        // scene: null,
         mouse: null,
-
+        camera: null,
+        renderer: null,
+        controls: null,
         unitLoadingSet: new Set(), // 模型加载数组 
+        unitGroups: new Array(20),
+        personGroup: new THREE.Group(),
+
         unitRemoveSet: new Set(), // 删除队列
 
         showText: true,
@@ -252,6 +252,16 @@
         totalUnit: 0,
         addedUnit: 0,
 
+        datGui: null,
+        gui: {
+          fov: 35, //灯光y轴的位置
+          position_x: 150, // 蓝
+          position_y: 200, //红 越大越远
+          position_z: 190, // 绿 俯仰
+          save: null,
+          load: null,
+          clear: null
+        },
         saveData: null,
         lablePosisionList: {},
         modMap: new Map(),
@@ -259,8 +269,8 @@
         topicTJ1: '', // 塔机和升降机推送消息
         topicTJ2: '', // 塔机和升降机推送消息
 
-
-
+        towerGroup: new THREE.Group(), // 塔机
+        elevatorGroup: new THREE.Group(), // 升降机
         towerHeight: TOWER_HEIGHT, // 塔吊高度 28米
 
         deviceMap: new Map(),
@@ -333,12 +343,8 @@
       }
     },
 
-    async mounted() {
-
-      // if (mainCanvas ===null){
+    mounted() {
       aaa()
-      // }
-
       this.loadingDialog = this.$loading({
         lock: false,
         text: this.loadtext,
@@ -347,28 +353,103 @@
         customClass: 'loading-class',
         // target: document.querySelector('.treeDiv')
       });
-      console.log('indexed_ver', this.indexed_ver)
-      let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
-      console.log('IndexDBDataVer', _IndexDBDataVer)
-      if (this.indexed_ver !== _IndexDBDataVer) {
-        await this.clearDB()
-        Cookies.set('IndexDBDataVer', this.indexed_ver)
-      }
-      await this.initDevlist()
+      // if (typeof (Worker) !== "undefined") {
+      //   // console.log(12343)
+      // } else {
+      //   // console.log(123)
+      // }
+      // console.log('indexed_ver', this.indexed_ver)
+      // let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
+      // console.log('IndexDBDataVer', _IndexDBDataVer)
+      // if (this.indexed_ver !== _IndexDBDataVer) {
+      //   await this.clearDB()
+      //   Cookies.set('IndexDBDataVer', this.indexed_ver)
+      // }
+      // await this.initDevlist()
 
 
+      // this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+      // // document.body.appendChild(this.stats.dom);
+      // document.getElementById('stat-div-loT').appendChild(this.stats.dom);
+      // this.personGroup.name = "personGroup";
+      // // let controls1 = new function () {
+      // //   this.获取camera参数 = () => {
+      // //     console.log("获取当前carame 参数")
+      // //     // const tc = camera.clone();
+      // //     console.log('camera', camera)
+      // //   }
+      // // };
+
+      // // 初始化GUI
+      // // this.initGUI()
       // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
       //   this.unitGroups[i] = new THREE.Group()
       // }
 
+      // //初始化变量
+      // let fov = 75 //this.gui.fov //拍摄距离  视野角值越大，场景中的物体越小
+      // let near = 1 //相机离视体积最近的距离
+      // let far = 800 //相机离视体积最远的距离
+      // let aspect = (window.innerWidth) / (window.innerHeight); //纵横比
+      // scene = new THREE.Scene();
+      // camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+      // // camera.position.set(10, 8, 20);
+      // // camera.position.x = this.gui.position_x
+      // // camera.position.y = this.gui.position_y
+      // // camera.position.z = this.gui.position_z
+      // // console.log(this.gui.position_x, this.gui.position_y, this.gui.position_z)
+      // camera.position.set(this.gui.position_x, this.gui.position_y, this.gui.position_z);
+      // camera.up = new THREE.Vector3(0, 0, 1); //相机以哪个方向为上方
+      // camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+      // // camera.position.set(-130, 0, 80);
+      // // camera.position.set(-100,0,10);
+      // scene.add(camera);
+
+
+      // renderer = new THREE.WebGLRenderer({
+      //   alpha: true,
+      //   antialias: true
+      // });
+      // renderer.setClearColor(0xFFFFFF, 10.0);
+      // renderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
+      // // renderer.setFaceCulling(THREE.CullFaceFront, THREE.FrontFaceDirectionCW);
+      // // document.body.appendChild(renderer.domElement);
+      // // this.mainCanvas = document.getElementById('myCanvas')
+
+      // // offscreen = htmlCanvas.ControlToOffscreen()
+
+      // this.mainCanvas = document.getElementById('loT-index-canvas3d')
+      // this.mainCanvas.appendChild(renderer.domElement);
+      // // offscreen.appendChild(renderer.domElement);
+      // // worker.postMessage({canvas:offscreen},[offscreen])
+      // renderer.setClearColor(0xcccccc, 1.0);
+      // // let model3dIndex = document.getElementById('model3d-index')
+      // // this.labelRenderer = new CSS2DRenderer();
+      // // this.labelRenderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
+      // // this.labelRenderer.domElement.style.position = 'absolute';
+
+      // // this.labelRenderer.domElement.style.pointerEvents = 'none';
+      // // this.labelRenderer.domElement.style.top = 0;
+      // // this.mainCanvas.appendChild(this.labelRenderer.domElement);
+      // // this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+      // // this.labelRenderer.render(scene, camera);
+
+      // this.controls = new THREE.MapControls(camera, renderer.domElement);
+
+      // this.initLight() //光源
+      // this.initControls()
+      // // this.initAxes()
       // // this.initRaycaster()
       // // this.initMouse()
-      // this.removeUnit()
+      // // this.removeUnit()
 
+      // // this.loadUnit()
 
       // window.onresize = this.onWindowResize;
+      // this.animate();
       // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-      //   this.scene.add(this.unitGroups[i])
+      //   scene.add(this.unitGroups[i])
 
       //   // if (i !== 0) {
       //   //   this.unitGroups[i].visible = false
@@ -376,30 +457,46 @@
       // }
 
 
+
+      // scene.add(this.personGroup)
+
       // this.mqttConnect()
-
-      towerGroup.name = "towerGroup";
+      // let ids = [17293, 17344, 17420, 17427, 17444, 17509, 17539, 17581, 17922, 17928, 17989, 18056, 18128, 18133,
+      //     18144, 18218, 18251, 18252, 18253, 18254, 18258, 18356, 18384, 18446, 18449, 18454, 18576, 18581, 18616,
+      //     18617, 18618, 18619, 18623, 18691, 18756, 18807, 18810, 18814, 18905, 18914, 18920, 18944, 18996, 19033,
+      //     19034, 19035, 19068, 19071, 19098, 19104, 19112, 19115, 5524, 5530, 5542, 5731, 5782, 5786, 5787, 5802,
+      //     5803, 5804, 5805, 5806, 5827, 5833, 5838, 5846, 6080, 6083, 6085, 6101
+      //   ];
+      // var _loader = new THREE.ObjectLoader();
+      // for (let index = 0; index < ids.length; index++) {
+      //   const id = ids[index];
+      //   _loader.load("/static/Jsons/" + id + ".json",  (obj) =>{
+      //     obj.name = id + "";
+      //     // obj.updateMatrix();
+      //     scene.add(obj)
+      //   })
+      // }
+      /*
+      this.towerGroup.name = "towerGroup";
       if (scene) {
-        scene.add(towerGroup)
-        towerGroup.position.set(60, 22, 0); // 红 绿
+        scene.add(this.towerGroup)
+        this.towerGroup.position.set(60, 22, 0); // 红 绿
       };
-      modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+      modifyTower(this.towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
 
 
-      elevatorGroup.name = "elevatorGroup";
+      this.elevatorGroup.name = "elevatorGroup";
       if (scene) {
-        scene.add(elevatorGroup)
-        elevatorGroup.position.set(80, 23.5, 0);
-      };
+        scene.add(this.elevatorGroup)
+        this.elevatorGroup.position.set(80, 23.5, 0);
+      };*/
       // 获取数据之后调用方法初始化或者调整状态
-      modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
+      // modifyElevator(this.elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
 
-      this.addDataToDB()
+      // this.addDataToDB()
     },
     beforeDestroy() {
       console.log("beforeDestroy")
-      // scene = null
-      // renderer.dispose()
       clearTimeout(this.timeoutid)
       clearTimeout(this.timeRemove)
     },
@@ -628,32 +725,75 @@
         }
       },
       render() {
-        if (this.renderEnabled === true) {
-          // this.renderRaycasterObj(this.raycaster, this.scene, this.camera, this.mouse); //渲染光投射器投射到的对象
-          // console.log("fov", this.gui.fov);
-          // console.log("this.scene", JSON.stringify(this.scene.toJSON()))
-          // this.camera.fov = this.gui.fov;
-          // this.camera.position.x = this.gui.position_x;
-          // this.camera.position.y = this.gui.position_y;
-          // this.camera.position.z = this.gui.position_z;
-          // this.camera.updateProjectionMatrix();
-          // this.controls.update();
-          this.renderer.render(this.scene, this.camera);
-          this.labelRenderer.render(this.scene, this.camera);
+        // if (this.renderEnabled === true) {
+        // this.renderRaycasterObj(this.raycaster, scene, camera, this.mouse); //渲染光投射器投射到的对象
+        // console.log("fov", this.gui.fov);
+        // console.log("scene", JSON.stringify(scene.toJSON()))
+        // camera.fov = this.gui.fov;
+        // camera.position.x = this.gui.position_x;
+        // camera.position.y = this.gui.position_y;
+        // camera.position.z = this.gui.position_z;
+        // camera.updateProjectionMatrix();
+        // this.controls.update();
+        renderer.render(scene, camera);
+        // this.labelRenderer.render(scene, camera);
+        // }
+      },
+      initGUI() {
+        this.datGui = new dat.GUI();
+        this.datGui.add(this.gui, "fov", 0, 100);
+        this.datGui.add(this.gui, "position_x", -360, 360);
+        this.datGui.add(this.gui, "position_y", -360, 360);
+        this.datGui.add(this.gui, "position_z", -360, 360);
+        this.gui.save = () => {
+          console.log('this.unitGroup', this.unitGroup)
+          this.unitGroup.visible = !this.unitGroup.visible
         }
+        this.gui.clear = () => {
+          scene = new THREE.Scene()
+          this.unitGroup = new THREE.Group()
+          scene.add(camera);
+          scene.add(this.unitGroup)
+          this.initLight()
+        }
+        this.gui.load = () => {
+          console.log("load")
+
+          var loadedGeometry = JSON.parse(this.saveData);
+          var loader = new THREE.ObjectLoader();
+          console.log('loadedGeometry', loadedGeometry)
+          scene = loader.parse(loadedGeometry);
+          this.controls = new THREE.MapControls(camera, renderer.domElement);
+
+
+        }
+        this.datGui.add(this.gui, 'save');
+        this.datGui.add(this.gui, 'clear');
+        this.datGui.add(this.gui, 'load');
+        this.datGui.domElement.style = 'position:absolute;top:100px;left:50px';
+      },
+      animate() {
+        this.stats.begin();
+        this.render();
+
+        this.stats.end();
+        requestAnimationFrame(this.animate);
+
+        // this.controls.update();
+        scene.updateMatrixWorld(true);
       },
       onWindowResize() {
         // console.log("onWindowResize")
-        this.camera.aspect = (window.innerWidth - 40) / (window.innerHeight - 34);
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
-        this.renderer.render(this.scene, this.camera);
+        // camera.aspect = (window.innerWidth - 40) / (window.innerHeight - 34);
+        // camera.updateProjectionMatrix();
+        // renderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
+        // renderer.render(scene, camera);
 
       },
       unitAllRemove() {},
       unitGroupAddDB(modelData) {
         // console.log('modelData', modelData)
-        this.indexedDBWaitList.set(modelData.modelID, modelData)
+        // this.indexedDBWaitList.set(modelData.modelID, modelData)
         // this.indexedDBWaitList.set(modelData)
       },
       addDataToDB() {
@@ -679,14 +819,26 @@
         this.loadingDialog.text = loadingTxt
         // this.loadtext = loadingTxt
       },
+      unitGroupAddMesh1(_mesh) {
+        this.addedUnit = this.addedUnit + 1
+        this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
+        // if (meshJson === null) {
+        //   return
+        // }
+        let _mod = Math.floor(Math.random() * this.unitGroups.length) //_data.modelID % 10
+        // this.unitGroups[_mod].add(_mesh)
+        scene.add(_mesh)
+        if (this.addedUnit == this.totalUnit) {
+          // this.loadingDialog.close()
+        }
+      },
       unitGroupAddMesh(meshJson, modelID, unit) {
 
 
-        if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
-          .DEVICE_ID !== '') {
-          // console.log('unitunitunitunit', unit)
-          this.deviceMap.set(unit.COMPONENT_NAME, unit)
-        }
+        // if (unit!==null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit.DEVICE_ID !== '') {
+        //   // console.log('unitunitunitunit', unit)
+        //   this.deviceMap.set(unit.COMPONENT_NAME, unit)
+        // }
         // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
         //   this.unitGroups[i].visible = false
         // }
@@ -704,57 +856,68 @@
         // console.log('mod', mod)
         // this.modMap.set(_param.modelID, _data)
         // this.percentage = Math.ceil((this.addedUnit / this.totalUnit) * 100)
-        let _mod = Math.floor(Math.random() * unitGroups.length) //_data.modelID % 10
-        let _mesh = this.loader.parse(meshJson)
-        // console.log('mod', mod)
-        // this.modMap.set(_mesh.id, mod)
-        // console.log('result.mesh', _mesh.material.opacity)
-        // 模型的透明度
-        if (unit.BUILDING_ID === 86 || unit.BUILDING_ID === 88 || unit.BUILDING_ID === 89) {
-          if (_mesh.material.opacity === 1) {
-            _mesh.material.opacity = 0.3
+        let _mod = Math.floor(Math.random() * this.unitGroups.length) //_data.modelID % 10
+        // let _mesh = this.loader.parse(meshJson)
+        let _mesh = null
+        this.loader.load(meshJson, (_mesh) => {
+          // obj.scale.x = obj.scale.y = obj.scale.z = 100;
+          // scene.add(obj);
+
+          // console.log('mod', mod)
+          // this.modMap.set(_mesh.id, mod)
+          // console.log('result.mesh', _mesh.material.opacity)
+          // 模型的透明度
+          if (unit.BUILDING_ID === 86 || unit.BUILDING_ID === 88 || unit.BUILDING_ID === 89) {
+            if (_mesh.material.opacity === 1) {
+              _mesh.material.opacity = 0.3
+            }
           }
-        }
 
-        // console.log('_mesh', _mesh.name)
-        unitGroups[_mod].add(_mesh)
-        // scene.add(_mesh)
-        const param = {
-          modelID: modelID,
-          meshID: _mesh.id,
-          groupIndex: _mod
-        }
-        // this.$store.dispatch('SetModelIDlist', param).then(() => {
-        //   // console.log("this.treeListData", this.treeListData)
-        // }).catch((e) => {
-        //   console.log("e", e)
-        // })
+          // this.insertMark(_mesh)
 
-        if (this.addedUnit == this.totalUnit) {
-          console.log(123123)
-          
-          this.addDeviceData()
-          // document.addEventListener('mouseup', (event) => {
-          //   // console.log('mouseup')
+
+          // console.log('_mesh', _mesh.name)
+          this.unitGroups[_mod].add(_mesh)
+          // const param = {
+          //   modelID: modelID,
+          //   meshID: _mesh.id,
+          //   groupIndex: _mod
+          // }
+          // this.$store.dispatch('SetModelIDlist', param).then(() => {
+          //   // console.log("this.treeListData", this.treeListData)
+          // }).catch((e) => {
+          //   console.log("e", e)
+          // })
+
+          if (this.addedUnit == this.totalUnit) {
+            // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+            //   this.unitGroups[i].visible = true
+            // }
+            // this.addDeviceData()
+            // document.addEventListener('mouseup', (event) => {
+            //   // console.log('mouseup')
+            //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+            //     if (i !== 0) {
+            //       this.unitGroups[i].visible = true
+            //     }
+            //   }
+            // }, false)
+            this.loadingDialog.close()
+            // console.log('this.indexedDBWaitList', this.indexedDBWaitList.length)
+            // 全部显示
+
+
+
+          }
+
+          // if (this.addedUnit == this.totalUnit && this.unitGroups[0].visible == false) {
           //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-          //     if (i !== 0) {
-          //       this.unitGroups[i].visible = true
-          //     }
+          //     this.unitGroups[i].visible = true
           //   }
-          // }, false)
-          this.loadingDialog.close()
-          // console.log('this.indexedDBWaitList', this.indexedDBWaitList.length)
-          // 全部显示
+          // }
+        });
 
 
-
-        }
-
-        // if (this.addedUnit == this.totalUnit && this.unitGroups[0].visible == false) {
-        //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-        //     this.unitGroups[i].visible = true
-        //   }
-        // }
       },
       unitTotalAdd(addTotal) {
         this.totalUnit = this.totalUnit + addTotal
@@ -766,7 +929,11 @@
         // }
 
       },
-
+      unitTotalRemove() {
+        this.percentage = 0
+        this.totalUnit = 0
+        this.addedUnit = 0
+      },
       unitRemove(unit) {
         // console.log('unit123', unit)
 
@@ -809,7 +976,24 @@
           this.removeUnit()
         }, 50)
       },
-
+      initControls() {
+        // controls = new THREE.MapControls(camera);
+        this.controls.enableDamping =
+          true; // an animation loop is required when either damping or auto-rotation are enabled
+        this.controls.dampingFactor = 1;
+        this.controls.screenSpacePanning = true;
+        this.controls.minDistance = 0;
+        this.controls.maxDistance = 500;
+        this.controls.maxPolarAngle = Math.PI / 2;
+        // this.controls.autoRotate = true;
+      },
+      //辅助坐标轴
+      initAxes() {
+        var size = 1000; // - （可选）表示轴的线的大小。默认值为1
+        var axesHelper = new THREE.AxesHelper(size);
+        axesHelper.name = "axesHelper";
+        scene.add(axesHelper);
+      },
       initMouse() {
         document.addEventListener('mousedown', (event) => {
           // THREE.Cache.clear()
@@ -860,20 +1044,20 @@
           let standardVector = new THREE.Vector3(this.mouse.x, this.mouse.y, 1); // 标准设备坐标
 
           // 标准设备坐标转世界坐标
-          let worldVector = standardVector.unproject(this.camera);
+          let worldVector = standardVector.unproject(camera);
           // 射线投射方向单位向量(worldVector坐标减相机位置坐标)
-          let ray = worldVector.sub(this.camera.position).normalize();
-          this.raycaster = new THREE.Raycaster(this.camera.position, this.ray); //光线投射器
-          this.raycaster.setFromCamera(this.mouse, this.camera);
-          // var vector = new THREE.Vector3(this.mouse.x, this.mouse.y, 0.5).unproject(this.camera);
-          // this.raycaster = new THREE.Raycaster(this.camera.position, vector.sub(this.camera.position).normalize());
-          if (this.scene.children[4] === undefined) {
+          let ray = worldVector.sub(camera.position).normalize();
+          this.raycaster = new THREE.Raycaster(camera.position, this.ray); //光线投射器
+          this.raycaster.setFromCamera(this.mouse, camera);
+          // var vector = new THREE.Vector3(this.mouse.x, this.mouse.y, 0.5).unproject(camera);
+          // this.raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+          if (scene.children[4] === undefined) {
             return
           }
-          // console.log('this.scene.children[4].children', this.scene.children[14].children)
+          // console.log('scene.children[4].children', scene.children[14].children)
           // for (let i = 14, len = 14; i <= len; i++) {
 
-          let intersects = this.raycaster.intersectObjects(this.scene.children[14].children, true);
+          let intersects = this.raycaster.intersectObjects(scene.children[14].children, true);
           // console.log('intersects', intersects)
           if (intersects.length > 0) {
             console.log('123')
@@ -913,7 +1097,15 @@
         }, false)
 
       },
-
+      initLight() {
+        let directionalLight = new THREE.DirectionalLight(0xF6CB90, 2); //模拟远处类似太阳的光源
+        directionalLight.position.set(30, 50, 70).normalize();
+        directionalLight.castShadow = true;
+        scene.add(directionalLight);
+        let ambient = new THREE.AmbientLight(0xffffff, 2); //AmbientLight,影响整个场景的光源
+        ambient.position.set(0, 0, 0);
+        scene.add(ambient);
+      },
       personInoutDialogHandle() {
         this.$confirm('此操作将清除浏览器数据库中缓存的模型数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -939,9 +1131,8 @@
         });
       },
       addDeviceData() {
-        console.log('unitGroups', unitGroups)
-        for (let i = 0, len = unitGroups.length; i < len; i++) {
-          unitGroups[i].children.forEach(mesh => {
+        for (let i = 0, len = this.unitGroups.length; i < len; i++) {
+          this.unitGroups[i].children.forEach(mesh => {
             let _device = this.deviceMap.get(mesh.name)
             if (_device !== undefined) {
               // 摄像头
@@ -1039,7 +1230,7 @@
         // lable.position.x = lable.position.x - 15
         // lable.position.z = lable.position.z - 10
         // console.log('lable.position)', lable.position)
-        personGroup.add(lable);
+        this.personGroup.add(lable);
 
       },
       addTxtBox(_mesh, device) {
@@ -1080,7 +1271,29 @@
         centroid.applyMatrix4(_mesh.matrixWorld);
         lable.position.copy(centroid)
         _mesh.add(lable)
-        personGroup.add(_mesh);
+        this.personGroup.add(_mesh);
+
+
+      },
+      createSpriteText() {
+        //先用画布将文字画出
+        let canvas = document.createElement("canvas");
+        let ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffff00";
+        ctx.font = "Bold 100px Arial";
+        ctx.lineWidth = 4;
+        ctx.fillText("123", 4, 104);
+        let texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+
+        //使用Sprite显示文字
+        let material = new THREE.SpriteMaterial({
+          map: texture
+        }); //通过动态canvas也就是说我们能再three里面自己随意写2d字体。动态更新文字等等功能
+        let textObj = new THREE.Sprite(material);
+
+        textObj.scale.set(10, 5, 1);
+        return textObj;
       }
     }
   }
