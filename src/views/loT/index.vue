@@ -121,7 +121,7 @@
   let controls = new THREE.MapControls(camera, renderer.domElement);
   // var walls = new THREE.Group();
   let unitGroups = new Array(20)
-
+  let showGroup = new THREE.Group()
   let personGroup = new THREE.Group()
   let towerGroup = new THREE.Group() // 塔机
   let elevatorGroup = new THREE.Group() // 升降机
@@ -201,6 +201,7 @@
     personGroup.name = "personGroup";
     scene.add(personGroup)
 
+    scene.add(showGroup)
 
     // scene.add(walls)
     for (let i = 0, len = unitGroups.length; i < len; i++) {
@@ -362,7 +363,7 @@
       // }
 
       // // this.initRaycaster()
-      // // this.initMouse()
+      this.initMouse()
       // this.removeUnit()
 
 
@@ -681,7 +682,7 @@
       },
       unitGroupAddMesh(meshJson, modelID, unit) {
 
-
+        // console.log('unit', unit)
         if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
           .DEVICE_ID !== '') {
           // console.log('unitunitunitunit', unit)
@@ -693,7 +694,7 @@
 
         this.addedUnit = this.addedUnit + 1
         this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
-        if (meshJson === null) {
+        if (meshJson === null || meshJson === '') {
           return
         }
         // if (this.addedUnit < this.totalUnit && this.unitGroups[0].visible == true) {
@@ -704,7 +705,7 @@
         // console.log('mod', mod)
         // this.modMap.set(_param.modelID, _data)
         // this.percentage = Math.ceil((this.addedUnit / this.totalUnit) * 100)
-        let _mod = Math.floor(Math.random() * unitGroups.length) //_data.modelID % 10
+
         let _mesh = this.loader.parse(meshJson)
         // console.log('mod', mod)
         // this.modMap.set(_mesh.id, mod)
@@ -717,13 +718,21 @@
         }
 
         // console.log('_mesh', _mesh.name)
-        unitGroups[_mod].add(_mesh)
-        // scene.add(_mesh)
-        const param = {
-          modelID: modelID,
-          meshID: _mesh.id,
-          groupIndex: _mod
+        if (unit.BUILDING_ID === 87) {
+          showGroup.add(_mesh)
+        } else {
+          let _mod = Math.floor(Math.random() * unitGroups.length) //_data.modelID % 10
+          unitGroups[_mod].add(_mesh)
         }
+
+
+
+        // scene.add(_mesh)
+        // const param = {
+        //   modelID: modelID,
+        //   meshID: _mesh.id,
+        //   groupIndex: _mod
+        // }
         // this.$store.dispatch('SetModelIDlist', param).then(() => {
         //   // console.log("this.treeListData", this.treeListData)
         // }).catch((e) => {
@@ -732,29 +741,27 @@
 
         if (this.addedUnit == this.totalUnit) {
           console.log(123123)
-          
+
           this.addDeviceData()
-          // document.addEventListener('mouseup', (event) => {
-          //   // console.log('mouseup')
-          //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-          //     if (i !== 0) {
-          //       this.unitGroups[i].visible = true
-          //     }
-          //   }
-          // }, false)
+          document.addEventListener('mouseup', (event) => {
+            // console.log('mouseup')
+            for (let i = 0, len = unitGroups.length; i < len; i++) {
+              // if (i !== 0) {
+              unitGroups[i].visible = true
+              // }
+            }
+          }, false)
           this.loadingDialog.close()
           // console.log('this.indexedDBWaitList', this.indexedDBWaitList.length)
           // 全部显示
 
-
+          for (let i = 0, len = unitGroups.length; i < len; i++) {
+            unitGroups[i].visible = true
+          }
 
         }
 
-        // if (this.addedUnit == this.totalUnit && this.unitGroups[0].visible == false) {
-        //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-        //     this.unitGroups[i].visible = true
-        //   }
-        // }
+
       },
       unitTotalAdd(addTotal) {
         this.totalUnit = this.totalUnit + addTotal
@@ -815,10 +822,10 @@
           // THREE.Cache.clear()
           // this.unitGroup.visible = false
           // console.log('123')
-          for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-            if (i !== 0) {
-              this.unitGroups[i].visible = false
-            }
+          for (let i = 0, len = unitGroups.length; i < len; i++) {
+            // if (i !== 0) {
+            unitGroups[i].visible = false
+            // }
           }
           // if (this.projectiveObj) {
           //   let _model = this.modelMap.get(this.projectiveObj.name)
@@ -939,9 +946,9 @@
         });
       },
       addDeviceData() {
-        console.log('unitGroups', unitGroups)
-        for (let i = 0, len = unitGroups.length; i < len; i++) {
-          unitGroups[i].children.forEach(mesh => {
+        console.log('showGroup', showGroup)
+        // for (let i = 0, len = unitGroups.length; i < len; i++) {
+          showGroup.children.forEach(mesh => {
             let _device = this.deviceMap.get(mesh.name)
             if (_device !== undefined) {
               // 摄像头
@@ -956,7 +963,7 @@
               }
             }
           })
-        }
+        // }
         this.updateDeviceData()
       },
       updateDeviceData() {

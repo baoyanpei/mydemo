@@ -51,7 +51,7 @@
   var logDomain = 'https://log.ys7.com/statistics.do';
 
   // var ckplayerJS =  './ckplayer/ckplayer.js';
-  var ckplayerSWF =  './ckplayer.swf';
+  var ckplayerSWF =  './static/ckplayer.swf';
   // var m3u8SWF =   './ckplayer/m3u8.swf';
   // var hlsJS ='./hls.min.js';
   var mpegJS = Domain + '/sdk/js/1.4/jsmpeg.min.js';
