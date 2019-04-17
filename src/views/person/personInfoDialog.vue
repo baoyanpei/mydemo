@@ -8,25 +8,25 @@
       @open="openPersonFacePercentDetailDialogHandle" :visible.sync="personInfoDialog.show"
       :title="personInfoDialog.name">
       <div id="person-face-person-detail-form" class="person-face-person-detail-form">
-        <el-row :gutter="24" style="width: 500px;">
-          <el-col :span="8" style="text-align: center;padding-right:0px;">
+        <el-row :gutter="24" style="width: 700px;">
+          <el-col :span="6" style="text-align: center;padding-right:0px;">
             <div><img :src="idcard_pic" style="height:120px;" /></div>
             <!-- <div>(身份证照)</div> -->
           </el-col>
-          <el-col :span="16" class="persion-info-txt" style="text-align: left;padding: 2px;">
+          <el-col :span="18" class="persion-info-txt" style="text-align: left;padding: 2px;">
             <el-row :gutter="24">
-              <el-col :span="12">
+              <el-col :span="8">
                 部门：{{bumen}}
               </el-col>
-              <el-col :span="12">
+              <el-col :span="14">
                 专业：{{zhuanye}}
               </el-col>
             </el-row>
             <el-row :gutter="24">
-              <el-col :span="12">
+              <el-col :span="8">
                 年龄：{{age}}
               </el-col>
-              <el-col :span="12">
+              <el-col :span="14">
                 学历：-
               </el-col>
             </el-row>
@@ -39,8 +39,8 @@
               <el-col :span="24">
                 入职时间：{{trasRuZHiShiJian(created_time)}}
                 （状态：<span v-html="transStatus(status)"></span>
-                <span v-if="status===4" style="color:#FF0000;">开除时间：</span>
-                <span v-if="status===2" style="color:#FF0000;">辞职时间：</span>
+                <span v-if="status===4 && leave_time!==''" style="color:#FF0000;">开除时间：{{leave_time}}</span>
+                <span v-if="status===2 && leave_time!==''" style="color:#FF0000;">辞职时间：{{leave_time}}</span>
                 ）
 
               </el-col>
@@ -51,7 +51,7 @@
               </el-col>
 
             </el-row>
-            
+
 
             <!-- <el-form-item label="姓名:">
                 {{name}}
@@ -74,10 +74,10 @@
           <el-button v-if="BtnKaiChu===true" type="warning" class="btn-chizhi" disabled size="mini">辞职
           </el-button>
 
-          
+
         </div>
         <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
-              style="position:absolute;top:85px;right:20px;">上工日志</el-button>
+          style="position:absolute;top:85px;right:20px;">上工日志</el-button>
 
         <el-row>
           <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
@@ -202,6 +202,7 @@
         mobile: '',
         created_time: '',
         status: '',
+        leave_time: '',
         bumen: '',
         zhuanye: '',
         idcarda: '',
@@ -319,6 +320,7 @@
         this.mobile = ""
         this.created_time = ""
         this.status = ""
+        this.leave_time = ''
         this.bumen = ''
         this.zhuanye = ''
         this.idcard_no = ''
@@ -350,6 +352,10 @@
           this.mobile = _personInfo.mobile
           this.created_time = _personInfo.created_time
           this.status = _personInfo.status
+
+          if ((this.status === 2 || this.status === 4) && _personInfo.leave_time !== '') {
+            this.leave_time = _personInfo.leave_time
+          }
           this.idcard_no = _personInfo.idcard_no
           this.bumen = _personInfo.group_name_level[0]
           this.zhuanye = _personInfo.group_name_level[1]
