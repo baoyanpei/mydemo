@@ -844,17 +844,6 @@
           //   // })
           // }
         }, false)
-
-
-
-        // document.addEventListener('mouseup', (event) => {
-        //   // console.log('mouseup')
-        //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-        //     if (i !== 0) {
-        //       this.unitGroups[i].visible = true
-        //     }
-        //   }
-        // }, false)
       },
       // 初始化 光线投射器
       initRaycaster() {
@@ -964,10 +953,13 @@
               this.addCameraLabel(mesh, _device)
             } else if (_device.DEVICE_TYPE === 10) { // 电表
               this.addTxtBox(mesh, _device)
+              this.addLabel1(mesh, _device, 'dianbiao.png')
             } else if (_device.DEVICE_TYPE === 11) { // 水表
               this.addTxtBox(mesh, _device)
+              this.addLabel1(mesh, _device, 'shuibiao.png')
             } else if (_device.DEVICE_TYPE === 15) { // 环境检测仪
               this.addTxtBox(mesh, _device)
+              this.addLabel1(mesh, _device, 'huanjinjianceyi.png')
             }
           }
         })
@@ -1038,6 +1030,51 @@
         }
         thisbt.src = "/static/videocamera3.png";
 
+        let lable = new CSS2DObject(thisbt);
+        lable.name = _mesh.name + "_b";
+        _mesh.geometry.computeBoundingBox();
+        let centroid = new THREE.Vector3();
+        centroid.addVectors(_mesh.geometry.boundingBox.min, _mesh.geometry.boundingBox.max);
+        centroid.multiplyScalar(0.5);
+        centroid.applyMatrix4(_mesh.matrixWorld);
+        lable.position.copy(centroid)
+        personGroup.add(lable);
+      },
+      addLabel1(_mesh, device, pic_url) {
+
+        let thisbt = document.createElement('img');
+
+        thisbt.className = 'loTLabel1'
+        thisbt.style.pointerEvents = 'auto'
+        // thisbt.style.marginTop = '-1em';
+        thisbt.title = _mesh.name
+        thisbt.onclick = () => {
+          console.log('name', _mesh.name, device.DEVICE_TYPE)
+          // let _mesh1 = scene.getObjectByName(_mesh.name + "_b", true)
+          // _mesh1.visible = false
+          // console.log('type', type, _mesh1)
+          let _obj = null
+          switch (device.DEVICE_TYPE) {
+            case 10:
+              _obj = $("#tipDianBiao")
+              break;
+            case 11:
+              _obj = $("#tipShuiBiao")
+              break;
+            case 15:
+              _obj = $("#tipHJJCY")
+              break;
+
+          }
+          if (_obj !== null) {
+            if (_obj.is(":visible") == true) {
+              _obj.hide()
+            } else {
+              _obj.show()
+            }
+          }
+        }
+        thisbt.src = `/static/${pic_url}` //"shuibiao.png";
 
         let lable = new CSS2DObject(thisbt);
         lable.name = _mesh.name + "_b";
@@ -1047,12 +1084,7 @@
         centroid.multiplyScalar(0.5);
         centroid.applyMatrix4(_mesh.matrixWorld);
         lable.position.copy(centroid)
-        // lable.position.y = lable.position.y - 10
-        // lable.position.x = lable.position.x - 15
-        // lable.position.z = lable.position.z - 10
-        // console.log('lable.position)', lable.position)
         personGroup.add(lable);
-
       },
       addTxtBox(_mesh, device) {
         let thisbt = document.createElement('div');
@@ -1062,16 +1094,19 @@
           thisbt.innerHTML = "<div class='css2-txt-box'>用电量：<span id='divDianBiao" + device.DEVICE_ID + "'> " + aaa
             .total_used +
             "</span> 度</div>"
+          thisbt.id = "tipDianBiao"
         } else if (device.DEVICE_TYPE === 11) {
           // 水表
           let DeviceID = 'YD10000SB03'
           let bbb = this.datumMeterMap.get(DeviceID)
+          thisbt.id = "tipShuiBiao"
           thisbt.innerHTML = "<div class='css2-txt-box'>用水量：<span id='divShuiBiao" + DeviceID + "'> " + bbb.total_used +
             "</span> 吨</div>"
         } else if (device.DEVICE_TYPE === 15) {
           let _h = "<div class='css2-txt-box2'>"
           _h = _h + "<span id='divHJJCY'> 环境检测仪 </span>"
           _h = _h + "</div>"
+          thisbt.id = "tipHJJCY"
           thisbt.innerHTML = _h
         }
 
