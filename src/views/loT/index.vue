@@ -1040,6 +1040,27 @@
         lable.position.copy(centroid)
         personGroup.add(lable);
       },
+      showHideTip(device_type) {
+        let _obj = null
+        switch (device_type) {
+          case 10:
+            _obj = $("#tipDianBiao")
+            break;
+          case 11:
+            _obj = $("#tipShuiBiao")
+            break;
+          case 15:
+            _obj = $("#tipHJJCY")
+            break;
+        }
+        if (_obj !== null) {
+          if (_obj.is(":visible") == true) {
+            _obj.hide()
+          } else {
+            _obj.show()
+          }
+        }
+      },
       addLabel1(_mesh, device, pic_url) {
 
         let thisbt = document.createElement('img');
@@ -1050,29 +1071,13 @@
         thisbt.title = _mesh.name
         thisbt.onclick = () => {
           console.log('name', _mesh.name, device.DEVICE_TYPE)
+          this.showHideTip(device.DEVICE_TYPE)
+
           // let _mesh1 = scene.getObjectByName(_mesh.name + "_b", true)
           // _mesh1.visible = false
           // console.log('type', type, _mesh1)
-          let _obj = null
-          switch (device.DEVICE_TYPE) {
-            case 10:
-              _obj = $("#tipDianBiao")
-              break;
-            case 11:
-              _obj = $("#tipShuiBiao")
-              break;
-            case 15:
-              _obj = $("#tipHJJCY")
-              break;
 
-          }
-          if (_obj !== null) {
-            if (_obj.is(":visible") == true) {
-              _obj.hide()
-            } else {
-              _obj.show()
-            }
-          }
+
         }
         thisbt.src = `/static/${pic_url}` //"shuibiao.png";
 
@@ -1093,7 +1098,7 @@
           // console.log('aaa', aaa)
           thisbt.innerHTML = "<div class='css2-txt-box'>用电量：<span id='divDianBiao" + device.DEVICE_ID + "'> " + aaa
             .total_used +
-            "</span> 度</div>"
+            "</span> 度</div><img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
           thisbt.id = "tipDianBiao"
         } else if (device.DEVICE_TYPE === 11) {
           // 水表
@@ -1101,11 +1106,11 @@
           let bbb = this.datumMeterMap.get(DeviceID)
           thisbt.id = "tipShuiBiao"
           thisbt.innerHTML = "<div class='css2-txt-box'>用水量：<span id='divShuiBiao" + DeviceID + "'> " + bbb.total_used +
-            "</span> 吨</div>"
+            "</span> 吨</div><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
         } else if (device.DEVICE_TYPE === 15) {
           let _h = "<div class='css2-txt-box2'>"
           _h = _h + "<span id='divHJJCY'> 环境检测仪 </span>"
-          _h = _h + "</div>"
+          _h = _h + "</div><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
           thisbt.id = "tipHJJCY"
           thisbt.innerHTML = _h
         }
@@ -1128,6 +1133,18 @@
         lable.position.copy(centroid)
         _mesh.add(lable)
         personGroup.add(_mesh);
+        setTimeout(() => {
+          $("#iconCloseDianBiao").click(() => {
+            this.showHideTip(10)
+          });
+          $("#iconCloseShuiBiao").click(() => {
+            this.showHideTip(11)
+          });
+          $("#iconCloseHJJCY").click(() => {
+            this.showHideTip(15)
+          });
+        }, 3000);
+
       }
     }
   }

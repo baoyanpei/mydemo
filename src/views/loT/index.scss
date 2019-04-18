@@ -8,7 +8,13 @@
 }
 .loT-index {
   height: calc(100vh - 34px);
-
+  .iconTipClose{
+    width: 10px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    cursor: pointer;
+  }
   .el-tabs__content {
     padding: 0px;
   }
