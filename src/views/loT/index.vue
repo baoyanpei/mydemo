@@ -9,7 +9,7 @@
     <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
       v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
       v-on:unitTotalAdd="unitTotalAdd"></loadModel>
-
+    <mqttLocation></mqttLocation>
     <div class="model3d-progress">
       <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div>
       <!-- <el-progress :percentage="percentage" color="#6ac044" :show-text="showText"></el-progress> -->
@@ -66,6 +66,7 @@
     mapState
   } from 'vuex'
   import loadModel from "./components/loadModel"
+  import mqttLocation from "./components/mqttLocation"
   import {
     Loading
   } from 'element-ui';
@@ -225,6 +226,7 @@
     name: 'model3D-index',
     components: {
       loadModel,
+      mqttLocation
       // ModelDetail
     },
     data() {
@@ -351,9 +353,9 @@
         customClass: 'loading-class',
         // target: document.querySelector('.treeDiv')
       });
-      console.log('indexed_ver', this.indexed_ver)
+      // console.log('indexed_ver', this.indexed_ver)
       let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
-      console.log('IndexDBDataVer', _IndexDBDataVer)
+      // console.log('IndexDBDataVer', _IndexDBDataVer)
       if (this.indexed_ver !== _IndexDBDataVer) {
         await this.clearDB()
         Cookies.set('IndexDBDataVer', this.indexed_ver)
@@ -433,7 +435,7 @@
             project_id: 10000
           }
           this.$store.dispatch('QueryDatumMeter', param).then((data) => {
-            console.log('QueryDatumMeter - data', data)
+            // console.log('QueryDatumMeter - data', data)
             data.forEach(datum => {
               this.datumMeterMap.set(datum.device_id, datum)
             })
@@ -465,7 +467,7 @@
       },
       onMessageArrived(message) {
         let obj = JSON.parse(message.payloadString);
-        // console.log("收到消息:" + message.destinationName + message.payloadString);
+        // console.log("收到消息1:" + message.destinationName + message.payloadString);
         // this.initPerson(obj)
         // this.mqttWeather(message.payloadString)
 
@@ -489,7 +491,7 @@
         const _cmd = destinationNameArray[5] //指令
         switch (TJNO) {
           case "18090311": // 塔吊
-            // console.log('塔吊', data)
+            console.log('塔吊', data)
             this.mqttTaDiao(_cmd, _payloadString)
             break;
           case "18090302": // 升降机
@@ -530,7 +532,7 @@
             if (_data.DoorState === '0') {
               doorOpen = false
             }
-            modifyElevator(this.elevatorGroup, "E1", _data.Height, doorOpen) //名称，高度，门的开启状态
+            modifyElevator(elevatorGroup, "E1", _data.Height, doorOpen) //名称，高度，门的开启状态
 
             $("#sjj_gd").html(_data.Height)
             $("#sjj_lc").html(_data.Floor)
@@ -661,7 +663,7 @@
       },
       addDataToDB() {
         setTimeout(() => {
-          console.log('===>===>===>===>===>', this.indexedDBWaitList.size)
+          // console.log('===>===>===>===>===>', this.indexedDBWaitList.size)
           let i = 0
           for (let data of this.indexedDBWaitList.values()) {
             i++
@@ -955,13 +957,10 @@
         // console.log('this.deviceMap', this.deviceMap)
         // for (let i = 0, len = unitGroups.length; i < len; i++) {
         showGroup.children.forEach(mesh => {
-          console.log('asda', mesh, this.deviceMap)
           let _device = this.deviceMap.get(mesh.name)
-          console.log('_device', _device)
           if (_device !== undefined) {
             // 摄像头
             if (_device.DEVICE_TYPE === 16) {
-              console.log('addCameraLabel', mesh, _device)
               this.addCameraLabel(mesh, _device)
             } else if (_device.DEVICE_TYPE === 10) { // 电表
               this.addTxtBox(mesh, _device)
@@ -1004,9 +1003,7 @@
       addCameraLabel(_mesh, device) {
 
         let deviceData = this.datumMeterMap.get(device.DEVICE_ID)
-        console.log('deviceData', deviceData, device)
         let thisbt = document.createElement('img');
-
 
         if (deviceData === undefined) {
           thisbt.className = 'loTLabelNoData'
@@ -1015,7 +1012,6 @@
         } else {
           thisbt.className = 'loTLabel'
         }
-
 
         thisbt.style.pointerEvents = 'auto'
         // thisbt.style.marginTop = '-1em';
