@@ -491,7 +491,7 @@
         const _cmd = destinationNameArray[5] //指令
         switch (TJNO) {
           case "18090311": // 塔吊
-            console.log('塔吊', data)
+            // console.log('塔吊', data)
             this.mqttTaDiao(_cmd, _payloadString)
             break;
           case "18090302": // 升降机
@@ -507,7 +507,7 @@
             const _data = JSON.parse(data)
             // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
             // console.log('RealtimeDataCrane', _data)
-            modifyTower(this.towerGroup, "T1", this.towerHeight, _data.Angle, _data.RRange, _data
+            modifyTower(towerGroup, "T1", this.towerHeight, _data.Angle, _data.RRange, _data
               .Height); //名称，高度，大臂角度，小车距离，吊钩线长
 
             $("#td_dbjd").html(_data.Angle)
@@ -525,7 +525,7 @@
         switch (cmd) {
           case "RealtimeDataElevator": // 2.11上报升降机实时数据（专用）
             _data = JSON.parse(data)
-            console.log('RealtimeDataElevator', _data)
+            // console.log('RealtimeDataElevator', _data)
             // console.log('高度', _data.Height)
             // 获取数据之后调用方法初始化或者调整状态
             let doorOpen = true
