@@ -10,6 +10,7 @@
       v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
       v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation></mqttLocation>
+    <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
       <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div>
       <!-- <el-progress :percentage="percentage" color="#6ac044" :show-text="showText"></el-progress> -->
@@ -67,6 +68,7 @@
   } from 'vuex'
   import loadModel from "./components/loadModel"
   import mqttLocation from "./components/mqttLocation"
+  import mqttBim from "./components/mqttBim"
   import {
     Loading
   } from 'element-ui';
@@ -75,11 +77,9 @@
     CSS2DObject
   } from 'three-css2drender';
   import $ from 'jquery'
-  // const MQTT_USERNAME = 'LOC_messager' // mqtt连接用户名
-  // const MQTT_PASSWORD = 'LOC_12342234' // mqtt连接密码 
-  const MQTT_USERNAME = 'BIM_messager' // mqtt连接用户名
-  const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码 
-  const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
+  // const MQTT_USERNAME = 'BIM_messager' // mqtt连接用户名
+  // const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码 
+  // const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
 
   const TOWER_HEIGHT = 75 //塔吊高度
 
@@ -108,7 +108,7 @@
   // let unitGroups = new Array(20)
   let showGroup = null
   let unitGroups = null
-  let personGroup = null
+  let deviceGroup = null
   let towerGroup = null // 塔机
   let elevatorGroup = null // 升降机
   let labelRenderer = null
@@ -272,9 +272,9 @@
     showGroup = new THREE.Group()
     showGroup.name = "showGroup"
     scene.add(showGroup)
-    personGroup = new THREE.Group()
-    personGroup.name = "personGroup";
-    scene.add(personGroup)
+    deviceGroup = new THREE.Group()
+    deviceGroup.name = "deviceGroup";
+    scene.add(deviceGroup)
 
     // unitGroups.visible = false
     // scene.add(walls)
@@ -300,20 +300,13 @@
     name: 'model3D-index',
     components: {
       loadModel,
-      mqttLocation
+      mqttLocation,
+      mqttBim
       // ModelDetail
     },
     data() {
       return {
-
         loadtext: '开始加载模型....',
-        client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
-        timerReconnectMqtt: null,
-        isConnectMqtt: null, //是否已经连接
-        topicUserInfo: '', //订阅用户信息
-        topicCount: '', //订阅统计消息
-        reconnectTimes: 0, //重连次数
-
         loader: new THREE.ObjectLoader(),
         modelDB: null,
 
@@ -335,12 +328,6 @@
         saveData: null,
         lablePosisionList: {},
         modMap: new Map(),
-        topicWeather: '', // 天气检测
-        topicTJ1: '', // 塔机和升降机推送消息
-        topicTJ2: '', // 塔机和升降机推送消息
-
-
-
         towerHeight: TOWER_HEIGHT, // 塔吊高度 28米
 
         deviceMap: new Map(),
@@ -374,8 +361,6 @@
       },
     },
     created() {
-      this.client.onConnectionLost = this.onConnectionLost; //注册连接断开处理事件
-      this.client.onMessageArrived = this.onMessageArrived; //注册消息接收处理事件
       IndexedDB.openDB('tbbim', 1, this.modelDB, {
         name: 'model',
         key: 'modelID'
@@ -386,31 +371,8 @@
     },
     watch: {
       project_id(curVal, oldVal) {
-        // if (oldVal === null && curVal !== null) {
-        //   this.mqttConnect()
-        // }
-        // if (oldVal !== null) {
-        //   this.unsubscribe()
-        // }
-        // if (curVal !== null) {
-        //   this.subscribe()
-        // }
+
       },
-      isConnectMqtt(curVal, oldVal) {
-        console.log('curValcurVal', curVal)
-        if (curVal === false) {
-          this.reconnectMqtt()
-        } else {
-          this.subscribe()
-          this.reconnectTimes = 0
-          clearTimeout(this.timerReconnectMqtt)
-        }
-      },
-      reconnectTimes(curVal, oldVal) {
-        if (oldVal > 0 && curVal === 0) {
-          this.info_system = ''
-        }
-      }
     },
 
     async mounted() {
@@ -436,27 +398,12 @@
       }
       await this.initDevlist()
 
-
-      // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-      //   this.unitGroups[i] = new THREE.Group()
-      // }
-
-      // // this.initRaycaster()
       this.initMouse()
-      // this.removeUnit()
 
 
       // window.onresize = this.onWindowResize;
-      // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-      //   this.scene.add(this.unitGroups[i])
 
-      //   // if (i !== 0) {
-      //   //   this.unitGroups[i].visible = false
-      //   // }
-      // }
-
-
-      this.mqttConnect()
+      // this.mqttConnect()
       towerGroup = new THREE.Group() // 塔机
       towerGroup.name = "towerGroup";
       if (scene) {
@@ -464,7 +411,7 @@
         towerGroup.position.set(60, 22, 0); // 红 绿
         modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
       };
-     
+
 
       elevatorGroup = new THREE.Group() // 升降机
       elevatorGroup.name = "elevatorGroup";
@@ -487,14 +434,14 @@
       scene.remove(elevatorGroup)
       scene.remove(directionalLight);
       scene.remove(ambient);
-      scene.remove(personGroup)
+      scene.remove(deviceGroup)
       renderer.dispose()
       renderer = null
       scene = null
       THREE.Cache.clear()
       unitGroups = null
       showGroup = null
-      personGroup = null
+      deviceGroup = null
       towerGroup = null
       elevatorGroup = null
       $('#loT-index-canvas3d').empty()
@@ -566,37 +513,6 @@
 
 
         })
-      },
-      mqttConnect() {
-        this.client.connect({
-          userName: MQTT_USERNAME,
-          password: MQTT_PASSWORD,
-          onSuccess: this.onConnect,
-          onFailure: this.onFailure,
-        }); //连接服务器并注册连接成功处理事件
-      },
-      onConnectionLost(responseObject) {
-        console.log("onConnectionLost", responseObject)
-        this.isConnectMqtt = false;
-        this.info_system = "通讯断开..."
-        if (responseObject.errorCode !== 0) {
-          console.log("onConnectionLost:" + responseObject.errorMessage);
-          console.log("连接已断开");
-        }
-      },
-      onMessageArrived(message) {
-        let obj = JSON.parse(message.payloadString);
-        // console.log("收到消息1:" + message.destinationName + message.payloadString);
-        // this.initPerson(obj)
-        // this.mqttWeather(message.payloadString)
-
-        if (message.destinationName === this.topicWeather) {
-          // console.log("收到天气消息:" + message.payloadString);
-          this.mqttWeather(message.payloadString)
-        } else if (message.destinationName.substring(0, 14) === 'BIM/Sets/zhgd/') { // 塔机和升降机推送消息
-          this.mqttTJ(message)
-        }
-
       },
       mqttTJ(data) {
         // console.log('mqttTJ', data)
@@ -707,52 +623,6 @@
         $('#divHJJCY').html(_h)
         // this.$refs.weather.updateData(_data)
 
-      },
-      onConnect() {
-        console.log("onConnected");
-        this.isConnectMqtt = true;
-        // this.client.subscribe(this.topicWeather); //订阅天气检测
-      },
-      onFailure(eee) {
-        this.isConnectMqtt = false;
-        this.info_system = "通讯断开..."
-        console.log("onFailure", eee);
-      },
-      reconnectMqtt() {
-        console.log('reconnectMqtt')
-        this.timerReconnectMqtt = setTimeout(() => {
-          if (this.isConnectMqtt === false) {
-            this.mqttConnect()
-            this.reconnectTimes++
-            this.info_system = `重新开始进行通讯连接${this.reconnectTimes}...`
-          }
-          this.reconnectMqtt()
-        }, 5 * 1000)
-      },
-      subscribe() {
-        //BIM/location/10000/#
-        if (this.isConnectMqtt === true) {
-          // this.topicUserInfo = `BIM/location/${this.project_id}/#` //订阅用户信息
-          // this.topicCount = `BIM/location/${this.project_id}/count` //订阅统计消息
-          // BIM/door/10001/count
-
-          this.topicWeather = 'BIM/HJ/720/01'
-          this.topicTJ1 = 'BIM/Sets/zhgd/DEYE/18090311/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
-          this.topicTJ2 = 'BIM/Sets/zhgd/DEYE/18090302/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
-          this.client.subscribe(this.topicWeather); //订阅主题
-          this.client.subscribe(this.topicTJ1); //塔机和升降机推送消息
-          this.client.subscribe(this.topicTJ2); //塔机和升降机推送消息
-          // this.client.subscribe(this.topicCount); //订阅主题
-          console.log("订阅成功！")
-        }
-      },
-      unsubscribe() {
-        if (this.isConnectMqtt === true && this.topicUserInfo !== '') {
-          // 取消老的订阅
-          this.client.unsubscribe(this.topicUserInfo); //订阅主题
-          this.client.unsubscribe(this.topicCount); //订阅主题
-          console.log("取消订阅成功！")
-        }
       },
       onWindowResize() {
         // console.log("onWindowResize")
@@ -907,125 +777,13 @@
         }
 
       },
-      removeUnit() {
-        // console.log("this.unitRemoveSet.size", this.unitRemoveSet.size, this.unitRemoveSet)
-        if (this.unitRemoveSet.size > 0) {
-          for (let gi = 0, len = this.unitGroups.length; gi < len; gi++) {
-            let i = 0
-            for (let unit of this.unitGroups[gi].children) {
-              if (this.unitRemoveSet.has(unit.uuid)) {
-                // console.log('uuid', unit.uuid)
-                this.unitLoadingSet.delete(unit.name);
-                this.unitRemoveSet.delete(unit.uuid);
-                // console.log('123123', this.unitGroups)
-                this.unitGroups[gi].children.splice(i, 1);
-              }
-              i++
-            }
-          }
-        }
-        this.timeRemove = setTimeout(() => {
-          this.removeUnit()
-        }, 50)
-      },
 
       initMouse() {
         document.addEventListener('mousedown', (event) => {
-          // THREE.Cache.clear()
-          // this.unitGroup.visible = false
-          // console.log('123')
-          // unitGroups.visible = false
 
 
-
-          // for (let i = 0, len = unitGroups.length; i < len; i++) {
-          //   // if (i !== 0) {
-          //   unitGroups[i].visible = false
-          //   // }
-          // }
-          // if (this.projectiveObj) {
-          //   let _model = this.modelMap.get(this.projectiveObj.name)
-          //   const param = {
-          //     show: true,
-          //     model: _model
-          //   }
-          //   // this.$store.dispatch('SetModelDetailDialog', param).then(() => {}).catch(() => {
-          //   // })
-          // }
         }, false)
       },
-      // 初始化 光线投射器
-      initRaycaster() {
-        // this.raycaster = new THREE.Raycaster(); //光线投射器
-        this.mouse = new THREE.Vector2(); //二维向量 
-        document.addEventListener('mousemove', (event) => {
-          event.preventDefault();
-          this.mouse.x = ((event.clientX - this.mainCanvas.getBoundingClientRect().left) / this.mainCanvas
-              .offsetWidth) *
-            2 - 1;
-
-          this.mouse.y = -((event.clientY - this.mainCanvas.getBoundingClientRect().top) / this.mainCanvas
-              .offsetHeight) *
-            2 +
-            1;
-
-          let standardVector = new THREE.Vector3(this.mouse.x, this.mouse.y, 1); // 标准设备坐标
-
-          // 标准设备坐标转世界坐标
-          let worldVector = standardVector.unproject(this.camera);
-          // 射线投射方向单位向量(worldVector坐标减相机位置坐标)
-          let ray = worldVector.sub(this.camera.position).normalize();
-          this.raycaster = new THREE.Raycaster(this.camera.position, this.ray); //光线投射器
-          this.raycaster.setFromCamera(this.mouse, this.camera);
-          // var vector = new THREE.Vector3(this.mouse.x, this.mouse.y, 0.5).unproject(this.camera);
-          // this.raycaster = new THREE.Raycaster(this.camera.position, vector.sub(this.camera.position).normalize());
-          if (this.scene.children[4] === undefined) {
-            return
-          }
-          // console.log('this.scene.children[4].children', this.scene.children[14].children)
-          // for (let i = 14, len = 14; i <= len; i++) {
-
-          let intersects = this.raycaster.intersectObjects(this.scene.children[14].children, true);
-          // console.log('intersects', intersects)
-          if (intersects.length > 0) {
-            console.log('123')
-            if (this.projectiveObj !== null && this.projectiveObj.name !== intersects[0].object) {
-              console.log('namename', this.projectiveObj.name)
-              // let _model = this.modelMap.get(this.projectiveObj.name)
-              // if (_model && _model.material.oldcolor) {
-              //   this.projectiveObj.hasChecked = false
-              //   this.projectiveObj.material.color = _model.material.oldcolor
-              // }
-            }
-            this.projectiveObj = intersects[0].object
-          } else {
-            if (this.projectiveObj !== null) {
-              // let _model = this.modelMap.get(this.projectiveObj.name)
-              // this.projectiveObj.material.color = _model.material.oldcolor
-              // this.projectiveObj.hasChecked = false
-              // this.projectiveObj = null;
-            }
-          }
-          // }
-
-
-          // if (this.projectiveObj) {
-          //   if (this.projectiveObj.hasChecked) {
-          //     this.projectiveObj.hasChecked = false;
-          //     let _model = this.modelMap.get(this.projectiveObj.name)
-          //     this.projectiveObj.material.color = _model.material.oldcolor
-          //   } else {
-          //     this.projectiveObj.hasChecked = true;
-          //     let _model = this.modelMap.get(this.projectiveObj.name)
-          //     this.projectiveObj.material.oldcolor = Object.assign({}, this.projectiveObj.material.color);
-          //     this.projectiveObj.material.color = new THREE.Color(0xff00FF, 0.2);
-          //   }
-          // }
-
-        }, false)
-
-      },
-
       personInoutDialogHandle() {
         this.$confirm('此操作将清除浏览器数据库中缓存的模型数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -1051,9 +809,6 @@
         });
       },
       addDeviceData() {
-        // console.log('showGroup', showGroup)
-        // console.log('this.deviceMap', this.deviceMap)
-        // for (let i = 0, len = unitGroups.length; i < len; i++) {
         showGroup.children.forEach(mesh => {
           let _device = this.deviceMap.get(mesh.name)
           if (_device !== undefined) {
@@ -1072,7 +827,6 @@
             }
           }
         })
-        // }
         this.updateDeviceData()
       },
       updateDeviceData() {
@@ -1147,7 +901,7 @@
         centroid.multiplyScalar(0.5);
         centroid.applyMatrix4(_mesh.matrixWorld);
         lable.position.copy(centroid)
-        personGroup.add(lable);
+        deviceGroup.add(lable);
       },
       showHideTip(device_type) {
         let _obj = null
@@ -1198,7 +952,7 @@
         centroid.multiplyScalar(0.5);
         centroid.applyMatrix4(_mesh.matrixWorld);
         lable.position.copy(centroid)
-        personGroup.add(lable);
+        deviceGroup.add(lable);
       },
       addTxtBox(_mesh, device) {
         let thisbt = document.createElement('div');
@@ -1241,7 +995,7 @@
         centroid.applyMatrix4(_mesh.matrixWorld);
         lable.position.copy(centroid)
         _mesh.add(lable)
-        personGroup.add(_mesh);
+        deviceGroup.add(_mesh);
         setTimeout(() => {
           $("#iconCloseDianBiao").click(() => {
             this.showHideTip(10)

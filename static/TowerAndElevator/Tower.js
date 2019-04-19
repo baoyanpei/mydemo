@@ -1,6 +1,6 @@
 function modifyTower(towerGroup, name, high, degree, distance, length) {
   //判断是新增还是更新信息
-  degree = degree - 90 // 根据现场实际的角度进行了修正90度
+  degree = degree - 180 // 根据现场实际的角度进行了修正90度
   var isEx = towerGroup.getObjectByName(name, true);
   if (isEx) {
     updateTower(isEx, degree, distance, length)

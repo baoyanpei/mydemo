@@ -3,8 +3,6 @@
   </div>
 </template>
 <script>
-
-
   import {
     CSS2DRenderer,
     CSS2DObject
@@ -15,8 +13,7 @@
   export default {
     directives: {},
     name: 'model3D-index',
-    components: {
-    },
+    components: {},
     data() {
       return {
         labelRenderer: null,
@@ -46,15 +43,7 @@
     },
     watch: {
       project_id(curVal, oldVal) {
-        // if (oldVal === null && curVal !== null) {
-        //   this.mqttConnect()
-        // }
-        // if (oldVal !== null) {
-        //   this.unsubscribe()
-        // }
-        // if (curVal !== null) {
-        //   this.subscribe()
-        // }
+       
       },
       isConnectMqtt(curVal, oldVal) {
         if (curVal === false) {
@@ -72,15 +61,7 @@
       }
     },
     mounted() {
-        this.mqttConnect()
-    //   document.getElementById('stat-div-location').appendChild(this.stats.dom);
-    //   this.personGroup.name = "personGroup";
-
-
-    //   this.scene.add(this.personGroup)
-
-
-
+      this.mqttConnect()
     },
     beforeDestroy() {
       console.log("beforeDestroy")
@@ -244,7 +225,7 @@
       },
       subscribe() {
         //BIM/location/10000/#
-        if (this.isConnectMqtt === true ) {
+        if (this.isConnectMqtt === true) {
           this.topicUserInfo = `BIM/location/10000/#` //订阅用户信息
           // this.topicCount = `BIM/location/${this.project_id}/count` //订阅统计消息
           // BIM/door/10001/count
@@ -257,7 +238,7 @@
         if (this.isConnectMqtt === true && this.topicUserInfo !== '') {
           // 取消老的订阅
           this.client.unsubscribe(this.topicUserInfo); //订阅主题
-        //   this.client.unsubscribe(this.topicCount); //订阅主题
+          //   this.client.unsubscribe(this.topicCount); //订阅主题
           console.log("取消订阅成功！")
         }
       },
