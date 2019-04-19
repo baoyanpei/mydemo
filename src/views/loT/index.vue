@@ -83,7 +83,7 @@
 
   const TOWER_HEIGHT = 75 //塔吊高度
 
-
+  console.log('12313123123')
 
 
   window.onresize = onWindowResize;
@@ -93,68 +93,58 @@
   let near = 1 //相机离视体积最近的距离
   let far = 800 //相机离视体积最远的距离
   let aspect = (window.innerWidth) / (window.innerHeight); //纵横比
-  let scene = new THREE.Scene();
-  let camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.up = new THREE.Vector3(0, 0, 1); //相机以哪个方向为上方
-  camera.position.set(-130, -0, 80);
-  camera.position.set(150, 200, 190);
-  scene.add(camera);
+  let scene = null
+  let camera = null
   let stats = new Stats()
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
   // document.body.appendChild(this.stats.dom);
 
+  let directionalLight = null
+  let ambient = null
+  let renderer = null
 
-  let renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    alpha: true
-  });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-  let labelRenderer = new CSS2DRenderer();
-  labelRenderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
-  labelRenderer.domElement.style.position = 'absolute';
-  labelRenderer.domElement.style.pointerEvents = 'none';
-  labelRenderer.domElement.style.top = 0;
-
-
-
-  let controls = new THREE.MapControls(camera, renderer.domElement);
+  let controls = null
   // var walls = new THREE.Group();
   // let unitGroups = new Array(20)
-  let showGroup = new THREE.Group()
-  let unitGroups = new THREE.Group()
-  let personGroup = new THREE.Group()
-  let towerGroup = new THREE.Group() // 塔机
-  let elevatorGroup = new THREE.Group() // 升降机
-  let animate = function () {
+  let showGroup = null
+  let unitGroups = null
+  let personGroup = null
+  let towerGroup = null // 塔机
+  let elevatorGroup = null // 升降机
+  let labelRenderer = null
+
+  function animate() {
     stats.begin();
     render();
     stats.end();
     requestAnimationFrame(animate);
-    controls.update();
-    scene.updateMatrixWorld(true);
+    if (controls) {
+      controls.update();
+    }
+    if (scene !== null) {
+      scene.updateMatrixWorld(true);
+    }
+
   };
 
   //光源
   function initLight() {
-    let directionalLight = new THREE.DirectionalLight(0xF6CB90, 2); //模拟远处类似太阳的光源
+    directionalLight = new THREE.DirectionalLight(0xF6CB90, 2); //模拟远处类似太阳的光源
     directionalLight.position.set(30, 50, 70).normalize();
     directionalLight.castShadow = true;
-    scene.add(directionalLight);
-    let ambient = new THREE.AmbientLight(0xffffff, 2); //AmbientLight,影响整个场景的光源
+    ambient = new THREE.AmbientLight(0xffffff, 2); //AmbientLight,影响整个场景的光源
     ambient.position.set(0, 0, 0);
+
+    scene.add(directionalLight);
     scene.add(ambient);
   }
 
   function initControls() {
     controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
     controls.dampingFactor = 1;
-
     controls.screenSpacePanning = true;
-
     controls.minDistance = 0;
     controls.maxDistance = 500;
-
     controls.maxPolarAngle = Math.PI / 2;
 
   }
@@ -176,34 +166,116 @@
   }
 
   function render() {
-    renderer.render(scene, camera);
-    labelRenderer.render(scene, camera);
+    if (renderer !== null) {
+      renderer.render(scene, camera);
+    }
+
+    if (scene != null && labelRenderer !== null) {
+      labelRenderer.render(scene, camera);
+    }
+
   }
+
+  function clearScene() {
+    // 从scene中删除模型并释放内存
+    console.log('scene', scene)
+    let len = scene.children.length
+    console.log('len', len)
+    if (len > 0) {
+      for (var i = 0; i < len; i++) {
+        var currObj = scene.children[i];
+
+        // 判断类型
+        if (currObj.type === 'Group') {
+          console.log('currObj', currObj)
+          var children = currObj.children;
+          deleteGroup(currObj);
+          console.log('currObj1', currObj)
+          // for (var i = 0; i < children.length; i++) {
+          //   // console.log('children', children[i])
+          //   deleteGroup(children[i]);
+          //   // console.log('21312313',currObj,children[i])
+          //   currObj.remove(children[i])
+          // }
+
+        } else {
+          deleteGroup(currObj);
+        }
+        // scene.remove(currObj);
+      }
+    }
+  }
+
   //go
+  // 删除group，释放内存
+  function deleteGroup(group) {
+    //console.log(group);
+    if (!group) return;
+    // 删除掉所有的模型组内的mesh
+    group.traverse(function (item) {
+      if (item instanceof THREE.Mesh) {
+
+        item.geometry.dispose(); // 删除几何体
+        item.material.dispose(); // 删除材质
+      }
+
+    });
+  }
 
 
 
   let mainCanvas = null
 
+
+  // initAxes()
+
+  animate();
+
   function initThree() {
+    console.log('mainCanvas', mainCanvas)
+    scene = new THREE.Scene();
+    // if (mainCanvas === null) {
     //初始化变量
     mainCanvas = document.getElementById('loT-index-canvas3d')
+
+    camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    camera.up = new THREE.Vector3(0, 0, 1); //相机以哪个方向为上方
+    camera.position.set(-130, -0, 80);
+    camera.position.set(150, 200, 190);
+    scene.add(camera);
+
+    renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    controls = new THREE.MapControls(camera, renderer.domElement);
+
     mainCanvas.appendChild(renderer.domElement);
-    // document.body.appendChild(renderer.domElement);
-    // renderer.setClearColor(0x4682B4, 1.0);
     renderer.setClearColor(0xcccccc, 1);
 
+
+
+    labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.pointerEvents = 'none';
+    labelRenderer.domElement.style.top = 0;
     mainCanvas.appendChild(labelRenderer.domElement);
     // this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
 
 
     // var buildingGroup = {}
-
+    unitGroups = new THREE.Group()
     unitGroups.name = "unitGroups"
+    scene.add(unitGroups)
+    showGroup = new THREE.Group()
+    showGroup.name = "showGroup"
     scene.add(showGroup)
+    personGroup = new THREE.Group()
     personGroup.name = "personGroup";
     scene.add(personGroup)
-    // scene.add(unitGroups)
+
     // unitGroups.visible = false
     // scene.add(walls)
     // for (let i = 0, len = unitGroups.length; i < len; i++) {
@@ -217,9 +289,11 @@
     document.getElementById('stat-div-loT').appendChild(stats.dom);
     initLight()
     initControls()
-    // initAxes()
+    // // initAxes()
 
-    animate();
+    // animate();
+    // }
+
   }
   export default {
     directives: {},
@@ -383,15 +457,16 @@
 
 
       this.mqttConnect()
-
+      towerGroup = new THREE.Group() // 塔机
       towerGroup.name = "towerGroup";
       if (scene) {
         scene.add(towerGroup)
         towerGroup.position.set(60, 22, 0); // 红 绿
+        modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
       };
-      modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+     
 
-
+      elevatorGroup = new THREE.Group() // 升降机
       elevatorGroup.name = "elevatorGroup";
       if (scene) {
         scene.add(elevatorGroup)
@@ -402,10 +477,54 @@
       this.addDataToDB()
     },
     beforeDestroy() {
-      console.log("beforeDestroy")
+      // $('#loT-index-canvas3d').empty()
+      // scene.remove(showGroup)
+      clearScene()
+      console.log('13213scene', scene)
+      scene.remove(unitGroups)
+      scene.remove(showGroup)
+      scene.remove(towerGroup)
+      scene.remove(elevatorGroup)
+      scene.remove(directionalLight);
+      scene.remove(ambient);
+      scene.remove(personGroup)
+      renderer.dispose()
+      renderer = null
+      scene = null
+      THREE.Cache.clear()
+      unitGroups = null
+      showGroup = null
+      personGroup = null
+      towerGroup = null
+      elevatorGroup = null
+      $('#loT-index-canvas3d').empty()
+      mainCanvas = null
+
+
+      // for (let i = 0, len = showGroup.children.length; i < len; i++) {
+      //   console.log('showGroup',showGroup.children[i])
+      //   // showGroup.children.splice(i, 1);
+      // }
+      // for (let i = 0, len = scene.children.length; i < len; i++) {
+      //   let allChildren = scene.children[i];
+      //   // console.log('allChildren', allChildren)
+      //   for (let i = 0, len = allChildren.children.length; i < len; i++) {
+      //     let allChildren1 = allChildren.children[i];
+      //     console.log('allChildren1', allChildren1)
+      //     scene.remove(allChildren1);
+      //   }
+      //   // var lastObject = allChildren[allChildren.length - 1];
+      //   // if (lastObject instanceof THREE.Mesh) {
+      //   //   scene.remove(lastObject);
+      //   // }
+
+      // }
+
+      // console.log('scene', scene)
+
+      // console.log("beforeDestroy")
       // scene = null
       // renderer.dispose()
-      clearTimeout(this.timeoutid)
       clearTimeout(this.timeRemove)
     },
     destroyed() {},
@@ -507,13 +626,16 @@
             const _data = JSON.parse(data)
             // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
             // console.log('RealtimeDataCrane', _data)
-            modifyTower(towerGroup, "T1", this.towerHeight, _data.Angle, _data.RRange, _data
-              .Height); //名称，高度，大臂角度，小车距离，吊钩线长
+            if (towerGroup !== null) {
+              modifyTower(towerGroup, "T1", this.towerHeight, _data.Angle, _data.RRange, _data
+                .Height); //名称，高度，大臂角度，小车距离，吊钩线长
 
-            $("#td_dbjd").html(_data.Angle)
-            $("#td_xcjl").html(_data.RRange)
-            $("#td_dgxc").html(_data.Height)
-            $("#td_sbsj").html(moment(_data.RTime).format("HH:mm:ss"))
+              $("#td_dbjd").html(_data.Angle)
+              $("#td_xcjl").html(_data.RRange)
+              $("#td_dgxc").html(_data.Height)
+              $("#td_sbsj").html(moment(_data.RTime).format("HH:mm:ss"))
+            }
+
 
 
             break
@@ -632,21 +754,6 @@
           console.log("取消订阅成功！")
         }
       },
-      render() {
-        if (this.renderEnabled === true) {
-          // this.renderRaycasterObj(this.raycaster, this.scene, this.camera, this.mouse); //渲染光投射器投射到的对象
-          // console.log("fov", this.gui.fov);
-          // console.log("this.scene", JSON.stringify(this.scene.toJSON()))
-          // this.camera.fov = this.gui.fov;
-          // this.camera.position.x = this.gui.position_x;
-          // this.camera.position.y = this.gui.position_y;
-          // this.camera.position.z = this.gui.position_z;
-          // this.camera.updateProjectionMatrix();
-          // this.controls.update();
-          this.renderer.render(this.scene, this.camera);
-          this.labelRenderer.render(this.scene, this.camera);
-        }
-      },
       onWindowResize() {
         // console.log("onWindowResize")
         this.camera.aspect = (window.innerWidth - 40) / (window.innerHeight - 34);
@@ -748,20 +855,20 @@
           console.log(123123)
 
           this.addDeviceData()
-          document.addEventListener('mouseup', (event) => {
-            // console.log('mouseup')
-            // unitGroups.visible = true
-            scene.add(unitGroups)
-            // for (let i = 0, len = unitGroups.length; i < len; i++) {
-            //   // if (i !== 0) {
-            //   unitGroups[i].visible = true
-            //   // }
-            // }
-          }, false)
+          // document.addEventListener('mouseup', (event) => {
+          //   // console.log('mouseup')
+          //   // unitGroups.visible = true
+          //   scene.add(unitGroups)
+          //   // for (let i = 0, len = unitGroups.length; i < len; i++) {
+          //   //   // if (i !== 0) {
+          //   //   unitGroups[i].visible = true
+          //   //   // }
+          //   // }
+          // }, false)
           this.loadingDialog.close()
           // console.log('this.indexedDBWaitList', this.indexedDBWaitList.length)
           // 全部显示
-          scene.add(unitGroups)
+          // scene.add(unitGroups)
           // unitGroups.visible = true
 
         }
@@ -828,7 +935,9 @@
           // this.unitGroup.visible = false
           // console.log('123')
           // unitGroups.visible = false
-          scene.remove(unitGroups)
+
+
+
           // for (let i = 0, len = unitGroups.length; i < len; i++) {
           //   // if (i !== 0) {
           //   unitGroups[i].visible = false
