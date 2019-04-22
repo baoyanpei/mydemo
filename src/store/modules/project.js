@@ -342,7 +342,6 @@ const project = {
       return new Promise((resolve, reject) => {
         queryProjectPerson(param).then(response => {
           commit('SET_PROJECT_PERSON_LIST', response.data)
-          // console.log('QueryProjectPersonsQueryProjectPersons', response.data)
           resolve(response.data)
         }).catch(error => {
           reject(error)
@@ -495,7 +494,7 @@ const project = {
       return new Promise((resolve, reject) => {
 
         commit('SET_PERSON_FACE_PERSON_DIALOG', param)
-        console.log('param123123', param)
+        // console.log('param123123', param)
         resolve()
 
       })
@@ -508,7 +507,7 @@ const project = {
       return new Promise((resolve, reject) => {
 
         commit('SET_IN_OUT_PERSON_DIALOG', param)
-        console.log('param123123', param)
+        // console.log('param123123', param)
         resolve()
 
       })

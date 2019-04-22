@@ -3,7 +3,7 @@
 
 </style>
 <template>
-  <el-dialog :modal="false" width="550px" top="15vh" :lock-scroll="true" :close-on-click-modal="false"
+  <el-dialog :modal="false" width="550px" top="10vh" :lock-scroll="true" :close-on-click-modal="false"
     @open="openPublishDialog" :visible.sync="publishDialog.show" title="发布管理">
     <dutyForm></dutyForm>
     <div id="publish-dialog" class="publish-dialog">

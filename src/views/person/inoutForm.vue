@@ -46,8 +46,8 @@
       <hr class="hr1" />
       <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="350px"
         :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
-        @sort-change="handleSortChange"
-        size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+        @sort-change="handleSortChange" size="mini" :show-header="true" header-align="center"
+        :default-sort="{prop: 'name', order: 'ascending'}">
         <el-table-column fixed type="index" width="40">
         </el-table-column>
         <el-table-column fixed property="name" sortable label="姓名" width="80" header-align="center">
@@ -182,16 +182,16 @@
     },
     methods: {
       initData() {
-        this.optionGroups = [], //部门选择的数据
-          this.optionsProjectPerson = [],
-          this.personInoutList = [],
-          this.personInoutForm = {
-            GroupList: ['all'], // 计划名称
-            person_id: '', // 人员
-            person_name: '',
-            InoutDaterange: [], // 时间范围
-          },
-          this.totalPerson = 0
+        this.optionGroups = [] //部门选择的数据
+        this.optionsProjectPerson = []
+        this.personInoutList = []
+        this.personInoutForm = {
+          GroupList: ['all'], // 计划名称
+          person_id: '', // 人员
+          person_name: '',
+          InoutDaterange: [], // 时间范围
+        }
+        this.totalPerson = 0
       },
       initDate() {
         // 每月的某一天，如每月10日
