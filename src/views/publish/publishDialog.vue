@@ -5,6 +5,7 @@
 <template>
   <el-dialog :modal="false" width="550px" top="15vh" :lock-scroll="true" :close-on-click-modal="false"
     @open="openPublishDialog" :visible.sync="publishDialog.show" title="发布管理">
+    <dutyForm></dutyForm>
     <div id="publish-dialog" class="publish-dialog">
       <el-form ref="publishForm" :model="publishForm" label-width="80px" :inline="true">
         <span class="table-title">通告：</span>
@@ -24,13 +25,15 @@
 <script>
   import moment from 'moment'
   import lodash from 'lodash'
-
+  import dutyForm from "./dutyForm"
   import {
     Loading
   } from 'element-ui';
   // import Mock from 'mockjs'
   export default {
-    components: {},
+    components: {
+      dutyForm
+    },
     directives: {},
     filters: {
 
