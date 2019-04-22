@@ -110,11 +110,11 @@
   let unitGroups = null
   let deviceGroup = null
   let personGroup = null
-        
+
   let towerGroup = null // 塔机
   let elevatorGroup = null // 升降机
   let labelRenderer = null
-  
+
 
   function animate() {
     stats.begin();
@@ -129,6 +129,16 @@
     }
 
   };
+
+  function onWindowResize() {
+    if (renderer !== null) {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.render(scene, camera);
+    }
+
+  }
 
   //光源
   function initLight() {
