@@ -127,7 +127,6 @@
           this.client.subscribe(this.topicWeather); //订阅主题
           this.client.subscribe(this.topicTJ1); //塔机和升降机推送消息
           this.client.subscribe(this.topicTJ2); //塔机和升降机推送消息
-          // this.client.subscribe(`BIM/location/10000/#`)
           // this.client.subscribe(this.topicCount); //订阅主题
           console.log("订阅成功！")
         }
