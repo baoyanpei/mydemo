@@ -9,7 +9,7 @@
     <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
       v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
       v-on:unitTotalAdd="unitTotalAdd"></loadModel>
-    <mqttLocation></mqttLocation>
+    <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
       <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div>
@@ -109,9 +109,12 @@
   let showGroup = null
   let unitGroups = null
   let deviceGroup = null
+  let personGroup = null
+        
   let towerGroup = null // 塔机
   let elevatorGroup = null // 升降机
   let labelRenderer = null
+  
 
   function animate() {
     stats.begin();
@@ -276,6 +279,9 @@
     deviceGroup.name = "deviceGroup";
     scene.add(deviceGroup)
 
+    personGroup = new THREE.Group()
+    personGroup.name = "personGroup";
+    scene.add(personGroup)
     // unitGroups.visible = false
     // scene.add(walls)
     // for (let i = 0, len = unitGroups.length; i < len; i++) {
@@ -347,6 +353,7 @@
         },
         indexedDBWaitList: new Map(),
         worker: new Worker("/static/workIndexedDB.js"),
+        lablePosisionList: {}
       }
     },
     computed: {
@@ -435,6 +442,7 @@
       scene.remove(directionalLight);
       scene.remove(ambient);
       scene.remove(deviceGroup)
+      scene.remove(personGroup)
       renderer.dispose()
       renderer = null
       scene = null
@@ -442,6 +450,7 @@
       unitGroups = null
       showGroup = null
       deviceGroup = null
+      personGroup = null
       towerGroup = null
       elevatorGroup = null
       $('#loT-index-canvas3d').empty()
@@ -612,7 +621,7 @@
         const _data = JSON.parse(data)
         // console.log('_data', _data)
         let _h = "环境检测仪<br/>"
-        _h = _h + "温度：" + _data.pm10 + "°C &nbsp;&nbsp;&nbsp;&nbsp;"
+        _h = _h + "温度：" + _data.temp + "°C &nbsp;&nbsp;&nbsp;&nbsp;"
         _h = _h + "湿度：" + _data.h + "% <br/>"
         _h = _h + "噪声：" + _data.noise + "db &nbsp;&nbsp;&nbsp;&nbsp;"
         _h = _h + "扬尘：" + _data.pm10 + "ug/m <br/>"
@@ -1008,7 +1017,112 @@
           });
         }, 3000);
 
-      }
+      },
+      initPerson(obj) {
+        // if (obj.name=="84:0d:8e:81:d4:3c"){
+        //     obj.name = "x";
+        //     editPerson(obj)
+        //     obj.name = "x1";
+        //     obj.x = obj.x1;
+        //     obj.y = obj.y1;
+        //     editPerson(obj)
+        // }
+        //editPerson(obj)
+        // obj.name = obj.name + "_1";
+        obj.x = obj.x1;
+        obj.y = obj.y1;
+        this.editPerson(obj)
+      },
+      editPerson(obj) {
+        let ex = personGroup.getObjectByName(obj.name, true)
+        if (ex) {
+          // ex.position.x = obj.x/1000-20.8;
+          ex.position.x = obj.x / 1000;
+          // ex.position.y = obj.y/1000-38.9;
+          ex.position.y = obj.y / 1000;
+          let thisb = $('#' + obj.labid)[0];
+          if (thisb != undefined) {
+            thisb.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
+          }
+        } else {
+          let personGeometry = new THREE.SphereGeometry(0.2);
+          //颜色根据传入的信息变化（白，蓝，黄，红）
+          let hatColor = Math.floor(Math.random() * 4.99) + 1;
+          switch (hatColor) {
+            case 1:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0x00FFFF
+              });
+              break;
+            case 2:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0xFF0000
+              });
+              break;
+            case 3:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0x0000FF
+              });
+              break;
+            case 4:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0x00FF00
+              });
+              break;
+            default:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0xFFFF00
+              });
+          }
+          //var personMaterial = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
+          //var personMaterial = new THREE.MeshLambertMaterial({color: obj.hatColor});
+          let person = new THREE.Mesh(personGeometry, personMaterial);
+          person.geometry.verticesNeedUpdate = true;
+          person.geometry.normalsNeedUpdate = true;
+
+          // 创建DIV跟随
+          let thisbt = document.createElement('button');
+          thisbt.className = 'locationLabel'
+          thisbt.style.marginTop = '-1em';
+          thisbt.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
+          thisbt.id = obj.labid;
+
+
+          // console.log('thisbt', thisbt)
+          let lable = new CSS2DObject(thisbt);
+          // console.log('lable', lable)
+          // lable.position.copy(ex.position);
+          // console.log('lable', lable)
+
+          let pName = Math.round(obj.x / 500) + ',' + Math.round(obj.y / 500)
+
+          lable.position.z = this.getLablePosition(pName);
+
+          lable.name = obj.name + "_b";
+
+          //Z坐标来自于所属楼层的Z坐标中心点
+          person.position.z = (obj.layer - 1) * 3.5 + 1.6;
+          //X,Y坐标来自于传入数据
+          person.position.x = obj.x / 1000;
+          person.position.y = obj.y / 1000;
+          //name来自于传入的数据
+          person.name = obj.name;
+          person.add(lable)
+          //person.visible = inBuilding(person,boxes[floorIndex-1]);
+          personGroup.add(person);
+        }
+      },
+      getLablePosition(a) {
+        let z
+        if (this.lablePosisionList.hasOwnProperty(a)) {
+          z = this.lablePosisionList[a][this.lablePosisionList[a].length - 1] + 0.5
+          this.lablePosisionList[a].push(z)
+        } else {
+          z = 0.5;
+          this.lablePosisionList[a] = [z]
+        }
+        return z
+      },
     }
   }
 
