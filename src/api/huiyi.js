@@ -28,7 +28,6 @@ method:add
 0,资料完成，计划执行完毕
 */
 export function huiyiSubmit(huiyiInfo) {
-  console.log("api", huiyiInfo)
   return request({
     url: 'api/info/plan',
     method: 'post',

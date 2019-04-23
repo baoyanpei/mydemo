@@ -19,7 +19,7 @@ const msg = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
 
       state.publishDialog.refresh = genRandom(1, 1000)
-      console.log('dasdasd', data)
+      // console.log('dasdasd', data)
     }
 
   },

@@ -13,7 +13,9 @@ import {
   queryProjectWorktime,
   queryPersonDatum,
   setCardOpera,
-  setQuitLeft
+  setQuitLeft,
+  queryDutyWeek,
+  updateDutyWeek
 } from '@/api/person'
 import Cookies from 'js-cookie'
 import hasPermissionToOperation from '@/utils/permissionUrl' // 权限判断函数
@@ -280,7 +282,7 @@ const project = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
 
       state.personFacePercentDialog.refresh = genRandom(1, 1000)
-      console.log('dasdasd', data)
+      // console.log('dasdasd', data)
     },
 
     SET_IN_OUT_PERSON_DIALOG: (state, data) => {
@@ -290,7 +292,7 @@ const project = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
 
       state.personInOutPercentDialog.refresh = genRandom(1, 1000)
-      console.log('dasdasd', data)
+      // console.log('dasdasd', data)
     },
 
     SET_PERSON_NOW_IS_CHANGED: (state) => {
@@ -700,6 +702,32 @@ const project = {
         })
       })
     },
+    QueryDutyWeek({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryDutyWeek(param).then(response => {
+          // const _data = response.data
+          console.log('queryDutyWeek', response)
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    UpdateDutyWeek({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        updateDutyWeek(param).then(response => {
+          // const _data = response.data
+          console.log('updateDutyWeek', response)
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    }
   }
 }
 

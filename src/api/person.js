@@ -32,7 +32,6 @@ method:query_person
         id :personid 可选
 */
 export function queryProjectPerson(data) {
-  console.log("api", data)
   return request({
     url: 'api/info/project',
     method: 'post',
@@ -393,6 +392,48 @@ remark ：离职备注原因
 export function setQuitLeft(data) {
   return request({
     url: 'api/info/user',
+    method: 'post',
+    data: data
+  })
+}
+
+/*
+api:/api/info/project
+method:queryDutyWeek
+'''
+更新值班周表
+参数：
+project_id:
+
+'''
+*/
+export function queryDutyWeek(data) {
+  return request({
+    url: 'api/info/project',
+    method: 'post',
+    data: data
+  })
+}
+
+/*
+api:/api/info/project
+method:update_duty_week
+'''
+更新值班周表
+参数：
+project_id:
+day1:周一
+day2:
+day3
+day4:
+day5:
+day6:
+day0:周日
+后接person_id,两person_id用“|”分割
+*/
+export function updateDutyWeek(data) {
+  return request({
+    url: 'api/info/project',
     method: 'post',
     data: data
   })
