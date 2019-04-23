@@ -10,14 +10,14 @@
           size="mini">确定修改
         </el-button>
       </div>
-      <el-table ref="table1" :data="dutyDataList" :key="Math.random()" border style="width: 100%" size="mini" clearable
+      <el-table ref="table1" :data="dutyDataList" :key="Math.random()" border style="width: 100%" size="mini" 
         @change="persionChangeHandle" :show-header="true" header-align="center">
         <el-table-column property="weekName" width="90" align="center" label="日期" header-align="center">
         </el-table-column>
         <el-table-column label="值班人1" header-align="center" align="center">
           <template slot-scope="scope">
             <span class="span-link1">
-              <el-select v-model="scope.row.person_id1" name="person_id1" filterable placeholder="请选择人员名字" size="mini">
+              <el-select v-model="scope.row.person_id1" name="person_id1" filterable clearable placeholder="请选择人员名字" size="mini">
                 <el-option v-for="item in optionsProjectPerson" :key="item.person_id" :label="item.name"
                   :value="item.person_id">
                 </el-option>
@@ -28,7 +28,7 @@
         <el-table-column label="值班人2" header-align="center" align="center">
           <template slot-scope="scope">
             <span class="span-link1">
-              <el-select v-model="scope.row.person_id2" name="person_id2" filterable placeholder="请选择人员名字" size="mini">
+              <el-select v-model="scope.row.person_id2" name="person_id2" filterable clearable placeholder="请选择人员名字" size="mini">
                 <el-option v-for="item in optionsProjectPerson" :key="item.person_id" :label="item.name"
                   :value="item.person_id">
                 </el-option>
@@ -78,19 +78,32 @@
         loading: false,
         dutyDataList: [{
           weekName: '星期一',
-
+          person_id1: '',
+          person_id2: '',
         }, {
           weekName: '星期二',
+          person_id1: '',
+          person_id2: '',
         }, {
           weekName: '星期三',
+          person_id1: '',
+          person_id2: '',
         }, {
           weekName: '星期四',
+          person_id1: '',
+          person_id2: '',
         }, {
           weekName: '星期五',
+          person_id1: '',
+          person_id2: '',
         }, {
           weekName: '星期六',
+          person_id1: '',
+          person_id2: '',
         }, {
           weekName: '星期日',
+          person_id1: '',
+          person_id2: '',
         }],
         optionsProjectPerson: [],
       }
@@ -166,7 +179,7 @@
             this.getDayData(_data.day0, 6)
           }
           //   this.optionsProjectPerson = personList
-          
+
           this.$refs.table1.clearSelection()
           this.loadingInstance.close();
 
@@ -187,11 +200,11 @@
         let personId1 = dutyData.person_id1
         let personId2 = dutyData.person_id2
 
-        if (personId1 === undefined) {
+        if (personId1 === undefined || personId1 === null) {
           personId1 = ''
         }
 
-        if (personId2 === undefined) {
+        if (personId2 === undefined || personId2 === null) {
           personId2 = ''
         }
 
