@@ -152,6 +152,24 @@ export const constantRouterMap = [{
         CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
       }
     }]
+  },
+  {
+    path: '/lot2',
+    name: 'lot2',
+    component: Layout,
+    redirect: '/loT2/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/loT/index2'),
+      name: 'lot2-index',
+      meta: {
+        title: '物联网',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
   }
 
 
