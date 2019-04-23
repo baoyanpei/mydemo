@@ -162,7 +162,7 @@
 
             for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
               let build = this.buildListByProID[i]
-              if (build.ID === 87 ) { //    || build.ID === 86 || build.ID === 88 || build.ID === 89
+              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89) { //     || build.ID === 88 || build.ID === 89
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
                 const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)
@@ -215,21 +215,21 @@
 
               _modList.forEach(mod => {
 
-                // idList.push(mod.ID)
-                if (building_id === 86 || building_id === 88 || building_id === 89) { //
-                  let _PARAMS_TYPE = []
-                  if (mod.PARAMS !== "") {
-                    _PARAMS_TYPE = mod.PARAMS.split(',')
-                    let _match = lodash.intersection(_PARAMS_TYPE, ['ST', 'SO']) //ST 主体
-                    if (_match.length > 0) {
-                      // console.log('mod', mod)
-                      idList.push(mod.ID)
-                    }
-                  }
+                idList.push(mod.ID)
+                // if (building_id === 86 || building_id === 88 || building_id === 89) { //
+                //   let _PARAMS_TYPE = []
+                //   if (mod.PARAMS !== "") {
+                //     _PARAMS_TYPE = mod.PARAMS.split(',')
+                //     let _match = lodash.intersection(_PARAMS_TYPE, ['ST', 'SO']) //ST 主体
+                //     if (_match.length > 0) {
+                //       // console.log('mod', mod)
+                //       idList.push(mod.ID)
+                //     }
+                //   }
 
-                } else {
-                  idList.push(mod.ID)
-                }
+                // } else {
+                //   idList.push(mod.ID)
+                // }
               })
 
 
@@ -305,20 +305,26 @@
             project_id: this.project_id,
             model_id: model_id
           }
-          this.$store.dispatch('QueryModdelByID', param).then((data) => {
-            data.forEach(unit => {
+          this.$store.dispatch('QueryModdelByID', param).then(async (data) => {
+            data.forEach(async (unit) => {
               // console.log('unit', unit)
               if (unit.MESH_JSON !== '') {
+                // let meshJsonURL = unit.MESH_JSON.replace('/data/root_www/bim_proj/',
+                //   'http://localhost:9527/static/')
+                let meshJsonURL = unit.MESH_JSON.replace('/data/root_www/bim_proj/',
+                  'http://admin.yidebim.com/')
+                console.log('meshJsonURL', meshJsonURL)
+                await this.getJsonFile(meshJsonURL)
                 // this.$emit('unitTotalAdd', 1)
-                let meshJson = getOriMesh(unit.MESH_JSON)
-                let modelData = {
-                  modelID: unit.ID,
-                  unit: unit,
-                  mesh: meshJson
-                }
-                this.$emit('unitGroupAddMesh', meshJson, unit.ID, unit)
-                this.$emit('unitGroupAddDB', modelData)
-   
+                // let meshJson = getOriMesh(unit.MESH_JSON)
+                // let modelData = {
+                //   modelID: unit.ID,
+                //   unit: unit,
+                //   mesh: meshJson
+                // }
+                // this.$emit('unitGroupAddMesh', meshJson, unit.ID, unit)
+                // this.$emit('unitGroupAddDB', modelData)
+
               } else {
                 this.$emit('unitGroupAddMesh', null, null, null)
                 let modelData = {
@@ -334,6 +340,19 @@
             console.log(e)
           })
         })
+
+      },
+      getJsonFile(meshJsonURL) {
+        this.$emit('unitGroupAddMesh1', meshJsonURL)
+        // return new Promise((resolve, reject) => {
+        //   let loader = new THREE.ObjectLoader()
+        //   loader.load(meshJsonURL, (_mesh) => {
+        //     console.log('meshJsonURL - 加载', meshJsonURL)
+        //     this.$emit('unitGroupAddMesh1', _mesh)
+        //     loader = null
+        //     resolve()
+        //   })
+        // })
 
       }
     }

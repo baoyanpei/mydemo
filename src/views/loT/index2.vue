@@ -7,8 +7,8 @@
     <div id="loT-index-canvas3d" class="child-host"></div>
     <div id="stat-div-loT" class="stat-div-loT"></div>
     <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
-      v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
-      v-on:unitTotalAdd="unitTotalAdd"></loadModel>
+      v-on:unitGroupAddMesh1="unitGroupAddMesh1" v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove"
+      v-on:addLoadingText="addLoadingText" v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
@@ -1121,6 +1121,24 @@
           //person.visible = inBuilding(person,boxes[floorIndex-1]);
           personGroup.add(person);
         }
+      },
+      unitGroupAddMesh1(meshJsonURL) {
+
+        let loader = new THREE.ObjectLoader()
+        loader.load(meshJsonURL, (_mesh) => {
+          console.log('meshJsonURL - 加载', meshJsonURL)
+          this.$emit('unitGroupAddMesh1', _mesh)
+          loader = null
+
+          this.addedUnit = this.addedUnit + 1
+          this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
+          scene.add(_mesh)
+          if (this.addedUnit == this.totalUnit) {
+            this.loadingDialog.close()
+          }
+        })
+
+
       },
       getLablePosition(a) {
         let z
