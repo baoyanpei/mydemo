@@ -25,6 +25,8 @@
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
     <!--人员详细信息对话框-->
     <PersonInfoDialog></PersonInfoDialog>
+    <!--人员进出详细信息对话框-->
+    <PersonInOutDetailDialog></PersonInOutDetailDialog>
     <!--人员辞退、辞职对话框-->
     <PersonQuitLeftDialog></PersonQuitLeftDialog>
     <!--人员信息对话框-->
@@ -51,6 +53,9 @@
   import InOutPersonDetailDialog from './views/person/inOutPersonDetailDialog'
   // 人员信息信息dialog
   import PersonInfoDialog from './views/person/personInfoDialog'
+
+  // 人员进出详细dialog
+  import PersonInOutDetailDialog from './views/person/personInOutDetailDialog'
 
   // 人员辞退、辞职dialog
   import PersonQuitLeftDialog from './views/person/personQuitLeftDialog'
@@ -87,6 +92,7 @@
       PersonGoOutDialog,
       LogsPersonComfirmDialog,
       PersonInfoDialog,
+      PersonInOutDetailDialog,
       PersonQuitLeftDialog,
       PersonListDialog,
       WorktimeFullCalendarDialog,

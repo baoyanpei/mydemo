@@ -91,6 +91,11 @@ const project = {
       show: false,
       data: {}
     },
+    personInOutDetailDialog: { //person inout detail窗口
+      refresh: 0,
+      show: false,
+      data: {}
+    },
     personQuitLeftDialog: { //person辞退、辞职窗口
       refresh: 0,
       show: false,
@@ -190,8 +195,19 @@ const project = {
       }
       state.personInfoDialog.refresh = genRandom(1, 1000)
     },
+    SET_PERSON_INOUT_DETAIL_DIALOG: (state, data) => {
+      // console.log('SET_PERSON_INOUT_DETAIL_DIALOG', data)
+      state.personInOutDetailDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      // console.log('opShow', data.opShow)
+      if (data.opShow === undefined) {
+        // 是否显示操作按钮
+        state.personInOutDetailDialog.opShow = false
+      }
+      state.personInOutDetailDialog.refresh = genRandom(1, 1000)
+    },
     SET_PERSON_QUIT_LEFT_DIALOG: (state, data) => {
-      // console.log('SET_PERSON_INFO_DIALOG', data)
+      // console.log('SET_PERSON_QUIT_LEFT_DIALOG', data)
       state.personQuitLeftDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       // console.log('opShow', data.opShow)
@@ -417,6 +433,14 @@ const project = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SET_PERSON_INFO_DIALOG', param)
+        resolve()
+      })
+    },
+    SetPersonInoutDetailDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PERSON_INOUT_DETAIL_DIALOG', param)
         resolve()
       })
     },

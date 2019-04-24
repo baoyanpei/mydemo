@@ -1,0 +1,127 @@
+<style lang="scss">
+  @import "./personInOutDetailDialog";
+
+</style>
+<template>
+  <div class="person-inout-detail-dialog">
+    <el-dialog :modal="false" top="0.5vh" width="500px" :lock-scroll="true" :close-on-click-modal="false"
+      @open="openPersonInOutDetailDialogHandle" :visible.sync="personInOutDetailDialog.show" :title="dialogTitle">
+      <div id="person-inout-detail-form" class="person-inout-detail-form">
+        <el-timeline>
+          <el-timeline-item v-for="(activity, index) in activities" :type="activity.type" :icon="activity.icon"
+            :key="index" :timestamp="activity.timestamp" placement="top">
+            <!-- <el-card> -->
+            <!-- {{activity.pic}} -->
+            <a :href="activity.pic" target="_blank">
+              <img :src="activity.pic" style="height:400px;" />
+            </a>
+            <!-- </el-card> -->
+          </el-timeline-item>
+          <el-timeline-item></el-timeline-item>
+        </el-timeline>
+      </div>
+    </el-dialog>
+
+  </div>
+
+</template>
+
+<script>
+  import moment from 'moment'
+  // import vpdf from 'vpdf'
+  // import pdf from 'vue-pdf'
+  // import vueshowpdf from 'vueshowpdf'
+  export default {
+    components: {
+      // pdf
+      // vueshowpdf
+    },
+    directives: {},
+
+    data() {
+
+      return {
+        dialogTitle: '',
+        activities: []
+
+      }
+    },
+    computed: {
+      project_id() {
+        return this.$store.state.project.project_id
+      },
+      personInOutDetailDialog: {
+        get: function () {
+          return this.$store.state.project.personInOutDetailDialog
+        },
+        set: function (newValue) {
+          this.$store.state.project.personInOutDetailDialog = newValue
+        }
+      },
+
+    },
+    created: function () {
+      // this.src = pdf.createLoadingTask(this.src)
+    },
+    watch: {
+      personInOutDetailDialog: {
+        handler: function (newVal, oldVal) {
+          //   console.info('value changed2 ', newVal)
+          if (newVal.show === true) {
+            this.initData()
+            this.initDialog()
+            // this.getProjectPersonInfo()
+            // this.getPersonDatum()
+            // this.getPerson()
+          } else {
+            this.initData()
+          }
+
+        },
+        deep: true
+      },
+
+    },
+    methods: {
+      // 打开窗口
+      openPersonInOutDetailDialogHandle() {
+        // console.log("----22222---")
+      },
+
+      initData() {
+        this.dialogTitle = ''
+        this.activities = []
+      },
+      initDialog() {
+        this.dialogTitle = `${this.personInOutDetailDialog.name} ${this.personInOutDetailDialog.bt.substring(0,10)}`
+        const param = {
+          method: 'query_inout_detail',
+          project_id: this.project_id,
+          person_id: this.personInOutDetailDialog.person_id,
+          bt: this.personInOutDetailDialog.bt, //开始时间 格式 2016 - 6 - 5 00: 00: 00
+          et: this.personInOutDetailDialog.et //结束时间 格式 2016 - 6 - 5 00: 00: 00
+        }
+        this.$store.dispatch('queryInOutDetail', param).then((data_list) => {
+          data_list.forEach(data => {
+            console.log('data', data)
+            if (data.direction === 1) {
+              this.activities.push({
+                content: '进场时间：',
+                type: 'primary',
+                // icon: 'el-icon-more',
+                timestamp: `进场时间：${data.created_time.substr(10)}`,
+                pic: data.pic
+              })
+            }
+
+          });
+        })
+      }
+    },
+    mounted() {
+
+
+    }
+  }
+
+</script>

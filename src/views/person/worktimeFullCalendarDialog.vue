@@ -60,15 +60,14 @@
     },
     methods: {
       // 打开窗口
-      openWorktimeFullCalendarDialogHandle() {
-      },
+      openWorktimeFullCalendarDialogHandle() {},
 
       initData() {
 
 
       },
       renderFullCalender() {
-        console.log("renderFullCalenderrenderFullCalender")
+        // console.log("renderFullCalenderrenderFullCalender")
         $('#worktime-fullcalender').fullCalendar({
           height: 500,
           header: {
@@ -92,10 +91,20 @@
           //   return false;
           // },
           // timeFormat: 'HH:mm{ - HH:mm}',
-          // eventClick: function (event) {
+          eventClick: (event) => {
+            // console.log('this.worktimeFullCalendarDialog', this.worktimeFullCalendarDialog)
+            const param = {
+              show: true,
+              bt: event.start.format('YYYY-MM-DD 00:00:00'),
+              et: event.start.format('YYYY-MM-DD 23:59:59'), //HH:mm:ss
+              ...this.worktimeFullCalendarDialog
+            }
+            // console.log('param', param)
+            this.$store.dispatch('SetPersonInoutDetailDialog', param).then(() => {}).catch(() => {
 
-          //   return false;
-          // },
+            })
+            return false;
+          },
           // loading: function (bool) {},
 
         });
