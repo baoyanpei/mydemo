@@ -706,7 +706,8 @@
         // this.modMap.set(_param.modelID, _data)
         // this.percentage = Math.ceil((this.addedUnit / this.totalUnit) * 100)
 
-        let _mesh = this.loader.parse(meshJson)
+        // let _mesh = this.loader.parse(meshJson)
+        let _mesh = meshJson
         // console.log('mod', mod)
         // this.modMap.set(_mesh.id, mod)
         // console.log('result.mesh', _mesh.material.opacity)

@@ -79,7 +79,7 @@
       },
       onMessageArrived(message) {
         let obj = JSON.parse(message.payloadString);
-        console.log("收到消息1:" + message.destinationName + message.payloadString);
+        // console.log("收到消息1:" + message.destinationName + message.payloadString);
         // this.initPerson(obj)
         // this.mqttWeather(message.payloadString)
 

@@ -124,7 +124,8 @@
         let model_id = this.modIDList[i]
         IndexedDB.getData(this.modelDB, 'model', model_id, async (result) => {
           if (result) {
-            this.$emit('unitGroupAddMesh', result.mesh, result.modelID, result.unit)
+            let _mesh = this.loader.parse(result.mesh)
+            this.$emit('unitGroupAddMesh', _mesh, result.modelID, result.unit)
             // this.modIDIndexList.push(model_id)
 
           } else {
@@ -162,7 +163,7 @@
 
             for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
               let build = this.buildListByProID[i]
-              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89) { //     || build.ID === 88 || build.ID === 89
+              if (build.ID === 87 || build.ID === 86    || build.ID === 88 || build.ID === 89) { // 
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
                 const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)
@@ -312,18 +313,19 @@
                 // let meshJsonURL = unit.MESH_JSON.replace('/data/root_www/bim_proj/',
                 //   'http://localhost:9527/static/')
                 let meshJsonURL = unit.MESH_JSON.replace('/data/root_www/bim_proj/',
-                  'http://admin.yidebim.com/')
-                console.log('meshJsonURL', meshJsonURL)
-                await this.getJsonFile(meshJsonURL)
+                  'http://admin.man.yidebim.com:8898/')
+                // console.log('meshJsonURL', meshJsonURL)
+                let mesh = await this.getJsonFile(meshJsonURL)
                 // this.$emit('unitTotalAdd', 1)
                 // let meshJson = getOriMesh(unit.MESH_JSON)
-                // let modelData = {
-                //   modelID: unit.ID,
-                //   unit: unit,
-                //   mesh: meshJson
-                // }
-                // this.$emit('unitGroupAddMesh', meshJson, unit.ID, unit)
-                // this.$emit('unitGroupAddDB', modelData)
+                let modelData = {
+                  modelID: unit.ID,
+                  unit: unit,
+                  mesh: mesh.toJSON()
+                }
+                
+                this.$emit('unitGroupAddMesh', mesh, unit.ID, unit)
+                this.$emit('unitGroupAddDB', modelData)
 
               } else {
                 this.$emit('unitGroupAddMesh', null, null, null)
@@ -343,16 +345,16 @@
 
       },
       getJsonFile(meshJsonURL) {
-        this.$emit('unitGroupAddMesh1', meshJsonURL)
-        // return new Promise((resolve, reject) => {
-        //   let loader = new THREE.ObjectLoader()
-        //   loader.load(meshJsonURL, (_mesh) => {
-        //     console.log('meshJsonURL - 加载', meshJsonURL)
-        //     this.$emit('unitGroupAddMesh1', _mesh)
-        //     loader = null
-        //     resolve()
-        //   })
-        // })
+        // this.$emit('unitGroupAddMesh1', meshJsonURL)
+        return new Promise((resolve, reject) => {
+          let loader = new THREE.ObjectLoader()
+          loader.load(meshJsonURL, (_mesh) => {
+            // console.log('meshJsonURL - 加载', meshJsonURL)
+            // this.$emit('unitGroupAddMesh1', _mesh)
+            // loader = null
+            resolve(_mesh)
+          })
+        })
 
       }
     }
