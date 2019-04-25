@@ -48,10 +48,10 @@
       <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="350px"
         :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
         @sort-change="handleSortChange" size="mini" :show-header="true" header-align="center"
-        :default-sort="{prop: 'name', order: 'ascending'}">
-        <el-table-column fixed type="index" width="40">
+        :default-sort="{prop: 'group_name_level[0]', order: 'descending'}">
+        <el-table-column  type="index" width="40">
         </el-table-column>
-        <el-table-column fixed property="name" sortable label="姓名" width="100" header-align="left">
+        <el-table-column  property="name" sortable label="姓名" width="100" header-align="left">
           <template slot-scope="scope">
             <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
           </template>
@@ -277,6 +277,9 @@
 
           })
           console.log('this.personInoutList', this.personInoutList)
+          this.personInoutList = lodash.orderBy(this.personInoutList, ['group_name_level[0]', 'group_name_level[1]',
+          'name'
+        ], ['asc', 'asc', 'asc']);
           this.totalPerson = this.personInoutList.length;
           this.loading = false
           if (this.personInoutList.length === 0) {
