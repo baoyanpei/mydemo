@@ -7,8 +7,8 @@
     <div id="loT-index-canvas3d" class="child-host"></div>
     <div id="stat-div-loT" class="stat-div-loT"></div>
     <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
-      v-on:unitGroupAddMesh1="unitGroupAddMesh1" v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove"
-      v-on:addLoadingText="addLoadingText" v-on:unitTotalAdd="unitTotalAdd"></loadModel>
+      v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
+      v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
@@ -465,32 +465,6 @@
       elevatorGroup = null
       $('#loT-index-canvas3d').empty()
       mainCanvas = null
-
-
-      // for (let i = 0, len = showGroup.children.length; i < len; i++) {
-      //   console.log('showGroup',showGroup.children[i])
-      //   // showGroup.children.splice(i, 1);
-      // }
-      // for (let i = 0, len = scene.children.length; i < len; i++) {
-      //   let allChildren = scene.children[i];
-      //   // console.log('allChildren', allChildren)
-      //   for (let i = 0, len = allChildren.children.length; i < len; i++) {
-      //     let allChildren1 = allChildren.children[i];
-      //     console.log('allChildren1', allChildren1)
-      //     scene.remove(allChildren1);
-      //   }
-      //   // var lastObject = allChildren[allChildren.length - 1];
-      //   // if (lastObject instanceof THREE.Mesh) {
-      //   //   scene.remove(lastObject);
-      //   // }
-
-      // }
-
-      // console.log('scene', scene)
-
-      // console.log("beforeDestroy")
-      // scene = null
-      // renderer.dispose()
       clearTimeout(this.timeRemove)
     },
     destroyed() {},
@@ -505,10 +479,6 @@
             modelDB = db
             IndexedDB.clearData(modelDB, 'model')
             // console.log('清理完成')
-            // this.$message({
-            //   type: 'success',
-            //   message: '清理完成!'
-            // });
             resolve()
           })
         })
@@ -589,6 +559,9 @@
             if (_data.DoorState === '0') {
               doorOpen = false
             }
+            if (elevatorGroup === null) {
+              return
+            }
             modifyElevator(elevatorGroup, "E1", _data.Height, doorOpen) //名称，高度，门的开启状态
 
             $("#sjj_gd").html(_data.Height)
@@ -659,11 +632,9 @@
       },
       addDataToDB() {
         setTimeout(() => {
-          // console.log('===>===>===>===>===>', this.indexedDBWaitList.size)
           let i = 0
           for (let data of this.indexedDBWaitList.values()) {
             i++
-            // console.log('===>', data)
             this.worker.postMessage(data); //向worker发送数据
             // worker.onmessage = function (evt) { //接收worker传过来的数据函数
             //   worker.terminate();
@@ -682,29 +653,12 @@
       },
       unitGroupAddMesh(meshJson, modelID, unit) {
 
-        // console.log('unit', unit)
-        if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
-          .DEVICE_ID !== '') {
-          // console.log('unitunitunitunit', unit)
-          this.deviceMap.set(unit.COMPONENT_NAME, unit)
-        }
-        // for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-        //   this.unitGroups[i].visible = false
-        // }
 
         this.addedUnit = this.addedUnit + 1
         this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
         if (meshJson === null || meshJson === '') {
           return
         }
-        // if (this.addedUnit < this.totalUnit && this.unitGroups[0].visible == true) {
-        //   for (let i = 0, len = this.unitGroups.length; i < len; i++) {
-        //     this.unitGroups[i].visible = false
-        //   }
-        // }
-        // console.log('mod', mod)
-        // this.modMap.set(_param.modelID, _data)
-        // this.percentage = Math.ceil((this.addedUnit / this.totalUnit) * 100)
 
         // let _mesh = this.loader.parse(meshJson)
         let _mesh = meshJson
@@ -712,13 +666,14 @@
         // this.modMap.set(_mesh.id, mod)
         // console.log('result.mesh', _mesh.material.opacity)
         // 模型的透明度
-        if (unit.BUILDING_ID === 86 || unit.BUILDING_ID === 88 || unit.BUILDING_ID === 89) {
+        if (unit.BUILDING_ID !== 87) {
           if (_mesh.material.opacity === 1) {
             _mesh.material.opacity = 0.3
           }
         }
 
         // console.log('_mesh', _mesh.name)
+        // console.log('uuuu', unit, _mesh)
         if (unit.BUILDING_ID === 87) {
           showGroup.add(_mesh)
         } else {
@@ -726,7 +681,13 @@
           // let _mod = Math.floor(Math.random() * unitGroups.length) //_data.modelID % 10
           // unitGroups[_mod].add(_mesh)
         }
-
+        if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
+          .DEVICE_ID !== '') {
+          this.deviceMap.set(unit.COMPONENT_NAME, {
+            'unit': unit,
+            'mesh': _mesh
+          })
+        }
 
 
         // scene.add(_mesh)
@@ -742,8 +703,6 @@
         // })
 
         if (this.addedUnit == this.totalUnit) {
-          console.log(123123)
-
           this.addDeviceData()
           // document.addEventListener('mouseup', (event) => {
           //   // console.log('mouseup')
@@ -829,22 +788,27 @@
         });
       },
       addDeviceData() {
-        showGroup.children.forEach(mesh => {
-          let _device = this.deviceMap.get(mesh.name)
-          if (_device !== undefined) {
-            // 摄像头
-            if (_device.DEVICE_TYPE === 16) {
-              this.addCameraLabel(mesh, _device)
-            } else if (_device.DEVICE_TYPE === 10) { // 电表
-              this.addTxtBox(mesh, _device)
-              this.addLabel1(mesh, _device, 'dianbiao.png')
-            } else if (_device.DEVICE_TYPE === 11) { // 水表
-              this.addTxtBox(mesh, _device)
-              this.addLabel1(mesh, _device, 'shuibiao.png')
-            } else if (_device.DEVICE_TYPE === 15) { // 环境检测仪
-              this.addTxtBox(mesh, _device)
-              this.addLabel1(mesh, _device, 'huanjinjianceyi.png')
-            }
+        // console.log('this.deviceMap', this.deviceMap)
+        // console.log('showGroup', showGroup)
+        let i = 0
+        this.deviceMap.forEach(data => {
+          // console.log('data', data, i++)
+          let _device = data.unit
+          let mesh = data.mesh
+          // let _device = this.deviceMap.get(mesh.name)
+          // // console.log('_device', _device)
+          // 摄像头
+          if (_device.DEVICE_TYPE === 16) {
+            this.addCameraLabel(mesh, _device)
+          } else if (_device.DEVICE_TYPE === 10) { // 电表
+            this.addTxtBox(mesh, _device)
+            this.addLabel1(mesh, _device, 'dianbiao.png')
+          } else if (_device.DEVICE_TYPE === 11) { // 水表
+            this.addTxtBox(mesh, _device)
+            this.addLabel1(mesh, _device, 'shuibiao.png')
+          } else if (_device.DEVICE_TYPE === 15) { // 环境检测仪
+            this.addTxtBox(mesh, _device)
+            this.addLabel1(mesh, _device, 'huanjinjianceyi.png')
           }
         })
         this.updateDeviceData()
@@ -859,11 +823,12 @@
             deviceList.forEach(device => {
               // this.datumMeterMap.set(datum.device_id, datum)
               if (device.device_type === 10) {
-                // console.log('device', device)
+                console.log('device1234', device)
                 $('#divDianBiao' + device.device_id).html(device.total_used)
               } else if (device.device_type === 11) {
                 // console.log('deviceYD10000SB03', device)
-                $('#divShuiBiaoYD10000SB03').html(device.total_used)
+                $('#divShuiBiao' + device.device_id).html(device.total_used)
+                // $('#divShuiBiaoYD10000SB03').html(device.total_used)
               }
             })
             this.updateDeviceData()
@@ -985,10 +950,11 @@
           thisbt.id = "tipDianBiao"
         } else if (device.DEVICE_TYPE === 11) {
           // 水表
-          let DeviceID = 'YD10000SB03'
-          let bbb = this.datumMeterMap.get(DeviceID)
+          // let DeviceID = 'YD10000SB03'
+          let bbb = this.datumMeterMap.get(device.DEVICE_ID)
           thisbt.id = "tipShuiBiao"
-          thisbt.innerHTML = "<div class='css2-txt-box'>用水量：<span id='divShuiBiao" + DeviceID + "'> " + bbb.total_used +
+          thisbt.innerHTML = "<div class='css2-txt-box'>用水量：<span id='divShuiBiao" + device.DEVICE_ID + "'> " + bbb
+            .total_used +
             "</span> 吨</div><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
         } else if (device.DEVICE_TYPE === 15) {
           let _h = "<div class='css2-txt-box2'>"
@@ -1123,24 +1089,7 @@
           personGroup.add(person);
         }
       },
-      unitGroupAddMesh1(meshJsonURL) {
 
-        let loader = new THREE.ObjectLoader()
-        loader.load(meshJsonURL, (_mesh) => {
-          console.log('meshJsonURL - 加载', meshJsonURL)
-          this.$emit('unitGroupAddMesh1', _mesh)
-          loader = null
-
-          this.addedUnit = this.addedUnit + 1
-          this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
-          scene.add(_mesh)
-          if (this.addedUnit == this.totalUnit) {
-            this.loadingDialog.close()
-          }
-        })
-
-
-      },
       getLablePosition(a) {
         let z
         if (this.lablePosisionList.hasOwnProperty(a)) {
