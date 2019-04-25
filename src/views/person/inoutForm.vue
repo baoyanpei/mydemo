@@ -3,7 +3,7 @@
 
 </style>
 <template>
-  <el-dialog :modal="false" width="550px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
+  <el-dialog :modal="false" width="520px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
     @open="openPersonInoutDialogHandle" :visible.sync="personInoutDialog.show" title="人员考勤">
     <div id="inout-from" class="inout-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
@@ -42,7 +42,8 @@
         </el-form-item>
       </el-form>
       <!-- <hr class="hr1" /> -->
-      <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
+      <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span><span
+        class="table-count-day">总计 {{ totalCountDay }} 天</span>
       <hr class="hr1" />
       <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="350px"
         :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
@@ -50,16 +51,16 @@
         :default-sort="{prop: 'name', order: 'ascending'}">
         <el-table-column fixed type="index" width="40">
         </el-table-column>
-        <el-table-column fixed property="name" sortable label="姓名" width="80" header-align="center">
+        <el-table-column fixed property="name" sortable label="姓名" width="100" header-align="left">
           <template slot-scope="scope">
             <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
           </template>
         </el-table-column>
         <!-- <el-table-column property="mobile" label="电话" width="100" header-align="center">
         </el-table-column> -->
-        <el-table-column property="group_name_level[0]" sortable label="部门" width="90" header-align="center">
+        <el-table-column property="group_name_level[0]" sortable label="部门" width="120" header-align="left">
         </el-table-column>
-        <el-table-column property="group_name_level[1]" sortable label="专业" width="100" header-align="center">
+        <el-table-column property="group_name_level[1]" sortable label="专业" width="120" header-align="left">
         </el-table-column>
         <el-table-column property="inDay" sortable label="上工天数" width="100" align="center" header-align="center">
           <template slot-scope="scope">
@@ -69,13 +70,13 @@
           </template>
 
         </el-table-column>
-        <el-table-column property="countDay" sortable label="统计天数" width="100" align="center" header-align="center">
+        <!-- <el-table-column property="countDay" sortable label="统计天数" width="100" align="center" header-align="center">
           <template slot-scope="scope">
             <span class="span-link1" @click="handleInDayClick(scope.row)">
               {{scope.row.countDay}}
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </div>
   </el-dialog>
@@ -147,7 +148,8 @@
         isMatchPerson: false, // 是否匹配人员名称
         personInoutTableEmptyText: '请点击查询按钮进行查询',
         checkedPersonType: false, //false 只有项目部
-        totalPerson: 0
+        totalPerson: 0,
+        totalCountDay: 0
         // list: []
       }
     },
@@ -394,6 +396,9 @@
           // console.log(this.projectPersonInoutList)
           console.log('QueryProjectPersonInDay', this.projectPersonInDay)
           this.getProjectPersonInout(sTime, eTime, isExport)
+
+          this.totalCountDay = moment(eTime).diff(moment(sTime), 'days') + 1
+
           // console.log('this.personInoutList', this.personInoutList)
         }).catch(() => {
           this.loading = false
