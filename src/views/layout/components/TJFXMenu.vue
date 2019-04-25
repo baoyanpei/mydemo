@@ -13,10 +13,10 @@
           <font-awesome-icon icon="chart-line" class="fa-icon"/>
           <span slot="title">统计分析</span>
         </el-menu-item>
-        <el-menu-item index="/gzbsz">
+        <!-- <el-menu-item index="/gzbsz">
           <font-awesome-icon icon="user" class="fa-icon"/>
           <span slot="title">工资表设置</span>
-        </el-menu-item>
+        </el-menu-item> -->
       </el-menu>
     </el-row>
   </div>
