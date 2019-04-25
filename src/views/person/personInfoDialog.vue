@@ -32,7 +32,8 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="24">
-                电话：{{mobile}}
+                电话：{{mobile}} <el-button id='btnCopy' type="primary" v-clipboard:copy="mobile" v-clipboard:success="onCopySuccess"
+                  v-clipboard:error="onCopyError" size="mini">复制</el-button>
               </el-col>
             </el-row>
             <el-row :gutter="24">
@@ -498,6 +499,19 @@
         }).catch(() => {
 
         });
+      },
+      onCopySuccess() {
+        console.log("copy", this.mobile)
+        this.$message({
+          message: '复制成功！',
+          type: 'success'
+        })
+      },
+      onCopyError() {
+        this.$message({
+          message: '复制失败',
+          type: 'error'
+        })
       }
     },
     mounted() {

@@ -32,6 +32,10 @@ import ECharts from 'vue-echarts/components/ECharts'
 
 import 'echarts'
 import 'echarts/theme/infographic'
+
+import VueClipboard from 'vue-clipboard2'
+
+
 import {
   faUser,
   faCoffee,
@@ -69,7 +73,7 @@ import 'fullcalendar/dist/fullcalendar.css';
 
 
 import * as filters from './filters' // global filters
-
+Vue.use(VueClipboard)
 Vue.use(Element, {
   size: 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)

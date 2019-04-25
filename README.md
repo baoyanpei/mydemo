@@ -45,3 +45,21 @@ https://blog.csdn.net/mutouafangzi/article/details/79915441
 #### threejs stat
 
 http://mrdoob.github.io/stats.js/
+
+#### vue 实现复制到粘贴板功能需要依赖到 clipboard.js
+https://www.cnblogs.com/wyhlightstar/p/8950430.html
+
+```cmd
+1、 首先需要安装依赖  * 出现错误的话，可以试试 cnpm
+
+npm install --save vue-clipboard2
+　　
+
+2、 安装成功之后就可以开始使用了
+
+对于vue-cli
+
+import Vue from 'vue'
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
+```
