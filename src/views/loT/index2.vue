@@ -7,8 +7,8 @@
     <div id="loT-index-canvas3d" class="child-host"></div>
     <div id="stat-div-loT" class="stat-div-loT"></div>
     <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
-       v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove"
-      v-on:addLoadingText="addLoadingText" v-on:unitTotalAdd="unitTotalAdd"></loadModel>
+      v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
+      v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
@@ -1060,6 +1060,30 @@
           thisbt.style.marginTop = '-1em';
           thisbt.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
           thisbt.id = obj.labid;
+          thisbt.style.pointerEvents = 'auto'
+          thisbt.onclick = async () => {
+            // 查询用户详细信息
+            // console.log('obj', obj)
+            // let mac = 
+            const _personInfoList = await this.getPersonInfo(obj.mac)
+            console.log('_personInfoList', _personInfoList)
+            if (_personInfoList.length === 0) {
+              this.$message({
+                message: '未查询到此人员信息',
+                type: 'error'
+              })
+            } else {
+              let _personInfo = _personInfoList[0]
+              const param = {
+                show: true,
+                ..._personInfo
+              }
+              this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
+
+              })
+            }
+
+          }
 
 
           // console.log('thisbt', thisbt)
@@ -1098,6 +1122,22 @@
         }
         return z
       },
+      getPersonInfo(mac) {
+        return new Promise((resolve, reject) => {
+
+          const param = {
+            method: 'query_person',
+            project_id: 10000,
+            mac: mac
+          }
+          this.$store.dispatch('QueryProjectPerson', param).then((data_list) => {
+            console.log("-data-->", data_list)
+            resolve(data_list)
+          }).catch(() => {
+            resolve([])
+          })
+        })
+      }
     }
   }
 
