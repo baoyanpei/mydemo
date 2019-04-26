@@ -7,8 +7,8 @@
     <div id="loT-index-canvas3d" class="child-host"></div>
     <div id="stat-div-loT" class="stat-div-loT"></div>
     <loadModel v-on:unitAllRemove="unitAllRemove" v-on:unitGroupAddMesh="unitGroupAddMesh"
-      v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
-      v-on:unitTotalAdd="unitTotalAdd"></loadModel>
+       v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove"
+      v-on:addLoadingText="addLoadingText" v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
@@ -640,33 +640,30 @@
             //   worker.terminate();
             // }
             this.indexedDBWaitList.delete(data.modelID)
-            if (i >= 100) {
+            if (i >= 20) {
               break;
             }
           }
           this.addDataToDB()
-        }, 5000)
+        }, 8000)
       },
       addLoadingText(loadingTxt) {
         this.loadingDialog.text = loadingTxt
         // this.loadtext = loadingTxt
       },
-      unitGroupAddMesh(meshJson, modelID, unit) {
-
-
+      unitGroupAddMesh(_mesh, modelID, unit) {
         this.addedUnit = this.addedUnit + 1
         this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
-        if (meshJson === null || meshJson === '') {
+        if (_mesh === null || _mesh === '') {
           return
         }
 
         // let _mesh = this.loader.parse(meshJson)
-        let _mesh = meshJson
         // console.log('mod', mod)
         // this.modMap.set(_mesh.id, mod)
         // console.log('result.mesh', _mesh.material.opacity)
         // 模型的透明度
-        if (unit.BUILDING_ID !== 87) {
+        if (unit.BUILDID !== 87) {
           if (_mesh.material.opacity === 1) {
             _mesh.material.opacity = 0.3
           }
@@ -674,7 +671,7 @@
 
         // console.log('_mesh', _mesh.name)
         // console.log('uuuu', unit, _mesh)
-        if (unit.BUILDING_ID === 87) {
+        if (unit.BUILDID === 87) {
           showGroup.add(_mesh)
         } else {
           unitGroups.add(_mesh)
@@ -683,7 +680,7 @@
         }
         if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
           .DEVICE_ID !== '') {
-          this.deviceMap.set(unit.COMPONENT_NAME, {
+          this.deviceMap.set(unit.NAME, {
             'unit': unit,
             'mesh': _mesh
           })
@@ -788,7 +785,7 @@
         });
       },
       addDeviceData() {
-        // console.log('this.deviceMap', this.deviceMap)
+        console.log('this.deviceMap', this.deviceMap)
         // console.log('showGroup', showGroup)
         let i = 0
         this.deviceMap.forEach(data => {

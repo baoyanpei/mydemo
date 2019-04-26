@@ -387,6 +387,18 @@ const model3d = {
         })
       })
     },
+    QueryFloorListByProID2({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryFloorListByBudID(param).then(response => {
+          // console.log("queryPersonInfo", response.data)
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
     // #通过楼层ID获取这个楼层所有构件的列表
     QueryModListByFloorID({
       commit
@@ -399,6 +411,23 @@ const model3d = {
             'param': param
           })
           resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // #通过楼层ID获取这个楼层所有构件的列表
+    QueryModListByFloorID2({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryModListByFloorID(param).then(response => {
+          // console.log("queryPersonInfo", response.data)
+          // commit('SET_MOD_LIST_BY_FLOORID', {
+          //   'data': response.data,
+          //   'param': param
+          // })
+          resolve(response.data)
         }).catch(error => {
           reject(error)
         })
