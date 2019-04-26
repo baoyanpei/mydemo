@@ -169,7 +169,7 @@
                 // this.modIDList.push(model_id)
               }
             }
-            console.log('this.modIDList', this.modIDList)
+            // console.log('this.modIDList', this.modIDList)
             resolve()
             // this.loadingDialog.close()
           }).catch((e) => {
@@ -190,17 +190,17 @@
 
           }
           this.$store.dispatch('QueryFloorListByProID2', param).then(async (floorListByBudID) => {
-            console.log("floorListByBudID", floorListByBudID)
+            // console.log("floorListByBudID", floorListByBudID)
             let idList = []
             for (let i = 0, len = floorListByBudID.length; i < len; i++) {
               let floor = floorListByBudID[i]
-              console.log('floor', floor)
+              // console.log('floor', floor)
               this.$emit('addLoadingText', `正在加载 ${building.NAME} 的 ${floor.NAME} 的模型列表`)
               // if (floor.NAME === '2F(4.200-8.400)' || floor.NAME === '3F(8.400-12.600)') {
               floor.BUILDID = building_id
               // console.log('building, floor',building, floor)
               const _modList = await this.getModListByFloorID(building, floor)
-              console.log('_modList', _modList)
+              // console.log('_modList', _modList)
               // this.$emit('unitTotalAdd', _modList.length)
 
               _modList.forEach(mod => {
@@ -268,60 +268,11 @@
         // });
 
       },
-      // getModelFromAPI(model_id) {
-      //   return new Promise((resolve, reject) => {
-      //     const param = {
-      //       // method: 'GetModelByID',
-      //       method: 'GetMergedModelByID',
-      //       project_id: this.project_id,
-      //       model_id: model_id
-      //     }
-      //     this.$store.dispatch('QueryModdelByID', param).then(async (data) => {
-      //       data.forEach(async (unit) => {
-      //         // console.log('unit', unit)
-      //         if (unit.MESH_JSON !== '') {
-      //           // let meshJsonURL = unit.MESH_JSON.replace('/data/root_www/bim_proj/',
-      //           //   'http://localhost:9527/static/')
-      //           // let meshJsonURL = unit.MESH_JSON.replace('/data/root_www/bim_proj/',
-      //           //   '/static/')
-      //           let meshJsonURL = unit.MESH_JSON.replace('/data/root_www/bim_proj/',
-      //             '')
-      //           // console.log('meshJsonURL', meshJsonURL)
-      //           let mesh = await this.getJsonFile(meshJsonURL)
-      //           // this.$emit('unitTotalAdd', 1)
-      //           // let meshJson = getOriMesh(unit.MESH_JSON)
-      //           let modelData = {
-      //             modelID: unit.ID,
-      //             unit: unit,
-      //             mesh: mesh.toJSON()
-      //           }
-
-      //           this.$emit('unitGroupAddMesh', mesh, unit.ID, unit)
-      //           this.$emit('unitGroupAddDB', modelData)
-
-      //         } else {
-      //           this.$emit('unitGroupAddMesh', null, null, null)
-      //           let modelData = {
-      //             modelID: unit.ID,
-      //             unit: unit,
-      //             mesh: ''
-      //           }
-      //           this.$emit('unitGroupAddDB', modelData)
-      //         }
-      //         resolve()
-      //       });
-      //     }).catch((e) => {
-      //       console.log(e)
-      //     })
-      //   })
-
-      // },
       getModelFromGEOM(unit) {
         return new Promise(async (resolve, reject) => {
           let geom = unit.GEOM
           if (geom !== '') {
-            // let meshJsonURL = unit.MESH_JSON.replace('/data/root_www/bim_proj/',
-            //   'http://localhost:9527/static/')
+
             // let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
             //   '/static/')
             let meshJsonURL = geom.replace('/data/root_www/bim_proj/',

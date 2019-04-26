@@ -820,7 +820,7 @@
             deviceList.forEach(device => {
               // this.datumMeterMap.set(datum.device_id, datum)
               if (device.device_type === 10) {
-                console.log('device1234', device)
+                // console.log('device1234', device)
                 $('#divDianBiao' + device.device_id).html(device.total_used)
               } else if (device.device_type === 11) {
                 // console.log('deviceYD10000SB03', device)
