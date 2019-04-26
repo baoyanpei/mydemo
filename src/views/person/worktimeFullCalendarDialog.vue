@@ -140,6 +140,26 @@
             // item.end = item.date + " 23:59:59"
             item.title = "入场人数" + item.in_count
             item.titleFormat = ""
+
+            item.worktime = 0 // 工作时长 大于1小时 显示1.00小时 小于1小时 显示 分钟
+            item.worktimeName = ""// 1 分钟 2小时
+            let work_seconds = item.work_seconds
+            if (work_seconds !== undefined) {
+              const _hours = work_seconds / 60 / 60
+              if (_hours>1){
+                item.worktime = _hours.toFixed(1)
+                item.worktimeName = "小时"
+              }else{
+                const _minutes = work_seconds / 60
+                item.worktime = _minutes.toFixed(0)
+                item.worktimeName = "分钟"
+              }
+              
+              // person.worktime = worktime
+            } 
+            // item.worktime = parseFloat(person.worktime)
+
+
             events.push({
               title: "进场时间:" + moment(item.in_time).format('HH:mm:ss'),
               start: moment(item.in_time).format('YYYY-MM-DD 00:00:00'),
@@ -155,7 +175,7 @@
               titleFormat: ""
             })
             events.push({
-              title: "工作时长:" + item.work_hours + "小时",
+              title: `工作时长:${item.worktime}${item.worktimeName}`,
               start: moment(item.out_time).format('YYYY-MM-DD 00:00:03'),
               backgroundColor: "#fc6720", //red
               borderColor: "#fc6720", //red
