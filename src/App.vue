@@ -134,9 +134,12 @@
     },
     watch: {
       '$route'(to, from) {
-        // console.log("totototo", to)
+        console.log("totototo", to)
         if (to.name !== "login" && to.name !== "wxbindtip" && this.personInfo === null) {
           this.getPerson()
+        }
+        if (from.name === 'lot2-index'){
+          location.reload()
         }
       }
     },

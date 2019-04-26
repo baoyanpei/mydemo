@@ -89,7 +89,8 @@ Vue.config.productionTip = false
 
 
 router.beforeEach(async (to, from, next) => {
-  console.log("to, from", to, from, to.query)
+  console.log("to, from 123", to, from, to.query)
+  
   if (to.meta.requireAuth) {
     // console.log("to.meta.requireAuth", to.meta.requireAuth, to.meta.CheckCode)
     // console.log("TongXunLu", store.state.project.project_id)
