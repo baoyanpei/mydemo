@@ -37,6 +37,13 @@ export const constantRouterMap = [{
     hidden: true
   },
   {
+    path: '/screen',
+    name: 'screen',
+    component: Layout,
+    component: () => import('@/views/screen/index'),
+    hidden: true
+  },
+  {
     path: '/wxbindtip',
     name: 'wxbindtip',
     component: () => import('@/views/login/wxbindTip'),
