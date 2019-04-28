@@ -24,7 +24,7 @@
             <div class="text">场内人员</div>
           </div>
           <div class="main">
-            123
+            <Inout></Inout>
           </div>
         </div>
       </el-col>
@@ -41,11 +41,13 @@
 <script>
   // import $ from 'jquery'
   import GateArea from './components/gateArea'
+  import Inout from './components/inout'
   export default {
     directives: {},
     name: 'Main',
     components: {
-      GateArea
+      GateArea,
+      Inout
       // VueDragResize
     },
     data() {
