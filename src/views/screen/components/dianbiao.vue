@@ -1,11 +1,11 @@
 <style lang="scss">
-  @import "./shuibiao.scss";
+  @import "./dianbiao.scss";
 
 </style>
 
 <template>
-  <div class="screen-shuibiao">
-    <echart ref="echarts-shuibiao" :options="option" class="echarts-shuibiao" theme="infographic" style="width:100%">
+  <div class="screen-dianbiao">
+    <echart ref="echarts-jcryzs" :options="option" class="echarts-jcryzs" theme="infographic" style="width:100%">
     </echart>
   </div>
 </template>
@@ -49,16 +49,16 @@
             data: [],
 
             axisLabel: {
-              color: '#34716c'
+              color: '#555555'
             },
             axisLine: {
               lineStyle: {
-                color: '#34716c'
+                color: '#2b3a59'
               }
             },
             axisTick: {
               lineStyle: {
-                color: '#34716c'
+                color: '#2b3a59'
               }
             }
           },
@@ -67,25 +67,25 @@
             splitLine: {
               show: true,
               lineStyle: {
-                color: ['#34716c'],
+                color: ['#2b3a59'],
                 type: 'solid',
               }
             },
             axisLabel: {
-              color: '#34716c'
+              color: '#555555'
             },
             axisLine: {
               lineStyle: {
-                color: '#34716c'
+                color: '#2b3a59'
               }
             },
             axisTick: {
               lineStyle: {
-                color: '#34716c'
+                color: '#2b3a59'
               }
             }
           },
-          color: ['#0db3ec', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
+          color: ['#55d5cf', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
           series: [{
             name: '水表数据',
             data: [],
@@ -133,7 +133,7 @@
           text: '正在载入数据...',
           spinner: 'el-icon-loading',
           background: 'rgba(255, 255, 255, 0.7)',
-          target: document.querySelector('.echart-shuibiao-container')
+          target: document.querySelector('.echart-jcryzs-container')
         });
         const _param = {
           method: 'query_days',
@@ -144,7 +144,7 @@
         this.option.xAxis.data = []
         this.option.series[0].data = []
         this.$store.dispatch('QueryDatumMeterDays', _param).then((dataList) => {
-        //   console.log('dataList', dataList)
+          //   console.log('dataList', dataList)
           dataList.forEach((item, index) => {
             this.option.xAxis.data.push(moment(item.day).format('DD'))
             let used = item.used
