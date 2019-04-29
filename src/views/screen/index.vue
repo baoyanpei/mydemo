@@ -58,6 +58,7 @@
                 <div class="text">现场视频监控</div>
               </div>
               <div class="main">
+                <Camera></Camera>
               </div>
             </div>
           </el-col>
@@ -112,6 +113,7 @@
   import ShuiBiao from './components/shuibiao'
   import DianBiao from './components/dianbiao'
   import Weather from './components/weather'
+  import Camera from './components/camera'
   export default {
     directives: {},
     name: 'Main',
@@ -121,7 +123,8 @@
       Online,
       ShuiBiao,
       DianBiao,
-      Weather
+      Weather,
+      Camera
       // VueDragResize
     },
     data() {
