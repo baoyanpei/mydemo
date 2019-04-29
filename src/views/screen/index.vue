@@ -28,10 +28,17 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="10">
-
+      <el-col :span="14">
+        <div class="lot-area">
+          <div class="title">
+            <img src="/static/screen/title-bg1.png" class="bg" />
+            <div class="text">智慧工地</div>
+          </div>
+          <div class="main">
+          </div>
+        </div>
       </el-col>
-      <el-col :span="9">
+      <el-col :span="5">
 
       </el-col>
     </el-row>
@@ -52,7 +59,7 @@
     },
     data() {
       return {
-        
+
       }
     },
     computed: {
@@ -64,8 +71,7 @@
     watch: {
 
     },
-    mounted() {
-    },
+    mounted() {},
     destroyed() {},
     methods: {
 

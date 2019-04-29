@@ -79,4 +79,33 @@
       top:-15px;
     }
   }
+
+  /* 智慧工地 */
+  .lot-area {
+    margin: 20px 0px 10px 20px;
+    .title {
+      text-align: center;
+      position: relative;
+      height: 30px;
+      z-index: 1;
+      .bg {
+        height: 30px;
+      }
+      .text{
+        position: relative;
+        top: -27px;
+        font-size: 15px;
+        font-weight: 500;
+      }
+    }
+    .main {
+      border: 1px solid #5985bd;
+      border-radius: 5px;
+      height: 510px;
+      padding: 20px 0px 10px 0px;
+      
+      position: relative;
+      top:-15px;
+    }
+  }
 }
