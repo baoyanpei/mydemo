@@ -8,9 +8,9 @@
     <el-table class="screen-inout-table" ref="personInoutTable" stripe v-loading="loading" :data="personInoutList" height="350px"
       :empty-text="personInoutTableEmptyText" style="width: 100%" size="mini" :show-header="true" header-align="center"
       :default-sort="{prop: 'group_name_level[0]', order: 'descending'}" :row-class-name="tableRowClassName">
-      <el-table-column type="index" label="序号" >
+      <el-table-column type="index" label="序号" width="50">
       </el-table-column>
-      <el-table-column property="name" label="姓名" header-align="left">
+      <el-table-column property="name" label="姓名" width="60" header-align="left">
       </el-table-column>
       <!-- <el-table-column property="mobile" label="电话" width="100" header-align="center">
         </el-table-column> -->

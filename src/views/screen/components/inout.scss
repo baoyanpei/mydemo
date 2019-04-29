@@ -14,6 +14,16 @@
 
   }
 
+  .el-table .cell {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    white-space: nowrap;
+    /*禁止换行*/
+    // word-break: break-all;
+    overflow: hidden;
+    line-height: 23px;
+  }
+
   .el-table thead {
     color: #7ebce3;
     font-weight: 500;
