@@ -1,0 +1,58 @@
+.screen-taji-info {
+  padding: 10px;
+  font-size: 20px;
+  margin: 10px 0px 0px 10px;
+  padding: 10px 10px 10px 10px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  height: 290px;
+  position: relative;
+
+  .bg-img {
+    position: absolute;
+    // height: 600px;
+    // width: 600px;
+    z-index: 0;
+    left: 0px;
+    top: 0px;
+    text-align: center;
+    top: 0px;
+
+    /*-1 可以当背景*/
+    img {
+      // width: 300px;
+      // opacity: 0.2;
+      // filter: alpha(opacity=20);
+      /* 针对 IE8 以及更早的版本 */
+    }
+  }
+
+  .title {
+    color: #f1f506;
+    font-size: 24px;
+    // background-color: #757373;
+  }
+
+  .grid-content {
+    // color: #ffcc00;
+    font-weight: 400;
+    line-height: 2.1rem;
+  }
+
+  .ZhenchangColor {
+    color: #67C23A;
+  }
+
+  .BaojinColor {
+    color: #FF0000;
+  }
+
+  .YujinColor {
+    color: #f1f506;
+  }
+
+  .NodataColor {
+    color: #FFFFFF;
+  }
+}

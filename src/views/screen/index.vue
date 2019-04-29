@@ -98,6 +98,7 @@
             <div class="text">塔机/升降机数据</div>
           </div>
           <div class="main">
+            <TajiArea></TajiArea>
           </div>
         </div>
       </el-col>
@@ -114,6 +115,7 @@
   import DianBiao from './components/dianbiao'
   import Weather from './components/weather'
   import Camera from './components/camera'
+  import TajiArea from './components/tajiArea'
   export default {
     directives: {},
     name: 'Main',
@@ -124,7 +126,8 @@
       ShuiBiao,
       DianBiao,
       Weather,
-      Camera
+      Camera,
+      TajiArea
       // VueDragResize
     },
     data() {
