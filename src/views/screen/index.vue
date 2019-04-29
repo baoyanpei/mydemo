@@ -41,12 +41,13 @@
         </el-row>
         <el-row>
           <el-col :span="14">
-            <div class="inday-area">
+            <div class="online-area">
               <div class="title">
                 <img src="/static/screen/title-bg2.png" class="bg" />
                 <div class="text">每日上工人数</div>
               </div>
               <div class="main">
+                <Online></Online>
               </div>
             </div>
           </el-col>
@@ -82,7 +83,7 @@
         <div class="dianbiao-area">
           <div class="title">
             <img src="/static/screen/title-bg1.png" class="bg" />
-            <div class="text">水表数据</div>
+            <div class="text">电表数据</div>
           </div>
           <div class="main">
           </div>
@@ -104,12 +105,14 @@
   // import $ from 'jquery'
   import GateArea from './components/gateArea'
   import Inout from './components/inout'
+  import Online from './components/online'
   export default {
     directives: {},
     name: 'Main',
     components: {
       GateArea,
-      Inout
+      Inout,
+      Online
       // VueDragResize
     },
     data() {
