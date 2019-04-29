@@ -127,10 +127,6 @@
 
     },
     methods: {
-      //   reloadData(param) {
-      //     // console.log('param', param)
-      //     this.getData(param)
-      //   },
       getData(param) {
         const loading = this.$loading({
           lock: true,
@@ -149,7 +145,7 @@
         this.option.series[0].data = []
         this.$store.dispatch('QueryPersonOnlineMaxList', _param).then((dataList) => {
           dataList.forEach((item, index) => {
-            this.option.xAxis.data.push(item.date)
+            this.option.xAxis.data.push(moment(item.date).format('MM-DD'))
             this.option.series[0].data.push(item.in_count)
             loading.close();
           })

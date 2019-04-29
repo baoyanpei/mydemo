@@ -117,7 +117,6 @@
       const eTime = moment(eDate).format('YYYY-MM-DD 23:59:59')
 
       const param = {
-        // method: 'query_person_in_hours',
         project_id: this.project_id,
         bt: sTime,
         et: eTime
@@ -128,10 +127,6 @@
 
     },
     methods: {
-      //   reloadData(param) {
-      //     // console.log('param', param)
-      //     this.getData(param)
-      //   },
       getData(param) {
         const loading = this.$loading({
           lock: true,
@@ -141,17 +136,22 @@
           target: document.querySelector('.echart-jcryzs-container')
         });
         const _param = {
-          method: 'query_online_max',
+          method: 'query_days',
           project_id: param.project_id,
-          bt: param.bt,
-          et: param.et
+          meter_id: 'YD10000SB03',
+          month: moment().format('YYYYMM') //'201904'
         }
         this.option.xAxis.data = []
         this.option.series[0].data = []
-        this.$store.dispatch('QueryPersonOnlineMaxList', _param).then((dataList) => {
+        this.$store.dispatch('QueryDatumMeterDays', _param).then((dataList) => {
+        //   console.log('dataList', dataList)
           dataList.forEach((item, index) => {
-            this.option.xAxis.data.push(item.date)
-            this.option.series[0].data.push(item.in_count)
+            this.option.xAxis.data.push(moment(item.day).format('DD'))
+            let used = item.used
+            if (used === '') {
+              used = 0
+            }
+            this.option.series[0].data.push(used)
             loading.close();
           })
         })
