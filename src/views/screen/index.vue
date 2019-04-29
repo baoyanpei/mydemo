@@ -78,6 +78,7 @@
             <div class="text">水表数据</div>
           </div>
           <div class="main">
+            <ShuiBiao></ShuiBiao>
           </div>
         </div>
         <div class="dianbiao-area">
@@ -106,13 +107,15 @@
   import GateArea from './components/gateArea'
   import Inout from './components/inout'
   import Online from './components/online'
+  import ShuiBiao from './components/shuibiao'
   export default {
     directives: {},
     name: 'Main',
     components: {
       GateArea,
       Inout,
-      Online
+      Online,
+      ShuiBiao
       // VueDragResize
     },
     data() {
