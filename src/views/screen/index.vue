@@ -87,6 +87,7 @@
             <div class="text">电表数据</div>
           </div>
           <div class="main">
+            <DianBiao></DianBiao>
           </div>
         </div>
         <div class="taji-area">
@@ -108,6 +109,7 @@
   import Inout from './components/inout'
   import Online from './components/online'
   import ShuiBiao from './components/shuibiao'
+  import DianBiao from './components/dianbiao'
   export default {
     directives: {},
     name: 'Main',
@@ -115,7 +117,8 @@
       GateArea,
       Inout,
       Online,
-      ShuiBiao
+      ShuiBiao,
+      DianBiao
       // VueDragResize
     },
     data() {
