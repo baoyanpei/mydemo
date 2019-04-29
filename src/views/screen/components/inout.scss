@@ -46,4 +46,11 @@
   .el-table th.is-leaf {
     border-bottom: 0px solid #EBEEF5;
   }
+
+  .el-table::before {
+    content: '';
+    position: absolute;
+    background-color:transparent;
+    z-index: 1;
+  }
 }
