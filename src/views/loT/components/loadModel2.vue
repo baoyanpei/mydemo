@@ -160,7 +160,8 @@
 
             for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
               let build = this.buildListByProID[i]
-              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89 ) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
+              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID ===
+                89) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
                 const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)
@@ -278,15 +279,21 @@
               '')
             // console.log('meshJsonURL', meshJsonURL)
             let mesh = await this.getJsonFile(meshJsonURL)
-            // this.$emit('unitTotalAdd', 1)
-            // let meshJson = getOriMesh(unit.MESH_JSON)
-            let modelData = {
-              modelID: unit.ID,
-              unit: unit,
-              mesh: mesh.toJSON()
+            if (mesh === null) {
+              this.$emit('unitGroupAddMesh', null, null, null)
+            } else {
+              // this.$emit('unitTotalAdd', 1)
+              // let meshJson = getOriMesh(unit.MESH_JSON)
+              let modelData = {
+                modelID: unit.ID,
+                unit: unit,
+                mesh: mesh.toJSON()
+              }
+              this.$emit('unitGroupAddMesh', mesh, unit.ID, unit)
+              this.$emit('unitGroupAddDB', modelData)
+
             }
-            this.$emit('unitGroupAddMesh', mesh, unit.ID, unit)
-            this.$emit('unitGroupAddDB', modelData)
+
 
           } else {
             this.$emit('unitGroupAddMesh', null, null, null)
@@ -314,7 +321,7 @@
             // console.log('xhr', xhr)
           }, (error) => {
             console.log('An error happened', error);
-
+            resolve(null)
           })
         })
 

@@ -655,71 +655,34 @@
         this.addedUnit = this.addedUnit + 1
         this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
         if (_mesh === null || _mesh === '') {
-          return
-        }
 
-        // let _mesh = this.loader.parse(meshJson)
-        // console.log('mod', mod)
-        // this.modMap.set(_mesh.id, mod)
-        // console.log('result.mesh', _mesh.material.opacity)
-        // 模型的透明度
-        if (unit.BUILDID !== 87) {
-          if (_mesh.material.opacity === 1) {
-            _mesh.material.opacity = 0.3
+        } else {
+          
+          // 模型的透明度
+          if (unit.BUILDID !== 87) {
+            if (_mesh.material.opacity === 1) {
+              _mesh.material.opacity = 0.3
+            }
+          }
+
+          if (unit.BUILDID === 87) {
+            showGroup.add(_mesh)
+          } else {
+            unitGroups.add(_mesh)
+          }
+          if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
+            .DEVICE_ID !== '') {
+            this.deviceMap.set(unit.NAME, {
+              'unit': unit,
+              'mesh': _mesh
+            })
           }
         }
 
-        // console.log('_mesh', _mesh.name)
-        // console.log('uuuu', unit, _mesh)
-        if (unit.BUILDID === 87) {
-          showGroup.add(_mesh)
-        } else {
-          unitGroups.add(_mesh)
-          // let _mod = Math.floor(Math.random() * unitGroups.length) //_data.modelID % 10
-          // unitGroups[_mod].add(_mesh)
-        }
-        if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
-          .DEVICE_ID !== '') {
-          this.deviceMap.set(unit.NAME, {
-            'unit': unit,
-            'mesh': _mesh
-          })
-        }
-
-
-        // scene.add(_mesh)
-        // const param = {
-        //   modelID: modelID,
-        //   meshID: _mesh.id,
-        //   groupIndex: _mod
-        // }
-        // this.$store.dispatch('SetModelIDlist', param).then(() => {
-        //   // console.log("this.treeListData", this.treeListData)
-        // }).catch((e) => {
-        //   console.log("e", e)
-        // })
-
         if (this.addedUnit == this.totalUnit) {
           this.addDeviceData()
-          // document.addEventListener('mouseup', (event) => {
-          //   // console.log('mouseup')
-          //   // unitGroups.visible = true
-          //   scene.add(unitGroups)
-          //   // for (let i = 0, len = unitGroups.length; i < len; i++) {
-          //   //   // if (i !== 0) {
-          //   //   unitGroups[i].visible = true
-          //   //   // }
-          //   // }
-          // }, false)
           this.loadingDialog.close()
-          // console.log('this.indexedDBWaitList', this.indexedDBWaitList.length)
-          // 全部显示
-          // scene.add(unitGroups)
-          // unitGroups.visible = true
-
         }
-
-
       },
       unitTotalAdd(addTotal) {
         this.totalUnit = this.totalUnit + addTotal
