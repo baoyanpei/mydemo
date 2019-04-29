@@ -13,7 +13,9 @@
     <div class="gate-area-div">
       <GeteArea ref="gateArea"></GeteArea>
     </div>
-
+    <div class="yizheng-logo">
+      <img src="/static/yizheng-logo.png"/>
+    </div>
     <div class="bim-toolbar">
       <!--v-draggable-->
       <!-- <div class="bim-toolbar1">

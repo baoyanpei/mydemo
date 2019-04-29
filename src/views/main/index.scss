@@ -1,13 +1,17 @@
 .main-container {
   height: 100%;
   // padding-top: 32px;
-  background-color: #ffffff;
-  background-color: #fff;
-  background-image: url(../../assets/weacher_bg.jpg);
+  background-color: #FFFFFF;
+  // background-image: url(../../assets/weacher_bg.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50%;
+  .yizheng-logo{
+    position: fixed;
+    bottom: 10px;
+    right: 30px;
 
+  }
   .HuiyiDialog {
     left: 32vw;
     background-color: rgba(0, 0, 0, 0.7);
