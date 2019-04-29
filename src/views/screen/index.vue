@@ -28,18 +28,73 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="14">
-        <div class="lot-area">
+      <el-col :span="13">
+        <el-row>
+          <div class="lot-area">
+            <div class="title">
+              <img src="/static/screen/title-bg1.png" class="bg" />
+              <div class="text">智慧工地</div>
+            </div>
+            <div class="main">
+            </div>
+          </div>
+        </el-row>
+        <el-row>
+          <el-col :span="14">
+            <div class="inday-area">
+              <div class="title">
+                <img src="/static/screen/title-bg2.png" class="bg" />
+                <div class="text">每日上工人数</div>
+              </div>
+              <div class="main">
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="10">
+            <div class="vedio-area">
+              <div class="title">
+                <img src="/static/screen/title-bg2.png" class="bg" />
+                <div class="text">现场视频监控</div>
+              </div>
+              <div class="main">
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :span="6">
+        <div class="weather-area">
           <div class="title">
             <img src="/static/screen/title-bg1.png" class="bg" />
-            <div class="text">智慧工地</div>
+            <div class="text">环境检测仪</div>
           </div>
           <div class="main">
           </div>
         </div>
-      </el-col>
-      <el-col :span="5">
-
+        <div class="shuibiao-area">
+          <div class="title">
+            <img src="/static/screen/title-bg1.png" class="bg" />
+            <div class="text">水表数据</div>
+          </div>
+          <div class="main">
+          </div>
+        </div>
+        <div class="dianbiao-area">
+          <div class="title">
+            <img src="/static/screen/title-bg1.png" class="bg" />
+            <div class="text">水表数据</div>
+          </div>
+          <div class="main">
+          </div>
+        </div>
+        <div class="taji-area">
+          <div class="title">
+            <img src="/static/screen/title-bg2.png" class="bg" />
+            <div class="text">塔机/升降机数据</div>
+          </div>
+          <div class="main">
+          </div>
+        </div>
       </el-col>
     </el-row>
   </div>
