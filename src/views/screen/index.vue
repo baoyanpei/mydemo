@@ -70,6 +70,7 @@
             <div class="text">环境检测仪</div>
           </div>
           <div class="main">
+            <Weather></Weather>
           </div>
         </div>
         <div class="shuibiao-area">
@@ -110,6 +111,7 @@
   import Online from './components/online'
   import ShuiBiao from './components/shuibiao'
   import DianBiao from './components/dianbiao'
+  import Weather from './components/weather'
   export default {
     directives: {},
     name: 'Main',
@@ -118,7 +120,8 @@
       Inout,
       Online,
       ShuiBiao,
-      DianBiao
+      DianBiao,
+      Weather
       // VueDragResize
     },
     data() {
