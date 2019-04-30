@@ -19,8 +19,8 @@
         </div>
       </el-col>
       <el-col :span="16">
-        <div :class="taji_data.Weight | checkStatus('Weight').class" class="grid-content">
-          {{taji_data.Weight | checkStatus('Weight').value}} 吨
+        <div class="grid-content">
+          {{sjjData.sjjgd}} 米
         </div>
       </el-col>
     </el-row>
@@ -31,8 +31,8 @@
         </div>
       </el-col>
       <el-col :span="16">
-        <div :class="taji_data.WindLevel | checkStatus('WindLevel').class" class="grid-content">
-          {{taji_data.WindLevel | checkStatus('WindLevel').value}} 级
+        <div class="grid-content">
+          {{sjjData.sjjlc}} 层
         </div>
       </el-col>
     </el-row>
@@ -43,8 +43,8 @@
         </div>
       </el-col>
       <el-col :span="16">
-        <div :class="taji_data.ObliguityAlarm | alertText1().class" class="grid-content">
-          {{taji_data.ObliguityAlarm | alertText1().value}}
+        <div class="grid-content">
+          {{sjjData.mzt}}
         </div>
       </el-col>
     </el-row>
@@ -55,8 +55,8 @@
         </div>
       </el-col>
       <el-col :span="16">
-        <div :class="taji_data.MomentAlarm | alertText1().class" class="grid-content">
-          {{ taji_data.RTime }}
+        <div class="grid-content">
+          {{sjjData.sbsj}}
         </div>
       </el-col>
     </el-row>
@@ -68,25 +68,12 @@
     components: {},
     data() {
       return {
-        taji_data: {
-          Weight: '-', //载重
-          WindLevel: '-', //风级
-          MomentAlarm: '-', //力矩报警
-          WindSpeedAlarm: '-', //风速报警
-          HeightAlarm: '-', //高度上限位报警
-          MinRangeAlarm: '-', //幅度内限位报警
-          MaxRangeAlarm: '-', // 幅度外限位报警
-          PosAngleAlarm: '-', // 顺时针回转限位报警
-          NegAngleAlarm: '-', //逆时针回转限位报警
-          ObliguityAlarm: '-', //倾角报警
-          MultiAlarmAll: '-', //多机防撞报警
-          WorkStatus: '-', //工作状态
-          RTime: '-'
+        sjjData: {
+          sjjgd: '-',
+          sjjlc: '-',
+          sbsj: '-',
+          mzt: '-'
         },
-        // TempColor: '#FF00000',
-        // ZhenchangColor: '#67C23A',
-        // BaojinColor: '#FF0000',
-        // YujinColor: '#f1f506',
 
 
       }
@@ -95,91 +82,28 @@
 
     },
     filters: { //如下这样写
-      checkStatus: (valueNum, typeName) => { //valueNum就是我们需要的值
-        let _class = 'ZhenchangColor'
-        if (valueNum === '-') {
-          return {
-            value: valueNum,
-            class: 'NodataColor'
-          }
-        }
-        switch (typeName) {
-          case 'Weight': // 载重
-            return {
-              value: valueNum,
-              class: 'ZhenchangColor'
-            }
-            break
-          case 'WindLevel': //风力
-            if (parseInt(valueNum) > 5) {
-              _class = 'BaojinColor'
-            }
-            return {
-              value: valueNum,
-              class: _class
-            }
-            break;
-          case 'MomentAlarm':
-            return valueNum
-            break;
-        }
-      },
-      alertText1: (value) => {
-        if (value === '-') {
-          return {
-            value: value,
-            class: 'NodataColor'
-          }
-        } else if (value === '0') {
-          return {
-            value: '正常',
-            class: 'ZhenchangColor'
-          }
-        } else if (value === '1') {
-          return {
-            value: '报警',
-            class: 'BaojinColor'
-          }
-        } else if (value === '2') {
-          return {
-            value: '预警',
-            class: 'YujinColor'
-          }
-        }
-        return {
-          value: '未知',
-          class: 'NodataColor'
-        }
-      },
-      workStatusText: (value) => {
-        if (value === '-') {
-          return {
-            value: value,
-            class: 'NodataColor'
-          }
-        } else if (value === '0') {
-          return {
-            value: '运行监控',
-            class: 'ZhenchangColor'
-          }
-        } else if (value === '1') {
-          return {
-            value: '顶升监控',
-            class: 'ZhenchangColor'
-          }
-        }
-        return {
-          value: '未知',
-          class: 'NodataColor'
-        }
-      }
+
     },
     methods: {
       updateData(data) {
-        this.taji_data = data
-
+        this.sjjData.sjjgd = data.Height
+        this.sjjData.sjjlc = data.Floor
+        switch (_data.DoorState) {
+          case "0":
+            this.sjjData.mzt = '内外笼门全关'
+            break;
+          case "1":
+            this.sjjData.mzt = '内外笼门全开'
+            break;
+          case "2":
+            this.sjjData.mzt = '仅内笼门开'
+            break;
+          case "3":
+            this.sjjData.mzt = '仅外笼门开'
+            break;
+        }
+        this.sjjData.sbsj = moment(data.RTime).format("HH:mm:ss")
       },
-
     },
     watch: {
 

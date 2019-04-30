@@ -5,8 +5,8 @@
 
 <template>
   <div class="screen-taji-area">
-    <TadiaoTaji></TadiaoTaji>
-    <ShenjiangjiTaji></ShenjiangjiTaji>
+    <TadiaoTaji ref="taji"></TadiaoTaji>
+    <ShenjiangjiTaji ref="shenjiangji"></ShenjiangjiTaji>
   </div>
 </template>
 <script>
@@ -182,12 +182,12 @@
             _data = JSON.parse(data)
             console.log('RealtimeDataElevator', _data)
             // this.$refs.taji.updateData(_data)
-            // this.$refs.shenjiangji.updateData(_data)
+            this.$refs.shenjiangji.updateData(_data)
             break
           case "WorkDataElevator": // 2.11上报升降机工作循环数据（专用）
             _data = JSON.parse(data)
             console.log('RealtimeDataCrane', _data)
-            // this.$refs.taji.updateData(_data)
+            this.$refs.taji.updateData(_data)
             break
         }
       },

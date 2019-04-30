@@ -82,12 +82,8 @@
   // const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
 
   const TOWER_HEIGHT = 75 //塔吊高度
-
-  console.log('12313123123')
-
-
+  // console.log('12313123123')
   window.onresize = onWindowResize;
-
 
   let fov = 35 //75 this.gui.fov //拍摄距离  视野角值越大，场景中的物体越小
   let near = 1 //相机离视体积最近的距离
