@@ -1,12 +1,14 @@
 <style lang="scss">
   @import "./gate.scss";
+
 </style>
 
 <template>
   <div class="screen-gate">
     <el-row>
       <el-col :span="14" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
-        <img v-show="persion_data.entry_pic !==''" :src="persion_data.entry_pic" @click="handleNameClick(persion_data)" class="photo info-name-link">
+        <img v-show="persion_data.entry_pic !==''" :src="persion_data.entry_pic" @click="handleNameClick(persion_data)"
+          class="photo info-name-link">
         <span v-show="persion_data.entry_pic ===''">&nbsp;</span>
         <div v-if="persion_data.card_type===4" class="person-type-desc">临时人员</div>
       </el-col>
@@ -133,7 +135,6 @@
         // const _data = JSON.parse(data)
         // console.log('userinfo1', data)
         this.persion_data = data
-
         // console.log("onoff", this.persion_data.onoff)
         if (this.lastPersonID !== this.persion_data.id) {
           if (this.persion_data.onoff === undefined) {
@@ -157,6 +158,9 @@
         this.nowInOutTime = `${_moment.format("YYYY-MM-DD")}  [${weekName}]  ${_moment.format("HH:mm:ss")}`
 
         this.lastPersonID = this.persion_data.id
+        // console.log('--------')
+
+
 
       },
       updateErrorInfo(data) {

@@ -5,19 +5,24 @@
 
 <template>
   <div class="screen-taji-area">
-
+    <TadiaoTaji></TadiaoTaji>
+    <ShenjiangjiTaji></ShenjiangjiTaji>
   </div>
 </template>
 <script>
   import lodash from 'lodash'
   import moment from 'moment'
-
+  import TadiaoTaji from './tadiaoTaji'
+  import ShenjiangjiTaji from './shenjiangjiTaji'
   const MQTT_USERNAME = 'BIM_messager' // mqtt连接用户名
   const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码 
   const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
 
   export default {
-    components: {},
+    components: {
+      TadiaoTaji,
+      ShenjiangjiTaji
+    },
     data() {
       return {
 

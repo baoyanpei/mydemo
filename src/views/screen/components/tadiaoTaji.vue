@@ -1,172 +1,78 @@
 <style lang="scss">
-  @import "./taji.scss";
+  @import "./tadiaoTaji.scss";
 
 </style>
 <template>
-  <div class="screen-taji-info">
+  <div class="screen-tadiao-taji">
     <div class="bg-img">
       <!-- <img src="../../assets/tadiao.png"> -->
     </div>
     <el-row>
       <el-col :span="24" class="title">
-        塔机实时数据
+        <span>塔机数据</span>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="14">
-        <div class="grid-content">
-          载重：
+      <el-col :span="8">
+        <div class="grid-content label">
+          塔吊高度：
         </div>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="16">
         <div :class="taji_data.Weight | checkStatus('Weight').class" class="grid-content">
           {{taji_data.Weight | checkStatus('Weight').value}} 吨
         </div>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="14">
-        <div class="grid-content">
-          风级：
+      <el-col :span="8">
+        <div class="grid-content label">
+          大臂角度：
         </div>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="16">
         <div :class="taji_data.WindLevel | checkStatus('WindLevel').class" class="grid-content">
           {{taji_data.WindLevel | checkStatus('WindLevel').value}} 级
         </div>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="14">
-        <div class="grid-content" style="font-size: 20px;">
-          倾角：
+      <el-col :span="8">
+        <div class="grid-content label">
+          小车距离：
         </div>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="16">
         <div :class="taji_data.ObliguityAlarm | alertText1().class" class="grid-content">
           {{taji_data.ObliguityAlarm | alertText1().value}}
         </div>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="14">
-        <div class="grid-content">
-          力矩报警：
+      <el-col :span="8">
+        <div class="grid-content label">
+          吊钩线长：
         </div>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="16">
         <div :class="taji_data.MomentAlarm | alertText1().class" class="grid-content">
           {{taji_data.MomentAlarm | alertText1().value}}
         </div>
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="14">
-        <div class="grid-content">
-          风速报警：
-        </div>
-      </el-col>
-      <el-col :span="10">
-        <div :class="taji_data.WindSpeedAlarm | alertText1().class" class="grid-content">
-          {{taji_data.WindSpeedAlarm | alertText1().value}}
-        </div>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="14">
-        <div class="grid-content">
-          工作状态：
-        </div>
-      </el-col>
-      <el-col :span="10">
-        <div :class="taji_data.WorkStatus | workStatusText().class" class="grid-content">
-          {{taji_data.WorkStatus | workStatusText().value}}
-        </div>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="14">
-        <div class="grid-content">
-          多机防撞：
-        </div>
-      </el-col>
-      <el-col :span="10">
-        <div :class="taji_data.MultiAlarmAll | alertText1().class" class="grid-content">
-          {{taji_data.MultiAlarmAll | alertText1().value}}
-        </div>
-      </el-col>
-    </el-row>
-    <!--
-          <el-row>
-            <el-col :span="7">
-              <div class="grid-content" style="font-size: 20px;">
-                高度上限位：
-              </div>
-            </el-col>
-            <el-col :span="5">
-              <div :class="taji_data.HeightAlarm | alertText1().class" class="grid-content">
-                {{taji_data.HeightAlarm | alertText1().value}}
-              </div>
-            </el-col>
-          </el-row>
-          -->
 
-    <!--
-          <el-row>
-            <el-col :span="7">
-              <div class="grid-content" style="font-size: 20px;">
-                幅度内限位：
-              </div>
-            </el-col>
-            <el-col :span="5">
-              <div :class="taji_data.MinRangeAlarm | alertText1().class" class="grid-content">
-                {{taji_data.MinRangeAlarm | alertText1().value}}
-              </div>
-            </el-col>
-            <el-col :span="7">
-              <div class="grid-content" style="font-size: 20px;">
-                幅度外限位：
-              </div>
-            </el-col>
-            <el-col :span="5">
-              <div :class="taji_data.MaxRangeAlarm | alertText1().class" class="grid-content">
-                {{taji_data.MaxRangeAlarm | alertText1().value}}
-              </div>
-            </el-col>
-          </el-row>
-        -->
-    <!--
-          <el-row>
-            <el-col :span="10">
-              <div class="grid-content">
-                顺时针回转限位：
-              </div>
-            </el-col>
-            <el-col :span="10">
-              <div :class="taji_data.PosAngleAlarm | alertText1().class" class="grid-content">
-                {{taji_data.PosAngleAlarm | alertText1().value}}
-              </div>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="10">
-              <div class="grid-content">
-                逆时针回转限位：
-              </div>
-            </el-col>
-            <el-col :span="10">
-              <div class="grid-content">
-                <div :class="taji_data.NegAngleAlarm | alertText1().class" class="grid-content">
-                  {{taji_data.NegAngleAlarm | alertText1().value}}
-                </div>
-              </div>
-            </el-col>
-          </el-row>
-          -->
-    <el-row>
-      <el-col :span="24">
-        <div class="grid-content" style="font-size: 12px;">上报时间：{{ taji_data.RTime }}</div>
+      <el-col :span="8">
+        <div class="grid-content label">
+          上报时间：
+        </div>
       </el-col>
+      <el-col :span="16">
+        <div :class="taji_data.MomentAlarm | alertText1().class" class="grid-content">
+                {{ taji_data.RTime }}
+        </div>
+      </el-col>
+      
     </el-row>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <style lang="scss">
   @import "./gateArea.scss";
+
 </style>
 
 <template>
@@ -28,6 +29,7 @@
         isConnectMqtt: null, //是否已经连接
 
         topicUserInfo: '', //订阅用户信息
+        topicCount: '',
         reconnectTimes: 0, //重连次数
       }
     },
@@ -90,8 +92,12 @@
         //BIM/door/10000/223293220/msg
         //{"direction": 2, "gate_ip": "192.168.0.254", "gate_sn": "223293220", "rfid": "611477", "door_no": "2", "msg": "\u67e5\u65e0\u6b64\u5361\u7528\u6237\u4fe1\u606f", "project_id": "10000", "id": "0e07ca193c894e4fbaeba499c0108e34", "onoff": -1}
         console.log("收到消息:" + message.destinationName + message.payloadString);
+        if (message.destinationName === this.topicCount) {
+          console.log('this.topicCount', this.topicCount)
+        } else {
+          this.mqttUserInfo(message.payloadString)
+        }
 
-        this.mqttUserInfo(message.payloadString)
       },
       onConnect() {
         console.log("onConnected");
@@ -116,6 +122,7 @@
       subscribe() {
         if (this.isConnectMqtt === true && this.project_id !== null) {
           this.topicUserInfo = `BIM/door/${this.project_id}/#` //订阅用户信息
+          this.topicCount = `BIM/door/${this.project_id}/count`
           // BIM/door/10001/count
           this.client.subscribe(this.topicUserInfo); //订阅主题
           console.log("订阅成功！", this.topicUserInfo)

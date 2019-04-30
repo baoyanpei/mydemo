@@ -1,14 +1,13 @@
-.screen-taji-info {
-  padding: 10px;
-  font-size: 20px;
-  margin: 10px 0px 0px 10px;
-  padding: 10px 10px 10px 10px;
+.screen-tadiao-taji {
+  // padding: 10px;
+  font-size: 14px;
+  margin: 10px 0px 0px 150px;
+  // padding: 10px 10px 10px 10px;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  height: 290px;
+  // height: 290px;
   position: relative;
-
   .bg-img {
     position: absolute;
     // height: 600px;
@@ -30,14 +29,29 @@
 
   .title {
     color: #f1f506;
-    font-size: 24px;
+    font-size: 16px;
+    text-align: left !important;
+
     // background-color: #757373;
+    span {
+      background-color: #57d5fe;
+      padding: 3px 5px 3px 5px;
+      color: #115288;
+      border-radius: 5px;
+      font-weight: 600;
+    }
+  }
+
+  .label {
+    color: #57d5fe !important;
   }
 
   .grid-content {
     // color: #ffcc00;
-    font-weight: 400;
-    line-height: 2.1rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+
+
   }
 
   .ZhenchangColor {
