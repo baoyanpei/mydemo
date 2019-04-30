@@ -20,7 +20,7 @@
       </el-col>
       <el-col :span="16">
         <div class="grid-content">
-          {{towerHeight}} 米
+          {{tdData.tdgd}} 米
         </div>
       </el-col>
     </el-row>
@@ -32,6 +32,7 @@
       </el-col>
       <el-col :span="16">
         <div class="grid-content">
+          {{tdData.dbjd}} 度
         </div>
       </el-col>
     </el-row>
@@ -43,6 +44,7 @@
       </el-col>
       <el-col :span="16">
         <div class="grid-content">
+          {{tdData.xcjl}} 米
         </div>
       </el-col>
     </el-row>
@@ -54,6 +56,7 @@
       </el-col>
       <el-col :span="16">
         <div class="grid-content">
+          {{tdData.dgxc}} 米
         </div>
       </el-col>
     </el-row>
@@ -66,6 +69,7 @@
       </el-col>
       <el-col :span="16">
         <div class="grid-content">
+          {{tdData.sbsj}}
         </div>
       </el-col>
 
@@ -79,13 +83,13 @@
     components: {},
     data() {
       return {
-        towerHeight: TOWER_HEIGHT, // 塔吊高度 28米
-        taji_data: {
-
-        },
-
-
-
+        tdData: {
+          tdgd: TOWER_HEIGHT,
+          dbjd: '-',
+          xcjl: '-',
+          dgxc: '-',
+          sbsj: '-'
+        }
       }
     },
     props: {
@@ -96,7 +100,10 @@
     },
     methods: {
       updateData(data) {
-        this.taji_data = data
+        this.tdData.dbjd = data.Angle
+        this.tdData.xcjl = data.RRange
+        this.tdData.dgxc = data.Height
+        this.tdData.sbsj = moment(data.RTime).format("HH:mm:ss")
 
       },
 

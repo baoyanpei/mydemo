@@ -170,7 +170,7 @@
           case "RealtimeDataCrane": // 2.3 上报塔机实时数据（专用）
             const _data = JSON.parse(data)
             console.log('RealtimeDataCrane', _data)
-            // this.$refs.taji.updateData(_data)
+            this.$refs.taji.updateData(_data)
             break
         }
       },
@@ -181,13 +181,12 @@
           case "RealtimeDataElevator": // 2.11上报升降机实时数据（专用）
             _data = JSON.parse(data)
             console.log('RealtimeDataElevator', _data)
-            // this.$refs.taji.updateData(_data)
             this.$refs.shenjiangji.updateData(_data)
             break
           case "WorkDataElevator": // 2.11上报升降机工作循环数据（专用）
             _data = JSON.parse(data)
             console.log('RealtimeDataCrane', _data)
-            this.$refs.taji.updateData(_data)
+            // this.$refs.shenjiangji.updateData(_data)
             break
         }
       },

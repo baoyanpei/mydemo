@@ -88,7 +88,7 @@
       updateData(data) {
         this.sjjData.sjjgd = data.Height
         this.sjjData.sjjlc = data.Floor
-        switch (_data.DoorState) {
+        switch (data.DoorState) {
           case "0":
             this.sjjData.mzt = '内外笼门全关'
             break;
