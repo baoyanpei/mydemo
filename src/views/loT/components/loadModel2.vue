@@ -320,7 +320,7 @@
           }, (xhr) => {
             // console.log('xhr', xhr)
           }, (error) => {
-            console.log('An error happened', error);
+            // console.log('An error happened', error);
             resolve(null)
           })
         })

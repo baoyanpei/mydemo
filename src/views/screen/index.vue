@@ -36,6 +36,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
+              <LotArea></LotArea>
             </div>
           </div>
         </el-row>
@@ -116,6 +117,7 @@
   import Weather from './components/weather'
   import Camera from './components/camera'
   import TajiArea from './components/tajiArea'
+  import LotArea from './components/lotArea'
   export default {
     directives: {},
     name: 'Main',
@@ -127,7 +129,8 @@
       DianBiao,
       Weather,
       Camera,
-      TajiArea
+      TajiArea,
+      LotArea
       // VueDragResize
     },
     data() {
