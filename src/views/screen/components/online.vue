@@ -128,13 +128,13 @@
     },
     methods: {
       getData(param) {
-        const loading = this.$loading({
-          lock: true,
-          text: '正在载入数据...',
-          spinner: 'el-icon-loading',
-          background: 'rgba(255, 255, 255, 0.7)',
-          target: document.querySelector('.echart-jcryzs-container')
-        });
+        // const loading = this.$loading({
+        //   lock: true,
+        //   text: '正在载入数据...',
+        //   spinner: 'el-icon-loading',
+        //   background: 'rgba(255, 255, 255, 0.7)',
+        //   target: document.querySelector('.screen-online')
+        // });
         const _param = {
           method: 'query_online_max',
           project_id: param.project_id,
@@ -147,7 +147,7 @@
           dataList.forEach((item, index) => {
             this.option.xAxis.data.push(moment(item.date).format('MM-DD'))
             this.option.series[0].data.push(item.in_count)
-            loading.close();
+            // loading.close();
           })
         })
       }

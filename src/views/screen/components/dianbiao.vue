@@ -128,13 +128,13 @@
           },
           methods: {
             getData(param) {
-              const loading = this.$loading({
-                lock: true,
-                text: '正在载入数据...',
-                spinner: 'el-icon-loading',
-                background: 'rgba(255, 255, 255, 0.7)',
-                target: document.querySelector('.echart-dianbiao-container')
-              });
+              // const loading = this.$loading({
+              //   lock: true,
+              //   text: '正在载入数据...',
+              //   spinner: 'el-icon-loading',
+              //   background: 'rgba(255, 255, 255, 0.7)',
+              //   target: document.querySelector('.echart-dianbiao-container')
+              // });
               const _param = {
                 method: 'query_days',
                 project_id: param.project_id,
@@ -152,7 +152,7 @@
                     used = 0
                   }
                   this.option.series[0].data.push(used)
-                  loading.close();
+                  // loading.close();
                 })
               })
             }
