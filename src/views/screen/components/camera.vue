@@ -14,7 +14,7 @@
 
   let player;
   const playerHTML =
-    '<video id="myPlayer" poster="" controls playsInline webkit-playsinline autoplay=true><source src="rtmp://rtmp.open.ys7.com/openlive/6afc96f4599c4708b8323fddc5b4cea2" type="rtmp/flv" /></video>'
+    '<video id="screen_carame_player" poster="" controls playsInline webkit-playsinline autoplay=true><source src="rtmp://rtmp.open.ys7.com/openlive/6afc96f4599c4708b8323fddc5b4cea2" type="rtmp/flv" /></video>'
 
   export default {
     components: {},
@@ -69,7 +69,7 @@
         }, 10 * 1000)
       },
       initPlayer() {
-        this.player = new EZUIPlayer('myPlayer');
+        this.player = new EZUIPlayer('screen_carame_player');
 
         this.player.on('play', () => {
           this.isPlay = true;
