@@ -5,7 +5,10 @@
 <template>
   <div class="screen-index-container" style="margin: 0px;">
     <el-row>
-      <div class="header"></div>
+      <div class="header">
+        <div class="now-time">{{todayDate}}</div>
+      </div>
+
     </el-row>
     <el-row>
       <el-col :span="5">
@@ -109,6 +112,7 @@
 
 <script>
   // import $ from 'jquery'
+  import moment from 'moment'
   import GateArea from './components/gateArea'
   import Inout from './components/inout'
   import Online from './components/online'
@@ -135,7 +139,7 @@
     },
     data() {
       return {
-
+        todayDate: ''
       }
     },
     computed: {
@@ -147,10 +151,20 @@
     watch: {
 
     },
-    mounted() {},
+    mounted() {
+      moment.locale('zh-cn');
+      this.getDate()
+    },
     destroyed() {},
     methods: {
-
+      getDate() {
+        setTimeout(() => {
+          const _moment = moment()
+          const weekName = moment.weekdays(_moment.isoWeekday())
+          this.todayDate = `${_moment.format("YYYY-MM-DD")}  [${weekName}]  ${_moment.format("HH:mm:ss")}`
+          this.getDate()
+        }, 1000)
+      },
     }
   }
 
