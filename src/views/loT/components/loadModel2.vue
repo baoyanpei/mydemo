@@ -91,11 +91,13 @@
     watch: {
       totalOKModel(curVal, oldVal) {
         if (curVal === this.totalNeedModel) {
-          let _modIDAPIList = lodash.chunk(this.modIDAPIList, this.modIDAPIList.length / 6)
+          // console.log('1231231313')
+          // console.log('_modIDAPIList.length', this.modIDAPIList.length)
+          let _modIDAPIList = lodash.chunk(this.modIDAPIList, Math.ceil(this.modIDAPIList.length / 6))
           // console.log('_modIDAPIList.length', _modIDAPIList.length)
           for (let i = 0, len = _modIDAPIList.length; i < len; i++) {
             let unitList = _modIDAPIList[i]
-            // console.log('ids', ids)
+            // console.log('unitList', unitList)
             this.getAPI(unitList)
           }
 
@@ -126,7 +128,7 @@
             // this.modIDIndexList.push(model_id)
 
           } else {
-
+            // console.log('this.modIDList[i]', this.modIDList[i])
             // this.getModelFromAPI(model_id)
             // console.log('model_id', model_id)
             this.modIDAPIList.push(this.modIDList[i])
@@ -136,7 +138,7 @@
         });
       }
 
-      console.log('123', this.modIDAPIList.length)
+      // console.log('123', this.modIDAPIList.length)
 
     },
     methods: {
@@ -160,8 +162,7 @@
 
             for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
               let build = this.buildListByProID[i]
-              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID ===
-                89) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
+              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
                 const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)
@@ -273,10 +274,10 @@
           let geom = unit.GEOM
           if (geom !== '') {
 
-            // let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
-            //   '/static/')
             let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
-              '')
+              '/static/')
+            // let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
+            //   '')
             // console.log('meshJsonURL', meshJsonURL)
             let mesh = await this.getJsonFile(meshJsonURL)
             if (mesh === null) {

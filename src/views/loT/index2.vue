@@ -12,7 +12,8 @@
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
-      <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div>
+      <!-- <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div> -->
+      <div>{{loadingText}}</div>
       <!-- <el-progress :percentage="percentage" color="#6ac044" :show-text="showText"></el-progress> -->
 
     </div>
@@ -321,7 +322,7 @@
         loadtext: '开始加载模型....',
         loader: new THREE.ObjectLoader(),
         modelDB: null,
-
+        loadingText: '',
         renderEnabled: true,
         projectiveObj: null,
         mainCanvas: null,
@@ -394,14 +395,14 @@
       initThree()
       // }
 
-      this.loadingDialog = this.$loading({
-        lock: false,
-        text: this.loadtext,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.3)',
-        customClass: 'loading-class',
-        // target: document.querySelector('.treeDiv')
-      });
+      // this.loadingDialog = this.$loading({
+      //   lock: false,
+      //   text: this.loadtext,
+      //   spinner: 'el-icon-loading',
+      //   background: 'rgba(0, 0, 0, 0.3)',
+      //   customClass: 'loading-class',
+      //   // target: document.querySelector('.treeDiv')
+      // });
       // console.log('indexed_ver', this.indexed_ver)
       let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
       // console.log('IndexDBDataVer', _IndexDBDataVer)
@@ -644,16 +645,18 @@
         }, 8000)
       },
       addLoadingText(loadingTxt) {
-        this.loadingDialog.text = loadingTxt
+        this.loadingText = loadingTxt
+        // this.loadingDialog.text = loadingTxt
         // this.loadtext = loadingTxt
       },
       unitGroupAddMesh(_mesh, modelID, unit) {
         this.addedUnit = this.addedUnit + 1
-        this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
+        // this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
+        this.loadingText = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
         if (_mesh === null || _mesh === '') {
 
         } else {
-          
+
           // 模型的透明度
           if (unit.BUILDID !== 87) {
             if (_mesh.material.opacity === 1) {
@@ -677,7 +680,8 @@
 
         if (this.addedUnit == this.totalUnit) {
           this.addDeviceData()
-          this.loadingDialog.close()
+          this.loadingText = `加载完成 ${this.addedUnit}/${this.totalUnit}`
+          // this.loadingDialog.close()
         }
       },
       unitTotalAdd(addTotal) {
