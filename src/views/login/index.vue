@@ -35,15 +35,16 @@
                 <span class="svg-container">
                   <svg-icon icon-class="password" />
                 </span>
-                <el-input :type="passwordType" v-model="loginForm.password" :placeholder="$t('login.password')" name="password"
-                  auto-complete="on" @keyup.enter.native="handleLogin" style="width:65%;" />
+                <el-input :type="passwordType" v-model="loginForm.password" :placeholder="$t('login.password')"
+                  name="password" auto-complete="on" @keyup.enter.native="handleLogin" style="width:65%;" />
                 <span class="show-pwd" @click="showPwd">
                   <svg-icon icon-class="eye" />
                 </span>
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-button type="primary" @click="getSmsCode" class="btnSmsCode" :disabled="btnSmsCode.disable || time > 0">{{
+              <el-button type="primary" @click="getSmsCode" class="btnSmsCode"
+                :disabled="btnSmsCode.disable || time > 0">{{
                 btnSmsCodeText }}</el-button>
             </el-col>
           </el-row>
@@ -170,6 +171,8 @@
       }
     },
     mounted() {
+      // let id = this.$route.params.id
+
       // console.log(window.location.href)
       const code = this.getQueryString("code")
       const state = this.getQueryString("state")
@@ -262,10 +265,19 @@
             this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
               this.loading = false
 
+              // console.log('this.$route.query.from', this.$route.query.from)
+              let from = this.$route.query.from
+              console.log('from1234', from)
+              if (from !== undefined && from !== '') {
+                this.$router.push({
+                  path: from
+                })
+              } else {
+                this.$router.push({
+                  path: '/main'
+                })
+              }
 
-              this.$router.push({
-                path: '/main'
-              })
             }).catch(() => {
               this.loading = false
             })

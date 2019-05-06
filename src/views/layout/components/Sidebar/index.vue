@@ -20,10 +20,10 @@
         <font-awesome-icon icon="calendar-alt" />
         <span slot="title">工资台帐</span>
       </el-menu-item> -->
-      <el-menu-item index="/lot/index">
+      <!-- <el-menu-item index="/lot/index">
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
-      </el-menu-item>
+      </el-menu-item> -->
       <el-menu-item index="/lot2/index">
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备2</span>
