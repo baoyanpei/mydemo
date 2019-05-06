@@ -110,6 +110,7 @@
 
   let towerGroup = null // 塔机
   let elevatorGroup = null // 升降机
+  let sectionGroup = null // 升降机轨道
   let labelRenderer = null
 
 
@@ -237,7 +238,7 @@
   let mainCanvas = null
 
 
-  // initAxes()
+  
 
   animate();
 
@@ -302,7 +303,7 @@
     document.getElementById('stat-div-loT').appendChild(stats.dom);
     initLight()
     initControls()
-    // // initAxes()
+    initAxes()
 
     // animate();
     // }
@@ -431,9 +432,17 @@
       elevatorGroup.name = "elevatorGroup";
       if (scene) {
         scene.add(elevatorGroup)
-        elevatorGroup.position.set(80, 23.5, 0);
+        elevatorGroup.position.set(78.5, 24, 0);
       };
       modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
+
+      sectionGroup = new THREE.Group() // 升降机轨道
+      sectionGroup.name = "sectionGroup";
+      if (scene) {
+        scene.add(sectionGroup)
+        sectionGroup.position.set(80, 26, 0); // 红 绿
+      };
+      LoadSection(sectionGroup,67)
 
       this.addDataToDB()
     },
@@ -446,6 +455,7 @@
       scene.remove(showGroup)
       scene.remove(towerGroup)
       scene.remove(elevatorGroup)
+      scene.remove(sectionGroup)
       scene.remove(directionalLight);
       scene.remove(ambient);
       scene.remove(deviceGroup)
@@ -460,6 +470,7 @@
       personGroup = null
       towerGroup = null
       elevatorGroup = null
+      sectionGroup = null
       $('#loT-index-canvas3d').empty()
       mainCanvas = null
       clearTimeout(this.timeRemove)
