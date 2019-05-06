@@ -689,6 +689,7 @@
 
         if (this.addedUnit == this.totalUnit) {
           this.addDeviceData()
+          this.loadingText = `加载完成 ${this.addedUnit}/${this.totalUnit}`
           // this.loadingDialog.close()
         }
       },
