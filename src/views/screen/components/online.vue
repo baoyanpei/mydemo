@@ -27,7 +27,7 @@
             right: '5%',
             bottom: '3%',
             top: 35,
-            height: 300,
+            height: 290,
             // borderWidth: 1,
             // borderColor: '#ccc',
             containLabel: true
@@ -46,16 +46,23 @@
           xAxis: {
             type: 'category',
             data: [],
-            
-            axisLabel: {
-              color: '#555555'
-            },
-            axisLine: {
+            splitLine: { // 竖分割线
+              show: true,
               lineStyle: {
-                color: '#2b3a59'
+                color: ['#3c3825'],
+                type: 'solid',
+              }
+            },
+            axisLabel: {
+              color: '#aaaaaa'
+            },
+            axisLine: { // 横 标尺线
+              lineStyle: {
+                color: '#d28a38'
               }
             },
             axisTick: {
+              show: false,
               lineStyle: {
                 color: '#2b3a59'
               }
@@ -63,34 +70,58 @@
           },
           yAxis: {
             type: 'value',
-            splitLine: {
-              show: true,
+            splitLine: { // 横分割线
+              show: false,
               lineStyle: {
                 color: ['#2b3a59'],
                 type: 'solid',
               }
             },
             axisLabel: {
-              color: '#555555'
+              color: '#aaaaaa'
             },
-            axisLine: {
+            axisLine: { // 竖 标尺线
+              show: true,
               lineStyle: {
-                color: '#2b3a59'
+                color: '#d28a38'
               }
             },
             axisTick: {
+              show: false,
               lineStyle: {
                 color: '#2b3a59'
               }
             }
           },
-          color: ['#404bd7', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
+          color: ['#ecad48', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
           series: [{
             name: '在场人数',
-            data: [],
             type: 'line',
             smooth: true,
-            center: ['10%', '10%'],
+            symbol: 'circle',
+            symbolSize: 0,
+            sampling: 'average',
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
+                  offset: 0,
+                  color: '#513407' // 0% 处的颜色
+                }, {
+                  offset: 0.8,
+                  color: 'black' // 100% 处的颜色
+                }],
+                global: false // 缺省为 false
+              },
+             
+            },
+            data: []
+
+
           }]
         }
       }

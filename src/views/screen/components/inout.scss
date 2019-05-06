@@ -33,13 +33,22 @@
     margin-top: 0px;
   }
 
-  .el-table th,
+  .el-table--enable-row-hover .el-table__body tr:hover>td {
+    background-color: transparent
+  }
+
+  .el-table th {
+    background-color: #7f5421;
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+
   .el-table tr {
     background-color: transparent;
   }
 
   .el-table--striped .el-table__body tr.el-table__row--striped td {
-    background: #0E2046;
+    background: #7f5421;
   }
 
   .el-table td,
@@ -50,7 +59,7 @@
   .el-table::before {
     content: '';
     position: absolute;
-    background-color:transparent;
+    background-color: transparent;
     z-index: 1;
   }
 }

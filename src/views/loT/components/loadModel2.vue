@@ -162,7 +162,7 @@
 
             for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
               let build = this.buildListByProID[i]
-              if ( build.ID === 88 ) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
+              if ( build.ID === 187) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
                 const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)
@@ -274,10 +274,10 @@
           let geom = unit.GEOM
           if (geom !== '') {
 
-            let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
-              '/static/')
             // let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
-            //   '')
+            //   '/static/')
+            let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
+              '')
             // console.log('meshJsonURL', meshJsonURL)
             let mesh = await this.getJsonFile(meshJsonURL)
             if (mesh === null) {
