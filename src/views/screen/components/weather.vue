@@ -6,7 +6,106 @@
 <template>
   <div class="screen-weather">
     <div class="weather-info">
-      <el-row :gutter="10">
+
+      <el-row class='weather-row'>
+        <el-col :span="12">
+          <el-row>
+            <el-col :span="6" class="icon-img">
+              <img src="/static/screen/gold/icon-1.png">
+            </el-col>
+            <el-col :span="18">
+              <div>
+                <span v-bind:style="{ color: TempColor}">
+                  {{weather_data.temp}} °C
+                </span>
+              </div>
+              <div class="label">温度</div>
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="12">
+          <el-row>
+            <el-col :span="6" class="icon-img">
+              <img src="/static/screen/gold/icon-2.png">
+            </el-col>
+            <el-col :span="18">
+              <div>
+                <span v-bind:style="{ color: HColor}">
+                  {{weather_data.h}} %
+                </span>
+              </div>
+              <div class="label">湿度</div>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+
+      <el-row class='weather-row'>
+        <el-col :span="12">
+          <el-row>
+            <el-col :span="6" class="icon-img">
+              <img src="/static/screen/gold/icon-3.png">
+            </el-col>
+            <el-col :span="18">
+              <div>
+                <span v-bind:style="{ color: NoiseColor}">
+                  {{weather_data.noise}} db
+                </span>
+              </div>
+              <div class="label">温度</div>
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="12">
+          <el-row>
+            <el-col :span="6" class="icon-img">
+              <img src="/static/screen/gold/icon-4.png">
+            </el-col>
+            <el-col :span="18">
+              <div>
+                <span v-bind:style="{ color: WindColor}">
+                  {{ weather_data.wind }} 级
+                </span>
+              </div>
+              <div class="label">风速</div>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+
+      <el-row class='weather-row'>
+        <el-col :span="12">
+          <el-row>
+            <el-col :span="6" class="icon-img">
+              <img src="/static/screen/gold/icon-5.png">
+            </el-col>
+            <el-col :span="18">
+              <div>
+                <span v-bind:style="{ color: PM10Color}">
+                  {{weather_data.pm10}} ug/m<sup>3</sup>
+                </span>
+              </div>
+              <div class="label">扬尘</div>
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="12">
+          <el-row>
+            <el-col :span="6" class="icon-img">
+              <img src="/static/screen/gold/icon-6.png">
+            </el-col>
+            <el-col :span="18">
+              <div>
+                <span v-bind:style="{ color: PM2_5Color}">
+                  {{weather_data.pm2_5}} ug/m<sup>3</sup>
+                </span>
+              </div>
+              <div class="label">PM2.5</div>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+      <!-- <el-row :gutter="10">
         <el-col :span="12">
           <div class="grid-content bg-purple">
             温度：
@@ -76,7 +175,7 @@
         <el-col :span="24">
           <div class="grid-content bg-purple" style="font-size: 12px;">服务器时间：{{ weather_data.cdate }}</div>
         </el-col>
-      </el-row>
+      </el-row> -->
     </div>
   </div>
 </template>

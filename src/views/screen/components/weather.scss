@@ -3,12 +3,31 @@
   background-repeat: no-repeat;
   height: 100%;
   width: 100%;
-  background-position:center 10px;
-  
+  background-position: center 10px;
+
+  .label {
+    color: #d28a38;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .weather-row {
+    height: 50px;
+    margin: 13px 0px 0px 0px;
+  }
+
+  .icon-img {
+    text-align: center;
+
+    img {
+      line-height: 50px;
+    }
+  }
+
   .weather-info {
     padding: 10px;
     font-size: 18px;
-    margin: 0px 25px 0px 25px;
+    margin: 0px 15px 0px 55px;
     padding: 10px 10px 10px 10px;
     border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.1);
