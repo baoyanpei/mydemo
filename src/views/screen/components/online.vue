@@ -109,7 +109,8 @@
     },
     mounted() {
 
-      const sDate = moment().add('month', 0).format('YYYY-MM') + '-01'
+      // const sDate = moment().add('month', 0).format('YYYY-MM') + '-01'
+      const sDate = moment().add('day', -30).format('YYYY-MM-DD 00:00:00')
       const eDate = moment().format('YYYY-MM-DD')
 
       const sTime = moment(sDate).format('YYYY-MM-DD 00:00:00')

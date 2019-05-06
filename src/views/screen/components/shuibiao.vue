@@ -110,16 +110,17 @@
     },
     mounted() {
 
-      const sDate = moment().add('month', 0).format('YYYY-MM') + '-01'
-      const eDate = moment().format('YYYY-MM-DD')
+      // const sDate = moment().add('month', 0).format('YYYY-MM') + '-01'
+      // const sDate = moment().add('day', -30).format('YYYY-MM-DD')
+      // const eDate = moment().format('YYYY-MM-DD')
 
-      const sTime = moment(sDate).format('YYYY-MM-DD 00:00:00')
-      const eTime = moment(eDate).format('YYYY-MM-DD 23:59:59')
+      // const sTime = moment(sDate).format('YYYY-MM-DD 00:00:00')
+      // const eTime = moment(eDate).format('YYYY-MM-DD 23:59:59')
 
       const param = {
         project_id: this.project_id,
-        bt: sTime,
-        et: eTime
+        // bt: sTime,
+        // et: eTime
       }
       this.getData(param)
     },
