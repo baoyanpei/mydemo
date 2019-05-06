@@ -303,7 +303,7 @@
     document.getElementById('stat-div-loT').appendChild(stats.dom);
     initLight()
     initControls()
-    initAxes()
+    // initAxes()
 
     // animate();
     // }
