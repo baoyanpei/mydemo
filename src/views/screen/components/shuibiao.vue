@@ -49,14 +49,15 @@
             data: [],
 
             axisLabel: {
-              color: '#34716c'
+              color: '#d28a38'
             },
             axisLine: {
               lineStyle: {
-                color: '#34716c'
+                color: '#7c684e'
               }
             },
             axisTick: {
+              show: false,
               lineStyle: {
                 color: '#34716c'
               }
@@ -64,34 +65,43 @@
           },
           yAxis: {
             type: 'value',
+            splitNumber: 4,
             splitLine: {
               show: true,
               lineStyle: {
-                color: ['#34716c'],
+                color: ['#7c684e'],
                 type: 'solid',
               }
             },
             axisLabel: {
-              color: '#34716c'
+              color: '#d28a38'
             },
             axisLine: {
               lineStyle: {
-                color: '#34716c'
+                color: '#7c684e'
               }
             },
             axisTick: {
+              show: false,
               lineStyle: {
                 color: '#34716c'
               }
             }
           },
-          color: ['#0db3ec', '#57A2D6', '#FBDB70', '#88DDE1', '#F3A386'],
           series: [{
             name: '水表数据',
             data: [],
             type: 'line',
-            smooth: true,
+            smooth: false,
             center: ['10%', '10%'],
+            symbol: 'circle',
+            symbolSize: 10,
+            itemStyle:{
+              color: '#f58e28',
+            },
+            lineStyle:{
+              color: '#50b889',
+            }
           }]
         }
       }
@@ -145,7 +155,7 @@
         this.option.xAxis.data = []
         this.option.series[0].data = []
         this.$store.dispatch('QueryDatumMeterDays', _param).then((dataList) => {
-        //   console.log('dataList', dataList)
+          //   console.log('dataList', dataList)
           dataList.forEach((item, index) => {
             this.option.xAxis.data.push(moment(item.day).format('DD'))
             let used = item.used
