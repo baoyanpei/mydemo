@@ -1,4 +1,10 @@
 .screen-weather {
+  background-image: url(/static/screen/gold/earth.png);
+  background-repeat: no-repeat;
+  height: 100%;
+  width: 100%;
+  background-position:center 10px;
+  
   .weather-info {
     padding: 10px;
     font-size: 18px;
@@ -7,7 +13,7 @@
     border-radius: 10px;
     background-color: rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.1);
-    height: 250px;
+    // height: 250px;
 
     .title {
       color: #f1f506;

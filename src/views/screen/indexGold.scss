@@ -226,7 +226,7 @@ $box-border-color: #d5a871;
     .main {
       @extend %box-border;
       height: 210px;
-      padding: 20px 0px 10px 0px;
+      padding: 0px 0px 0px 0px;
       position: relative;
       top: -15px;
     }
