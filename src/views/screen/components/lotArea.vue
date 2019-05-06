@@ -12,7 +12,8 @@
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
-      <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div>
+      <!-- <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div> -->
+      <div>{{loadingText}}</div>
       <!-- <el-progress :percentage="percentage" color="#6ac044" :show-text="showText"></el-progress> -->
 
     </div>
@@ -106,6 +107,7 @@
 
   let towerGroup = null // 塔机
   let elevatorGroup = null // 升降机
+  let sectionGroup = null // 升降机轨道
   let labelRenderer = null
 
 
@@ -319,7 +321,7 @@
         loadtext: '开始加载模型....',
         loader: new THREE.ObjectLoader(),
         modelDB: null,
-
+        loadingText: '',
         renderEnabled: true,
         projectiveObj: null,
         mainCanvas: null,
@@ -392,14 +394,14 @@
       initThree()
       // }
 
-      this.loadingDialog = this.$loading({
-        lock: false,
-        text: this.loadtext,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.3)',
-        customClass: 'loading-class',
-        target: document.querySelector('.screen-loT')
-      });
+      // this.loadingDialog = this.$loading({
+      //   lock: false,
+      //   text: this.loadtext,
+      //   spinner: 'el-icon-loading',
+      //   background: 'rgba(0, 0, 0, 0.3)',
+      //   customClass: 'loading-class',
+      //   target: document.querySelector('.screen-loT')
+      // });
       // console.log('indexed_ver', this.indexed_ver)
       let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
       // console.log('IndexDBDataVer', _IndexDBDataVer)
@@ -428,9 +430,17 @@
       elevatorGroup.name = "elevatorGroup";
       if (scene) {
         scene.add(elevatorGroup)
-        elevatorGroup.position.set(80, 23.5, 0);
+        elevatorGroup.position.set(78.5, 24, 0);
       };
       modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
+
+      sectionGroup = new THREE.Group() // 升降机轨道
+      sectionGroup.name = "sectionGroup";
+      if (scene) {
+        scene.add(sectionGroup)
+        sectionGroup.position.set(80, 26, 0); // 红 绿
+      };
+      LoadSection(sectionGroup,67)
 
       this.addDataToDB()
     },
@@ -443,6 +453,7 @@
       scene.remove(showGroup)
       scene.remove(towerGroup)
       scene.remove(elevatorGroup)
+      scene.remove(sectionGroup)
       scene.remove(directionalLight);
       scene.remove(ambient);
       scene.remove(deviceGroup)
@@ -457,6 +468,7 @@
       personGroup = null
       towerGroup = null
       elevatorGroup = null
+      sectionGroup = null
       $('#screen-loT-canvas3d').empty()
       mainCanvas = null
       clearTimeout(this.timeRemove)
@@ -642,12 +654,14 @@
         }, 8000)
       },
       addLoadingText(loadingTxt) {
-        this.loadingDialog.text = loadingTxt
+        // this.loadingDialog.text = loadingTxt
+        this.loadingText = loadingTxt
         // this.loadtext = loadingTxt
       },
       unitGroupAddMesh(_mesh, modelID, unit) {
         this.addedUnit = this.addedUnit + 1
-        this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
+        // this.loadingDialog.text = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
+        this.loadingText = `正在加载模型列表${this.addedUnit}/${this.totalUnit}`
         if (_mesh === null || _mesh === '') {
 
         } else {
@@ -675,7 +689,7 @@
 
         if (this.addedUnit == this.totalUnit) {
           this.addDeviceData()
-          this.loadingDialog.close()
+          // this.loadingDialog.close()
         }
       },
       unitTotalAdd(addTotal) {
