@@ -18,7 +18,7 @@
       </el-table-column>
       <el-table-column property="group_name_level[1]" label="专业" header-align="center">
       </el-table-column>
-      <el-table-column property="group_name_level[1]" label="工种" header-align="center">
+      <el-table-column property="project_pos_name" label="工种" header-align="center">
       </el-table-column>
       <!-- <el-table-column property="countDay" sortable label="统计天数" width="100" align="center" header-align="center">
           <template slot-scope="scope">
