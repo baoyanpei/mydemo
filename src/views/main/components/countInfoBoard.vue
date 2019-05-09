@@ -22,59 +22,79 @@
           </div>
         </el-col>
       </el-row>
-      <el-row>
+      <div v-if="project_id===10000">
+        <el-row style="margin: 6px 0px;">
+          <el-col :span="8">
+            <div class="grid-content bg-purple link" @click="personListDialogHandle">
+              建 设 单 位：{{projectGroupDict.建设单位.total_in}}</div>
+          </el-col>
+          <el-col :span="8">
+            <div class="grid-content bg-purple link" @click="personListDialogHandle">
+              监 理 单 位：{{projectGroupDict.监理单位.total_in}}</div>
+          </el-col>
+        </el-row>
+        <el-row style="margin: 6px 0px;">
+          <el-col :span="8">
+            <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':['项目经理部']})">
+              项目经理部：{{projectGroupDict.项目经理部.total_in}}
+              <span class="info-item-all">/{{projectGroupDict.项目经理部.total_all}}</span>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':['基础施工班']})">
+              基础施工班：{{projectGroupDict.基础施工班.total_in}}
+              <span class="info-item-all">/{{projectGroupDict.基础施工班.total_all}}</span>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':['土建施工班']})">
+              土建施工班：{{projectGroupDict.土建施工班.total_in}}
+              <span class="info-item-all">/{{projectGroupDict.土建施工班.total_all}}</span>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row style="margin: 6px 0px;">
+          <el-col :span="8">
+            <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':['安装施工班']})">
+              安装施工班：{{projectGroupDict.安装施工班.total_in}}
+              <span class="info-item-all">/{{projectGroupDict.安装施工班.total_all}}</span>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':['装修施工班']})">
+              装修施工班：{{projectGroupDict.装修施工班.total_in}}
+              <span class="info-item-all">/{{projectGroupDict.装修施工班.total_all}}</span>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':['特种作业班']})">
+              特种作业班：{{projectGroupDict.特种作业班.total_in}}
+              <span class="info-item-all">/{{projectGroupDict.特种作业班.total_all}}</span>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':['技工施工班']})">
+              技工施工班：{{projectGroupDict.技工施工班.total_in}}
+              <span class="info-item-all">/{{projectGroupDict.技工施工班.total_all}}</span>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':['临时通行人']})">
+              临时通行人：{{projectGroupDict.临时通行人.total_in}}
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <el-row v-if="project_id!==10000">
         <el-col v-for="(item,index) in projectGroupList" :key="index" :span="8">
           <div class="grid-content info-name link" @click="personNowInDialogHandle({'group_names':[item.name]})">
             {{item.name}}: <span class="info-item-green">{{item.total_in}}</span>
             <span class="info-item-all" v-if="item.total_all>=0">/{{item.total_all}}</span>
           </div>
         </el-col>
-        <!-- <el-col :span="8">
-          <div class="grid-content info-name">监&nbsp;理&nbsp;&nbsp;单&nbsp;位: <span class="info-item-green">{{projectCount.监理人数}}</span></div>
-        </el-col> -->
       </el-row>
-      <el-row>
-        <!-- <el-col :span="8" :push="0">
-          <div class="grid-content info-name">项目经理部: <span class="info-item-green">{{projectCount.项目经理部}}</span><span
-              class="info-item-all">/{{projectCount.group.项目经理部.all}}</span></div>
-        </el-col>
-        <el-col :span="8" :push="0">
-          <div class="grid-content info-name">基础施工班: <span class="info-item-green">{{projectCount.基础施工班}}</span><span
-              class="info-item-all">/{{projectCount.group.基础施工班.all}}</span></div>
-        </el-col>
-        <el-col :span="8" :push="0">
-          <div class="grid-content info-name">土建施工班: <span class="info-item-green">{{projectCount.土建施工班}}</span><span
-              class="info-item-all">/{{projectCount.group.土建施工班.all}}</span></div>
-        </el-col>
-        <el-col :span="8" :push="0">
-          <div class="grid-content info-name">安装施工班: <span class="info-item-green">{{projectCount.安装施工班}}</span><span
-              class="info-item-all">/{{projectCount.group.安装施工班.all}}</span></div>
-        </el-col>
-        <el-col :span="8" :push="0">
-          <div class="grid-content info-name">装修施工班: <span class="info-item-green">{{projectCount.装修施工班}}</span><span
-              class="info-item-all">/{{projectCount.group.装修施工班.all}}</span></div>
-        </el-col>
-        <el-col :span="8" :push="0">
-          <div class="grid-content info-name">特种作业班: <span class="info-item-green">{{projectCount.特种作业班}}</span><span
-              class="info-item-all">/{{projectCount.group.特种作业班.all}}</span></div>
-        </el-col>
-        <el-col :span="8" :push="0">
-          <div class="grid-content info-name">技工施工班: <span class="info-item-green">{{projectCount.技工施工班}}</span><span
-              class="info-item-all">/{{projectCount.group.技工施工班.all}}</span></div>
-        </el-col>
-        <el-col :span="8" :push="0">
-          <div class="grid-content info-name">临时通行人: <span class="info-item-green">{{projectCount.临时人员}}</span></div>
-        </el-col> -->
-      </el-row>
-
-      <!-- <el-row :gutter="24">
-        <el-col :span="12" class="text-center">
-          <div class="grid-content bg-purple">值班人数：刘亚良</div>
-        </el-col>
-        <el-col :span="12" class="text-center">
-          <div class="grid-content bg-purple">2018年06年25日</div>
-        </el-col>
-      </el-row> -->
     </div>
   </div>
 </template>
@@ -86,7 +106,49 @@
     components: {},
     data() {
       return {
-        projectGroupList: []
+        projectGroupList: [],
+        projectGroupDict: {
+          '建设单位': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '监理单位': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '项目经理部': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '基础施工班': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '土建施工班': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '安装施工班': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '装修施工班': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '特种作业班': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '技工施工班': {
+            'total_in': 0,
+            'total_all': 0
+          },
+          '临时通行人': {
+            'total_in': 0,
+            'total_all': 0
+          }
+        }
       }
     },
     computed: {
@@ -150,10 +212,15 @@
               'total_in': this.projectCount[key],
               'total_all': _total_all
             })
+            this.projectGroupDict[key] = {
+              'name': key,
+              'total_in': this.projectCount[key],
+              'total_all': _total_all
+            }
           }
 
         }
-        // console.log("this.projectGroupList", this.projectGroupList)
+        console.log("this.projectGroupDict", this.projectGroupDict)
       },
       personListDialogHandle() {
         const param = {
