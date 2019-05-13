@@ -5,29 +5,23 @@
 
 <template>
   <div class="screen-inout">
-    <el-table class="screen-inout-table" ref="personInoutTable" stripe v-loading="loading" :data="personInoutList" height="350px"
-      :empty-text="personInoutTableEmptyText" style="width: 100%" size="mini" :show-header="true" header-align="center"
-      :default-sort="{prop: 'group_name_level[0]', order: 'descending'}" :row-class-name="tableRowClassName">
-      <el-table-column type="index" label="序号" width="50" align="center">
-      </el-table-column>
-      <el-table-column property="name" label="姓名" width="60" header-align="left">
-      </el-table-column>
-      <!-- <el-table-column property="mobile" label="电话" width="100" header-align="center">
-        </el-table-column> -->
-      <el-table-column property="group_name_level[0]" label="部门" header-align="center">
-      </el-table-column>
-      <el-table-column property="group_name_level[1]" label="专业" header-align="center">
-      </el-table-column>
-      <el-table-column property="project_pos_name" label="工种" header-align="center">
-      </el-table-column>
-      <!-- <el-table-column property="countDay" sortable label="统计天数" width="100" align="center" header-align="center">
-          <template slot-scope="scope">
-            <span class="span-link1" @click="handleInDayClick(scope.row)">
-              {{scope.row.countDay}}
-            </span>
-          </template>
-        </el-table-column> -->
-    </el-table>
+    <transition name="el-fade-in-linear">
+      <el-table v-if="show" class="screen-inout-table" ref="personInoutTable1" stripe :data="personInoutList"
+        height="350px" :empty-text="personInoutTableEmptyText" style="width: 100%" size="mini" :show-header="true"
+        header-align="center" :default-sort="{prop: 'group_name_level[0]', order: 'descending'}"
+        :row-class-name="tableRowClassName">
+
+        <el-table-column property="name" label="姓名" width="80" header-align="left">
+        </el-table-column>
+        <!-- <el-table-column property="mobile" label="电话" width="100" header-align="center">
+              </el-table-column> -->
+        <el-table-column property="group_name_level[0]" label="部门" header-align="left">
+        </el-table-column>
+        <el-table-column property="group_name_level[1]" label="专业" header-align="left">
+        </el-table-column>
+      </el-table>
+    </transition>
+
   </div>
 </template>
 <script>
@@ -37,10 +31,12 @@
     data() {
       return {
         project_id: 10000,
-        loading: false,
+        // loading: false,
         personInoutTableEmptyText: '请点击查询按钮进行查询',
         personInoutList: [],
+        personNowInDataList:[],
         checkedPersonType: false, //false 只有项目部
+        show: true
       }
     },
     props: {
@@ -57,6 +53,8 @@
     },
     mounted() {
       this.getProjectPersonInout()
+      this.refreshData()
+      this.getNewData()
     },
     destroyed() {
 
@@ -87,8 +85,9 @@
         this.totalPerson = 0
         this.$store.dispatch('QueryProjectPersonNowIn', param).then((personNowInDataList) => {
           personNowInDataList.forEach(item => {
-            this.personInoutList.push(item)
+            this.personNowInDataList.push(item)
           })
+          this.personInoutList = lodash.shuffle(this.personNowInDataList);
           this.personInoutList = lodash.chunk(this.personInoutList, 9)[0]
           //   this.totalPerson = this.personNowInList.length;
           this.loading = false
@@ -109,6 +108,23 @@
           return 'success-row';
         }
         return '';
+      },
+      getNewData() {
+        setTimeout(() => {
+          this.show = false
+          this.personInoutList = lodash.shuffle(this.personNowInDataList);
+          this.personInoutList = lodash.chunk(this.personInoutList, 9)[0]
+          setTimeout(() => {
+            this.show = true
+            this.getNewData()
+          }, 500)
+        }, 10 * 1000) //10秒
+      },
+      refreshData() {
+        setTimeout(() => {
+          this.getProjectPersonInout()
+          this.refreshData()
+        }, 120 * 1000) //120秒
       }
     },
 
