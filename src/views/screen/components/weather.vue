@@ -52,7 +52,7 @@
                   {{weather_data.noise}} db
                 </span>
               </div>
-              <div class="label">温度</div>
+              <div class="label">噪声</div>
             </el-col>
           </el-row>
         </el-col>
