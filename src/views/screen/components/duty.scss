@@ -1,1 +1,13 @@
-.screen-duty {}
+.screen-duty {
+  .list-duty {
+    padding-top: 5px;
+    padding-left: 25px;
+  }
+
+  .item-duty {
+    text-align: left;
+    line-height: 28px;
+    color: #cc8e46;
+    font-weight: 600;
+  }
+}

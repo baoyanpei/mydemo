@@ -5,7 +5,13 @@
 
 <template>
   <div class="screen-duty">
-    
+    <div class="list-duty">
+      <div v-for="person in personList" :key="person.id" class="item-duty">
+        {{person.index}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值班人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{person.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{person.mobile}}
+      </div>
+
+    </div>
+
   </div>
 </template>
 <script>
@@ -14,7 +20,8 @@
     components: {},
     data() {
       return {
-        project_id: 10000,
+        project_id: '10000',
+        personList: []
 
       }
     },
@@ -31,13 +38,46 @@
 
     },
     mounted() {
-
+      this.getProjectDutyDay()
     },
     destroyed() {
 
     },
     methods: {
-      
+      getProjectDutyDay() {
+        this.personList = []
+        let param = {
+          method: 'query_duty_day',
+          project_id: this.project_id,
+          //   source: 3,
+          //   userid: "admin_sluice"
+        }
+
+        this.$store.dispatch('QueryDutyDay', param).then((DutyData) => {
+          console.log('DutyData', DutyData)
+
+          const _data = DutyData.data
+          console.log('_data', _data)
+          let _index = 0
+          if (_data.length > 0) {
+            let _personList = _data[0].persons
+            console.log("_personList", _personList)
+
+            _personList.forEach(person => {
+              _index = _index + 1
+              person.index = _index
+              this.personList.push(person)
+            });
+            // if (persons.length > 0) {
+            //   const person = persons[0]
+            //   this.zhiban = `${person.name} ${person.mobile}`
+            // }
+          }
+          console.log('this.personList', this.personList)
+        }).catch(() => {
+          //   this.loading = false
+        })
+      },
     },
 
   }

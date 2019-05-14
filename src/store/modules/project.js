@@ -15,6 +15,7 @@ import {
   setCardOpera,
   setQuitLeft,
   queryDutyWeek,
+  queryDutyDay,
   updateDutyWeek
 } from '@/api/person'
 import Cookies from 'js-cookie'
@@ -323,7 +324,7 @@ const project = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.personInfoChanged = genRandom(1, 1000)
     },
-    
+
     SET_PROJECT_PERSION_INOUT_LIST: (state, data) => {
       state.projectPersonInoutList = data
     },
@@ -733,6 +734,19 @@ const project = {
         queryDutyWeek(param).then(response => {
           // const _data = response.data
           console.log('queryDutyWeek', response)
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    QueryDutyDay({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryDutyDay(param).then(response => {
+          // const _data = response.data
+          console.log('queryDutyDay', response)
           resolve(response)
         }).catch(error => {
           reject(error)

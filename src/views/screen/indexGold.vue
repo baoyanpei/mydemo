@@ -48,7 +48,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <!-- <LotArea></LotArea> -->
+              <LotArea></LotArea>
             </div>
           </div>
         </el-row>

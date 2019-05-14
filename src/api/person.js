@@ -416,6 +416,26 @@ export function queryDutyWeek(data) {
 }
 
 /*
+/api/info/project
+project_duty_day 
+查询项目值班表天
+        参数:
+        project_id
+        可选：
+        day: 不填为当天 '2018-09-27'
+        查多天 day 和 bt,et互斥 bt,et优先
+        bt:'2018-09-27'
+        et:'2018-09-28'
+*/
+export function queryDutyDay(data) {
+  return request({
+    url: 'api/info/project_test',
+    method: 'post',
+    data: data
+  })
+}
+
+/*
 api:/api/info/project
 method:update_duty_week
 '''
