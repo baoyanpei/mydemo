@@ -56,22 +56,23 @@
           <el-col :span="14">
             <div class="online-area">
               <div class="title">
-                <img src="/static/screen/gold/titleBg.png" class="bg" />
-                <div class="text">每日上工人数</div>
+                <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;"/>
+                <div class="text">进出场车辆</div>
               </div>
               <div class="main">
-                <Online></Online>
+                <Vehicle></Vehicle>
+                <!-- <Online></Online> -->
               </div>
             </div>
           </el-col>
           <el-col :span="10">
             <div class="vedio-area">
               <div class="title">
-                <img src="/static/screen/gold/titleBg.png" class="bg" />
+                <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;"/>
                 <div class="text">现场视频监控</div>
               </div>
               <div class="main">
-                <Camera></Camera>
+                <!-- <Camera></Camera> -->
               </div>
             </div>
           </el-col>
@@ -126,6 +127,7 @@
   import Inout from './components/inout'
   import Online from './components/online'
   import Duty from './components/duty'
+  import Vehicle from './components/vehicle'
   import ShuiBiao from './components/shuibiao'
   import DianBiao from './components/dianbiao'
   import Weather from './components/weather'
@@ -146,7 +148,7 @@
       TajiArea,
       LotArea,
       Duty,
-      
+      Vehicle
       // VueDragResize
     },
     data() {

@@ -7,6 +7,7 @@ import {
   queryProjectPersonInout,
   queryProjectPersonGoOut,
   queryLogsPersonComfirm,
+  queryVehicleGate,
   queryProjectPersonInDay,
   queryInOutDetail,
   queryPersonWorktime,
@@ -636,6 +637,21 @@ const project = {
         })
       })
     },
+    // 进出车辆日志查询
+    QueryVehicleGate({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryVehicleGate(param).then(response => {
+          const _data = response.data
+          // console.log('queryLogsPersonComfirm', _data)
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    
     // 设置人证校验是否为本人
     setProjectInfo({
       commit

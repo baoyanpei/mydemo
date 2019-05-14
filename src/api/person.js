@@ -142,6 +142,29 @@ export function queryLogsPersonComfirm(data) {
   })
 }
 
+
+/*
+进出车辆查询：
+
+进出车辆日志查询
+/api/info/gate
+query_vehicle_logs
+        project_id,
+        lisence:车牌模糊查询
+        
+        可选参数: 
+        bt 开始时间
+        et 结束时间
+        return {"status":"success","msg":'',"data":[]}
+*/
+export function queryVehicleGate(data) {
+  return request({
+    url: 'api/info/gate',
+    method: 'post',
+    data: data
+  })
+}
+
 /* 
 query_person_inday(self, params):
         '''

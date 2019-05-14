@@ -32,7 +32,7 @@
       return {
         project_id: 10000,
         // loading: false,
-        personInoutTableEmptyText: '请点击查询按钮进行查询',
+        personInoutTableEmptyText: '正在查询',
         personInoutList: [],
         personNowInDataList:[],
         checkedPersonType: false, //false 只有项目部
@@ -83,6 +83,7 @@
 
         // this.personNowInList = []
         this.totalPerson = 0
+        this.personNowInDataList = []
         this.$store.dispatch('QueryProjectPersonNowIn', param).then((personNowInDataList) => {
           personNowInDataList.forEach(item => {
             this.personNowInDataList.push(item)
