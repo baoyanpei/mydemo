@@ -32,11 +32,11 @@
         </div>
         <div class="inout-area">
           <div class="title">
-            <img src="/static/screen/gold/titleBg.png" class="bg" />
-            <div class="text">场内人员</div>
+            <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;"/>
+            <div class="text">场内人员{{totalInoutPerson}}人</div>
           </div>
           <div class="main">
-            <Inout></Inout>
+            <Inout v-on:inoutTotalPerson="inoutTotalPerson"></Inout>
           </div>
         </div>
       </el-col>
@@ -48,7 +48,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <LotArea></LotArea>
+              <!-- <LotArea></LotArea> -->
             </div>
           </div>
         </el-row>
@@ -145,12 +145,14 @@
       Camera,
       TajiArea,
       LotArea,
-      Duty
+      Duty,
+      
       // VueDragResize
     },
     data() {
       return {
-        todayDate: ''
+        todayDate: '',
+        totalInoutPerson: '0'
       }
     },
     computed: {
@@ -176,6 +178,9 @@
           this.getDate()
         }, 1000)
       },
+      inoutTotalPerson(total) {
+        this.totalInoutPerson = total
+      }
     }
   }
 

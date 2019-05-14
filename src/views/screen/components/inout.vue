@@ -81,7 +81,7 @@
           // et:this.personNowinDialog.et
         }
 
-        this.personNowInList = []
+        // this.personNowInList = []
         this.totalPerson = 0
         this.$store.dispatch('QueryProjectPersonNowIn', param).then((personNowInDataList) => {
           personNowInDataList.forEach(item => {
@@ -89,6 +89,8 @@
           })
           this.personInoutList = lodash.shuffle(this.personNowInDataList);
           this.personInoutList = lodash.chunk(this.personInoutList, 5)[0]
+
+          this.$emit('inoutTotalPerson', this.personNowInDataList.length)
           //   this.totalPerson = this.personNowInList.length;
           this.loading = false
           //   this.loadingDialog.close()
