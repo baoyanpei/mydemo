@@ -8,10 +8,10 @@
     <transition name="el-fade-in-linear">
       <el-table v-if="show" class="screen-inout-table" ref="personInoutTable1" stripe :data="personInoutList"
         height="350px" :empty-text="personInoutTableEmptyText" style="width: 100%" size="mini" :show-header="true"
-        header-align="center" :default-sort="{prop: 'group_name_level[0]', order: 'descending'}"
+        :default-sort="{prop: 'group_name_level[0]', order: 'descending'}"
         :row-class-name="tableRowClassName">
 
-        <el-table-column property="name" label="姓名" width="80" header-align="left">
+        <el-table-column property="name" label="姓名" width="120" align="center" header-align="center">
         </el-table-column>
         <!-- <el-table-column property="mobile" label="电话" width="100" header-align="center">
               </el-table-column> -->
@@ -88,7 +88,7 @@
             this.personNowInDataList.push(item)
           })
           this.personInoutList = lodash.shuffle(this.personNowInDataList);
-          this.personInoutList = lodash.chunk(this.personInoutList, 9)[0]
+          this.personInoutList = lodash.chunk(this.personInoutList, 5)[0]
           //   this.totalPerson = this.personNowInList.length;
           this.loading = false
           //   this.loadingDialog.close()
@@ -113,7 +113,7 @@
         setTimeout(() => {
           this.show = false
           this.personInoutList = lodash.shuffle(this.personNowInDataList);
-          this.personInoutList = lodash.chunk(this.personInoutList, 9)[0]
+          this.personInoutList = lodash.chunk(this.personInoutList, 5)[0]
           setTimeout(() => {
             this.show = true
             this.getNewData()

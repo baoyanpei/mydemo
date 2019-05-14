@@ -21,6 +21,15 @@
             <GateArea ref="gateArea"></GateArea>
           </div>
         </div>
+        <div class="duty-area">
+          <div class="title">
+            <img src="/static/screen/gold/titleBg.png" class="bg" />
+            <div class="text">值班人员</div>
+          </div>
+          <div class="main">
+            <Duty></Duty>
+          </div>
+        </div>
         <div class="inout-area">
           <div class="title">
             <img src="/static/screen/gold/titleBg.png" class="bg" />
@@ -39,7 +48,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <LotArea></LotArea>
+              <!-- <LotArea></LotArea> -->
             </div>
           </div>
         </el-row>
@@ -116,6 +125,7 @@
   import GateArea from './components/gateArea'
   import Inout from './components/inout'
   import Online from './components/online'
+  import Duty from './components/duty'
   import ShuiBiao from './components/shuibiao'
   import DianBiao from './components/dianbiao'
   import Weather from './components/weather'
@@ -134,7 +144,8 @@
       Weather,
       Camera,
       TajiArea,
-      LotArea
+      LotArea,
+      Duty
       // VueDragResize
     },
     data() {
