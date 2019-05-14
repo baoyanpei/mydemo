@@ -12,13 +12,13 @@
   }
 
   .weather-row {
-    height: 50px;
-    margin: 13px 0px 0px 0px;
+    // height: 50px;
+    margin: 8px 0px 0px 0px;
   }
 
   .icon-img {
     text-align: center;
-    
+
     img {
       // box-shadow: 0 0 15px #ddb75e;
       line-height: 50px;
@@ -47,5 +47,111 @@
       line-height: 1.8rem;
     }
 
+  }
+
+  @-webkit-keyframes blink {
+    0% {
+      color: #eff1f6;
+      opacity: 1;
+    }
+
+    50% {
+      color: #fefade;
+    }
+
+    100% {
+      color: #eff1f6;
+    }
+  }
+
+  .blink {
+    -webkit-animation-name: blink;
+    -webkit-animation-duration: 2000ms;
+    -webkit-animation-iteration-count: 3;
+    -webkit-animation-timing-function: ease-in-out;
+  }
+
+
+  .box {
+    font-size: 20px;
+    color: rgb(64, 158, 255);
+    // margin: 10px;
+    animation: changeshadow 1s ease-in infinite;
+    /* 其它浏览器兼容性前缀 */
+    -webkit-animation: changeshadow 1s linear infinite;
+    -moz-animation: changeshadow 1s linear infinite;
+    -ms-animation: changeshadow 1s linear infinite;
+    -o-animation: changeshadow 1s linear infinite;
+  }
+
+  @keyframes changeshadow {
+    0% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+
+    50% {
+      text-shadow: 0 0 40px rgb(64, 158, 255)
+    }
+
+    100% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+  }
+
+  /* 添加兼容性前缀 */
+  @-webkit-keyframes changeshadow {
+    0% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+
+    50% {
+      text-shadow: 0 0 40px rgb(64, 158, 255)
+    }
+
+    100% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+  }
+
+  @-moz-keyframes changeshadow {
+    0% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+
+    50% {
+      text-shadow: 0 0 40px rgb(64, 158, 255)
+    }
+
+    100% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+  }
+
+  @-ms-keyframes changeshadow {
+    0% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+
+    50% {
+      text-shadow: 0 0 40px rgb(64, 158, 255)
+    }
+
+    100% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+  }
+
+  @-o-keyframes changeshadow {
+    0% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
+
+    50% {
+      text-shadow: 0 0 40px rgb(64, 158, 255)
+    }
+
+    100% {
+      text-shadow: 0 0 8px rgb(64, 158, 255)
+    }
   }
 }

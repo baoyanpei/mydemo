@@ -15,7 +15,7 @@
             </el-col>
             <el-col :span="18">
               <div>
-                <span v-bind:style="{ color: TempColor}">
+                <span v-bind:style="{ color: TempColor}" class="box1">
                   {{weather_data.temp}} °C
                 </span>
               </div>

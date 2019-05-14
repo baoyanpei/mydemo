@@ -203,7 +203,7 @@ $box-border-color: #d5a871;
 
   /* 环境检测仪 */
   .weather-area {
-    margin: 0px 20px 10px 20px;
+    margin: 0px 20px 5px 20px;
 
     .title {
       text-align: center;
@@ -225,7 +225,7 @@ $box-border-color: #d5a871;
 
     .main {
       @extend %box-border;
-      height: 210px;
+      height: 160px;
       padding: 0px 0px 0px 0px;
       position: relative;
       top: -15px;
@@ -234,7 +234,7 @@ $box-border-color: #d5a871;
 
   /* 水表数据 */
   .shuibiao-area {
-    margin: 0px 20px 10px 20px;
+    margin: 0px 20px 5px 20px;
 
     .title {
       text-align: center;
@@ -265,7 +265,7 @@ $box-border-color: #d5a871;
 
   /* 电表数据 */
   .dianbiao-area {
-    margin: 0px 20px 0px 20px;
+    margin: 0px 20px 10px 20px;
 
     .title {
       text-align: center;
@@ -318,7 +318,7 @@ $box-border-color: #d5a871;
 
     .main {
       @extend %box-border;
-      height: 320px;
+      height: 370px;
       padding: 0px 0px 0px 0px;
       position: relative;
       top: -15px;
