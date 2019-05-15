@@ -35,7 +35,7 @@
           </div>
           <div class="in-time">进场时间：<br />{{lastVehicle.created_time}}</div>
 
-          <img :src="lastVehicle.pic" class="vehicle-img"/>
+          <img :src="lastVehicle.pic" class="vehicle-img" />
         </div>
 
       </el-col>
@@ -73,6 +73,7 @@
     },
     mounted() {
       this.getVehicleGateData()
+      this.refreshData()
     },
     destroyed() {
 
@@ -89,7 +90,13 @@
         }
         return '';
       },
-
+      refreshData() {
+        setTimeout(() => {
+          this.getVehicleGateData()
+          this.refreshData()
+          console.log('getVehicleGateData')
+        }, 60 * 1000)
+      },
       getVehicleGateData() {
 
         let param = {

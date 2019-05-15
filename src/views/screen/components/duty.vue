@@ -7,7 +7,13 @@
   <div class="screen-duty">
     <div class="list-duty">
       <div v-for="person in personList" :key="person.id" class="item-duty">
-        {{person.index}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值班人&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{person.name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{person.mobile}}
+        <div class="person-line">
+          <div class="person-index">{{person.index}}</div>
+          <div class="person-zhibanren">值班人</div>
+          <div class="person-name">{{person.name}}</div>
+          <div class="person-mobile">{{person.mobile}}</div>
+        </div>
+
       </div>
 
     </div>

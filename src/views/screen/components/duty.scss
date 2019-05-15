@@ -9,5 +9,31 @@
     line-height: 28px;
     color: #cc8e46;
     font-weight: 600;
+
+    .person-line {
+      width: 340px;
+      float: left;
+      .person-index {
+        float: left;
+        width: 50px;;
+      }
+
+      .person-zhibanren {
+        float: left;
+        width: 80px;;
+      }
+
+      .person-name {
+        float: left;
+        width: 80px;;
+      }
+
+      .person-mobile {
+        float: left;
+        width: 100px;
+      }
+    }
+
   }
+
 }

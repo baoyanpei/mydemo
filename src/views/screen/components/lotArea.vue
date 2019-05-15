@@ -17,7 +17,8 @@
       <!-- <el-progress :percentage="percentage" color="#6ac044" :show-text="showText"></el-progress> -->
 
     </div>
-    <div class="divDataTadiao">
+    <div v-show="showTadiaoInfo" class="divDataTadiao">
+      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeTadiaoInfoHandle" title="关闭" />
       <div style="padding-bottom: 5px;font-size: 14px;">塔吊</div>
       <div>塔吊高度：<span id="td_tdgd">{{tdData.tdgd}}</span> 米</div>
       <div>大臂角度：<span id="td_dbjd">{{tdData.dbjd}}</span> 度</div>
@@ -25,7 +26,8 @@
       <div>吊钩线长：<span id="td_dgxc">{{tdData.dgxc}}</span> 米</div>
       <div>上报时间：<span id="td_sbsj">{{tdData.sbsj}}</span></div>
     </div>
-    <div class="divDataShenJiangJi">
+    <div v-show="showShenjiangjiInfo" class="divDataShenJiangJi">
+      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeShenjiangjiInfoHandle" title="关闭" />
       <div style="padding-bottom: 5px;font-size: 14px;">升降机</div>
       <div>高度：<span id="sjj_gd">{{sjjData.sjjgd}}</span> 米</div>
       <div>楼层：<span id="sjj_lc">{{sjjData.sjjlc}}</span> 层</div>
@@ -360,6 +362,9 @@
         indexedDBWaitList: new Map(),
         worker: new Worker("/static/workIndexedDB.js"),
         lablePosisionList: {},
+
+        showTadiaoInfo: true,
+        showShenjiangjiInfo: true
       }
     },
     computed: {
@@ -440,7 +445,7 @@
         scene.add(sectionGroup)
         sectionGroup.position.set(80, 26, 0); // 红 绿
       };
-      LoadSection(sectionGroup,67)
+      LoadSection(sectionGroup, 67)
 
       this.addDataToDB()
     },
@@ -1109,6 +1114,12 @@
             resolve([])
           })
         })
+      },
+      closeTadiaoInfoHandle() {
+        this.showTadiaoInfo = false;
+      },
+      closeShenjiangjiInfoHandle() {
+        this.showShenjiangjiInfo = false;
       }
     }
   }
