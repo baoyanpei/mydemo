@@ -41,3 +41,25 @@ export function queryDatumMeterDays(data) {
     data: data
   })
 }
+
+// 按小时查询
+/*
+/api/datum/meter
+method:query_hours
+{
+    "project_id": 10000,
+    "meter_id": "YD10000SB03",
+    "bt": "2019-05-01 00:00:00",
+    "bt": "2019-06-01 23:59:59"
+    # "id": 100812
+},
+
+*/
+export function queryDatumMeterHours(data) {
+  // console.log("api", data)
+  return request({
+    url: 'api/datum/meter',
+    method: 'post',
+    data: data
+  })
+}

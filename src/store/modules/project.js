@@ -762,7 +762,7 @@ const project = {
       return new Promise((resolve, reject) => {
         queryDutyDay(param).then(response => {
           // const _data = response.data
-          console.log('queryDutyDay', response)
+          // console.log('queryDutyDay', response)
           resolve(response)
         }).catch(error => {
           reject(error)

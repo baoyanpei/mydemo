@@ -32,7 +32,7 @@
         </div>
         <div class="inout-area">
           <div class="title">
-            <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;"/>
+            <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;" />
             <div class="text">场内人员{{totalInoutPerson}}人</div>
           </div>
           <div class="main">
@@ -48,7 +48,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <!-- <LotArea></LotArea> -->
+              <LotArea></LotArea>
             </div>
           </div>
         </el-row>
@@ -56,7 +56,7 @@
           <el-col :span="14">
             <div class="online-area">
               <div class="title">
-                <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;"/>
+                <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;" />
                 <div class="text">进出场车辆</div>
               </div>
               <div class="main">
@@ -68,11 +68,11 @@
           <el-col :span="10">
             <div class="vedio-area">
               <div class="title">
-                <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;"/>
+                <img src="/static/screen/gold/titleBg.png" class="bg" style="width: 150px;" />
                 <div class="text">现场视频监控</div>
               </div>
               <div class="main">
-                <!-- <Camera></Camera> -->
+                <Camera></Camera>
               </div>
             </div>
           </el-col>
@@ -88,7 +88,24 @@
             <Weather></Weather>
           </div>
         </div>
-        <div class="shuibiao-area">
+        <div class="meter-area">
+          <div class="title">
+            <img src="/static/screen/gold/titleBg.png" class="bg" />
+            <div class="text">水表/电表</div>
+          </div>
+          <div class="main">
+            <!-- <Weather></Weather> -->
+            <el-row>
+              <el-col :span="12">
+                <MeterShui></MeterShui>
+              </el-col>
+              <el-col :span="12">
+                <MeterDian></MeterDian>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+        <!-- <div class="shuibiao-area">
           <div class="title">
             <img src="/static/screen/gold/titleBg.png" class="bg" />
             <div class="text">水表数据</div>
@@ -105,7 +122,7 @@
           <div class="main">
             <DianBiao></DianBiao>
           </div>
-        </div>
+        </div> -->
         <div class="taji-area">
           <div class="title">
             <img src="/static/screen/gold/titleBg.png" class="bg" />
@@ -128,12 +145,14 @@
   import Online from './components/online'
   import Duty from './components/duty'
   import Vehicle from './components/vehicle'
-  import ShuiBiao from './components/shuibiao'
-  import DianBiao from './components/dianbiao'
+  // import ShuiBiao from './components/shuibiao'
+  // import DianBiao from './components/dianbiao'
   import Weather from './components/weather'
   import Camera from './components/camera'
   import TajiArea from './components/tajiArea'
   import LotArea from './components/lotArea'
+  import MeterShui from './components/meterShui'
+  import MeterDian from './components/meterDian'
   export default {
     directives: {},
     name: 'Main',
@@ -141,14 +160,16 @@
       GateArea,
       Inout,
       Online,
-      ShuiBiao,
-      DianBiao,
+      // ShuiBiao,
+      // DianBiao,
       Weather,
       Camera,
       TajiArea,
       LotArea,
       Duty,
-      Vehicle
+      Vehicle,
+      MeterShui,
+      MeterDian
       // VueDragResize
     },
     data() {

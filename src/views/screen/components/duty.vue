@@ -60,14 +60,14 @@
         }
 
         this.$store.dispatch('QueryDutyDay', param).then((DutyData) => {
-          console.log('DutyData', DutyData)
+          // console.log('DutyData', DutyData)
 
           const _data = DutyData.data
-          console.log('_data', _data)
+          // console.log('_data', _data)
           let _index = 0
           if (_data.length > 0) {
             let _personList = _data[0].persons
-            console.log("_personList", _personList)
+            // console.log("_personList", _personList)
 
             _personList.forEach(person => {
               _index = _index + 1
@@ -79,7 +79,7 @@
             //   this.zhiban = `${person.name} ${person.mobile}`
             // }
           }
-          console.log('this.personList', this.personList)
+          // console.log('this.personList', this.personList)
         }).catch(() => {
           //   this.loading = false
         })

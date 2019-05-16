@@ -72,6 +72,7 @@ $box-border-color: #d5a871;
       top: -15px;
     }
   }
+
   /* 值班人员 */
   .duty-area {
     margin: 0px 0px 5px 20px;
@@ -263,39 +264,8 @@ $box-border-color: #d5a871;
     }
   }
 
-  /* 水表数据 */
-  .shuibiao-area {
-    margin: 0px 20px 5px 20px;
-
-    .title {
-      text-align: center;
-      position: relative;
-      height: 30px;
-      z-index: 1;
-
-      .bg {
-        height: 30px;
-      }
-
-      .text {
-        position: relative;
-        top: -27px;
-        font-size: 15px;
-        font-weight: 500;
-      }
-    }
-
-    .main {
-      @extend %box-border;
-      height: 145px;
-      padding: 20px 0px 10px 0px;
-      position: relative;
-      top: -15px;
-    }
-  }
-
-  /* 电表数据 */
-  .dianbiao-area {
+  /* 水表电表数据 */
+  .meter-area {
     margin: 0px 20px 10px 20px;
 
     .title {
@@ -318,12 +288,74 @@ $box-border-color: #d5a871;
 
     .main {
       @extend %box-border;
-      height: 155px;
+      height: 335px;
       padding: 20px 0px 10px 0px;
       position: relative;
       top: -15px;
     }
   }
+
+  // /* 水表数据 */
+  // .shuibiao-area {
+  //   margin: 0px 20px 5px 20px;
+
+  //   .title {
+  //     text-align: center;
+  //     position: relative;
+  //     height: 30px;
+  //     z-index: 1;
+
+  //     .bg {
+  //       height: 30px;
+  //     }
+
+  //     .text {
+  //       position: relative;
+  //       top: -27px;
+  //       font-size: 15px;
+  //       font-weight: 500;
+  //     }
+  //   }
+
+  //   .main {
+  //     @extend %box-border;
+  //     height: 145px;
+  //     padding: 20px 0px 10px 0px;
+  //     position: relative;
+  //     top: -15px;
+  //   }
+  // }
+
+  /* 电表数据 */
+  // .dianbiao-area {
+  //   margin: 0px 20px 10px 20px;
+
+  //   .title {
+  //     text-align: center;
+  //     position: relative;
+  //     height: 30px;
+  //     z-index: 1;
+
+  //     .bg {
+  //       height: 30px;
+  //     }
+
+  //     .text {
+  //       position: relative;
+  //       top: -27px;
+  //       font-size: 15px;
+  //       font-weight: 500;
+  //     }
+  //   }
+
+  //   .main {
+  //     @extend %box-border;
+  //     height: 155px;
+  //     padding: 20px 0px 10px 0px;
+  //     position: relative;
+  //     top: -15px;
+  //   }
+  // }
 
   /* 塔机/升降机数据 */
   .taji-area {

@@ -94,7 +94,7 @@
         setTimeout(() => {
           this.getVehicleGateData()
           this.refreshData()
-          console.log('getVehicleGateData')
+          // console.log('getVehicleGateData')
         }, 60 * 1000)
       },
       getVehicleGateData() {
@@ -105,11 +105,11 @@
         }
 
         this.$store.dispatch('QueryVehicleGate', param).then((vehicleDataList) => {
-          console.log('vehicleDataList', vehicleDataList)
+          // console.log('vehicleDataList', vehicleDataList)
           this.vehicleList = lodash.chunk(vehicleDataList, 8)[0]
           this.vehicleList.forEach(data => {
             data.lisence = data.lisence.replace(data.lisence_type, '')
-            console.log('data', data.lisence.replace(data.lisence_type, ''))
+            // console.log('data', data.lisence.replace(data.lisence_type, ''))
           });
           this.lastVehicle = vehicleDataList[0]
         }).catch(() => {
