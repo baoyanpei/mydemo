@@ -133,7 +133,6 @@
 
       updateData(data) {
         // const _data = JSON.parse(data)
-        // console.log('userinfo1', data)
         this.persion_data = data
         // console.log("onoff", this.persion_data.onoff)
         if (this.lastPersonID !== this.persion_data.id) {
@@ -229,10 +228,13 @@
             break;
         }
       },
-      handleNameClick(row) {
+      handleNameClick(person) {
+        if (person.id === 0) {
+          return
+        }
         const param = {
           show: true,
-          ...row
+          ...person
         }
         this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
 
@@ -276,12 +278,12 @@
       // },
     },
     watch: {
-      project_id(curVal, oldVal) {
-        if (curVal !== null) {
-          this.persion_data = Object.assign({}, PersonDataEmpty)
-          // this.getProjectGatePerson()
-        }
-      },
+      // project_id(curVal, oldVal) {
+      //   if (curVal !== null) {
+      //     this.persion_data = Object.assign({}, PersonDataEmpty)
+      //     // this.getProjectGatePerson()
+      //   }
+      // },
     },
     mounted() {
       // console.log("this.curValcurValcurValcurVal",this.project_id)
