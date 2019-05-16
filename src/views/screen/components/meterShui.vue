@@ -15,11 +15,11 @@
         <div class="item-box">{{total_used[4]}}</div>
       </div>
       <div class="total-today-label">今日用水量</div>
-      <div class="total-today">{{total_today}}MW</div>
+      <div class="total-today">{{total_today}} 吨</div>
     </div>
     <div>
       <echart ref="echarts-shuibiao" :options="option" class="echarts-shuibiao" theme="infographic"
-        style="width:100%;height: 150px;">
+        style="width:100%;height: 170px;">
       </echart>
     </div>
   </div>
@@ -51,10 +51,13 @@
             containLabel: true
           },
           legend: {
-            show: false,
-            data: ['水表数据'],
+            show: true,
+            bottom: 0,
+            itemHeight: 4,
+            data: ['最近7小时用水'],
+            align: 'left',
             // align: 'right',
-            right: 30,
+            // right: 30,
             textStyle: {
               color: '#FFFFFF'
             }
@@ -107,7 +110,7 @@
             }
           },
           series: [{
-            name: '水表数据',
+            name: '最近7小时用水',
             data: [],
             type: 'bar',
             smooth: false,
@@ -138,16 +141,19 @@
 
     },
     mounted() {
-
-      this.getCurrentData()
-      //   this.getDaysData()
-      this.getTodayHoursData()
-      this.getLastHoursData()
+      this.getAllData()
+      this.refreshData()
     },
     destroyed() {
 
     },
     methods: {
+      getAllData() {
+        this.getCurrentData()
+        this.getTodayHoursData()
+        this.getLastHoursData()
+
+      },
       getCurrentData() {
         const param = {
           method: 'devlist',
@@ -225,7 +231,14 @@
 
           }
         })
-      }
+      },
+      refreshData() {
+        setTimeout(() => {
+          this.getAllData()
+          this.refreshData()
+          // console.log('getVehicleGateData')
+        }, 120 * 1000)
+      },
     },
 
   }
