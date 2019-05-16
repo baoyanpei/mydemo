@@ -5,11 +5,10 @@
 
 <template>
   <div class="screen-inout">
-    <transition name="el-fade-in-linear">
-      <el-table v-if="show" class="screen-inout-table" ref="personInoutTable1" stripe :data="personInoutList"
-        height="350px" :empty-text="personInoutTableEmptyText" style="width: 100%" size="mini" :show-header="true"
-        :default-sort="{prop: 'group_name_level[0]', order: 'descending'}"
-        :row-class-name="tableRowClassName">
+    <div style="width: 390px;">
+      <el-table class="screen-inout-table" ref="personInoutTable1" stripe :data="personInoutList" height="215px"
+        :empty-text="personInoutTableEmptyText" style="width:100%" size="mini" :show-header="true"
+        :default-sort="{prop: 'group_name_level[0]', order: 'descending'}" :row-class-name="tableRowClassName">
 
         <el-table-column property="name" label="姓名" width="120" align="center" header-align="center">
         </el-table-column>
@@ -20,7 +19,8 @@
         <el-table-column property="group_name_level[1]" label="专业" header-align="left">
         </el-table-column>
       </el-table>
-    </transition>
+    </div>
+
 
   </div>
 </template>
@@ -34,9 +34,11 @@
         // loading: false,
         personInoutTableEmptyText: '正在查询',
         personInoutList: [],
-        personNowInDataList:[],
+        personNowInDataList: [],
         checkedPersonType: false, //false 只有项目部
-        show: true
+        singleHeight: 35,
+        currentScroll: 0,
+        timeoutScroll: null
       }
     },
     props: {
@@ -54,23 +56,17 @@
     mounted() {
       this.getProjectPersonInout()
       this.refreshData()
-      this.getNewData()
     },
     destroyed() {
 
     },
     methods: {
       getProjectPersonInout() {
-        console.log('personNowinDialog', this.personNowinDialog)
+        clearTimeout(this.timeoutScroll)
+        this.$refs.personInoutTable1.bodyWrapper.scrollTop = 0
+        this.personNowInDataList = []
         this.loading = true
-        // this.loadingDialog = this.$loading({
-        //   // lock: true,
-        //   // text: '正在读取数据...',
-        //   // spinner: 'el-icon-loading',
-        //   // background: 'rgba(0, 0, 0, 0.5)',
-        //   // customClass: 'loading-class',
-        //   target: document.querySelector('.nowin-dialog')
-        // });
+ 
         this.personNowInMap = new Map()
         this.personNowInMapList = []
         let param = {
@@ -83,17 +79,28 @@
 
         // this.personNowInList = []
         this.totalPerson = 0
-        this.personNowInDataList = []
         this.$store.dispatch('QueryProjectPersonNowIn', param).then((personNowInDataList) => {
+          // personNowInDataList = personNowInDataList.concat(personNowInDataList)
+
+          let totalPerson = personNowInDataList.length
           personNowInDataList.forEach(item => {
             this.personNowInDataList.push(item)
           })
-          this.personInoutList = lodash.shuffle(this.personNowInDataList);
-          this.personInoutList = lodash.chunk(this.personInoutList, 5)[0]
+          if (totalPerson > 5) {
+            for (let i = 0; i < 5; i++) {
+              this.personNowInDataList = this.personNowInDataList.concat(this.personNowInDataList)
+            }
+          }
+          this.$emit('inoutTotalPerson', totalPerson)
+          this.personInoutList = this.personNowInDataList
+          if (this.personInoutList.length > 5) {
+            setTimeout(() => {
+              this.currentScroll = 0
+              this.scrollTable()
+            }, 5000) //120秒
+          }
 
-          this.$emit('inoutTotalPerson', this.personNowInDataList.length)
-          //   this.totalPerson = this.personNowInList.length;
-          this.loading = false
+
           //   this.loadingDialog.close()
           // console.log('this.personInoutList', this.personInoutList)
         }).catch(() => {
@@ -112,22 +119,49 @@
         }
         return '';
       },
-      getNewData() {
-        setTimeout(() => {
-          this.show = false
-          this.personInoutList = lodash.shuffle(this.personNowInDataList);
-          this.personInoutList = lodash.chunk(this.personInoutList, 5)[0]
-          setTimeout(() => {
-            this.show = true
-            this.getNewData()
-          }, 500)
-        }, 10 * 1000) //10秒
-      },
       refreshData() {
         setTimeout(() => {
           this.getProjectPersonInout()
           this.refreshData()
-        }, 120 * 1000) //120秒
+        }, 60 * 1000) //120秒
+      },
+      scrollTable() {
+
+        // console.log('scrollHeight', this.$refs.personInoutTable1.bodyWrapper.scrollHeight)
+        // console.log('scrollTop', this.$refs.personInoutTable1.bodyWrapper.scrollTop, )
+
+        let _scrollTop = this.singleHeight * this.personInoutList.length - this.singleHeight * 5
+        console.log('_scrollTop', _scrollTop, this.$refs.personInoutTable1.bodyWrapper.scrollTop, this.$refs
+          .personInoutTable1.bodyWrapper.scrollHeight)
+        if (this.$refs.personInoutTable1.bodyWrapper.scrollTop >= _scrollTop - 5) {
+
+          this.timeoutScroll = setTimeout(() => {
+            this.$refs.personInoutTable1.bodyWrapper.scrollTop = 0
+
+            this.timeoutScroll = setTimeout(() => {
+              this.currentScroll = 0
+              this.scrollTable()
+            }, 5000) //120秒
+
+          }, 5000) //120秒
+        } else {
+          this.$refs.personInoutTable1.bodyWrapper.scrollTop += 5
+
+          this.currentScroll = this.currentScroll + 5
+          if (this.currentScroll >= this.singleHeight * 5) {
+            this.timeoutScroll = setTimeout(() => {
+              this.currentScroll = 0
+              this.scrollTable()
+            }, 5000) //120秒
+          } else {
+            this.timeoutScroll = setTimeout(() => {
+              this.scrollTable()
+            }, 50) //120秒
+          }
+        }
+
+
+
       }
     },
 
