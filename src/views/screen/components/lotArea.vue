@@ -18,7 +18,7 @@
 
     </div>
     <div v-show="showTadiaoInfo" class="divDataTadiao">
-      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeTadiaoInfoHandle" title="关闭" />
+      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(1)" title="关闭" />
       <div style="padding-bottom: 5px;font-size: 14px;">塔吊</div>
       <div>塔吊高度：<span id="td_tdgd">{{tdData.tdgd}}</span> 米</div>
       <div>大臂角度：<span id="td_dbjd">{{tdData.dbjd}}</span> 度</div>
@@ -27,13 +27,39 @@
       <div>上报时间：<span id="td_sbsj">{{tdData.sbsj}}</span></div>
     </div>
     <div v-show="showShenjiangjiInfo" class="divDataShenJiangJi">
-      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeShenjiangjiInfoHandle" title="关闭" />
+      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(2)" title="关闭" />
       <div style="padding-bottom: 5px;font-size: 14px;">升降机</div>
       <div>高度：<span id="sjj_gd">{{sjjData.sjjgd}}</span> 米</div>
       <div>楼层：<span id="sjj_lc">{{sjjData.sjjlc}}</span> 层</div>
       <div>笼门状态：<span id="sjj_lmzt">{{sjjData.mzt}}</span> </div>
       <div>上报时间：<span id="sjj_sbsj">{{sjjData.sbsj}}</span></div>
     </div>
+
+    <div v-show="showWeatherInfo" class="divDataWeather">
+      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(3)" title="关闭" />
+      <div style="padding-bottom: 5px;font-size: 14px;">环境检测仪</div>
+      <div>温度：<span>{{weather_data.temp}}</span> °C</div>
+      <div>湿度：<span>{{weather_data.h}}</span> %</div>
+      <div>噪声：<span>{{weather_data.noise}}</span> db</div>
+      <div>扬尘：<span>{{weather_data.pm10}}</span> ug/m</div>
+      <div>PM2.5：<span>{{weather_data.pm2_5}}</span> ug/m</div>
+      <div>风速：<span>{{ weather_data.wind }}</span> 级</div>
+    </div>
+    <div v-show="showShuibiaoInfo" class="divDataShuibiao">
+      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(4)" title="关闭" />
+      <div style="padding-bottom: 5px;font-size: 14px;">水表</div>
+      <div>当前用量：<span>{{shuibiaoTotalUsed}}</span> 吨</div>
+
+    </div>
+    <div v-show="showDianbiaoInfo" class="divDataDianbiao">
+      <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(5)" title="关闭" />
+      <div style="padding-bottom: 5px;font-size: 14px;">电表</div>
+      <div>当前用量：{{dianbiaoTotalUsed}} 度</div>
+
+    </div>
+
+
+
     <!-- <div class="bim-toolbar">
       <div class="bim-toolbar1">
         <div>
@@ -197,10 +223,10 @@
 
         // 判断类型
         if (currObj.type === 'Group') {
-          console.log('currObj', currObj)
+          // console.log('currObj', currObj)
           var children = currObj.children;
           deleteGroup(currObj);
-          console.log('currObj1', currObj)
+          // console.log('currObj1', currObj)
           // for (var i = 0; i < children.length; i++) {
           //   // console.log('children', children[i])
           //   deleteGroup(children[i]);
@@ -359,12 +385,25 @@
           sbsj: '-',
           mzt: '-'
         },
+        shuibiaoTotalUsed: '-',
+        dianbiaoTotalUsed: '-',
         indexedDBWaitList: new Map(),
         worker: new Worker("/static/workIndexedDB.js"),
         lablePosisionList: {},
 
         showTadiaoInfo: true,
-        showShenjiangjiInfo: true
+        showShenjiangjiInfo: true,
+        showWeatherInfo: true,
+        showShuibiaoInfo: true,
+        showDianbiaoInfo: true,
+        weather_data: {
+          temp: '-',
+          h: '-',
+          noise: '-',
+          wind: '-',
+          pm10: '-',
+          pm2_5: '-'
+        },
       }
     },
     computed: {
@@ -504,6 +543,13 @@
             // console.log('QueryDatumMeter - data', data)
             data.forEach(datum => {
               this.datumMeterMap.set(datum.device_id, datum)
+
+              if (datum.device_type === 10) { // 电表
+                this.dianbiaoTotalUsed = datum.total_used
+              } else if (datum.device_type === 11) { // 水表
+                this.shuibiaoTotalUsed = datum.total_used
+              }
+
             })
             resolve()
           }).catch((e) => {
@@ -622,19 +668,11 @@
         _h = _h + "PM2.5：" + _data.pm2_5 + "ug/m &nbsp;&nbsp;&nbsp;&nbsp;"
         _h = _h + "风速：" + _data.wind + "级 <br/>"
         _h = _h + "<span style='font-size:10px;'>服务器时间：" + moment(_data.cdate).format("HH:mm:ss") + "</span><br/>"
-
-        $('#divHJJCY').html(_h)
-        // this.$refs.weather.updateData(_data)
+        this.weather_data = _data
+        // $('#divHJJCY').html(_h)
 
       },
-      //   onWindowResize() {
-      //     // console.log("onWindowResize")
-      //     this.camera.aspect = (window.innerWidth - 40) / (window.innerHeight - 34);
-      //     this.camera.updateProjectionMatrix();
-      //     this.renderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
-      //     this.renderer.render(this.scene, this.camera);
 
-      //   },
       unitAllRemove() {},
       unitGroupAddDB(modelData) {
         // console.log('modelData', modelData)
@@ -796,11 +834,14 @@
           this.$store.dispatch('QueryDatumMeter', param).then((deviceList) => {
             deviceList.forEach(device => {
               // this.datumMeterMap.set(datum.device_id, datum)
-              if (device.device_type === 10) {
+              if (device.device_type === 10) { // 电表
                 // console.log('device1234', device)
+                this.dianbiaoTotalUsed = device.total_used
                 $('#divDianBiao' + device.device_id).html(device.total_used)
-              } else if (device.device_type === 11) {
-                // console.log('deviceYD10000SB03', device)
+
+              } else if (device.device_type === 11) { // 水表
+                console.log('shuibiaoTotalUsed', device.total_used)
+                this.shuibiaoTotalUsed = device.total_used
                 $('#divShuiBiao' + device.device_id).html(device.total_used)
                 // $('#divShuiBiaoYD10000SB03').html(device.total_used)
               }
@@ -918,22 +959,32 @@
         if (device.DEVICE_TYPE === 10) {
           let aaa = this.datumMeterMap.get(device.DEVICE_ID)
           // console.log('aaa', aaa)
-          thisbt.innerHTML = "<div class='css2-txt-box'>用电量：<span id='divDianBiao" + device.DEVICE_ID + "'> " + aaa
-            .total_used +
-            "</span> 度</div><img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+          thisbt.innerHTML =
+            "<div class='css2-txt-box-name'>电表</span><img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+
+          // thisbt.innerHTML = "<div class='css2-txt-box'>电表：<span id='divDianBiao" + device.DEVICE_ID + "'> " + aaa
+          //   .total_used +
+          //   "</span> 度</div><img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
           thisbt.id = "tipDianBiao"
         } else if (device.DEVICE_TYPE === 11) {
           // 水表
           // let DeviceID = 'YD10000SB03'
           let bbb = this.datumMeterMap.get(device.DEVICE_ID)
           thisbt.id = "tipShuiBiao"
-          thisbt.innerHTML = "<div class='css2-txt-box'>用水量：<span id='divShuiBiao" + device.DEVICE_ID + "'> " + bbb
-            .total_used +
-            "</span> 吨</div><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+          thisbt.innerHTML =
+            "<div class='css2-txt-box-name'>水表</span><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+          // thisbt.innerHTML = "<div class='css2-txt-box'>水表：<span id='divShuiBiao" + device.DEVICE_ID + "'> " + bbb
+          //   .total_used +
+          //   "</span> 吨</div><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
         } else if (device.DEVICE_TYPE === 15) {
-          let _h = "<div class='css2-txt-box2'>"
+
+          let _h = "<div class='css2-txt-box2-name'>"
           _h = _h + "<span id='divHJJCY'> 环境检测仪 </span>"
           _h = _h + "</div><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+
+          // let _h = "<div class='css2-txt-box2'>"
+          // _h = _h + "<span id='divHJJCY'> 环境检测仪 </span>"
+          // _h = _h + "</div><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
           thisbt.id = "tipHJJCY"
           thisbt.innerHTML = _h
         }
@@ -941,7 +992,7 @@
 
         thisbt.className = 'css2-txt-flag'
         thisbt.style.pointerEvents = 'auto'
-        thisbt.style.marginTop = '-3em';
+        thisbt.style.marginTop = '-2em';
         thisbt.onclick = () => {
 
         }
@@ -1115,11 +1166,25 @@
           })
         })
       },
-      closeTadiaoInfoHandle() {
-        this.showTadiaoInfo = false;
-      },
-      closeShenjiangjiInfoHandle() {
-        this.showShenjiangjiInfo = false;
+      closeInfoAreaHandle(type) {
+        switch (type) {
+          case 1:
+            this.showTadiaoInfo = false
+            break;
+          case 2:
+            this.showShenjiangjiInfo = false
+            break;
+          case 3:
+            this.showWeatherInfo = false
+            break;
+          case 4:
+            this.showShuibiaoInfo = false
+            break;
+          case 5:
+            this.showDianbiaoInfo = false
+            break;
+        }
+
       }
     }
   }
