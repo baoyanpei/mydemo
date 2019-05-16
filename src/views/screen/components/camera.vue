@@ -68,14 +68,15 @@
             project_id: 10000
           }
           this.$store.dispatch('QueryDatumMeter', param).then((data) => {
-            // console.log('QueryDatumMeter - data', data)
+            
             data.forEach(datum => {
-              if (datum.device_type === 16 && datum.video_url.length > 0) {
+              if (datum.device_type === 16 && datum.video_url.length > 0 && datum.stable === 1) {
+                
                 this.cameraURList.push(datum)
               }
 
             })
-
+            // console.log('this.cameraURList', this.cameraURList)
             resolve()
           }).catch((e) => {
             console.log(e)
