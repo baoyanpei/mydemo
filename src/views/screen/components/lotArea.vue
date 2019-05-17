@@ -10,6 +10,8 @@
       v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
       v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
+    <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
+    
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
       <!-- <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div> -->
@@ -93,6 +95,7 @@
   } from 'vuex'
   import loadModel from "../../loT/components/loadModel2"
   import mqttLocation from "../../loT/components/mqttLocation"
+  import historyLocation from "../../loT/components/historyLocation"
   import mqttBim from "../../loT/components/mqttBim"
   import {
     Loading
@@ -341,7 +344,8 @@
     components: {
       loadModel,
       mqttLocation,
-      mqttBim
+      mqttBim,
+      historyLocation
       // ModelDetail
     },
     data() {
@@ -485,7 +489,7 @@
         sectionGroup.position.set(80, 26, 0); // 红 绿
       };
       LoadSection(sectionGroup, 67)
-
+      this.queryPersonGroup()
       this.addDataToDB()
     },
     beforeDestroy() {
@@ -732,6 +736,7 @@
 
         if (this.addedUnit == this.totalUnit) {
           this.addDeviceData()
+          this.$refs.historyLocation.getLocationHisData()
           this.loadingText = `加载完成 ${this.addedUnit}/${this.totalUnit}`
           // this.loadingDialog.close()
         }
@@ -1031,8 +1036,8 @@
         // }
         //editPerson(obj)
         // obj.name = obj.name + "_1";
-        obj.x = obj.x1;
-        obj.y = obj.y1;
+        // obj.x = obj.x1;
+        // obj.y = obj.y1;
         this.editPerson(obj)
       },
       editPerson(obj) {
@@ -1042,10 +1047,11 @@
           ex.position.x = obj.x / 1000;
           // ex.position.y = obj.y/1000-38.9;
           ex.position.y = obj.y / 1000;
-          let thisb = $('#' + obj.labid)[0];
+          let thisb = $('#' + obj.mac)[0];
           if (thisb != undefined) {
             thisb.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
           }
+          ex.userData.INFO = obj
         } else {
           let personGeometry = new THREE.SphereGeometry(0.2);
           //颜色根据传入的信息变化（白，蓝，黄，红）
@@ -1079,6 +1085,7 @@
           //var personMaterial = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
           //var personMaterial = new THREE.MeshLambertMaterial({color: obj.hatColor});
           let person = new THREE.Mesh(personGeometry, personMaterial);
+          person.userData.INFO = obj
           person.geometry.verticesNeedUpdate = true;
           person.geometry.normalsNeedUpdate = true;
 
@@ -1087,7 +1094,7 @@
           thisbt.className = 'locationLabel'
           thisbt.style.marginTop = '-1em';
           thisbt.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
-          thisbt.id = obj.labid;
+          thisbt.id = obj.mac;
           thisbt.style.pointerEvents = 'auto'
           thisbt.onclick = async () => {
             // 查询用户详细信息
@@ -1185,7 +1192,35 @@
             break;
         }
 
-      }
+      },
+      queryPersonGroup() { //遍历personGroup 以获取在线人员
+        setTimeout(() => {
+
+          let meshList = personGroup.children
+          console.log('meshList', meshList)
+          let i = 0
+          for (let mesh of meshList) {
+            let _INFO = mesh.userData.INFO
+            if (_INFO !== '') {
+              console.log('_INFO', _INFO)
+              const date1 = moment(_INFO.datatime);
+              const date2 = moment();
+              const diffMinites = date2.diff(date1, 'minute'); //计算相差的分钟数 
+              if (diffMinites > 30) { // 超过的分钟数
+                let _childrens = mesh.children
+                _childrens.forEach(label => {
+                  mesh.remove(label)
+                })
+                personGroup.remove(mesh)
+                // personGroup.children.splice(i, 1);
+                console.log('删除_INFO', _INFO)
+              }
+            }
+            i++
+          }
+          this.queryPersonGroup()
+        }, 60 * 1000)
+      },
     }
   }
 

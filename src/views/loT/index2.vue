@@ -10,6 +10,7 @@
       v-on:unitGroupAddDB="unitGroupAddDB" v-on:unitRemove="unitRemove" v-on:addLoadingText="addLoadingText"
       v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
+    <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
       <!-- <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div> -->
@@ -69,6 +70,7 @@
   } from 'vuex'
   import loadModel from "./components/loadModel2"
   import mqttLocation from "./components/mqttLocation"
+  import historyLocation from "./components/historyLocation"
   import mqttBim from "./components/mqttBim"
   import {
     Loading
@@ -198,10 +200,10 @@
 
         // 判断类型
         if (currObj.type === 'Group') {
-          console.log('currObj', currObj)
+          // console.log('currObj', currObj)
           var children = currObj.children;
           deleteGroup(currObj);
-          console.log('currObj1', currObj)
+          // console.log('currObj1', currObj)
           // for (var i = 0; i < children.length; i++) {
           //   // console.log('children', children[i])
           //   deleteGroup(children[i]);
@@ -238,7 +240,7 @@
   let mainCanvas = null
 
 
-  
+
 
   animate();
 
@@ -315,6 +317,7 @@
     components: {
       loadModel,
       mqttLocation,
+      historyLocation,
       mqttBim
       // ModelDetail
     },
@@ -442,15 +445,14 @@
         scene.add(sectionGroup)
         sectionGroup.position.set(80, 26, 0); // 红 绿
       };
-      LoadSection(sectionGroup,67)
-
+      LoadSection(sectionGroup, 67)
+      this.queryPersonGroup()
       this.addDataToDB()
     },
     beforeDestroy() {
       // $('#loT-index-canvas3d').empty()
       // scene.remove(showGroup)
       clearScene()
-      console.log('13213scene', scene)
       scene.remove(unitGroups)
       scene.remove(showGroup)
       scene.remove(towerGroup)
@@ -691,6 +693,7 @@
 
         if (this.addedUnit == this.totalUnit) {
           this.addDeviceData()
+          this.$refs.historyLocation.getLocationHisData()
           this.loadingText = `加载完成 ${this.addedUnit}/${this.totalUnit}`
           // this.loadingDialog.close()
         }
@@ -977,21 +980,25 @@
         // }
         //editPerson(obj)
         // obj.name = obj.name + "_1";
-        obj.x = obj.x1;
-        obj.y = obj.y1;
+        // obj.x = obj.x1;
+        // obj.y = obj.y1;
         this.editPerson(obj)
       },
       editPerson(obj) {
+        // console.log('obj', obj)
         let ex = personGroup.getObjectByName(obj.name, true)
         if (ex) {
+
           // ex.position.x = obj.x/1000-20.8;
           ex.position.x = obj.x / 1000;
           // ex.position.y = obj.y/1000-38.9;
           ex.position.y = obj.y / 1000;
-          let thisb = $('#' + obj.labid)[0];
+          let thisb = $('#' + obj.mac)[0];
           if (thisb != undefined) {
             thisb.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
           }
+          ex.userData.INFO = obj
+          // console.log('exexex', ex)
         } else {
           let personGeometry = new THREE.SphereGeometry(0.2);
           //颜色根据传入的信息变化（白，蓝，黄，红）
@@ -1025,22 +1032,21 @@
           //var personMaterial = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
           //var personMaterial = new THREE.MeshLambertMaterial({color: obj.hatColor});
           let person = new THREE.Mesh(personGeometry, personMaterial);
+          person.userData.INFO = obj
           person.geometry.verticesNeedUpdate = true;
           person.geometry.normalsNeedUpdate = true;
-
           // 创建DIV跟随
           let thisbt = document.createElement('button');
           thisbt.className = 'locationLabel'
           thisbt.style.marginTop = '-1em';
           thisbt.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
-          thisbt.id = obj.labid;
+          thisbt.id = obj.mac;
           thisbt.style.pointerEvents = 'auto'
           thisbt.onclick = async () => {
             // 查询用户详细信息
             // console.log('obj', obj)
             // let mac = 
             const _personInfoList = await this.getPersonInfo(obj.mac)
-            console.log('_personInfoList', _personInfoList)
             if (_personInfoList.length === 0) {
               this.$message({
                 message: '未查询到此人员信息',
@@ -1081,6 +1087,7 @@
           person.name = obj.name;
           person.add(lable)
           //person.visible = inBuilding(person,boxes[floorIndex-1]);
+          console.log('person', person)
           personGroup.add(person);
         }
       },
@@ -1111,7 +1118,35 @@
             resolve([])
           })
         })
-      }
+      },
+      queryPersonGroup() { //遍历personGroup 以获取在线人员
+        setTimeout(() => {
+
+          let meshList = personGroup.children
+          console.log('meshList', meshList)
+          let i = 0
+          for (let mesh of meshList) {
+            let _INFO = mesh.userData.INFO
+            if (_INFO !== '') {
+              console.log('_INFO', _INFO)
+              const date1 = moment(_INFO.datatime);
+              const date2 = moment();
+              const diffMinites = date2.diff(date1, 'minute'); //计算相差的分钟数 
+              if (diffMinites > 60) { // 超过的分钟数
+                let _childrens = mesh.children
+                _childrens.forEach(label => {
+                  mesh.remove(label)
+                })
+                personGroup.remove(mesh)
+                // personGroup.children.splice(i, 1);
+                console.log('删除_INFO', _INFO)
+              }
+            }
+            i++
+          }
+          this.queryPersonGroup()
+        }, 60 * 1000)
+      },
     }
   }
 

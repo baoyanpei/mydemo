@@ -18,7 +18,7 @@
             <div class="text">门禁管理</div>
           </div>
           <div class="main">
-            <GateArea ref="gateArea"></GateArea>
+            <GateArea ref="gateArea" v-on:gateMessage="gateMessage"></GateArea>
           </div>
         </div>
         <div class="duty-area">
@@ -203,6 +203,9 @@
       },
       inoutTotalPerson(total) {
         this.totalInoutPerson = total
+      },
+      gateMessage() {
+
       }
     }
   }

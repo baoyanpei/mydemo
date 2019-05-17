@@ -1,7 +1,8 @@
 import {
   queryDatumMeter,
   queryDatumMeterDays,
-  queryDatumMeterHours
+  queryDatumMeterHours,
+  queryLocationHis
 } from '@/api/datum'
 
 const datum = {
@@ -45,6 +46,19 @@ const datum = {
     }, param) {
       return new Promise((resolve, reject) => {
         queryDatumMeterHours(param).then(response => {
+          //   commit('SET_PROJECT_PERSON_LIST', response.data)
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 查询项目定位历史信息
+    QueryLocationHis({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryLocationHis(param).then(response => {
           //   commit('SET_PROJECT_PERSON_LIST', response.data)
           resolve(response.data)
         }).catch(error => {

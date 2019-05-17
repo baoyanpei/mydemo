@@ -131,8 +131,8 @@
         // console.log('scrollTop', this.$refs.personInoutTable1.bodyWrapper.scrollTop, )
 
         let _scrollTop = this.singleHeight * this.personInoutList.length - this.singleHeight * 5
-        console.log('_scrollTop', _scrollTop, this.$refs.personInoutTable1.bodyWrapper.scrollTop, this.$refs
-          .personInoutTable1.bodyWrapper.scrollHeight)
+        // console.log('_scrollTop', _scrollTop, this.$refs.personInoutTable1.bodyWrapper.scrollTop, this.$refs
+          // .personInoutTable1.bodyWrapper.scrollHeight)
         if (this.$refs.personInoutTable1.bodyWrapper.scrollTop >= _scrollTop - 5) {
 
           this.timeoutScroll = setTimeout(() => {

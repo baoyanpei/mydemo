@@ -63,3 +63,24 @@ export function queryDatumMeterHours(data) {
     data: data
   })
 }
+
+// 查询项目定位历史信息
+/*
+/api/datum/meter
+method：query_location_his
+查询项目定位历史信息
+参数：
+project_id:
+bt:起时间
+et:止时间
+return {"status":"success","msg":'',"data":[]}
+
+*/
+export function queryLocationHis(data) {
+  // console.log("api", data)
+  return request({
+    url: 'api/datum/meter',
+    method: 'post',
+    data: data
+  })
+}
