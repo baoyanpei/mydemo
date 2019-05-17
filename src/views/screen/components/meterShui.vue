@@ -211,7 +211,7 @@
           let _hourMap = new Map()
           dataList.forEach((item, index) => {
             // this.option.xAxis.data.push(moment(item.hour, 'YYYYMMDDHHMM').format('HH'))
-            let _h = moment(item.hour, 'YYYYMMDDHHMM').format('h')
+            let _h = moment(item.hour, 'YYYYMMDDHHMM').format('H')
             _hourMap.set(_h, item)
             // this.option.series[0].data.push(used)
             // loading.close();

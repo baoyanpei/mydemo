@@ -211,11 +211,12 @@
           let _hourMap = new Map()
           dataList.forEach((item, index) => {
             // this.option.xAxis.data.push(moment(item.hour, 'YYYYMMDDHHMM').format('HH'))
-            let _h = moment(item.hour, 'YYYYMMDDHHMM').format('h')
+            let _h = moment(item.hour, 'YYYYMMDDHHMM').format('H')
             _hourMap.set(_h, item)
             // this.option.series[0].data.push(used)
             // loading.close();
           })
+          console.log('_hourMap', _hourMap)
           for (let i = btHH; i <= etHH; i++) {
             this.option.xAxis.data.push(i)
             let _hourData = _hourMap.get(i.toString())
