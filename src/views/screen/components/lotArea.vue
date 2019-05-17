@@ -11,7 +11,7 @@
       v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
-    
+
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
       <!-- <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div> -->
@@ -33,7 +33,7 @@
       <div style="padding-bottom: 5px;font-size: 14px;">升降机</div>
       <div>高度：<span id="sjj_gd">{{sjjData.sjjgd}}</span> 米</div>
       <div>楼层：<span id="sjj_lc">{{sjjData.sjjlc}}</span> 层</div>
-      <div>笼门状态：<span id="sjj_lmzt">{{sjjData.mzt}}</span> </div>
+      <div>笼门：<span id="sjj_lmzt">{{sjjData.mzt}}</span> </div>
       <div>上报时间：<span id="sjj_sbsj">{{sjjData.sbsj}}</span></div>
     </div>
 
@@ -1221,6 +1221,31 @@
           this.queryPersonGroup()
         }, 60 * 1000)
       },
+      gateData(data) {
+        console.log('gateData', data)
+        //direction: 1 进 2 出
+        if (data.direction === 2) {
+          let meshList = personGroup.children
+          console.log('meshList', meshList)
+          let i = 0
+          for (let mesh of meshList) {
+            let _INFO = mesh.userData.INFO
+            if (_INFO !== '') {
+              console.log('_INFO', _INFO)
+              if (_INFO.name === data.name) { // 超过的分钟数
+                let _childrens = mesh.children
+                _childrens.forEach(label => {
+                  mesh.remove(label)
+                })
+                personGroup.remove(mesh)
+                // personGroup.children.splice(i, 1);
+                console.log('删除_INFO-121331', _INFO)
+              }
+            }
+            i++
+          }
+        }
+      }
     }
   }
 

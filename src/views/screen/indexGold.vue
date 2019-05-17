@@ -48,7 +48,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <LotArea></LotArea>
+              <LotArea ref="lotArea"></LotArea>
             </div>
           </div>
         </el-row>
@@ -204,8 +204,9 @@
       inoutTotalPerson(total) {
         this.totalInoutPerson = total
       },
-      gateMessage() {
-
+      gateMessage(data) {
+        console.log('gateMessage',data)
+        this.$refs.lotArea.gateData(data)
       }
     }
   }

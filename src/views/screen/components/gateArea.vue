@@ -96,6 +96,7 @@
           // console.log('this.topicCount', this.topicCount)
         } else {
           this.mqttUserInfo(message.payloadString)
+          
         }
 
       },
@@ -140,6 +141,7 @@
         const _data = JSON.parse(data)
         const _gateID = `gate${_data.door_no}`
         this.$refs[_gateID].updateData(_data)
+        this.$emit('gateMessage', _data)
       },
       getProjectGatePerson() {
         if (this.project_id !== null) {
