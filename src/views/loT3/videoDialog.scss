@@ -1,0 +1,25 @@
+.video-detail {
+
+  // opacity: 0.7;
+  #myPlayer {
+    max-width: 560px;
+    height: 380px;
+    // margin-left: -45px;
+  }
+
+  .el-dialog__header {
+    padding: 5px 20px 5px;
+    background-color: #333333;
+  }
+
+  .el-dialog__title {
+    line-height: 24px;
+    font-size: 12px;
+    color: #FFFFFF;
+  }
+
+  .el-dialog__body {
+    background-color: #000000;
+    color: #FFFFFF
+  }
+}
