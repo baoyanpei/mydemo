@@ -13,10 +13,7 @@
     <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
     <div class="model3d-progress">
-      <!-- <div>加载 {{addedUnit}}/{{totalUnit}} 个组件</div> -->
       <div>{{loadingText}}</div>
-      <!-- <el-progress :percentage="percentage" color="#6ac044" :show-text="showText"></el-progress> -->
-
     </div>
     <div class="divDataTadiao">
       <div style="padding-bottom: 5px;font-size: 14px;">塔吊</div>
@@ -87,7 +84,7 @@
   // const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码 
   // const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
 
-  const TOWER_HEIGHT = 75 //塔吊高度
+  // const TOWER_HEIGHT = 75 //塔吊高度
   // console.log('12313123123')
   window.onresize = onWindowResize;
 
@@ -187,7 +184,8 @@
     // 从scene中删除模型并释放内存
     console.log('scene1', scene)
     $(".tip-device").remove()
-
+    $('.divDataTadiao').hide()
+    $('.divDataShenJiangJi').hide()
     let meshList = personGroup.children
     for (let mesh of meshList) {
       let _childrens = mesh.children
@@ -335,12 +333,12 @@
         saveData: null,
         lablePosisionList: {},
         modMap: new Map(),
-        towerHeight: TOWER_HEIGHT, // 塔吊高度 28米
+        towerHeight: 0, // 塔吊高度 28米
 
         deviceMap: new Map(),
         datumMeterMap: new Map(),
         tdData: {
-          tdgd: TOWER_HEIGHT,
+          tdgd: 0,
           dbjd: '-',
           xcjl: '-',
           dgxc: '-',
@@ -401,28 +399,40 @@
     beforeDestroy() {
       this.clearData()
     },
+
+
     destroyed() {},
     methods: {
       async init() {
         await this.initDevlist()
         // window.onresize = this.onWindowResize;
 
-        // this.mqttConnect()
-        if (this.project_id === 10000) {
 
-          towerGroup.position.set(60, 22, 0); // 红 绿
-          modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
-          // {"tower_x":60,"tower_y":22,"tower_z":0,"height":75,"mqtt":'BIM/Sets/zhgd/DEYE/18090311/#'}
+        this.datumMeterMap.forEach(datum => {
 
-          // 升降机
-          elevatorGroup.position.set(78.5, 24, 0);
-          modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
-          // {"elevator_x":78.5,"elevator_y":24,"elevator_z":0,"section_x":78.5,"section_y":24,"section_z":0,"section_height":75,"mqtt":'BIM/Sets/zhgd/DEYE/18090302/#'}
+          if (datum.device_type === 13) { // 塔机
 
-          sectionGroup.position.set(80, 26, 0); // 红 绿
-          LoadSection(sectionGroup, 67)
-        }
+            // {"tower_x":60,"tower_y":22,"tower_z":0,"height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090311/#"}
+            $('.divDataTadiao').show()
+            let paramsJson = JSON.parse(datum.params_json)
+            this.towerHeight = paramsJson.height
+            this.tdData.tdgd = this.towerHeight
+            towerGroup.position.set(paramsJson.tower_x, paramsJson.tower_y, paramsJson.tower_z); // 红 绿
+            modifyTower(towerGroup, `T${datum.device_id}`, this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+          } else if (datum.device_type === 12) { // 升降机
+            $('.divDataShenJiangJi').show()
+            // console.log('datum', datum)
+            let paramsJson = JSON.parse(datum.params_json)
+            // console.log('paramsJson', paramsJson)
+            elevatorGroup.position.set(paramsJson.elevator_x, paramsJson.elevator_y, paramsJson.elevator_z);
+            modifyElevator(elevatorGroup, `E${datum.device_id}`, 0, false) //名称，高度，门的开启状态
 
+            // {"elevator_x":78.5,"elevator_y":24,"elevator_z":0,"section_x":80,"section_y":26,"section_z":0,"section_height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
+
+            sectionGroup.position.set(paramsJson.section_x, paramsJson.section_y, paramsJson.section_z); // 红 绿
+            LoadSection(sectionGroup, paramsJson.section_height)
+          }
+        })
 
         this.queryPersonGroup()
         this.addDataToDB()
@@ -462,6 +472,7 @@
             method: 'devlist',
             project_id: this.project_id
           }
+          this.datumMeterMap = new Map()
           this.$store.dispatch('QueryDatumMeter', param).then((data) => {
             // console.log('QueryDatumMeter - data', data)
             data.forEach(datum => {
@@ -505,7 +516,7 @@
             // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
             // console.log('RealtimeDataCrane', _data)
             if (towerGroup !== null) {
-              modifyTower(towerGroup, "T1", this.towerHeight, _data.Angle, _data.RRange, _data
+              modifyTower(towerGroup, `T${_data.HxzId}`, this.towerHeight, _data.Angle, _data.RRange, _data
                 .Height); //名称，高度，大臂角度，小车距离，吊钩线长
 
               $("#td_dbjd").html(_data.Angle)
@@ -535,7 +546,7 @@
             if (elevatorGroup === null) {
               return
             }
-            modifyElevator(elevatorGroup, "E1", _data.Height, doorOpen) //名称，高度，门的开启状态
+            modifyElevator(elevatorGroup, `E${_data.HxzId}`, _data.Height, doorOpen) //名称，高度，门的开启状态
 
             $("#sjj_gd").html(_data.Height)
             $("#sjj_lc").html(_data.Floor)
