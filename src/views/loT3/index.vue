@@ -132,14 +132,12 @@
 
   };
 
+  //窗口变动触发的函数
   function onWindowResize() {
-    if (renderer !== null) {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.render(scene, camera);
-    }
-
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.render(scene, camera);
   }
 
   //光源
@@ -172,13 +170,7 @@
     scene.add(axesHelper);
   }
 
-  //窗口变动触发的函数
-  function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.render(scene, camera);
-  }
+
 
   function render() {
     if (renderer !== null) {
@@ -372,9 +364,6 @@
       project_id() {
         return this.$store.state.project.project_id
       },
-      modelMap() {
-        return this.$store.state.model3d.modelMap
-      },
     },
     created() {
       IndexedDB.openDB('tbbim', 1, this.modelDB, {
@@ -423,12 +412,12 @@
 
           towerGroup.position.set(60, 22, 0); // 红 绿
           modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
-
+          // {"tower_x":60,"tower_y":22,"tower_z":0,"height":75,"mqtt":'BIM/Sets/zhgd/DEYE/18090311/#'}
 
           // 升降机
           elevatorGroup.position.set(78.5, 24, 0);
           modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
-
+          // {"elevator_x":78.5,"elevator_y":24,"elevator_z":0,"section_x":78.5,"section_y":24,"section_z":0,"section_height":75,"mqtt":'BIM/Sets/zhgd/DEYE/18090302/#'}
 
           sectionGroup.position.set(80, 26, 0); // 红 绿
           LoadSection(sectionGroup, 67)
@@ -600,14 +589,14 @@
         // this.$refs.weather.updateData(_data)
 
       },
-      onWindowResize() {
-        // console.log("onWindowResize")
-        this.camera.aspect = (window.innerWidth - 40) / (window.innerHeight - 34);
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
-        this.renderer.render(this.scene, this.camera);
+      // onWindowResize() {
+      //   // console.log("onWindowResize")
+      //   this.camera.aspect = (window.innerWidth - 40) / (window.innerHeight - 34);
+      //   this.camera.updateProjectionMatrix();
+      //   this.renderer.setSize(window.innerWidth - 40, window.innerHeight - 34);
+      //   this.renderer.render(this.scene, this.camera);
 
-      },
+      // },
       unitAllRemove() {},
       unitGroupAddDB(modelData) {
         // console.log('modelData', modelData)
@@ -685,23 +674,7 @@
       },
 
       unitRemove(unit) {
-        // console.log('unit123', unit)
-        const _data = this.modelMap.get(unit.ID)
-        if (_data === undefined) {
-          return;
-        }
-        const _meshID = _data.meshID
-        const _groupIndex = _data.groupIndex
-        let i = 0
-        // console.log('this.unitGroups[gi].children', this.unitGroups[gi].children)
-        const _unitGroup = this.unitGroups[_groupIndex]
-        for (let mesh of _unitGroup.children) {
-          if (mesh.id === _meshID) {
-            _unitGroup.children.splice(i, 1);
-            break;
-          }
-          i++
-        }
+
       },
       initMouse() {
         document.addEventListener('mousedown', (event) => {
