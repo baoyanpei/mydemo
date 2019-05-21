@@ -42,14 +42,17 @@
               <font-awesome-icon icon="magic" size="2x" />
             </el-button>
           </el-tooltip>
+
         </div>
       </div>
 
       <div class="bim-toolbar2">
         <div>
-          <!-- <el-button @click="addDeviceData">
-                  <font-awesome-icon icon="magic" size="2x" />
-                </el-button> -->
+          <el-tooltip class="item" effect="dark" content="清理scene" placement="top">
+            <el-button @click="clearSceneHandle">
+              <font-awesome-icon icon="magic" size="2x" />
+            </el-button>
+          </el-tooltip>
         </div>
       </div>
     </div>
@@ -97,14 +100,13 @@
   let stats = new Stats()
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
   // document.body.appendChild(this.stats.dom);
+  let mainCanvas = null
 
   let directionalLight = null
   let ambient = null
   let renderer = null
 
   let controls = null
-  // var walls = new THREE.Group();
-  // let unitGroups = new Array(20)
   let showGroup = null
   let unitGroups = null
   let deviceGroup = null
@@ -191,56 +193,41 @@
 
   function clearScene() {
     // 从scene中删除模型并释放内存
-    console.log('scene', scene)
-    let len = scene.children.length
-    console.log('len', len)
-    if (len > 0) {
-      for (var i = 0; i < len; i++) {
-        var currObj = scene.children[i];
+    console.log('scene1', scene)
+    $(".tip-device").remove()
 
-        // 判断类型
-        if (currObj.type === 'Group') {
-          // console.log('currObj', currObj)
-          var children = currObj.children;
-          deleteGroup(currObj);
-          // console.log('currObj1', currObj)
-          // for (var i = 0; i < children.length; i++) {
-          //   // console.log('children', children[i])
-          //   deleteGroup(children[i]);
-          //   // console.log('21312313',currObj,children[i])
-          //   currObj.remove(children[i])
-          // }
-
-        } else {
-          deleteGroup(currObj);
-        }
-        // scene.remove(currObj);
+    let meshList = personGroup.children
+    for (let mesh of meshList) {
+      let _childrens = mesh.children
+      while (_childrens.length) {
+        let label = _childrens[0]
+        mesh.remove(label)
       }
     }
+
+    let len = scene.children.length
+    if (len > 0) {
+      scene.children.forEach((currObj) => {
+        // 判断类型
+        if (currObj.type === 'Group') {
+          let childrens = currObj.children;
+          while (childrens.length) {
+            let item = childrens[0]
+            currObj.remove(item)
+            if (item instanceof THREE.Mesh) {
+              item.geometry.dispose()
+              item.material.dispose(); // 删除材质
+            }
+
+          }
+        }
+      })
+    }
+    console.log('scene2', scene)
   }
 
-  //go
-  // 删除group，释放内存
-  function deleteGroup(group) {
-    //console.log(group);
-    if (!group) return;
-    // 删除掉所有的模型组内的mesh
-    group.traverse(function (item) {
-      if (item instanceof THREE.Mesh) {
 
-        item.geometry.dispose(); // 删除几何体
-        item.material.dispose(); // 删除材质
-      }
-
-    });
-  }
-
-
-
-  let mainCanvas = null
-
-
-
+  
 
   animate();
 
@@ -389,96 +376,80 @@
     },
     watch: {
       project_id(curVal, oldVal) {
+        if (oldVal !== null) {
+          this.clearData()
+        }
+        if (curVal !== null) {
+          this.init()
+        }
 
       },
     },
 
     async mounted() {
 
-      // if (mainCanvas ===null){
+      this.initMouse()
       initThree()
-      // }
-
-      // this.loadingDialog = this.$loading({
-      //   lock: false,
-      //   text: this.loadtext,
-      //   spinner: 'el-icon-loading',
-      //   background: 'rgba(0, 0, 0, 0.3)',
-      //   customClass: 'loading-class',
-      //   // target: document.querySelector('.treeDiv')
-      // });
-      // console.log('indexed_ver', this.indexed_ver)
       let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
       // console.log('IndexDBDataVer', _IndexDBDataVer)
       if (this.indexed_ver !== _IndexDBDataVer) {
         await this.clearDB()
         Cookies.set('IndexDBDataVer', this.indexed_ver)
       }
-      await this.initDevlist()
 
-      this.initMouse()
-
-
-      // window.onresize = this.onWindowResize;
-
-      // this.mqttConnect()
-      towerGroup = new THREE.Group() // 塔机
-      towerGroup.name = "towerGroup";
-      if (scene) {
-        scene.add(towerGroup)
-        towerGroup.position.set(60, 22, 0); // 红 绿
-        modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
-      };
-
-
-      elevatorGroup = new THREE.Group() // 升降机
-      elevatorGroup.name = "elevatorGroup";
-      if (scene) {
-        scene.add(elevatorGroup)
-        elevatorGroup.position.set(78.5, 24, 0);
-      };
-      modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
-
-      sectionGroup = new THREE.Group() // 升降机轨道
-      sectionGroup.name = "sectionGroup";
-      if (scene) {
-        scene.add(sectionGroup)
-        sectionGroup.position.set(80, 26, 0); // 红 绿
-      };
-      LoadSection(sectionGroup, 67)
-      this.queryPersonGroup()
-      this.addDataToDB()
     },
     beforeDestroy() {
-      // $('#loT-index-canvas3d').empty()
-      // scene.remove(showGroup)
-      clearScene()
-      scene.remove(unitGroups)
-      scene.remove(showGroup)
-      scene.remove(towerGroup)
-      scene.remove(elevatorGroup)
-      scene.remove(sectionGroup)
-      scene.remove(directionalLight);
-      scene.remove(ambient);
-      scene.remove(deviceGroup)
-      scene.remove(personGroup)
-      renderer.dispose()
-      renderer = null
-      scene = null
-      THREE.Cache.clear()
-      unitGroups = null
-      showGroup = null
-      deviceGroup = null
-      personGroup = null
-      towerGroup = null
-      elevatorGroup = null
-      sectionGroup = null
-      $('#loT-index-canvas3d').empty()
-      mainCanvas = null
-      clearTimeout(this.timeRemove)
+      this.clearData()
     },
     destroyed() {},
     methods: {
+      async init() {
+        await this.initDevlist()
+        // window.onresize = this.onWindowResize;
+
+        // this.mqttConnect()
+        towerGroup = new THREE.Group() // 塔机
+        towerGroup.name = "towerGroup";
+        if (scene) {
+          scene.add(towerGroup)
+          towerGroup.position.set(60, 22, 0); // 红 绿
+          modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+        };
+
+
+        elevatorGroup = new THREE.Group() // 升降机
+        elevatorGroup.name = "elevatorGroup";
+        if (scene) {
+          scene.add(elevatorGroup)
+          elevatorGroup.position.set(78.5, 24, 0);
+        };
+        modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
+
+        sectionGroup = new THREE.Group() // 升降机轨道
+        sectionGroup.name = "sectionGroup";
+        if (scene) {
+          scene.add(sectionGroup)
+          sectionGroup.position.set(80, 26, 0); // 红 绿
+        };
+        LoadSection(sectionGroup, 67)
+
+        this.queryPersonGroup()
+        this.addDataToDB()
+      },
+      clearData() {
+        this.addedUnit = 0
+        this.totalUnit = 0
+        clearScene()
+        // scene.remove(unitGroups)
+        // scene.remove(showGroup)
+        // scene.remove(towerGroup)
+        // scene.remove(elevatorGroup)
+        // scene.remove(sectionGroup)
+        // scene.remove(deviceGroup)
+        // scene.remove(personGroup)
+        THREE.Cache.clear()
+        clearTimeout(this.timeRemove)
+      },
       clearDB() {
         return new Promise((resolve, reject) => {
           let modelDB = null
@@ -497,7 +468,7 @@
         return new Promise((resolve, reject) => {
           const param = {
             method: 'devlist',
-            project_id: 10000
+            project_id: this.project_id
           }
           this.$store.dispatch('QueryDatumMeter', param).then((data) => {
             // console.log('QueryDatumMeter - data', data)
@@ -711,7 +682,6 @@
 
       unitRemove(unit) {
         // console.log('unit123', unit)
-
         const _data = this.modelMap.get(unit.ID)
         if (_data === undefined) {
           return;
@@ -728,14 +698,15 @@
           }
           i++
         }
-
       },
-
       initMouse() {
         document.addEventListener('mousedown', (event) => {
 
 
         }, false)
+      },
+      clearSceneHandle() {
+        this.clearData()
       },
       personInoutDialogHandle() {
         this.$confirm('此操作将清除浏览器数据库中缓存的模型数据, 是否继续?', '提示', {
@@ -791,7 +762,7 @@
         setTimeout(() => {
           const param = {
             method: 'devlist',
-            project_id: 10000
+            project_id: this.project_id
           }
           this.$store.dispatch('QueryDatumMeter', param).then((deviceList) => {
             deviceList.forEach(device => {
@@ -810,12 +781,8 @@
             console.log(e)
           })
         }, 60 * 1000)
-
-
-
       },
       addCameraLabel(_mesh, device) {
-
         let deviceData = this.datumMeterMap.get(device.DEVICE_ID)
         let thisbt = document.createElement('img');
 
@@ -826,7 +793,6 @@
         } else {
           thisbt.className = 'loTLabel'
         }
-
         thisbt.style.pointerEvents = 'auto'
         // thisbt.style.marginTop = '-1em';
         thisbt.title = _mesh.name
@@ -918,7 +884,7 @@
         if (device.DEVICE_TYPE === 10) {
           let aaa = this.datumMeterMap.get(device.DEVICE_ID)
           // console.log('aaa', aaa)
-          thisbt.innerHTML = "<div class='css2-txt-box'>用电量：<span id='divDianBiao" + device.DEVICE_ID + "'> " + aaa
+          thisbt.innerHTML = "<div class='css2-txt-box '>用电量：<span id='divDianBiao" + device.DEVICE_ID + "'> " + aaa
             .total_used +
             "</span> 度</div><img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
           thisbt.id = "tipDianBiao"
@@ -927,13 +893,15 @@
           // let DeviceID = 'YD10000SB03'
           let bbb = this.datumMeterMap.get(device.DEVICE_ID)
           thisbt.id = "tipShuiBiao"
-          thisbt.innerHTML = "<div class='css2-txt-box'>用水量：<span id='divShuiBiao" + device.DEVICE_ID + "'> " + bbb
+          thisbt.innerHTML = "<div class='css2-txt-box tip-device'>用水量：<span id='divShuiBiao" + device.DEVICE_ID +
+            "'> " + bbb
             .total_used +
             "</span> 吨</div><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
         } else if (device.DEVICE_TYPE === 15) {
-          let _h = "<div class='css2-txt-box2'>"
-          _h = _h + "<span id='divHJJCY'> 环境检测仪 </span>"
-          _h = _h + "</div><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+          let _h = "<div class='css2-txt-box2 tip-device'>"
+          _h = _h +
+            "<span id='divHJJCY' class='tip-device'> 环境检测仪 </span><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+          _h = _h + "</div>"
           thisbt.id = "tipHJJCY"
           thisbt.innerHTML = _h
         }
@@ -1108,7 +1076,7 @@
 
           const param = {
             method: 'query_person',
-            project_id: 10000,
+            project_id: this.project_id,
             mac: mac
           }
           this.$store.dispatch('QueryProjectPerson', param).then((data_list) => {

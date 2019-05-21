@@ -43,13 +43,19 @@
     },
     watch: {
       project_id(curVal, oldVal) {
-       
+        if (oldVal === null && curVal !== null) {
+          this.mqttConnect()
+        }
+        if (oldVal !== null) {
+          this.unsubscribe()
+          this.subscribe(curVal)
+        }
       },
       isConnectMqtt(curVal, oldVal) {
         if (curVal === false) {
           this.reconnectMqtt()
         } else {
-          this.subscribe()
+          this.subscribe(this.project_id)
           this.reconnectTimes = 0
           clearTimeout(this.timerReconnectMqtt)
         }
@@ -61,7 +67,7 @@
       }
     },
     mounted() {
-      this.mqttConnect()
+      // this.mqttConnect()
     },
     beforeDestroy() {
       console.log("beforeDestroy")
@@ -118,15 +124,15 @@
           this.reconnectMqtt()
         }, 5 * 1000)
       },
-      subscribe() {
+      subscribe(project_id) {
         //BIM/location/10000/#
         if (this.isConnectMqtt === true) {
-          this.topicUserInfo = `BIM/location/10000/#` //订阅用户信息
+          this.topicUserInfo = `BIM/location/${project_id}/#` //订阅用户信息
           // this.topicCount = `BIM/location/${this.project_id}/count` //订阅统计消息
           // BIM/door/10001/count
           this.client.subscribe(this.topicUserInfo); //订阅主题
           // this.client.subscribe(this.topicCount); //订阅主题
-          console.log("订阅成功123！")
+          console.log("订阅成功！", this.topicUserInfo)
         }
       },
       unsubscribe() {
@@ -134,7 +140,7 @@
           // 取消老的订阅
           this.client.unsubscribe(this.topicUserInfo); //订阅主题
           //   this.client.unsubscribe(this.topicCount); //订阅主题
-          console.log("取消订阅成功！")
+          console.log("取消订阅成功！", this.topicUserInfo)
         }
       },
     }

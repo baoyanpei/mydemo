@@ -46,8 +46,8 @@
 
         treeAttachParamsListData: [],
 
-        project_id: 10000,
-        building_id: 87, // 87 周边
+        // project_id: null,
+        // building_id: 87, // 87 周边
         modIDAPIList: [],
         modIDList: [],
         totalNeedModel: 0,
@@ -56,6 +56,9 @@
       }
     },
     computed: {
+      project_id() {
+        return this.$store.state.project.project_id
+      },
       buildListByProID() {
         return this.$store.state.model3d.buildListByProID
       },
@@ -89,59 +92,51 @@
       this.worker = null
     },
     watch: {
+      project_id(curVal, oldVal) {
+        console.log('curVal123123', this.project_id)
+        if (curVal !== null) {
+          console.log('curVal', this.project_id)
+          this.init()
+        }
+        // if (oldVal !== null) {
+        //   this.unsubscribe()
+        // }
+        // if (curVal !== null) {
+        //   this.subscribe()
+        // }
+      },
       totalOKModel(curVal, oldVal) {
         if (curVal === this.totalNeedModel) {
-          // console.log('1231231313')
-          // console.log('_modIDAPIList.length', this.modIDAPIList.length)
           let _modIDAPIList = lodash.chunk(this.modIDAPIList, Math.ceil(this.modIDAPIList.length / 6))
-          // console.log('_modIDAPIList.length', _modIDAPIList.length)
           for (let i = 0, len = _modIDAPIList.length; i < len; i++) {
             let unitList = _modIDAPIList[i]
-            // console.log('unitList', unitList)
             this.getAPI(unitList)
           }
-
         }
       }
 
     },
-    async mounted() {
-      // this.loadingDialog = this.$loading({
-      //   // lock: true,
-      //   // text: '正在读取数据...',
-      //   // spinner: 'el-icon-loading',
-      //   // background: 'rgba(0, 0, 0, 0.5)',
-      //   // customClass: 'loading-class',
-      //   target: document.querySelector('.treeDiv')
-      // });
-      await this.getBuildingListByProID()
-      // console.log('this.modIDList', this.modIDList)
-
-      this.totalNeedModel = this.modIDList.length
-      for (let i = 0, len = this.modIDList.length; i < len; i++) {
-        let model_id = this.modIDList[i].ID
-        let model_geom = this.modIDList[i].GEOM
-        IndexedDB.getData(this.modelDB, 'model', model_id, async (result) => {
-          if (result) {
-            let _mesh = this.loader.parse(result.mesh)
-            this.$emit('unitGroupAddMesh', _mesh, result.modelID, result.unit)
-            // this.modIDIndexList.push(model_id)
-
-          } else {
-            // console.log('this.modIDList[i]', this.modIDList[i])
-            // this.getModelFromAPI(model_id)
-            // console.log('model_id', model_id)
-            this.modIDAPIList.push(this.modIDList[i])
-
-          }
-          this.totalOKModel++
-        });
-      }
-
-      // console.log('123', this.modIDAPIList.length)
+    mounted() {
 
     },
     methods: {
+      async init() {
+        await this.getBuildingListByProID()
+        this.totalNeedModel = this.modIDList.length
+        for (let i = 0, len = this.modIDList.length; i < len; i++) {
+          let model_id = this.modIDList[i].ID
+          let model_geom = this.modIDList[i].GEOM
+          IndexedDB.getData(this.modelDB, 'model', model_id, async (result) => {
+            if (result) {
+              let _mesh = this.loader.parse(result.mesh)
+              this.$emit('unitGroupAddMesh', _mesh, result.modelID, result.unit)
+            } else {
+              this.modIDAPIList.push(this.modIDList[i])
+            }
+            this.totalOKModel++
+          });
+        }
+      },
       async getAPI(unitList) {
         // let _chunkList = lodash.chunk(unitList, 1)
         for (let i = 0, len = unitList.length; i < len; i++) {
@@ -159,11 +154,11 @@
             project_id: this.project_id
           }
           this.$store.dispatch('QueryBuildingListByProID', param).then(async () => {
-
+            console.log('this.buildListByProID', this.buildListByProID)
             for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
               let build = this.buildListByProID[i]
-              if (build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID ===
-                89) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
+              if (build.ID ===
+                87) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
                 const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)

@@ -34,7 +34,15 @@
     },
     watch: {
       project_id(curVal, oldVal) {
-
+        if (oldVal === null && curVal !== null) {
+          this.mqttConnect()
+        }
+        if (oldVal !== null) {
+          this.unsubscribe()
+        }
+        if (curVal === 10000) {
+          this.subscribe()
+        }
       },
       isConnectMqtt(curVal, oldVal) {
         if (curVal === false) {
@@ -52,8 +60,8 @@
       }
     },
     mounted() {
-      this.mqttConnect()
-      
+      // this.mqttConnect()
+
     },
     beforeDestroy() {
       console.log("beforeDestroy")
@@ -85,10 +93,10 @@
 
         if (message.destinationName === this.topicWeather) {
           // console.log("收到天气消息:" + message.payloadString);
-        //   this.mqttWeather(message.payloadString)
+          //   this.mqttWeather(message.payloadString)
           this.$emit('mqttWeather', message.payloadString)
         } else if (message.destinationName.substring(0, 14) === 'BIM/Sets/zhgd/') { // 塔机和升降机推送消息
-        //   this.mqttTJ(message)
+          //   this.mqttTJ(message)
           this.$emit('mqttTJ', message)
         }
 
@@ -128,15 +136,16 @@
           this.client.subscribe(this.topicTJ1); //塔机和升降机推送消息
           this.client.subscribe(this.topicTJ2); //塔机和升降机推送消息
           // this.client.subscribe(this.topicCount); //订阅主题
-          console.log("订阅成功！")
+          console.log("订阅成功！", this.topicWeather, this.topicTJ1, this.topicTJ2)
         }
       },
       unsubscribe() {
         if (this.isConnectMqtt === true && this.topicUserInfo !== '') {
           // 取消老的订阅
-          this.client.unsubscribe(this.topicUserInfo); //订阅主题
-          this.client.unsubscribe(this.topicCount); //订阅主题
-          console.log("取消订阅成功！")
+          this.client.unsubscribe(this.topicWeather); //订阅主题
+          this.client.unsubscribe(this.topicTJ1); //订阅主题
+          this.client.unsubscribe(this.topicTJ2); //订阅主题
+          console.log("取消订阅成功！", this.topicWeather, this.topicTJ1, this.topicTJ2)
         }
       },
     }
