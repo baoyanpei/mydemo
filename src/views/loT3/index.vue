@@ -227,7 +227,7 @@
   }
 
 
-  
+
 
   animate();
 
@@ -297,6 +297,17 @@
     // animate();
     // }
 
+    towerGroup = new THREE.Group() // 塔机
+    towerGroup.name = "towerGroup";
+    scene.add(towerGroup)
+
+    elevatorGroup = new THREE.Group() // 升降机
+    elevatorGroup.name = "elevatorGroup";
+    scene.add(elevatorGroup)
+
+    sectionGroup = new THREE.Group() // 升降机轨道
+    sectionGroup.name = "sectionGroup";
+    scene.add(sectionGroup)
   }
   export default {
     directives: {},
@@ -408,30 +419,21 @@
         // window.onresize = this.onWindowResize;
 
         // this.mqttConnect()
-        towerGroup = new THREE.Group() // 塔机
-        towerGroup.name = "towerGroup";
-        if (scene) {
-          scene.add(towerGroup)
+        if (this.project_id === 10000) {
+
           towerGroup.position.set(60, 22, 0); // 红 绿
           modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
-        };
 
 
-        elevatorGroup = new THREE.Group() // 升降机
-        elevatorGroup.name = "elevatorGroup";
-        if (scene) {
-          scene.add(elevatorGroup)
+          // 升降机
           elevatorGroup.position.set(78.5, 24, 0);
-        };
-        modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
+          modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
 
-        sectionGroup = new THREE.Group() // 升降机轨道
-        sectionGroup.name = "sectionGroup";
-        if (scene) {
-          scene.add(sectionGroup)
+
           sectionGroup.position.set(80, 26, 0); // 红 绿
-        };
-        LoadSection(sectionGroup, 67)
+          LoadSection(sectionGroup, 67)
+        }
+
 
         this.queryPersonGroup()
         this.addDataToDB()
@@ -884,24 +886,21 @@
         if (device.DEVICE_TYPE === 10) {
           let aaa = this.datumMeterMap.get(device.DEVICE_ID)
           // console.log('aaa', aaa)
-          thisbt.innerHTML = "<div class='css2-txt-box '>用电量：<span id='divDianBiao" + device.DEVICE_ID + "'> " + aaa
-            .total_used +
-            "</span> 度</div><img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+          thisbt.innerHTML =
+            `<div class='css2-txt-box tip-device'>用电量：<span id='divDianBiao${device.DEVICE_ID}'>${aaa
+            .total_used}</span> 度<img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/></div>`
           thisbt.id = "tipDianBiao"
         } else if (device.DEVICE_TYPE === 11) {
           // 水表
           // let DeviceID = 'YD10000SB03'
           let bbb = this.datumMeterMap.get(device.DEVICE_ID)
           thisbt.id = "tipShuiBiao"
-          thisbt.innerHTML = "<div class='css2-txt-box tip-device'>用水量：<span id='divShuiBiao" + device.DEVICE_ID +
-            "'> " + bbb
-            .total_used +
-            "</span> 吨</div><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+          thisbt.innerHTML =
+            `<div class='css2-txt-box tip-device'>用水量：<span id='divShuiBiao${device.DEVICE_ID}'>${bbb
+            .total_used}</span> 吨<img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/></div>`
         } else if (device.DEVICE_TYPE === 15) {
-          let _h = "<div class='css2-txt-box2 tip-device'>"
-          _h = _h +
-            "<span id='divHJJCY' class='tip-device'> 环境检测仪 </span><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
-          _h = _h + "</div>"
+          let _h =
+            "<div class='css2-txt-box2 tip-device'><span id='divHJJCY' class='tip-device'> 环境检测仪 </span><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/></div>"
           thisbt.id = "tipHJJCY"
           thisbt.innerHTML = _h
         }

@@ -39,10 +39,9 @@
         }
         if (oldVal !== null) {
           this.unsubscribe()
-        }
-        if (curVal === 10000) {
           this.subscribe()
         }
+
       },
       isConnectMqtt(curVal, oldVal) {
         if (curVal === false) {
@@ -128,15 +127,17 @@
           // this.topicUserInfo = `BIM/location/${this.project_id}/#` //订阅用户信息
           // this.topicCount = `BIM/location/${this.project_id}/count` //订阅统计消息
           // BIM/door/10001/count
+          if (this.project_id === 10000) {
+            this.topicWeather = 'BIM/HJ/720/01'
+            this.topicTJ1 = 'BIM/Sets/zhgd/DEYE/18090311/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
+            this.topicTJ2 = 'BIM/Sets/zhgd/DEYE/18090302/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
+            this.client.subscribe(this.topicWeather); //订阅主题
+            this.client.subscribe(this.topicTJ1); //塔机和升降机推送消息
+            this.client.subscribe(this.topicTJ2); //塔机和升降机推送消息
+            // this.client.subscribe(this.topicCount); //订阅主题
+            console.log("订阅成功！", this.topicWeather, this.topicTJ1, this.topicTJ2)
+          }
 
-          this.topicWeather = 'BIM/HJ/720/01'
-          this.topicTJ1 = 'BIM/Sets/zhgd/DEYE/18090311/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
-          this.topicTJ2 = 'BIM/Sets/zhgd/DEYE/18090302/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
-          this.client.subscribe(this.topicWeather); //订阅主题
-          this.client.subscribe(this.topicTJ1); //塔机和升降机推送消息
-          this.client.subscribe(this.topicTJ2); //塔机和升降机推送消息
-          // this.client.subscribe(this.topicCount); //订阅主题
-          console.log("订阅成功！", this.topicWeather, this.topicTJ1, this.topicTJ2)
         }
       },
       unsubscribe() {
