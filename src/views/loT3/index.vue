@@ -441,6 +441,7 @@
       clearData() {
         this.addedUnit = 0
         this.totalUnit = 0
+        this.loadingText = ''
         clearScene()
         // scene.remove(unitGroups)
         // scene.remove(showGroup)
@@ -450,7 +451,7 @@
         // scene.remove(deviceGroup)
         // scene.remove(personGroup)
         THREE.Cache.clear()
-        clearTimeout(this.timeRemove)
+        // clearTimeout(this.timeRemove)
       },
       clearDB() {
         return new Promise((resolve, reject) => {
@@ -644,17 +645,18 @@
         } else {
 
           // 模型的透明度
-          if (unit.BUILDID !== 87) {
-            if (_mesh.material.opacity === 1) {
-              _mesh.material.opacity = 0.3
-            }
+          // if (unit.BUILDID !== 87) {
+          if (_mesh.material.opacity === 1) {
+            _mesh.material.opacity = 0.3
           }
+          // }
 
-          if (unit.BUILDID === 87) {
-            showGroup.add(_mesh)
-          } else {
-            unitGroups.add(_mesh)
-          }
+          // if (unit.BUILDID === 87) {
+          //   showGroup.add(_mesh)
+          // } else {
+          //   unitGroups.add(_mesh)
+          // }
+          showGroup.add(_mesh)
           if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
             .DEVICE_ID !== '') {
             this.deviceMap.set(unit.NAME, {

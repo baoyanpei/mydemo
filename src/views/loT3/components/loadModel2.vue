@@ -59,25 +59,6 @@
       project_id() {
         return this.$store.state.project.project_id
       },
-      buildListByProID() {
-        return this.$store.state.model3d.buildListByProID
-      },
-      floorListByBudID() {
-        return this.$store.state.model3d.floorListByBudID
-      },
-      modListByFloorID() {
-        return this.$store.state.model3d.modListByFloorID
-      },
-      // modelByID() {
-      //   return this.$store.state.model3d.modelByID
-      // },
-      // modelMap() {
-      //   return this.$store.state.model3d.modelMap
-      // },
-      // buildMap() {
-      //   return this.$store.state.model3d.buildMap
-      // },
-
     },
     created() {
       IndexedDB.openDB('tbbim', 1, this.modelDB, {
@@ -93,17 +74,9 @@
     },
     watch: {
       project_id(curVal, oldVal) {
-        console.log('curVal123123', this.project_id)
         if (curVal !== null) {
-          console.log('curVal', this.project_id)
           this.init()
         }
-        // if (oldVal !== null) {
-        //   this.unsubscribe()
-        // }
-        // if (curVal !== null) {
-        //   this.subscribe()
-        // }
       },
       totalOKModel(curVal, oldVal) {
         if (curVal === this.totalNeedModel) {
@@ -121,6 +94,7 @@
     },
     methods: {
       async init() {
+        this.modIDList = []
         await this.getBuildingListByProID()
         this.totalNeedModel = this.modIDList.length
         for (let i = 0, len = this.modIDList.length; i < len; i++) {
@@ -153,10 +127,10 @@
             method: 'GetBuildingListByProID',
             project_id: this.project_id
           }
-          this.$store.dispatch('QueryBuildingListByProID', param).then(async () => {
-            console.log('this.buildListByProID', this.buildListByProID)
-            for (let i = 0, len = this.buildListByProID.length; i < len; i++) {
-              let build = this.buildListByProID[i]
+          this.$store.dispatch('QueryBuildingListByProID', param).then(async (buildList) => {
+            console.log('buildList', buildList)
+            for (let i = 0, len = buildList.length; i < len; i++) {
+              let build = buildList[i]
               if (build.ID ===
                 87) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
@@ -231,13 +205,6 @@
           // let _modList = []
           // console.log('GetModListByFloorID', param)
           this.$store.dispatch('QueryModListByFloorID2', param).then((modListByFloorID) => {
-            // console.log('modListByFloorID', modListByFloorID)
-            // modListByFloorID.forEach(d => {
-            //   // flag=1 可以画
-            //   // if (d.FLAG === 1) {
-            //   _modList.push(d)
-            //   // }
-            // });
             resolve(modListByFloorID)
           }).catch((e) => {
             console.log("e", e)

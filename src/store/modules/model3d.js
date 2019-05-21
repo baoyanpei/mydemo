@@ -350,7 +350,7 @@ const model3d = {
         queryBuildingListByProID(param).then(response => {
           // console.log("QueryBuildingListByProID", response.data)
           commit('SET_BUILDING_LIST_BY_PROID', response.data)
-          resolve()
+          resolve(response.data)
         }).catch(error => {
           reject(error)
         })
