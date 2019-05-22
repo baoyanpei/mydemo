@@ -385,7 +385,8 @@
     },
 
     async mounted() {
-
+      $('.divDataTadiao').hide()
+      $('.divDataShenJiangJi').hide()
       this.initMouse()
       initThree()
       let _IndexDBDataVer = Cookies.get('IndexDBDataVer')

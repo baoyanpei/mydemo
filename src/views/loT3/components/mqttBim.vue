@@ -16,10 +16,8 @@
         timerReconnectMqtt: null,
         isConnectMqtt: null, //是否已经连接
         topicWeather: '', // 天气检测
-        topicTJ1: '', // 塔机和升降机推送消息
-        topicTJ2: '', // 塔机和升降机推送消息
         reconnectTimes: 0, //重连次数
-
+        datumMeterMap: new Map(),
       }
     },
     computed: {
@@ -86,7 +84,7 @@
       },
       onMessageArrived(message) {
         let obj = JSON.parse(message.payloadString);
-        // console.log("收到消息1:" + message.destinationName + message.payloadString);
+        console.log("收到消息-BIM:" + message.destinationName + message.payloadString);
         // this.initPerson(obj)
         // this.mqttWeather(message.payloadString)
 
@@ -103,7 +101,6 @@
       onConnect() {
         console.log("onConnected");
         this.isConnectMqtt = true;
-        // this.client.subscribe(this.topicWeather); //订阅天气检测
       },
       onFailure(eee) {
         this.isConnectMqtt = false;
@@ -121,33 +118,77 @@
           this.reconnectMqtt()
         }, 5 * 1000)
       },
-      subscribe() {
+      async subscribe() {
+
+        // BIM/Sets/zhgd/DEYE/18090302/RuntimeData
+        // {"DownlineTime": "", "OnlineTime": "2019-05-22 11:11:44", "HxzId": "18090302", "HxzFactory": "DEYE", "RunTime": "0"}
+
+
         //BIM/location/10000/#
         if (this.isConnectMqtt === true) {
           // this.topicUserInfo = `BIM/location/${this.project_id}/#` //订阅用户信息
           // this.topicCount = `BIM/location/${this.project_id}/count` //订阅统计消息
           // BIM/door/10001/count
-          if (this.project_id === 10000) {
-            this.topicWeather = 'BIM/HJ/720/01'
-            this.topicTJ1 = 'BIM/Sets/zhgd/DEYE/18090311/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
-            this.topicTJ2 = 'BIM/Sets/zhgd/DEYE/18090302/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
-            this.client.subscribe(this.topicWeather); //订阅主题
-            this.client.subscribe(this.topicTJ1); //塔机和升降机推送消息
-            this.client.subscribe(this.topicTJ2); //塔机和升降机推送消息
-            // this.client.subscribe(this.topicCount); //订阅主题
-            console.log("订阅成功！", this.topicWeather, this.topicTJ1, this.topicTJ2)
-          }
+
+          await this.initDevlist()
+
+          // {"mqtt":"BIM/HJ/720/01"}
+          this.datumMeterMap.forEach(datum => {
+            // BIM/Sets/zhgd/DEYE/18090311/# 塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
+            // 'BIM/Sets/zhgd/DEYE/18090302/#' 塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
+            if ((datum.device_type === 15 || datum.device_type === 13 || datum.device_type === 12) && datum.params_json !== '') { // 环境检测仪
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.mqtt !== undefined) {
+                this.client.subscribe(paramsJson.mqtt); //订阅主题
+                console.log("订阅成功！", paramsJson.mqtt)
+                if (datum.device_type === 15){
+                  this.topicWeather = paramsJson.mqtt
+                }
+              }
+
+            }
+
+          })
 
         }
       },
       unsubscribe() {
         if (this.isConnectMqtt === true && this.topicUserInfo !== '') {
-          // 取消老的订阅
-          this.client.unsubscribe(this.topicWeather); //订阅主题
-          this.client.unsubscribe(this.topicTJ1); //订阅主题
-          this.client.unsubscribe(this.topicTJ2); //订阅主题
-          console.log("取消订阅成功！", this.topicWeather, this.topicTJ1, this.topicTJ2)
+          this.datumMeterMap.forEach(datum => {
+
+            if ((datum.device_type === 15 || datum.device_type === 13 || datum.device_type === 12) && datum.params_json !== '') { // 环境检测仪
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.mqtt !== undefined) {
+                this.client.unsubscribe(paramsJson.mqtt); //订阅主题
+                console.log("取消订阅成功！", paramsJson.mqtt)
+              }
+
+            }
+
+          })
         }
+      },
+      initDevlist() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'devlist',
+            project_id: this.project_id
+          }
+          this.datumMeterMap = new Map()
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            // console.log('QueryDatumMeter - data', data)
+            data.forEach(datum => {
+              this.datumMeterMap.set(datum.device_id, datum)
+            })
+            console.log('QueryDatumMeter', this.project_id, this.datumMeterMap)
+            resolve()
+          }).catch((e) => {
+            console.log(e)
+            resolve()
+          })
+
+
+        })
       },
     }
   }
