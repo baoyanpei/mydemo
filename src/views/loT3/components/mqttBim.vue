@@ -18,6 +18,7 @@
         topicWeather: '', // 天气检测
         reconnectTimes: 0, //重连次数
         datumMeterMap: new Map(),
+        mqttMap: new Map()
       }
     },
     computed: {
@@ -84,18 +85,38 @@
       },
       onMessageArrived(message) {
         let obj = JSON.parse(message.payloadString);
-        console.log("收到消息-BIM:" + message.destinationName + message.payloadString);
+        // console.log("收到消息-BIM:" + message.destinationName + message.payloadString);
+        // console.log('mqttMap', this.mqttMap)
         // this.initPerson(obj)
         // this.mqttWeather(message.payloadString)
 
-        if (message.destinationName === this.topicWeather) {
-          // console.log("收到天气消息:" + message.payloadString);
-          //   this.mqttWeather(message.payloadString)
-          this.$emit('mqttWeather', message.payloadString)
-        } else if (message.destinationName.substring(0, 14) === 'BIM/Sets/zhgd/') { // 塔机和升降机推送消息
-          //   this.mqttTJ(message)
-          this.$emit('mqttTJ', message)
-        }
+        // this.mqttMap.forEach((datum, key, map) => {
+        for (let [key, datum] of this.mqttMap) {
+          key = key.replace('#', '')
+          // console.log("--->", key, datum);
+          
+          if (message.destinationName.startsWith(key)) {
+            // console.log('key', key, datum.device_type)
+            if (datum.device_type === 15) {
+              this.$emit('mqttWeather', message.payloadString)
+              break
+            } else if (datum.device_type === 13 || datum.device_type === 12) {
+              this.mqttTJ(message, datum)
+              break
+            }
+          }
+        };
+
+
+        // if (message.destinationName === this.topicWeather) {
+        //   // console.log("收到天气消息:" + message.payloadString);
+        //   //   this.mqttWeather(message.payloadString)
+        //   this.$emit('mqttWeather', message.payloadString)
+        // } else if (message.destinationName.substring(0, 14) === 'BIM/Sets/zhgd/') { // 塔机和升降机推送消息
+        //   //   this.mqttTJ(message)
+        //   // this.$emit('mqttTJ', message)
+
+        // }
 
       },
       onConnect() {
@@ -136,12 +157,14 @@
           this.datumMeterMap.forEach(datum => {
             // BIM/Sets/zhgd/DEYE/18090311/# 塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
             // 'BIM/Sets/zhgd/DEYE/18090302/#' 塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
-            if ((datum.device_type === 15 || datum.device_type === 13 || datum.device_type === 12) && datum.params_json !== '') { // 环境检测仪
+            if ((datum.device_type === 15 || datum.device_type === 13 || datum.device_type === 12) && datum
+              .params_json !== '') { // 环境检测仪
               let paramsJson = JSON.parse(datum.params_json)
               if (paramsJson.mqtt !== undefined) {
                 this.client.subscribe(paramsJson.mqtt); //订阅主题
+                this.mqttMap.set(paramsJson.mqtt, datum)
                 console.log("订阅成功！", paramsJson.mqtt)
-                if (datum.device_type === 15){
+                if (datum.device_type === 15) {
                   this.topicWeather = paramsJson.mqtt
                 }
               }
@@ -156,10 +179,12 @@
         if (this.isConnectMqtt === true && this.topicUserInfo !== '') {
           this.datumMeterMap.forEach(datum => {
 
-            if ((datum.device_type === 15 || datum.device_type === 13 || datum.device_type === 12) && datum.params_json !== '') { // 环境检测仪
+            if ((datum.device_type === 15 || datum.device_type === 13 || datum.device_type === 12) && datum
+              .params_json !== '') { // 环境检测仪
               let paramsJson = JSON.parse(datum.params_json)
               if (paramsJson.mqtt !== undefined) {
                 this.client.unsubscribe(paramsJson.mqtt); //订阅主题
+                this.mqttMap.delete(paramsJson.mqtt)
                 console.log("取消订阅成功！", paramsJson.mqtt)
               }
 
@@ -189,6 +214,27 @@
 
 
         })
+      },
+      mqttTJ(data, datum) {
+        // console.log('mqttTJ', data)
+        const _destinationName = data.destinationName
+        const _payloadString = data.payloadString
+
+        const destinationNameArray = _destinationName.split('/')
+        // const TJNO = destinationNameArray[4] //黑匣子编号
+        const _cmd = destinationNameArray[5] //指令
+        switch (datum.device_type) {
+          case 13: // 塔吊
+            // console.log('塔吊', data)
+            // this.mqttTaDiao(_cmd, _payloadString)
+            this.$emit('mqttTaDiao', _cmd, _payloadString)
+            break;
+          case 12: // 升降机
+            // console.log('升降机', data)
+            // this.mqttShenJiangJi(_cmd, _payloadString)
+            this.$emit('mqttShenJiangJi', _cmd, _payloadString)
+            break;
+        }
       },
     }
   }

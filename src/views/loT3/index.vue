@@ -11,7 +11,7 @@
       v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
-    <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTJ="mqttTJ"></mqttBim>
+    <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao" v-on:mqttShenJiangJi="mqttShenJiangJi"></mqttBim>
     <div class="model3d-progress">
       <div>{{loadingText}}</div>
     </div>
@@ -44,13 +44,13 @@
       </div>
 
       <div class="bim-toolbar2">
-        <div>
+        <!-- <div>
           <el-tooltip class="item" effect="dark" content="清理scene" placement="top">
             <el-button @click="clearSceneHandle">
               <font-awesome-icon icon="magic" size="2x" />
             </el-button>
           </el-tooltip>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -488,27 +488,27 @@
 
         })
       },
-      mqttTJ(data) {
-        // console.log('mqttTJ', data)
-        const _destinationName = data.destinationName
-        const _payloadString = data.payloadString
+      // mqttTJ(data) {
+      //   // console.log('mqttTJ', data)
+      //   const _destinationName = data.destinationName
+      //   const _payloadString = data.payloadString
 
-        //destinationNameArray => ["BIM", "Sets", "zhgd", "DEYE", "18090311", "RealtimeDataCrane"]
-        const destinationNameArray = _destinationName.split('/')
-        // console.log('destinationNameArray', destinationNameArray)
-        const TJNO = destinationNameArray[4] //黑匣子编号
-        const _cmd = destinationNameArray[5] //指令
-        switch (TJNO) {
-          case "18090311": // 塔吊
-            // console.log('塔吊', data)
-            this.mqttTaDiao(_cmd, _payloadString)
-            break;
-          case "18090302": // 升降机
-            // console.log('升降机', data)
-            this.mqttShenJiangJi(_cmd, _payloadString)
-            break;
-        }
-      },
+      //   //destinationNameArray => ["BIM", "Sets", "zhgd", "DEYE", "18090311", "RealtimeDataCrane"]
+      //   const destinationNameArray = _destinationName.split('/')
+      //   // console.log('destinationNameArray', destinationNameArray)
+      //   const TJNO = destinationNameArray[4] //黑匣子编号
+      //   const _cmd = destinationNameArray[5] //指令
+      //   switch (TJNO) {
+      //     case "18090311": // 塔吊
+      //       // console.log('塔吊', data)
+      //       this.mqttTaDiao(_cmd, _payloadString)
+      //       break;
+      //     case "18090302": // 升降机
+      //       // console.log('升降机', data)
+      //       this.mqttShenJiangJi(_cmd, _payloadString)
+      //       break;
+      //   }
+      // },
       mqttTaDiao(cmd, data) { //塔吊
         // console.log('塔吊', cmd)
         switch (cmd) {
