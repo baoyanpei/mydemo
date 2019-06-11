@@ -97,6 +97,8 @@
         this.modIDList = []
         await this.getBuildingListByProID()
         this.totalNeedModel = this.modIDList.length
+        this.totalOKModel = 0
+        this.modIDAPIList = []
         for (let i = 0, len = this.modIDList.length; i < len; i++) {
           let model_id = this.modIDList[i].ID
           let model_geom = this.modIDList[i].GEOM
