@@ -11,7 +11,8 @@
       v-on:unitTotalAdd="unitTotalAdd"></loadModel>
     <mqttLocation v-on:initPerson="initPerson"></mqttLocation>
     <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
-    <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao" v-on:mqttShenJiangJi="mqttShenJiangJi"></mqttBim>
+    <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao" v-on:mqttShenJiangJi="mqttShenJiangJi">
+    </mqttBim>
     <div class="model3d-progress">
       <div>{{loadingText}}</div>
     </div>
@@ -413,25 +414,27 @@
 
           if (datum.device_type === 13) { // 塔机
 
-            // {"tower_x":60,"tower_y":22,"tower_z":0,"height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090311/#"}
+            // {"pos_x":60,"pos_y":22,"pos_z":0,"height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090311/#"}
             $('.divDataTadiao').show()
             let paramsJson = JSON.parse(datum.params_json)
             this.towerHeight = paramsJson.height
             this.tdData.tdgd = this.towerHeight
-            towerGroup.position.set(paramsJson.tower_x, paramsJson.tower_y, paramsJson.tower_z); // 红 绿
+            towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
             modifyTower(towerGroup, `T${datum.device_id}`, this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
           } else if (datum.device_type === 12) { // 升降机
             $('.divDataShenJiangJi').show()
-            // console.log('datum', datum)
             let paramsJson = JSON.parse(datum.params_json)
-            // console.log('paramsJson', paramsJson)
-            elevatorGroup.position.set(paramsJson.elevator_x, paramsJson.elevator_y, paramsJson.elevator_z);
+            // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
+            elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
             modifyElevator(elevatorGroup, `E${datum.device_id}`, 0, false) //名称，高度，门的开启状态
 
-            // {"elevator_x":78.5,"elevator_y":24,"elevator_z":0,"section_x":80,"section_y":26,"section_z":0,"section_height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
+            
 
-            sectionGroup.position.set(paramsJson.section_x, paramsJson.section_y, paramsJson.section_z); // 红 绿
-            LoadSection(sectionGroup, paramsJson.section_height)
+          } else if (datum.device_type === 100) { // 升降机轨道
+            // {"pos_x":80,"pos_y":26,"pos_z":0,"height":75}
+            let paramsJson = JSON.parse(datum.params_json)
+            sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+            LoadSection(sectionGroup, paramsJson.height)
           }
         })
 

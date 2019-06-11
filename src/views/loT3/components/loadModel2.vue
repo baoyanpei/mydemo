@@ -131,8 +131,10 @@
             console.log('buildList', buildList)
             for (let i = 0, len = buildList.length; i < len; i++) {
               let build = buildList[i]
-              if (build.ID ===
-                87) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
+              if (build.DEVICE_USEFLAG === 1) {
+                // if ((this.project_id === 10000 && build.ID ===
+                //   87) || (this.project_id === 10001 && build.ID ===
+                //   98)) { //  build.ID === 87 || build.ID === 86 || build.ID === 88 || build.ID === 89
                 this.$emit('addLoadingText', `正在加载 ${build.NAME} 的楼层列表`)
                 const _floorIDList = await this.getFloorListByBuildingID(build)
                 // console.log('_floorIDList', _floorIDList)
@@ -237,10 +239,10 @@
           let geom = unit.GEOM
           if (geom !== '') {
 
-            // let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
-            //   '/static/')
             let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
-              '')
+              '/static/')
+            // let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
+            //   '')
             // console.log('meshJsonURL', meshJsonURL)
             let mesh = await this.getJsonFile(meshJsonURL)
             if (mesh === null) {

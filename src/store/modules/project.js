@@ -23,7 +23,7 @@ import Cookies from 'js-cookie'
 import hasPermissionToOperation from '@/utils/permissionUrl' // 权限判断函数
 const project = {
   state: {
-    indexed_ver: '9',
+    indexed_ver: '10',
     project_id: null, // project_id
     project_name: "", // 项目名字
     project_list: [],
