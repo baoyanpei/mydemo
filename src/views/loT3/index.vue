@@ -377,6 +377,8 @@
       project_id(curVal, oldVal) {
         if (oldVal !== null) {
           this.clearData()
+          location.reload()
+          
         }
         if (curVal !== null) {
           this.init()
@@ -428,13 +430,24 @@
             elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
             modifyElevator(elevatorGroup, `E${datum.device_id}`, 0, false) //名称，高度，门的开启状态
 
-            
+
 
           } else if (datum.device_type === 100) { // 升降机轨道
             // {"pos_x":80,"pos_y":26,"pos_z":0,"height":75}
             let paramsJson = JSON.parse(datum.params_json)
             sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
             LoadSection(sectionGroup, paramsJson.height)
+
+          } else if (datum.device_type === 17) { // 网络设备
+            // {"pos_x":80,"pos_y":26,"pos_z":0,"height":75}
+            if (datum.params_json !== '' && datum.params_json !== null) {
+
+              // console.log('paramsJson', paramsJson)
+              this.addWifiDeviceLabel(datum)
+            }
+
+            // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+            // LoadSection(sectionGroup, paramsJson.height)
           }
         })
 
@@ -445,6 +458,7 @@
         this.addedUnit = 0
         this.totalUnit = 0
         this.loadingText = ''
+        this.deviceMap = new Map()
         clearScene()
         // scene.remove(unitGroups)
         // scene.remove(showGroup)
@@ -491,27 +505,6 @@
 
         })
       },
-      // mqttTJ(data) {
-      //   // console.log('mqttTJ', data)
-      //   const _destinationName = data.destinationName
-      //   const _payloadString = data.payloadString
-
-      //   //destinationNameArray => ["BIM", "Sets", "zhgd", "DEYE", "18090311", "RealtimeDataCrane"]
-      //   const destinationNameArray = _destinationName.split('/')
-      //   // console.log('destinationNameArray', destinationNameArray)
-      //   const TJNO = destinationNameArray[4] //黑匣子编号
-      //   const _cmd = destinationNameArray[5] //指令
-      //   switch (TJNO) {
-      //     case "18090311": // 塔吊
-      //       // console.log('塔吊', data)
-      //       this.mqttTaDiao(_cmd, _payloadString)
-      //       break;
-      //     case "18090302": // 升降机
-      //       // console.log('升降机', data)
-      //       this.mqttShenJiangJi(_cmd, _payloadString)
-      //       break;
-      //   }
-      // },
       mqttTaDiao(cmd, data) { //塔吊
         // console.log('塔吊', cmd)
         switch (cmd) {
@@ -733,7 +726,7 @@
           let _device = data.unit
           let mesh = data.mesh
           // let _device = this.deviceMap.get(mesh.name)
-          // // console.log('_device', _device)
+          console.log('_device', _device)
           // 摄像头
           if (_device.DEVICE_TYPE === 16) {
             this.addCameraLabel(mesh, _device)
@@ -818,6 +811,31 @@
         centroid.multiplyScalar(0.5);
         centroid.applyMatrix4(_mesh.matrixWorld);
         lable.position.copy(centroid)
+        deviceGroup.add(lable);
+      },
+      addWifiDeviceLabel(deviceData) {
+        let paramsJson = JSON.parse(deviceData.params_json)
+        console.log('deviceData', deviceData, paramsJson)
+        // let deviceData = this.datumMeterMap.get(device.DEVICE_ID)
+        let thisbt = document.createElement('img');
+
+        thisbt.className = 'loTLabel'
+        thisbt.style.pointerEvents = 'auto'
+        // thisbt.style.marginTop = '-1em';
+        thisbt.title = deviceData.device_name
+        thisbt.onclick = () => {
+
+        }
+        thisbt.src = "/static/icon/wifiDevice.png";
+
+        let lable = new CSS2DObject(thisbt);
+        lable.name = deviceData.device_id + "_b";
+        // lable.position.copy(centroid)
+        lable.position.z = (paramsJson.pos_layer - 1) * 3.5 + 1.4;
+        //X,Y坐标来自于传入数据
+        lable.position.x = paramsJson.pos_y / 1000 - 0.1;
+        lable.position.y = paramsJson.pos_x / 1000 + 0.1;
+        console.log('lable.position', lable.position)
         deviceGroup.add(lable);
       },
       showHideTip(device_type) {
@@ -927,18 +945,6 @@
 
       },
       initPerson(obj) {
-        // if (obj.name=="84:0d:8e:81:d4:3c"){
-        //     obj.name = "x";
-        //     editPerson(obj)
-        //     obj.name = "x1";
-        //     obj.x = obj.x1;
-        //     obj.y = obj.y1;
-        //     editPerson(obj)
-        // }
-        //editPerson(obj)
-        // obj.name = obj.name + "_1";
-        // obj.x = obj.x1;
-        // obj.y = obj.y1;
         this.editPerson(obj)
       },
       editPerson(obj) {
