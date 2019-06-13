@@ -45,13 +45,19 @@
       </div>
 
       <div class="bim-toolbar2">
-        <!-- <div>
-          <el-tooltip class="item" effect="dark" content="清理scene" placement="top">
-            <el-button @click="clearSceneHandle">
+        <div>
+          <el-tooltip class="item" effect="dark" content="save" placement="top">
+            <el-button @click="saveSceneHandle">
               <font-awesome-icon icon="magic" size="2x" />
             </el-button>
           </el-tooltip>
-        </div> -->
+          <el-tooltip class="item" effect="dark" content="load" placement="top">
+            <el-button @click="loadSceneHandle">
+              <font-awesome-icon icon="magic" size="2x" />
+            </el-button>
+          </el-tooltip>
+        </div>
+
       </div>
     </div>
   </div>
@@ -81,6 +87,7 @@
     CSS2DObject
   } from 'three-css2drender';
   import $ from 'jquery'
+  import OrbitControls from 'three-orbitcontrols'
   // const MQTT_USERNAME = 'BIM_messager' // mqtt连接用户名
   // const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码 
   // const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
@@ -89,9 +96,9 @@
   // console.log('12313123123')
   window.onresize = onWindowResize;
 
-  let fov = 35 //75 this.gui.fov //拍摄距离  视野角值越大，场景中的物体越小
+  let fov = 35 //35 this.gui.fov //拍摄距离  视野角值越大，场景中的物体越小
   let near = 1 //相机离视体积最近的距离
-  let far = 800 //相机离视体积最远的距离
+  let far = 1000 //相机离视体积最远的距离
   let aspect = (window.innerWidth) / (window.innerHeight); //纵横比
   let scene = null
   let camera = null
@@ -231,8 +238,10 @@
 
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     camera.up = new THREE.Vector3(0, 0, 1); //相机以哪个方向为上方
-    camera.position.set(-130, -0, 80);
+    // camera.position.set(-130, -0, 80);
     camera.position.set(150, 200, 190);
+    // camera.position.set(0, 20, 100);
+
     scene.add(camera);
 
     renderer = new THREE.WebGLRenderer({
@@ -240,7 +249,11 @@
       alpha: true
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    controls = new THREE.MapControls(camera, renderer.domElement);
+    // controls = new THREE.MapControls(camera, renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true
+    controls.dampingFactor = 0.25
+    controls.enableZoom = true
 
     mainCanvas.appendChild(renderer.domElement);
     renderer.setClearColor(0xcccccc, 1);
@@ -283,7 +296,7 @@
     document.getElementById('stat-div-loT').appendChild(stats.dom);
     initLight()
     initControls()
-    // initAxes()
+    initAxes()
 
     // animate();
     // }
@@ -353,7 +366,11 @@
         },
         indexedDBWaitList: new Map(),
         worker: new Worker("/static/workIndexedDB.js"),
-        lablePosisionList: {}
+        lablePosisionList: {},
+
+        pdata: null,
+        cameraState: null,
+        storage: window.localStorage
       }
     },
     computed: {
@@ -371,14 +388,13 @@
       }, (db) => {
         this.modelDB = db
       })
-
     },
     watch: {
       project_id(curVal, oldVal) {
         if (oldVal !== null) {
           this.clearData()
           location.reload()
-          
+
         }
         if (curVal !== null) {
           this.init()
@@ -392,6 +408,7 @@
       $('.divDataShenJiangJi').hide()
       this.initMouse()
       initThree()
+      
       let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
       // console.log('IndexDBDataVer', _IndexDBDataVer)
       if (this.indexed_ver !== _IndexDBDataVer) {
@@ -401,6 +418,7 @@
 
     },
     beforeDestroy() {
+      this.saveSceneHandle()
       this.clearData()
     },
 
@@ -450,7 +468,8 @@
             // LoadSection(sectionGroup, paramsJson.height)
           }
         })
-
+        this.loadSceneHandle()
+        this.autoSaveControlState()
         this.queryPersonGroup()
         this.addDataToDB()
       },
@@ -692,6 +711,39 @@
       },
       clearSceneHandle() {
         this.clearData()
+      },
+      saveSceneHandle() {
+        controls.saveState()
+        this.pdata = {
+          'modelID': this.project_id,
+          'target0': controls.target0,
+          'zoom0': controls.zoom0,
+          'position0': controls.position0
+        }
+
+        this.storage["lot3-control-" + this.project_id] = JSON.stringify(this.pdata);
+        // this.workerControl.postMessage(this.pdata); //向worker发送数据
+      },
+      loadSceneHandle() {
+        let storageData = this.storage["lot3-control-" + this.project_id]
+        
+        if (storageData !== undefined) {
+          storageData = JSON.parse(storageData)
+          // console.log('storageData', storageData)
+          controls.target.copy(storageData.target0);
+          controls.object.position.copy(storageData.position0);
+          controls.object.zoom = storageData.zoom0;
+          controls.object.updateProjectionMatrix();
+          controls.update();
+        }
+
+      },
+      autoSaveControlState() {
+        // 自动保存控制器的状态
+        setTimeout(() => {
+          this.saveSceneHandle()
+          this.autoSaveControlState()
+        }, 10000)
       },
       personInoutDialogHandle() {
         this.$confirm('此操作将清除浏览器数据库中缓存的模型数据, 是否继续?', '提示', {
