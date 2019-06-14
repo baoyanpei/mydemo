@@ -243,7 +243,9 @@
 
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     camera.up = new THREE.Vector3(0, 0, 1); //相机以哪个方向为上方
-    camera.position.set(150, 200, 190);
+    // camera.position.set(150, 200, 190);
+    camera.position.set(200, 200, 200);
+    camera.lookAt(0, 0, 0);
     // camera.position.set(0, 20, 100);
 
     scene.add(camera);
@@ -686,6 +688,7 @@
 
         if (this.addedUnit == this.totalUnit) {
 
+          // - [ ] 将模型移动至屏幕中心
           let objBbox = new THREE.Box3().setFromObject(showGroup);
           // 通过模型边界框获取模型中心（目标旋转点）
           this.bboxCenter = objBbox.clone().getCenter();
@@ -702,6 +705,20 @@
           sectionGroup.position.set(sectionGroup.position.x - this.bboxCenter.x, sectionGroup.position.y - this
             .bboxCenter.y, 0);
 
+          // - [ ] 设置模型的显示尺寸 fit scene
+          let storageData = this.storage["lot3-control-" + this.project_id]
+          if (storageData === undefined) {
+            const boundingSphere = new THREE.Box3().setFromObject(showGroup).getBoundingSphere();
+            const scale = 2; // object size / display size
+            const objectAngularSize = (camera.fov * Math.PI / 180) * scale;
+            const distanceToCamera = boundingSphere.radius / Math.tan(objectAngularSize / 2)
+            const len = Math.sqrt(Math.pow(distanceToCamera, 2) + Math.pow(distanceToCamera, 2))
+            camera.position.set(len, len, len);
+            controls.update();
+            camera.lookAt(boundingSphere.center);
+            controls.target.set(boundingSphere.center.x, boundingSphere.center.y, boundingSphere.center.z);
+            camera.updateProjectionMatrix();
+          }
 
           this.addDeviceData()
           this.$refs.historyLocation.getLocationHisData()
