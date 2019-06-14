@@ -46,13 +46,18 @@
 
       <div class="bim-toolbar2">
         <div>
-          <el-tooltip class="item" effect="dark" content="save" placement="top">
+          <!-- <el-tooltip class="item" effect="dark" content="save" placement="top">
             <el-button @click="saveSceneHandle">
               <font-awesome-icon icon="magic" size="2x" />
             </el-button>
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="load" placement="top">
             <el-button @click="loadSceneHandle">
+              <font-awesome-icon icon="magic" size="2x" />
+            </el-button>
+          </el-tooltip> -->
+          <el-tooltip class="item" effect="dark" content="获取中心" placement="top">
+            <el-button @click="setCenterHandle">
               <font-awesome-icon icon="magic" size="2x" />
             </el-button>
           </el-tooltip>
@@ -238,7 +243,6 @@
 
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     camera.up = new THREE.Vector3(0, 0, 1); //相机以哪个方向为上方
-    // camera.position.set(-130, -0, 80);
     camera.position.set(150, 200, 190);
     // camera.position.set(0, 20, 100);
 
@@ -251,9 +255,24 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     // controls = new THREE.MapControls(camera, renderer.domElement);
     controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true
-    controls.dampingFactor = 0.25
-    controls.enableZoom = true
+
+    // 使动画循环使用时阻尼或自转 意思是否有惯性
+    controls.enableDamping = true;
+    //动态阻尼系数 就是鼠标拖拽旋转灵敏度
+    controls.dampingFactor = 0.25;
+    //是否可以缩放
+    controls.enableZoom = true;
+    //是否自动旋转
+    controls.autoRotate = false;
+    //设置相机距离原点的最远距离
+    controls.minDistance = 20;
+    //设置相机距离原点的最远距离
+    controls.maxDistance = 10000;
+    //是否开启右键拖拽
+    controls.enablePan = true;
+
+
+
 
     mainCanvas.appendChild(renderer.domElement);
     renderer.setClearColor(0xcccccc, 1);
@@ -283,23 +302,6 @@
     personGroup = new THREE.Group()
     personGroup.name = "personGroup";
     scene.add(personGroup)
-    // unitGroups.visible = false
-    // scene.add(walls)
-    // for (let i = 0, len = unitGroups.length; i < len; i++) {
-    //   unitGroups[i] = new THREE.Group()
-
-    //   scene.add(unitGroups[i])
-    //   unitGroups[i].visible = false
-    // }
-
-
-    document.getElementById('stat-div-loT').appendChild(stats.dom);
-    initLight()
-    initControls()
-    initAxes()
-
-    // animate();
-    // }
 
     towerGroup = new THREE.Group() // 塔机
     towerGroup.name = "towerGroup";
@@ -312,6 +314,16 @@
     sectionGroup = new THREE.Group() // 升降机轨道
     sectionGroup.name = "sectionGroup";
     scene.add(sectionGroup)
+
+    document.getElementById('stat-div-loT').appendChild(stats.dom);
+    initLight()
+    initControls()
+    // initAxes()
+
+    // animate();
+    // }
+
+
   }
   export default {
     directives: {},
@@ -370,7 +382,8 @@
 
         pdata: null,
         cameraState: null,
-        storage: window.localStorage
+        storage: window.localStorage,
+        bboxCenter: null
       }
     },
     computed: {
@@ -408,7 +421,7 @@
       $('.divDataShenJiangJi').hide()
       this.initMouse()
       initThree()
-      
+
       let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
       // console.log('IndexDBDataVer', _IndexDBDataVer)
       if (this.indexed_ver !== _IndexDBDataVer) {
@@ -479,13 +492,6 @@
         this.loadingText = ''
         this.deviceMap = new Map()
         clearScene()
-        // scene.remove(unitGroups)
-        // scene.remove(showGroup)
-        // scene.remove(towerGroup)
-        // scene.remove(elevatorGroup)
-        // scene.remove(sectionGroup)
-        // scene.remove(deviceGroup)
-        // scene.remove(personGroup)
         THREE.Cache.clear()
         // clearTimeout(this.timeRemove)
       },
@@ -667,12 +673,8 @@
           }
           // }
 
-          // if (unit.BUILDID === 87) {
-          //   showGroup.add(_mesh)
-          // } else {
-          //   unitGroups.add(_mesh)
-          // }
           showGroup.add(_mesh)
+          // showGroup.position.set(bboxCenter.x, bboxCenter.y, bboxCenter.z);
           if (unit !== null && unit.DEVICE_TYPE !== null && unit.DEVICE_TYPE !== '' && unit.DEVICE_ID !== null && unit
             .DEVICE_ID !== '') {
             this.deviceMap.set(unit.NAME, {
@@ -683,6 +685,24 @@
         }
 
         if (this.addedUnit == this.totalUnit) {
+
+          let objBbox = new THREE.Box3().setFromObject(showGroup);
+          // 通过模型边界框获取模型中心（目标旋转点）
+          this.bboxCenter = objBbox.clone().getCenter();
+          // 反方向移动物体
+          showGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
+          personGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
+          deviceGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
+          unitGroups.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
+
+          towerGroup.position.set(towerGroup.position.x - this.bboxCenter.x, towerGroup.position.y - this.bboxCenter.y,
+            0);
+          elevatorGroup.position.set(elevatorGroup.position.x - this.bboxCenter.x, elevatorGroup.position.y - this
+            .bboxCenter.y, 0);
+          sectionGroup.position.set(sectionGroup.position.x - this.bboxCenter.x, sectionGroup.position.y - this
+            .bboxCenter.y, 0);
+
+
           this.addDeviceData()
           this.$refs.historyLocation.getLocationHisData()
           this.loadingText = `加载完成 ${this.addedUnit}/${this.totalUnit}`
@@ -726,7 +746,7 @@
       },
       loadSceneHandle() {
         let storageData = this.storage["lot3-control-" + this.project_id]
-        
+
         if (storageData !== undefined) {
           storageData = JSON.parse(storageData)
           // console.log('storageData', storageData)
@@ -744,6 +764,9 @@
           this.saveSceneHandle()
           this.autoSaveControlState()
         }, 10000)
+      },
+      setCenterHandle() {
+
       },
       personInoutDialogHandle() {
         this.$confirm('此操作将清除浏览器数据库中缓存的模型数据, 是否继续?', '提示', {
