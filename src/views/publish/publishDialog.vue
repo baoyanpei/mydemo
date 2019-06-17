@@ -8,7 +8,7 @@
     <dutyForm></dutyForm>
     <div id="publish-dialog" class="publish-dialog">
       <el-form ref="publishForm" :model="publishForm" label-width="80px" :inline="true">
-        <span class="table-title">通告：</span>
+        <span class="table-title">通告：（第一行18字节，其余20字节）</span>
         <div style="padding-top: 10px;padding-bottom: 10px;">
           <el-input type="textarea" v-model="publishForm.msg" :rows="6"></el-input>
         </div>
