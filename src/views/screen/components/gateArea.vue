@@ -91,12 +91,14 @@
       onMessageArrived(message) {
         //BIM/door/10000/223293220/msg
         //{"direction": 2, "gate_ip": "192.168.0.254", "gate_sn": "223293220", "rfid": "611477", "door_no": "2", "msg": "\u67e5\u65e0\u6b64\u5361\u7528\u6237\u4fe1\u606f", "project_id": "10000", "id": "0e07ca193c894e4fbaeba499c0108e34", "onoff": -1}
-        // console.log("收到消息:" + message.destinationName + message.payloadString);
+        // console.log("收到消息11:" + message.destinationName + message.payloadString);
         if (message.destinationName === this.topicCount) {
           // console.log('this.topicCount', this.topicCount)
+        } else if (message.destinationName === `BIM/door/${this.project_id}/cmd`) {
+
         } else {
           this.mqttUserInfo(message.payloadString)
-          
+
         }
 
       },
@@ -133,7 +135,7 @@
         if (this.isConnectMqtt === true && this.topicUserInfo !== '') {
           // 取消老的订阅
           this.client.unsubscribe(this.topicUserInfo); //订阅主题
-          console.log("取消订阅成功！")
+          console.log("取消订阅成功screen！")
         }
       },
 

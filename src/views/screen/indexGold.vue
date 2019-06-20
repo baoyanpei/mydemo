@@ -21,6 +21,15 @@
             <GateArea ref="gateArea" v-on:gateMessage="gateMessage"></GateArea>
           </div>
         </div>
+        <div class="message-area">
+          <div class="title">
+            <img src="/static/screen/gold/titleBg.png" class="bg" />
+            <div class="text">公告栏</div>
+          </div>
+          <div class="main">
+            <Message ref="messageArea"></Message>
+          </div>
+        </div>
         <div class="duty-area">
           <div class="title">
             <img src="/static/screen/gold/titleBg.png" class="bg" />
@@ -61,7 +70,6 @@
               </div>
               <div class="main">
                 <Vehicle></Vehicle>
-                <!-- <Online></Online> -->
               </div>
             </div>
           </el-col>
@@ -105,24 +113,6 @@
             </el-row>
           </div>
         </div>
-        <!-- <div class="shuibiao-area">
-          <div class="title">
-            <img src="/static/screen/gold/titleBg.png" class="bg" />
-            <div class="text">水表数据</div>
-          </div>
-          <div class="main">
-            <ShuiBiao></ShuiBiao>
-          </div>
-        </div>
-        <div class="dianbiao-area">
-          <div class="title">
-            <img src="/static/screen/gold/titleBg.png" class="bg" />
-            <div class="text">电表数据</div>
-          </div>
-          <div class="main">
-            <DianBiao></DianBiao>
-          </div>
-        </div> -->
         <div class="taji-area">
           <div class="title">
             <img src="/static/screen/gold/titleBg.png" class="bg" />
@@ -153,6 +143,7 @@
   import LotArea from './components/lotArea'
   import MeterShui from './components/meterShui'
   import MeterDian from './components/meterDian'
+  import Message from './components/Message'
   export default {
     directives: {},
     name: 'Main',
@@ -169,7 +160,8 @@
       Duty,
       Vehicle,
       MeterShui,
-      MeterDian
+      MeterDian,
+      Message
       // VueDragResize
     },
     data() {
@@ -207,7 +199,7 @@
       gateMessage(data) {
         console.log('gateMessage',data)
         this.$refs.lotArea.gateData(data)
-      }
+      },
     }
   }
 
