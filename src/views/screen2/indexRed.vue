@@ -57,7 +57,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <LotArea ref="lotArea"></LotArea>
+              <!-- <LotArea ref="lotArea"></LotArea> -->
             </div>
           </div>
         </el-row>
@@ -80,7 +80,7 @@
                 <div class="text">现场视频监控</div>
               </div>
               <div class="main">
-                <Camera></Camera>
+                <!-- <Camera></Camera> -->
               </div>
             </div>
           </el-col>
