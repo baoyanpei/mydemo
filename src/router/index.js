@@ -40,7 +40,7 @@ export const constantRouterMap = [{
     path: '/screen',
     name: 'screen',
     component: Layout,
-    component: () => import('@/views/screen2/indexGold'),
+    component: () => import('@/views/screen2/indexRed'),
     hidden: true
   },
   {
