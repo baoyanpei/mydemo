@@ -319,7 +319,7 @@
         // 2.湿度：适宜湿度在45％RH－65％RH之间；湿度在适宜度以下为红色，适宜度为绿色，适宜度以上为橘黄色
         const H = this.weather_data.h
         if (H > 65) {
-          this.HColor = '#E6A23C'
+          this.HColor = '#E78163'
         } else if (H < 45) {
           this.HColor = '#FF0000'
         } else {
@@ -333,7 +333,7 @@
         } else if (PM10 < 50) {
           this.PM10Color = '#67C23A'
         } else {
-          this.PM10Color = '#E6A23C'
+          this.PM10Color = '#E78163'
         }
 
         // 4.PM2.5：一级标准24 小时平均浓度限值35μg/m3；二级标准24 小时平均浓度限值75μg/m3；小于一级标准的为绿色，大于二级标准为橙黄色，大于二级标准为红色
@@ -343,7 +343,7 @@
         } else if (PM10 < 35) {
           this.PM2_5Color = '#67C23A'
         } else {
-          this.PM2_5Color = '#E6A23C'
+          this.PM2_5Color = '#E78163'
         }
 
         // 5.噪音：50分贝下为绿色，50分贝以上到90分贝为橙黄色，90分贝以上为红色
@@ -353,7 +353,7 @@
         } else if (Noise < 50) {
           this.NoiseColor = '#67C23A'
         } else {
-          this.NoiseColor = '#E6A23C'
+          this.NoiseColor = '#E78163'
         }
 
         // 6.风力：等级请见附件；5级以上的用红色标示

@@ -70,7 +70,7 @@
             data: [],
 
             axisLabel: {
-              color: '#347ad0'
+              color: '#3960CB'
             },
             axisLine: {
               lineStyle: {
@@ -95,7 +95,7 @@
               }
             },
             axisLabel: {
-              color: '#347ad0'
+              color: '#3960CB'
             },
             axisLine: {
               lineStyle: {
@@ -119,10 +119,10 @@
             symbolSize: 10,
             barWidth: 8,
             itemStyle: {
-              color: '#347ad0',
+              color: '#3960CB',
             },
             lineStyle: {
-              color: '#347ad0',
+              color: '#3960CB',
             }
           }]
         }

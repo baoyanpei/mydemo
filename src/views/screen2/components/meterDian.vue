@@ -70,17 +70,17 @@
             data: [],
 
             axisLabel: {
-              color: '#AD9271'
+              color: '#ffc297'
             },
             axisLine: {
               lineStyle: {
-                color: '#AD9271'
+                color: '#ffc297'
               }
             },
             axisTick: {
               show: false,
               lineStyle: {
-                color: '#AD9271'
+                color: '#ffc297'
               }
             }
           },
@@ -90,16 +90,16 @@
             splitLine: {
               show: true,
               lineStyle: {
-                color: ['#AD9271'],
+                color: ['#ffc297'],
                 type: 'solid',
               }
             },
             axisLabel: {
-              color: '#AD9271'
+              color: '#ffc297'
             },
             axisLine: {
               lineStyle: {
-                color: '#AD9271'
+                color: '#ffc297'
               }
             },
             axisTick: {
@@ -119,10 +119,10 @@
             symbolSize: 10,
             barWidth: 8,
             itemStyle: {
-              color: '#FFC376',
+              color: '#ffc297',
             },
             lineStyle: {
-              color: '#FFC376',
+              color: '#ffc297',
             }
           }]
         }
