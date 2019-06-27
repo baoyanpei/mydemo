@@ -1,0 +1,53 @@
+.screen-message-info {
+  font-size: 1rem;
+  margin: 0px 5px 5px 5px;
+  padding: 0px 10px 0px 10px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  height: 100px;
+  width: 386px;
+  line-height: 30px;
+  text-indent:30px;
+  font-weight: 600;
+  overflow-y: auto;
+  color:#cc8e46;
+  position: relative;
+  .divContent{
+    padding-bottom: 50px;
+  }
+  
+  .info-content {
+    overflow: hidden;
+    height: 80px;
+    word-break: break-all;
+    white-space: normal;
+    width: 100%;
+
+  }
+
+  .info-title {
+    color: #ffcc00;
+    text-shadow: black 0.1em 0.1em 0.1em;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  .message_main {
+    padding: 0px 10px 0px 10px;
+  }
+
+  .slide-enter-active,
+  .slide-leave-active {
+    transition: all 0.5s linear;
+  }
+
+  .slide-leave-to {
+    transform: translateY(-20px);
+  }
+
+  .slide-enter {
+    transform: translateY(20px);
+  }
+}
