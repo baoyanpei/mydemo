@@ -57,7 +57,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <!-- <LotArea ref="lotArea"></LotArea> -->
+              <LotArea ref="lotArea"></LotArea>
             </div>
           </div>
         </el-row>
