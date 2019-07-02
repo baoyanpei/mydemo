@@ -52,7 +52,8 @@
         modIDList: [],
         totalNeedModel: 0,
         totalOKModel: 0,
-        indexedDBWaitList: []
+        indexedDBWaitList: [],
+        isInitData: false //是否已经加载了数据
       }
     },
     computed: {
@@ -90,10 +91,15 @@
 
     },
     mounted() {
-
+      this.init()
     },
     methods: {
       async init() {
+        if (this.isInitData === true || this.project_id === null) {
+          return
+        }
+        this.isInitData = true
+
         this.modIDList = []
         await this.getBuildingListByProID()
         this.totalNeedModel = this.modIDList.length

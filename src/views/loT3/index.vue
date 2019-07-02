@@ -51,14 +51,15 @@
               <font-awesome-icon icon="magic" size="2x" />
             </el-button>
           </el-tooltip>
+          
           <el-tooltip class="item" effect="dark" content="load" placement="top">
             <el-button @click="loadSceneHandle">
               <font-awesome-icon icon="magic" size="2x" />
             </el-button>
           </el-tooltip> -->
-          <el-tooltip class="item" effect="dark" content="获取中心" placement="top">
-            <el-button @click="setCenterHandle">
-              <font-awesome-icon icon="magic" size="2x" />
+          <el-tooltip class="item" effect="dark" content="重置位置" placement="top">
+            <el-button @click="setCenterHandle(false)">
+              <font-awesome-icon icon="crosshairs" size="2x" />
             </el-button>
           </el-tooltip>
         </div>
@@ -385,7 +386,8 @@
         pdata: null,
         cameraState: null,
         storage: window.localStorage,
-        bboxCenter: null
+        bboxCenter: null,
+        isInitData: false //是否已经加载了数据
       }
     },
     computed: {
@@ -406,6 +408,7 @@
     },
     watch: {
       project_id(curVal, oldVal) {
+        console.log('project_idproject_idproject_id', curVal, oldVal)
         if (oldVal !== null) {
           this.clearData()
           location.reload()
@@ -424,12 +427,15 @@
       this.initMouse()
       initThree()
 
+      console.log('mounted mounted mounted')
+
       let _IndexDBDataVer = Cookies.get('IndexDBDataVer')
       // console.log('IndexDBDataVer', _IndexDBDataVer)
       if (this.indexed_ver !== _IndexDBDataVer) {
         await this.clearDB()
         Cookies.set('IndexDBDataVer', this.indexed_ver)
       }
+      this.init()
 
     },
     beforeDestroy() {
@@ -441,6 +447,11 @@
     destroyed() {},
     methods: {
       async init() {
+        if (this.isInitData === true || this.project_id === null) {
+          return
+        }
+        this.isInitData = true
+        console.log('init init init init')
         await this.initDevlist()
         // window.onresize = this.onWindowResize;
 
@@ -483,8 +494,8 @@
             // LoadSection(sectionGroup, paramsJson.height)
           }
         })
-        this.loadSceneHandle()
-        this.autoSaveControlState()
+        // this.loadSceneHandle()
+        // this.autoSaveControlState()
         this.queryPersonGroup()
         this.addDataToDB()
       },
@@ -685,44 +696,15 @@
             })
           }
         }
-
-        if (this.addedUnit == this.totalUnit) {
-
-          // - [ ] 将模型移动至屏幕中心
-          let objBbox = new THREE.Box3().setFromObject(showGroup);
-          // 通过模型边界框获取模型中心（目标旋转点）
-          this.bboxCenter = objBbox.clone().getCenter();
-          // 反方向移动物体
-          showGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
-          personGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
-          deviceGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
-          unitGroups.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
-
-          towerGroup.position.set(towerGroup.position.x - this.bboxCenter.x, towerGroup.position.y - this.bboxCenter.y,
-            0);
-          elevatorGroup.position.set(elevatorGroup.position.x - this.bboxCenter.x, elevatorGroup.position.y - this
-            .bboxCenter.y, 0);
-          sectionGroup.position.set(sectionGroup.position.x - this.bboxCenter.x, sectionGroup.position.y - this
-            .bboxCenter.y, 0);
-
-          // - [ ] 设置模型的显示尺寸 fit scene
-          let storageData = this.storage["lot3-control-" + this.project_id]
-          if (storageData === undefined) {
-            const boundingSphere = new THREE.Box3().setFromObject(showGroup).getBoundingSphere();
-            const scale = 2; // object size / display size
-            const objectAngularSize = (camera.fov * Math.PI / 180) * scale;
-            const distanceToCamera = boundingSphere.radius / Math.tan(objectAngularSize / 2)
-            const len = Math.sqrt(Math.pow(distanceToCamera, 2) + Math.pow(distanceToCamera, 2))
-            camera.position.set(len, len, len);
-            controls.update();
-            camera.lookAt(boundingSphere.center);
-            controls.target.set(boundingSphere.center.x, boundingSphere.center.y, boundingSphere.center.z);
-            camera.updateProjectionMatrix();
-          }
-
+        if (this.addedUnit == 1) {
+          this.setCenterHandle(false)
+        } else if (this.addedUnit == this.totalUnit) {
+          this.setCenterHandle(true)
+          // this.loadSceneHandle()
           this.addDeviceData()
           this.$refs.historyLocation.getLocationHisData()
           this.loadingText = `加载完成 ${this.addedUnit}/${this.totalUnit}`
+          this.autoSaveControlState()
           // this.loadingDialog.close()
         }
       },
@@ -782,8 +764,46 @@
           this.autoSaveControlState()
         }, 10000)
       },
-      setCenterHandle() {
+      setCenterHandle(isMoveCenter) {
+        // - [ ] 将模型移动至屏幕中心
+        let objBbox = new THREE.Box3().setFromObject(showGroup);
+        // 通过模型边界框获取模型中心（目标旋转点）
+        this.bboxCenter = objBbox.clone().getCenter();
+        console.log(this.bboxCenter.x, this.bboxCenter.y)
 
+        if (isMoveCenter) {
+          // 反方向移动物体
+          showGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
+          personGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
+          deviceGroup.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
+          unitGroups.position.set(-this.bboxCenter.x, -this.bboxCenter.y, 0);
+
+          towerGroup.position.set(towerGroup.position.x - this.bboxCenter.x, towerGroup.position.y - this.bboxCenter.y,
+            0);
+          elevatorGroup.position.set(elevatorGroup.position.x - this.bboxCenter.x, elevatorGroup.position.y - this
+            .bboxCenter.y, 0);
+          sectionGroup.position.set(sectionGroup.position.x - this.bboxCenter.x, sectionGroup.position.y - this
+            .bboxCenter.y, 0);
+        }
+
+
+
+        const boundingSphere = new THREE.Box3().setFromObject(showGroup).getBoundingSphere();
+        const scale = 2; // object size / display size
+        const objectAngularSize = (camera.fov * Math.PI / 180) * scale;
+        const distanceToCamera = boundingSphere.radius / Math.tan(objectAngularSize / 2)
+        const len = Math.sqrt(Math.pow(distanceToCamera, 2) + Math.pow(distanceToCamera, 2))
+        camera.position.set(len, len, len);
+        controls.update();
+        camera.lookAt(boundingSphere.center);
+        controls.target.set(boundingSphere.center.x, boundingSphere.center.y, boundingSphere.center.z);
+        camera.updateProjectionMatrix();
+
+        // // - [ ] 设置模型的显示尺寸 fit scene
+        // let storageData = this.storage["lot3-control-" + this.project_id]
+        // if (storageData !== undefined) {
+        //   this.loadSceneHandle()
+        // }
       },
       personInoutDialogHandle() {
         this.$confirm('此操作将清除浏览器数据库中缓存的模型数据, 是否继续?', '提示', {
