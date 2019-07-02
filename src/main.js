@@ -55,11 +55,12 @@ import {
   faUserCog,
   faDesktop,
   faNetworkWired,
-  faMagic
+  faMagic,
+  faCrosshairs
 } from '@fortawesome/free-solid-svg-icons'
 // 图标来源
 // https://fontawesome.com/icons?d=gallery&s=solid&m=free
-library.add(faQrcode, faDesktop, faMagic, faNetworkWired, faUser, faHome, faUserCog, faChartLine, faChartBar, faMobileAlt, faCoffee, faUserSecret, faCalendarAlt, faBookOpen, faAddressCard, faCalendarCheck, faCalendarPlus, faStreetView, faListAlt)
+library.add(faQrcode, faDesktop, faMagic, faNetworkWired, faUser, faCrosshairs, faHome, faUserCog, faChartLine, faChartBar, faMobileAlt, faCoffee, faUserSecret, faCalendarAlt, faBookOpen, faAddressCard, faCalendarCheck, faCalendarPlus, faStreetView, faListAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('icon', Icon)
 Vue.use(VueWorker)
@@ -90,7 +91,7 @@ Vue.config.productionTip = false
 
 router.beforeEach(async (to, from, next) => {
   console.log("to, from 123", to, from, to.query)
-  
+
   if (to.meta.requireAuth) {
     // console.log("to.meta.requireAuth", to.meta.requireAuth, to.meta.CheckCode)
     // console.log("TongXunLu", store.state.project.project_id)
