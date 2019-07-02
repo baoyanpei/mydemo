@@ -80,7 +80,7 @@
                 <div class="text">现场视频监控</div>
               </div>
               <div class="main">
-                <!-- <Camera></Camera> -->
+                <Camera></Camera>
               </div>
             </div>
           </el-col>
