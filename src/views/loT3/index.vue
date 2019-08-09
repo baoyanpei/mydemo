@@ -473,25 +473,44 @@
             // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
             elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
             modifyElevator(elevatorGroup, `E${datum.device_id}`, 0, false) //名称，高度，门的开启状态
-
-
-
           } else if (datum.device_type === 100) { // 升降机轨道
-            // {"pos_x":80,"pos_y":26,"pos_z":0,"height":75}
             let paramsJson = JSON.parse(datum.params_json)
             sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
             LoadSection(sectionGroup, paramsJson.height)
 
           } else if (datum.device_type === 17) { // 网络设备
-            // {"pos_x":80,"pos_y":26,"pos_z":0,"height":75}
             if (datum.params_json !== '' && datum.params_json !== null) {
-
-              // console.log('paramsJson', paramsJson)
               this.addWifiDeviceLabel(datum)
             }
 
-            // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-            // LoadSection(sectionGroup, paramsJson.height)
+          } else if (datum.device_type === 16) { // 摄像头
+            if (datum.params_json !== '' && datum.params_json !== null && datum.params_json.pos_x !== undefined) {
+              this.addCameraDeviceLabel(datum)
+            }
+
+            // if (datum.device_id === 'YD10000IPC013') {
+            //   let _demo16 = '{"pos_x":78.5,"pos_y":24,"pos_z":0}'
+            //   datum['params_json'] = _demo16
+            //   console.log('_demo16', datum)
+            //   this.addCameraDeviceLabel(datum)
+            // }
+          } else if (datum.device_type === 10) { // 电表
+            if (datum.params_json !== '' && datum.params_json !== null && datum.params_json.pos_x !== undefined) {
+              this.addNormalDeviceLabel(datum, 'dianbiao.png')
+              this.addTxtBoxByPosition(datum)
+            }
+          } else if (datum.device_type === 11) { // 水表
+            if (datum.params_json !== '' && datum.params_json !== null && datum.params_json.pos_x !== undefined) {
+              this.addNormalDeviceLabel(datum, 'shuibiao.png')
+              this.addTxtBoxByPosition(datum)
+            }
+
+          } else if (datum.device_type === 15) { // 环境检测仪
+            if (datum.params_json !== '' && datum.params_json !== null && datum.params_json.pos_x !== undefined) {
+              this.addNormalDeviceLabel(datum, 'huanjinjianceyi.png')
+              this.addTxtBoxByPosition(datum)
+            }
+
           }
         })
         // this.loadSceneHandle()
@@ -830,6 +849,9 @@
         });
       },
       addDeviceData() {
+        if (this.project_id !== 10000) {
+          return
+        }
         console.log('this.deviceMap', this.deviceMap)
         // console.log('showGroup', showGroup)
         let i = 0
@@ -838,7 +860,7 @@
           let _device = data.unit
           let mesh = data.mesh
           // let _device = this.deviceMap.get(mesh.name)
-          console.log('_device', _device)
+          // console.log('_device', _device)
           // 摄像头
           if (_device.DEVICE_TYPE === 16) {
             this.addCameraLabel(mesh, _device)
@@ -925,6 +947,55 @@
         lable.position.copy(centroid)
         deviceGroup.add(lable);
       },
+      addCameraDeviceLabel(deviceData) {
+        let paramsJson = JSON.parse(deviceData.params_json)
+        // console.log('deviceData', deviceData, paramsJson)
+        // let deviceData = this.datumMeterMap.get(device.DEVICE_ID)
+        let thisbt = document.createElement('img');
+
+        thisbt.className = 'loTLabel'
+        thisbt.style.pointerEvents = 'auto'
+        // thisbt.style.marginTop = '-1em';
+        thisbt.title = deviceData.device_name
+        thisbt.onclick = () => {
+          // console.log('deviceData12312312313', deviceData)
+          // alert('现场浇注楼梯:楼梯:540159 Run 1')
+          if (deviceData === undefined) {
+            this.$message({
+              message: '此摄像头未配置数据',
+              type: 'error'
+            })
+          } else if (deviceData.video_url === '') {
+            this.$message({
+              message: '此摄像头无法直播',
+              type: 'error'
+            })
+          } else {
+            const param = {
+              show: true,
+              deviceData: deviceData
+            }
+            this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+          }
+        }
+        thisbt.src = "/static/videocamera3.png";
+
+        let lable = new CSS2DObject(thisbt);
+        lable.name = deviceData.device_id + "_b";
+        // lable.position.copy(centroid)
+        console.log('paramsJson.pos_layer', paramsJson.pos_layer)
+        if (paramsJson.pos_layer !== undefined) {
+          lable.position.z = (paramsJson.pos_layer - 1) * 3.5 + 1.4;
+        } else {
+          lable.position.z = 0
+        }
+
+        //X,Y坐标来自于传入数据
+        lable.position.x = paramsJson.pos_x - 0.1;
+        lable.position.y = paramsJson.pos_y + 0.1;
+        console.log('lable.position', lable.position)
+        deviceGroup.add(lable);
+      },
       addWifiDeviceLabel(deviceData) {
         let paramsJson = JSON.parse(deviceData.params_json)
         console.log('deviceData', deviceData, paramsJson)
@@ -950,6 +1021,106 @@
         console.log('lable.position', lable.position)
         deviceGroup.add(lable);
       },
+      addNormalDeviceLabel(deviceData, picName) {
+        if (this.project_id === 10000) {
+          return
+        }
+        let paramsJson = JSON.parse(deviceData.params_json)
+        console.log('deviceData', deviceData, paramsJson)
+        // let deviceData = this.datumMeterMap.get(device.DEVICE_ID)
+        let thisbt = document.createElement('img');
+
+        thisbt.className = 'loTLabel1'
+        thisbt.style.pointerEvents = 'auto'
+        // thisbt.style.marginTop = '-1em';
+        thisbt.title = deviceData.device_name
+        thisbt.onclick = () => {
+          this.showHideTip(deviceData.device_type)
+        }
+        // thisbt.src = "/static/icon/wifiDevice.png";
+        thisbt.src = `/static/${picName}` //"shuibiao.png";
+
+        let lable = new CSS2DObject(thisbt);
+        lable.name = deviceData.device_id + "_b";
+        // lable.position.copy(centroid)
+        if (paramsJson.pos_layer !== undefined) {
+          lable.position.z = (paramsJson.pos_layer - 1) * 3.5 + 1.4;
+        } else {
+          lable.position.z = 0
+        }
+        //X,Y坐标来自于传入数据
+        lable.position.x = paramsJson.pos_x - 0.1;
+        lable.position.y = paramsJson.pos_y + 0.1;
+        // console.log('lable.position', lable.position)
+        deviceGroup.add(lable);
+      },
+      addTxtBoxByPosition(deviceData) {
+        if (this.project_id === 10000) {
+          return
+        }
+        let paramsJson = JSON.parse(deviceData.params_json)
+        // console.log('addTxtBoxByPosition', deviceData)
+        let thisbt = document.createElement('div');
+        if (deviceData.device_type === 10) {
+          let aaa = this.datumMeterMap.get(deviceData.device_id)
+          // console.log('aaa', aaa)
+          thisbt.innerHTML =
+            `<div class='css2-txt-box tip-device'>用电量：<span id='divDianBiao${deviceData.device_id}'>${aaa
+            .total_used}</span> 度<img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/></div>`
+          thisbt.id = "tipDianBiao"
+        } else if (deviceData.device_type === 11) {
+          // 水表
+          // let DeviceID = 'YD10000SB03'
+          let bbb = this.datumMeterMap.get(deviceData.device_id)
+          thisbt.id = "tipShuiBiao"
+          thisbt.innerHTML =
+            `<div class='css2-txt-box tip-device'>用水量：<span id='divShuiBiao${deviceData.device_id}'>${bbb
+            .total_used}</span> 吨<img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/></div>`
+        } else if (deviceData.device_type === 15) {
+          let _h =
+            "<div class='css2-txt-box2 tip-device'><span id='divHJJCY' class='tip-device'> 环境检测仪 </span><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/></div>"
+          thisbt.id = "tipHJJCY"
+          thisbt.innerHTML = _h
+        }
+
+
+        thisbt.className = 'css2-txt-flag'
+        thisbt.style.pointerEvents = 'auto'
+        thisbt.style.marginTop = '-3em';
+        thisbt.onclick = () => {
+          // console.log('name', _mesh.name, device.DEVICE_TYPE)
+
+        }
+        // thisbt.src = "http://admin.yidebim.com/bim2/static/videocamera3.png";
+        let lable = new CSS2DObject(thisbt);
+        lable.name = deviceData.device_id + "_box";
+
+        if (paramsJson.pos_layer !== undefined) {
+          lable.position.z = (paramsJson.pos_layer - 1) * 3.5 + 1.4;
+        } else {
+          lable.position.z = 0
+        }
+        //X,Y坐标来自于传入数据
+        lable.position.x = paramsJson.pos_x - 0.1;
+        lable.position.y = paramsJson.pos_y + 0.1;
+        console.log('lable.position', lable.position)
+        deviceGroup.add(lable);
+
+
+        setTimeout(() => {
+          $("#iconCloseDianBiao").click(() => {
+            this.showHideTip(10)
+          });
+          $("#iconCloseShuiBiao").click(() => {
+            this.showHideTip(11)
+          });
+          $("#iconCloseHJJCY").click(() => {
+            this.showHideTip(15)
+          });
+        }, 3000);
+
+      },
+
       showHideTip(device_type) {
         let _obj = null
         switch (device_type) {
