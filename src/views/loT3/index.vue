@@ -484,8 +484,12 @@
             }
 
           } else if (datum.device_type === 16) { // 摄像头
-            if (datum.params_json !== '' && datum.params_json !== null && datum.params_json.pos_x !== undefined) {
-              this.addCameraDeviceLabel(datum)
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                this.addCameraDeviceLabel(datum)
+              }
+
             }
 
             // if (datum.device_id === 'YD10000IPC013') {
@@ -495,20 +499,32 @@
             //   this.addCameraDeviceLabel(datum)
             // }
           } else if (datum.device_type === 10) { // 电表
-            if (datum.params_json !== '' && datum.params_json !== null && datum.params_json.pos_x !== undefined) {
-              this.addNormalDeviceLabel(datum, 'dianbiao.png')
-              this.addTxtBoxByPosition(datum)
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                this.addNormalDeviceLabel(datum, 'dianbiao.png')
+                this.addTxtBoxByPosition(datum)
+              }
+
             }
           } else if (datum.device_type === 11) { // 水表
-            if (datum.params_json !== '' && datum.params_json !== null && datum.params_json.pos_x !== undefined) {
-              this.addNormalDeviceLabel(datum, 'shuibiao.png')
-              this.addTxtBoxByPosition(datum)
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                this.addNormalDeviceLabel(datum, 'shuibiao.png')
+                this.addTxtBoxByPosition(datum)
+              }
             }
 
           } else if (datum.device_type === 15) { // 环境检测仪
-            if (datum.params_json !== '' && datum.params_json !== null && datum.params_json.pos_x !== undefined) {
-              this.addNormalDeviceLabel(datum, 'huanjinjianceyi.png')
-              this.addTxtBoxByPosition(datum)
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                console.log('datum_15', paramsJson)
+                this.addNormalDeviceLabel(datum, 'huanjinjianceyi.png')
+                this.addTxtBoxByPosition(datum)
+              }
+
             }
 
           }
@@ -987,12 +1003,12 @@
         if (paramsJson.pos_layer !== undefined) {
           lable.position.z = (paramsJson.pos_layer - 1) * 3.5 + 1.4;
         } else {
-          lable.position.z = 0
+          lable.position.z = paramsJson.pos_z / 1000
         }
 
         //X,Y坐标来自于传入数据
-        lable.position.x = paramsJson.pos_x - 0.1;
-        lable.position.y = paramsJson.pos_y + 0.1;
+        lable.position.x = paramsJson.pos_x / 1000 - 0.1;
+        lable.position.y = paramsJson.pos_y / 1000 + 0.1;
         console.log('lable.position', lable.position)
         deviceGroup.add(lable);
       },
@@ -1043,14 +1059,10 @@
         let lable = new CSS2DObject(thisbt);
         lable.name = deviceData.device_id + "_b";
         // lable.position.copy(centroid)
-        if (paramsJson.pos_layer !== undefined) {
-          lable.position.z = (paramsJson.pos_layer - 1) * 3.5 + 1.4;
-        } else {
-          lable.position.z = 0
-        }
+        lable.position.z = paramsJson.pos_z / 1000
         //X,Y坐标来自于传入数据
-        lable.position.x = paramsJson.pos_x - 0.1;
-        lable.position.y = paramsJson.pos_y + 0.1;
+        lable.position.x = paramsJson.pos_x / 1000;
+        lable.position.y = paramsJson.pos_y / 1000;
         // console.log('lable.position', lable.position)
         deviceGroup.add(lable);
       },
@@ -1098,11 +1110,11 @@
         if (paramsJson.pos_layer !== undefined) {
           lable.position.z = (paramsJson.pos_layer - 1) * 3.5 + 1.4;
         } else {
-          lable.position.z = 0
+          lable.position.z = paramsJson.pos_z / 1000;
         }
         //X,Y坐标来自于传入数据
-        lable.position.x = paramsJson.pos_x - 0.1;
-        lable.position.y = paramsJson.pos_y + 0.1;
+        lable.position.x = paramsJson.pos_x / 1000;
+        lable.position.y = paramsJson.pos_y / 1000;
         console.log('lable.position', lable.position)
         deviceGroup.add(lable);
 
