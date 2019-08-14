@@ -483,7 +483,7 @@
               this.addWifiDeviceLabel(datum)
             }
 
-          } else if (datum.device_type === 16) { // 摄像头
+          } else if (datum.device_type === 16 || datum.device_type === 18) { // 摄像头
             if (datum.params_json !== '' && datum.params_json !== null) {
               let paramsJson = JSON.parse(datum.params_json)
               if (paramsJson.pos_x !== undefined) {
@@ -527,6 +527,15 @@
 
             }
 
+          } else if (datum.device_type === 14) { // 闸机
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                // console.log('datum_14', paramsJson)
+                this.addNormalDeviceLabel(datum, 'icon/zhaji.gif')
+                this.addTxtBoxByPosition(datum)
+              }
+            }
           }
         })
         // this.loadSceneHandle()
