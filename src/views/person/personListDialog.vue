@@ -59,7 +59,7 @@
         <el-table-column property="group_name_level[0]" align="center" sortable label="部门" width="90"
           header-align="center">
         </el-table-column>
-        <el-table-column property="group_name_level[1]" align="center" sortable label="专业" width="100"
+        <el-table-column property="group_name_level[1]" align="center" sortable label="班组" width="100"
           header-align="center">
         </el-table-column>
         <el-table-column property="project_pos_name" align="center" sortable label="工种" width="80"
@@ -408,7 +408,7 @@
         //     filename = `${filename}_${this.personInoutForm.GroupList[0]}`
         // }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '工种',
+          const tHeader = ['序号', '姓名', '电话', '部门', '班组', '工种',
             '学历', '入职时间', '人员状态'
           ]
           const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'project_pos_name', 'education',

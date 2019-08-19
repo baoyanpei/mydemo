@@ -19,7 +19,7 @@
                 部门：{{bumen}}
               </el-col>
               <el-col :span="14">
-                专业：{{zhuanye}}
+                班组：{{zhuanye}}
               </el-col>
             </el-row>
             <el-row :gutter="24">

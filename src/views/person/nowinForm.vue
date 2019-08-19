@@ -47,7 +47,7 @@
           </el-table-column>
           <el-table-column property="group_name_level[0]" sortable label="部门" width="90" header-align="center">
           </el-table-column>
-          <el-table-column property="group_name_level[1]" sortable label="专业" header-align="center">
+          <el-table-column property="group_name_level[1]" sortable label="班组" header-align="center">
           </el-table-column>
           <el-table-column property="last_in_time" sortable label="最后进场时间" width="140" header-align="center">
           </el-table-column>

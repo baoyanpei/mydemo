@@ -16,7 +16,7 @@
               </el-table-column> -->
         <el-table-column property="group_name_level[0]" label="部门" header-align="left">
         </el-table-column>
-        <el-table-column property="group_name_level[1]" label="专业" header-align="left">
+        <el-table-column property="group_name_level[1]" label="班组" header-align="left">
         </el-table-column>
       </el-table>
     </div>

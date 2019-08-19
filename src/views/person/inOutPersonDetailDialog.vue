@@ -25,7 +25,7 @@
               <el-form-item label="部门:">
                 {{bumen}}
               </el-form-item>
-              <el-form-item label="专业:">
+              <el-form-item label="班组:">
                 {{zhuanye}}
               </el-form-item>
             </el-form>

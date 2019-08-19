@@ -63,7 +63,7 @@
                   </el-table-column>
                   <el-table-column property="name" sortable="custom" prop="name" label="部门" width="100">
                   </el-table-column>
-                  <el-table-column property="name" sortable="custom" prop="name" label="专业" width="100">
+                  <el-table-column property="name" sortable="custom" prop="name" label="班组" width="100">
                   </el-table-column>
                   <el-table-column property="mobile" sortable label="手机" width="100">
                     <template slot-scope="scope">{{ scope.row.mobile }}</template>

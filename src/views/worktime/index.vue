@@ -39,7 +39,7 @@
             </el-table-column>
             <el-table-column property="group_name_level[0]" sortable label="部门" width="90" header-align="center">
             </el-table-column>
-            <el-table-column property="group_name_level[1]" sortable label="专业" width="100" header-align="center">
+            <el-table-column property="group_name_level[1]" sortable label="班组" width="100" header-align="center">
             </el-table-column>
             <el-table-column property="inDay" sortable label="出勤天数" width="100" align="center" header-align="center">
             </el-table-column>
@@ -378,7 +378,7 @@
           let gz = "      "
           let ff = "      "
           let qz = "      "
-          const tHeader = ['序号', '姓名', '电话', '部门', '专业', '上工天数', '统计天数', '工作时长(小时)', '统计开始日期', '统计结束日期', '工资', '发放',
+          const tHeader = ['序号', '姓名', '电话', '部门', '班组', '上工天数', '统计天数', '工作时长(小时)', '统计开始日期', '统计结束日期', '工资', '发放',
             '签字'
           ]
           const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'inDay', 'countDay', 'worktime',

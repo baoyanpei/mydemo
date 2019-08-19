@@ -22,7 +22,7 @@
           <div class="grid-content info-qita">部门：<span>{{persion_data.group_name_root}}</span></div>
         </el-row>
         <el-row :gutter="24">
-          <div class="grid-content info-qita">专业：<span>{{persion_data.group_name}}</span></div>
+          <div class="grid-content info-qita">班组：<span>{{persion_data.group_name}}</span></div>
         </el-row>
         <el-row :gutter="24">
           <div class="grid-content info-qita">职位：
@@ -61,7 +61,7 @@
     "card_type": -1, //卡类型 4 零时人员
     // "entry_pic": "",
     "group_id": "",
-    "group_name": "", // 专业
+    "group_name": "", // 班组
     "group_name_root": "",
     "groups_type": "", // 部门类型 1为管理部门，0为施工部门
     "project_pos_id": "", // 职位id
