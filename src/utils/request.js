@@ -93,14 +93,14 @@ service.interceptors.response.use(
               return res
             } else {
               Message({
-                message: res.msg + "（接口status!=success）",
+                message: res.msg + "（1接口status!=success）",
                 type: 'error',
                 duration: 5 * 1000
               })
             }
           } catch (error) {
             Message({
-              message: res.msg + "（接口status!=success）",
+              message: res.msg + "（2接口status!=success）",
               type: 'error',
               duration: 5 * 1000
             })

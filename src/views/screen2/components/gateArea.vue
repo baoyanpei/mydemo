@@ -22,7 +22,7 @@
     },
     data() {
       return {
-        project_id: 10000,
+        project_id: null,
 
         client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
         timerReconnectMqtt: null,
@@ -62,8 +62,8 @@
       }
     },
     mounted() {
-      this.mqttConnect()
-      this.getProjectGatePerson()
+      // this.mqttConnect()
+      // this.getProjectGatePerson()
     },
     destroyed() {
       this.unsubscribe()
@@ -71,6 +71,11 @@
       // window.removeEventListener('hashchange', this.afterQRScan)
     },
     methods: {
+      init(project_id) {
+        this.project_id = project_id
+        this.getProjectGatePerson()
+        this.mqttConnect()
+      },
       mqttConnect() {
         this.client.connect({
           userName: MQTT_USERNAME,

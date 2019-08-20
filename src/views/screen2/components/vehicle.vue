@@ -5,41 +5,45 @@
 
 <template>
   <div class="screen-vehicle">
-    <el-row>
-      <el-col :span="8">
-        <el-table class="screen-vehicle-table" ref="vehicleTable" stripe :data="vehicleList" height="320px"
-          :empty-text="vehicleTableEmptyText" style="width: 100%" size="mini" :show-header="true" border
-          :row-class-name="tableRowClassName" :resizabl="false">
+    <div v-if="hasVehicleDevice === false" class="noVehicleDeviceTips">{{noVehicleDeviceTips}}</div>
+    <div v-if="hasVehicleDevice === true">
+      <el-row>
+        <el-col :span="8">
+          <el-table class="screen-vehicle-table" ref="vehicleTable" stripe :data="vehicleList" height="320px"
+            :empty-text="vehicleTableEmptyText" style="width: 100%" size="mini" :show-header="true" border
+            :row-class-name="tableRowClassName" :resizabl="false">
 
-          <el-table-column property="lisence" label="车牌号" align="center" header-align="center">
-          </el-table-column>
-          <el-table-column property="created_time" label="进场时间" align="center" header-align="center">
-            <template slot-scope="scope">
-              <span v-html="createTimeHTML(scope.row.created_time)"></span>
-            </template>
-          </el-table-column>
+            <el-table-column property="lisence" label="车牌号" align="center" header-align="center">
+            </el-table-column>
+            <el-table-column property="created_time" label="进场时间" align="center" header-align="center">
+              <template slot-scope="scope">
+                <span v-html="createTimeHTML(scope.row.created_time)"></span>
+              </template>
+            </el-table-column>
 
-        </el-table>
-      </el-col>
-      <el-col :span="16">
-        <div style='padding-left: 20px;' class="last-vehicle">
-          <div class="title">最新进场车牌号码</div>
-          <div class="lisence">
-            <div class="lisence-letter">{{lastVehicle.lisence[0]}}</div>
-            <div class="lisence-letter">{{lastVehicle.lisence[1]}}</div>
-            <div class="lisence-letter">{{lastVehicle.lisence[2]}}</div>
-            <div class="lisence-letter">{{lastVehicle.lisence[3]}}</div>
-            <div class="lisence-letter">{{lastVehicle.lisence[4]}}</div>
-            <div class="lisence-letter">{{lastVehicle.lisence[5]}}</div>
-            <div class="lisence-letter">{{lastVehicle.lisence[6]}}</div>
+          </el-table>
+        </el-col>
+        <el-col :span="16">
+          <div style='padding-left: 20px;' class="last-vehicle">
+            <div class="title">最新进场车牌号码</div>
+            <div class="lisence">
+              <div class="lisence-letter">{{lastVehicle.lisence[0]}}</div>
+              <div class="lisence-letter">{{lastVehicle.lisence[1]}}</div>
+              <div class="lisence-letter">{{lastVehicle.lisence[2]}}</div>
+              <div class="lisence-letter">{{lastVehicle.lisence[3]}}</div>
+              <div class="lisence-letter">{{lastVehicle.lisence[4]}}</div>
+              <div class="lisence-letter">{{lastVehicle.lisence[5]}}</div>
+              <div class="lisence-letter">{{lastVehicle.lisence[6]}}</div>
+            </div>
+            <div class="in-time">进场时间：<br />{{lastVehicle.created_time}}</div>
+
+            <img :src="lastVehicle.pic" class="vehicle-img" />
           </div>
-          <div class="in-time">进场时间：<br />{{lastVehicle.created_time}}</div>
 
-          <img :src="lastVehicle.pic" class="vehicle-img" />
-        </div>
+        </el-col>
+      </el-row>
+    </div>
 
-      </el-col>
-    </el-row>
 
   </div>
 </template>
@@ -50,13 +54,15 @@
     components: {},
     data() {
       return {
-        project_id: 10000,
+        project_id: null,
         vehicleTableEmptyText: '正在查询',
         vehicleList: [],
         lastVehicle: {
           lisence: '',
           created_time: ''
-        }
+        },
+        hasVehicleDevice: false,
+        noVehicleDeviceTips: ''
       }
     },
     props: {
@@ -72,13 +78,34 @@
 
     },
     mounted() {
-      this.getVehicleGateData()
-      this.refreshData()
+      // this.getVehicleGateData()
+      // this.refreshData()
     },
     destroyed() {
 
     },
     methods: {
+      init(project_id, datumMeterMap) {
+        this.project_id = project_id
+
+
+        datumMeterMap.forEach(datum => {
+          if (datum.device_type === 18) {
+            // this.cameraURList.push(datum)
+            this.hasVehicleDevice = true
+
+
+          }
+        })
+
+
+        if (this.hasVehicleDevice === true) {
+          this.getVehicleGateData()
+          this.refreshData()
+        } else {
+          this.noVehicleDeviceTips = "该项目没有配置车牌识别摄像头"
+        }
+      },
       tableRowClassName({
         row,
         rowIndex

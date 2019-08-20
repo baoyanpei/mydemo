@@ -10,7 +10,9 @@
       </div>
 
     </el-row>
-    <el-row>
+    <div v-show="canShow===false" class="errTips">{{errTips}}</div>
+
+    <el-row v-show="canShow===true">
       <el-col :span="5">
         <div class="gate-area">
           <div class="title">
@@ -57,7 +59,7 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <LotArea ref="lotArea"></LotArea>
+              <!-- <LotArea ref="lotArea"></LotArea> -->
             </div>
           </div>
         </el-row>
@@ -69,7 +71,7 @@
                 <div class="text">进出场车辆</div>
               </div>
               <div class="main">
-                <Vehicle></Vehicle>
+                <Vehicle ref="vehicle"></Vehicle>
               </div>
             </div>
           </el-col>
@@ -166,8 +168,13 @@
     },
     data() {
       return {
+        errTips: '',
         todayDate: '',
-        totalInoutPerson: '0'
+        totalInoutPerson: '0',
+        datumMeterMap: new Map(),
+        project_id: null,
+        personInfo: null,
+        canShow: true
       }
     },
     computed: {
@@ -182,9 +189,48 @@
     mounted() {
       moment.locale('zh-cn');
       this.getDate()
+      let _initProjectID = null;
+      let _projectID = this.$route.query.project_id
+      console.log('_projectID', _projectID)
+      if (_projectID === undefined || _projectID === '') {
+        // this.errTips = 'URL参数缺少project_id'
+        _initProjectID = 10000
+      } else {
+        _initProjectID = parseInt(_projectID, 10)
+      }
+
+      this.init(_initProjectID)
+
+
     },
     destroyed() {},
     methods: {
+      async init(projectID) {
+        await this.getPerson()
+        if (this.personInfo !== null) {
+          let _projects = this.personInfo.project
+          _projects.forEach(project => {
+            console.log('project', project)
+            if (project.project_id === projectID) {
+              this.project_id = projectID
+            }
+          })
+          if (this.project_id !== null) {
+            await this.initDevlist()
+            console.log('personInfo1233', this.personInfo)
+            console.log('this.datumMeterMap', this.datumMeterMap)
+            this.$refs.gateArea.init(this.project_id)
+            this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
+          } else {
+            this.canShow = false
+            this.errTips = '项目ID错误或您没有查看权限'
+          }
+
+
+        }
+
+
+      },
       getDate() {
         setTimeout(() => {
           const _moment = moment()
@@ -193,11 +239,46 @@
           this.getDate()
         }, 1000)
       },
+      getPerson() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'query'
+          }
+          this.$store.dispatch('QueryPersonInfo', param).then((data) => {
+            // console.log('datatadaad',data)
+            this.personInfo = data
+            resolve()
+          }).catch(() => {
+            resolve()
+          })
+        })
+
+      },
+      initDevlist() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'devlist',
+            project_id: this.project_id
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            // console.log('QueryDatumMeter - data', data)
+            data.forEach(datum => {
+              this.datumMeterMap.set(datum.device_id, datum)
+            })
+            resolve()
+          }).catch((e) => {
+            console.log(e)
+            resolve()
+          })
+
+
+        })
+      },
       inoutTotalPerson(total) {
         this.totalInoutPerson = total
       },
       gateMessage(data) {
-        console.log('gateMessage',data)
+        console.log('gateMessage', data)
         this.$refs.lotArea.gateData(data)
       },
     }

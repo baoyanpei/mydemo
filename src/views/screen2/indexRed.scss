@@ -3,9 +3,17 @@ $box-border-color: #ECA198;
 
 %box-border {
   border: 3px solid $box-border-color;
-  box-shadow: 0 0 10px #d43982;//d43982
+  box-shadow: 0 0 10px #d43982; //d43982
   border-radius: 5px;
   background-color: #000000;
+}
+
+.errTips {
+  min-height: 1080px;
+  line-height: 1080px;
+  text-align: center;
+  font-size: 4rem;
+  // color: #333333;
 }
 
 .screen-index-container {

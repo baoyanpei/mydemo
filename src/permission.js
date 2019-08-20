@@ -77,7 +77,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       console.log('from333312344', to, from)
-      next(`/login?from=${to.path}`) // 否则全部重定向到登录页
+      next(`/login?from=${to.fullPath}`) // 否则全部重定向到登录页
       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
   }

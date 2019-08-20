@@ -50,8 +50,20 @@ const person = {
     }, param) {
       return new Promise((resolve, reject) => {
         queryPersonInfo(param).then(response => {
-          // console.log("queryPersonInfo", response.data)
+          console.log("queryPersonInfo", response.data)
           commit('SET_PERSON_INFO', response.data)
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    QueryPersonInfoScreen({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryPersonInfo(param).then(response => {
+          console.log("queryPersonInfo", response.data)
           resolve(response.data)
         }).catch(error => {
           reject(error)
