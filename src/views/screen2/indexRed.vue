@@ -47,7 +47,7 @@
             <div class="text">场内人员{{totalInoutPerson}}人</div>
           </div>
           <div class="main">
-            <Inout v-on:inoutTotalPerson="inoutTotalPerson"></Inout>
+            <Inout ref="inout" v-on:inoutTotalPerson="inoutTotalPerson"></Inout>
           </div>
         </div>
       </el-col>
@@ -223,6 +223,8 @@
             this.$refs.messageArea.init(this.project_id)
             this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
             this.$refs.duty.init(this.project_id)
+            this.$refs.inout.init(this.project_id)
+            
             
           } else {
             this.canShow = false

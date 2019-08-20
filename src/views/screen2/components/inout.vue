@@ -30,7 +30,7 @@
     components: {},
     data() {
       return {
-        project_id: 10000,
+        project_id: null,
         // loading: false,
         personInoutTableEmptyText: '正在查询',
         personInoutList: [],
@@ -54,19 +54,24 @@
 
     },
     mounted() {
-      this.getProjectPersonInout()
-      this.refreshData()
+      // this.getProjectPersonInout()
+      // this.refreshData()
     },
     destroyed() {
 
     },
     methods: {
+      init(project_id) {
+        this.project_id = project_id
+        this.getProjectPersonInout()
+        this.refreshData()
+      },
       getProjectPersonInout() {
         clearTimeout(this.timeoutScroll)
         this.$refs.personInoutTable1.bodyWrapper.scrollTop = 0
         this.personNowInDataList = []
         this.loading = true
- 
+
         this.personNowInMap = new Map()
         this.personNowInMapList = []
         let param = {
@@ -132,7 +137,7 @@
 
         let _scrollTop = this.singleHeight * this.personInoutList.length - this.singleHeight * 5
         // console.log('_scrollTop', _scrollTop, this.$refs.personInoutTable1.bodyWrapper.scrollTop, this.$refs
-          // .personInoutTable1.bodyWrapper.scrollHeight)
+        // .personInoutTable1.bodyWrapper.scrollHeight)
         if (this.$refs.personInoutTable1.bodyWrapper.scrollTop >= _scrollTop - 5) {
 
           this.timeoutScroll = setTimeout(() => {
