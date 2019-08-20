@@ -210,7 +210,7 @@
         if (this.personInfo !== null) {
           let _projects = this.personInfo.project
           _projects.forEach(project => {
-            console.log('project', project)
+            // console.log('project', project)
             if (project.project_id === projectID) {
               this.project_id = projectID
             }
@@ -219,7 +219,7 @@
             await this.initDevlist()
             console.log('personInfo1233', this.personInfo)
             console.log('this.datumMeterMap', this.datumMeterMap)
-            this.$refs.gateArea.init(this.project_id)
+            this.$refs.gateArea.init(this.project_id,this.datumMeterMap)
             this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
           } else {
             this.canShow = false

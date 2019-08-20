@@ -31,6 +31,7 @@
         topicUserInfo: '', //订阅用户信息
         topicCount: '',
         reconnectTimes: 0, //重连次数
+        deviceIDs: []
       }
     },
     props: {
@@ -71,8 +72,17 @@
       // window.removeEventListener('hashchange', this.afterQRScan)
     },
     methods: {
-      init(project_id) {
+      init(project_id, datumMeterMap) {
         this.project_id = project_id
+
+        datumMeterMap.forEach(datum => {
+          if (datum.device_type === 14) {
+            // this.cameraURList.push(datum)
+            this.deviceIDs.push(datum.device_id)
+
+
+          }
+        })
         this.getProjectGatePerson()
         this.mqttConnect()
       },
@@ -158,15 +168,19 @@
           }
 
           this.$store.dispatch('QueryProjectGatePerson', param).then(() => {
-            //   console.log('this.projectGatePerson123', this.projectGatePerson)
+            console.log('this.projectGatePerson123', this.projectGatePerson)
             for (let key in this.projectGatePerson) {
-              // console.log(key, this.projectGatePerson[key])
               const GateData = this.projectGatePerson[key]
-              const _gateID = `gate${GateData.door_no}`
-              // console.log("_gateID", _gateID)
-              if (GateData !== undefined) {
-                this.$refs[_gateID].setProjectGatePerson(GateData)
 
+              if (this.deviceIDs.indexOf(GateData.gate_sn) !== -1) {
+                const _gateID = `gate${GateData.door_no}`
+                // console.log("_gateID", _gateID)
+                // console.log('this.deviceIDs', this.deviceIDs)
+                // console.log('indexOf', this.deviceIDs.indexOf(GateData.gate_sn))
+                if (GateData !== undefined) {
+                  this.$refs[_gateID].setProjectGatePerson(GateData)
+
+                }
               }
             }
           }).catch(() => {
