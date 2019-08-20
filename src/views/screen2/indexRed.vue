@@ -121,7 +121,7 @@
             <div class="text">塔机/升降机</div>
           </div>
           <div class="main">
-            <TajiArea></TajiArea>
+            <TajiArea ref="tajiArea"></TajiArea>
           </div>
         </div>
       </el-col>
@@ -227,7 +227,8 @@
             this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
             this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
             this.$refs.weather.init(this.project_id, this.datumMeterMap)
-
+            this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
+            
             
           } else {
             this.canShow = false

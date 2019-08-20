@@ -33,10 +33,11 @@
         info_system: '', //系统信息
         reconnectTimes: 0, //重连次数
 
-        topicTJ1: '', // 塔机和升降机推送消息
-        topicTJ2: '', // 塔机和升降机推送消息
-
-        project_id: 10000,
+        topicTJ1: '', // 塔机
+        topicTJ2: '', // 升降机
+        TJ_DeviceID: '', // 塔机
+        SJJ_DeviceID: '', // 升降机
+        project_id: null,
 
       }
     },
@@ -67,13 +68,47 @@
       }
     },
     mounted() {
-      this.mqttConnect()
+      // this.mqttConnect()
     },
     destroyed() {
       this.unsubscribe()
       clearTimeout(this.timerReconnectMqtt)
     },
     methods: {
+      init(project_id, datumMeterMap) {
+        this.project_id = project_id
+
+        datumMeterMap.forEach(datum => {
+          // 升降机
+          if (datum.device_type === 12 && datum.params_json.length > 0) {
+            // this.cameraURList.push(datum)
+
+            const params_json = JSON.parse(datum.params_json)
+            const _mqtt = params_json.mqtt
+            if (_mqtt !== undefined && _mqtt !== '') {
+              this.topicTJ2 = _mqtt
+              this.SJJ_DeviceID = datum.device_id.toString()
+            }
+          } else if (datum.device_type === 13 && datum.params_json.length > 0) { // 塔机
+            const params_json = JSON.parse(datum.params_json)
+
+            const _mqtt = params_json.mqtt
+            if (_mqtt !== undefined && _mqtt !== '') {
+              this.topicTJ1 = _mqtt
+              this.TJ_DeviceID = datum.device_id.toString()
+            }
+          }
+        })
+
+        this.mqttConnect()
+
+        window.addEventListener("online", () => {
+          this.mqttConnect()
+        }); // offline网络连接事件        
+        window.addEventListener("offline", () => {
+          // this.mqttConnect()
+        })
+      },
       mqttConnect() {
         this.client.connect({
           userName: MQTT_USERNAME,
@@ -121,11 +156,15 @@
       },
       subscribe() {
         if (this.isConnectMqtt === true && this.project_id !== null) {
-          this.topicTJ1 = 'BIM/Sets/zhgd/DEYE/18090311/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
-          this.topicTJ2 = 'BIM/Sets/zhgd/DEYE/18090302/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
+          // this.topicTJ1 = 'BIM/Sets/zhgd/DEYE/18090311/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
+          // this.topicTJ2 = 'BIM/Sets/zhgd/DEYE/18090302/#' //塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
           // BIM/door/10001/count
-          this.client.subscribe(this.topicTJ1); //塔机和升降机推送消息
-          this.client.subscribe(this.topicTJ2); //塔机和升降机推送消息
+          if (this.topicTJ1 !== '') {
+            this.client.subscribe(this.topicTJ1); //塔机
+          }
+          if (this.topicTJ2 !== '') {
+            this.client.subscribe(this.topicTJ2); //升降机
+          }
           console.log("订阅成功！", this.topicTJ1)
           console.log("订阅成功！", this.topicTJ2)
         }
@@ -151,15 +190,19 @@
         //destinationNameArray => ["BIM", "Sets", "zhgd", "DEYE", "18090311", "RealtimeDataCrane"]
         const destinationNameArray = _destinationName.split('/')
         // console.log('destinationNameArray', destinationNameArray)
-        const TJNO = destinationNameArray[4] //黑匣子编号
+        const TJNO = destinationNameArray[4].toString() //黑匣子编号
         const _cmd = destinationNameArray[5] //指令
+        // console.log("--->TJNO", TJNO)
         switch (TJNO) {
-          case "18090311": // 塔吊
+          case this.TJ_DeviceID.toString(): // 塔吊
             // console.log('塔吊', data)
             this.mqttTaDiao(_cmd, _payloadString)
             break;
-          case "18090302": // 升降机
+          case this.SJJ_DeviceID.toString(): // 升降机
             // console.log('升降机', data)
+            // let _RealtimeDataElevatorName = this.topicTJ2.replace('#', 'RealtimeDataElevator')
+            // console.log('_RealtimeDataElevatorName', _RealtimeDataElevatorName)
+            // console.log('_destinationName', _destinationName)
             this.mqttShenJiangJi(_cmd, _payloadString)
             break;
         }
