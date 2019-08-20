@@ -3,7 +3,14 @@
   background-repeat: no-repeat;
   height: 100%;
   width: 100%;
-  background-position: center 10px;
+  background-position: center -10px;
+
+  .noWeatherTips {
+    line-height: 150px;
+    text-align: center;
+    font-size: 20px;
+    color: #aaaaaa;
+  }
 
   .label {
     color: #E78163;

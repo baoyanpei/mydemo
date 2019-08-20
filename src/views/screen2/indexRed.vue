@@ -95,7 +95,7 @@
             <div class="text">环境检测仪</div>
           </div>
           <div class="main">
-            <Weather></Weather>
+            <Weather ref="weather"></Weather>
           </div>
         </div>
         <div class="meter-area">
@@ -226,8 +226,9 @@
             this.$refs.inout.init(this.project_id)
             this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
             this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
+            this.$refs.weather.init(this.project_id, this.datumMeterMap)
 
-
+            
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'

@@ -5,7 +5,8 @@
 
 <template>
   <div class="screen-weather">
-    <div class="weather-info">
+    <div v-if="topicWeather === ''" class="noWeatherTips">{{noWeatherTips}}</div>
+    <div v-if="topicWeather !== ''" class="weather-info">
 
       <el-row class='weather-row'>
         <el-col :span="12">
@@ -105,77 +106,6 @@
           </el-row>
         </el-col>
       </el-row>
-      <!-- <el-row :gutter="10">
-        <el-col :span="12">
-          <div class="grid-content bg-purple">
-            温度：
-            <span v-bind:style="{ color: TempColor}">
-              {{weather_data.temp}} °C
-            </span>
-          </div>
-        </el-col>
-        <el-col :span="12">
-          <div class="grid-content bg-purple" style="text-align: right;">
-            湿度：
-            <span v-bind:style="{ color: HColor}">
-              {{weather_data.h}} %
-            </span>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <div class="grid-content bg-purple">噪声：</div>
-        </el-col>
-        <el-col :span="12">
-          <div class="grid-content bg-purple" style="text-align: right;">
-            <span v-bind:style="{ color: NoiseColor}">
-              {{weather_data.noise}} db
-            </span>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <div class="grid-content bg-purple">扬尘：</div>
-        </el-col>
-        <el-col :span="12">
-          <div class="grid-content bg-purple" style="text-align: right;">
-            <span v-bind:style="{ color: PM10Color}">
-              {{weather_data.pm10}} ug/m<sup>3</sup>
-            </span>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <div class="grid-content bg-purple">PM2.5：</div>
-        </el-col>
-        <el-col :span="12">
-          <div class="grid-content bg-purple" style="text-align: right;">
-            <span v-bind:style="{ color: PM2_5Color}">
-              {{weather_data.pm2_5}} ug/m<sup>3</sup>
-            </span>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <div class="grid-content bg-purple">风速：</div>
-        </el-col>
-        <el-col :span="12">
-          <div class="grid-content bg-purple" style="text-align: right;">
-            <span v-bind:style="{ color: WindColor}">
-              {{ weather_data.wind }} 级
-            </span>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="24">
-          <div class="grid-content bg-purple" style="font-size: 12px;">服务器时间：{{ weather_data.cdate }}</div>
-        </el-col>
-      </el-row> -->
     </div>
   </div>
 </template>
@@ -191,7 +121,7 @@
     components: {},
     data() {
       return {
-
+        noWeatherTips: '',
         client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
         timerReconnectMqtt: null,
         isConnectMqtt: null, //是否已经连接
@@ -201,7 +131,7 @@
 
         topicWeather: '', // 天气检测
 
-        project_id: 10000,
+        project_id: null,
         weather_data: {},
         TempColor: '#FF00000',
         HColor: '#FF00000',
@@ -238,13 +168,42 @@
       }
     },
     mounted() {
-      this.mqttConnect()
+      // this.mqttConnect()
     },
     destroyed() {
       this.unsubscribe()
       clearTimeout(this.timerReconnectMqtt)
     },
     methods: {
+      init(project_id, datumMeterMap) {
+        this.project_id = project_id
+        // console.log('datumMeterMap', datumMeterMap)
+        datumMeterMap.forEach(datum => {
+          if (datum.device_type === 15 && datum.params_json.length > 0) {
+            // this.cameraURList.push(datum)
+
+            const params_json = JSON.parse(datum.params_json)
+            const _mqtt = params_json.mqtt
+            if (_mqtt !== undefined && _mqtt !== '') {
+              this.topicWeather = _mqtt // 天气检测
+
+
+              this.mqttConnect()
+
+              window.addEventListener("online", () => {
+                this.mqttConnect()
+              }); // offline网络连接事件        
+              window.addEventListener("offline", () => {
+                // this.mqttConnect()
+              })
+            }
+          }
+        })
+
+        if (this.topicWeather === '') {
+          this.noWeatherTips = '该项目没有配置环境检测仪'
+        }
+      },
       mqttConnect() {
         this.client.connect({
           userName: MQTT_USERNAME,
@@ -291,7 +250,7 @@
       },
       subscribe() {
         if (this.isConnectMqtt === true && this.project_id !== null) {
-          this.topicWeather = `BIM/HJ/720/01` //订阅用户信息
+          // this.topicWeather = `BIM/HJ/720/01` //订阅用户信息
           // BIM/door/10001/count
           this.client.subscribe(this.topicWeather); //订阅主题
           console.log("订阅成功！", this.topicWeather)
