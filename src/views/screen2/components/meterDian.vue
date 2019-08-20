@@ -5,7 +5,8 @@
 
 <template>
   <div class="screen-meter-dian">
-    <div class="data-area">
+    <div v-if="device_id === null" class="noMeterDianTips">{{noMeterDianTips}}</div>
+    <div v-if="device_id !== null" class="data-area">
       <div class="label">当前电表读数</div>
       <div class="total-used">
         <div class="item-box">{{total_used[0]}}</div>
@@ -17,7 +18,7 @@
       <div class="total-today-label">今日用电量</div>
       <div class="total-today">{{total_today}} 度</div>
     </div>
-    <div>
+    <div v-if="device_id !== null">
       <echart ref="echarts-shuibiao" :options="option" class="echarts-shuibiao" theme="infographic"
         style="width:100%;height: 170px;">
       </echart>
@@ -31,8 +32,9 @@
     components: {},
     data() {
       return {
-        project_id: 10000,
-        device_id: 'YD10000DB01', //YD10000SB03, YD10000DB01
+        noMeterDianTips: '',
+        project_id: null,
+        device_id: null, //YD10000SB03, YD10000DB01
         total_used: '',
         total_today: '',
         option: {
@@ -141,13 +143,33 @@
 
     },
     mounted() {
-      this.getAllData()
-      this.refreshData()
+      // this.getAllData()
+      // this.refreshData()
     },
     destroyed() {
 
     },
     methods: {
+      init(project_id, datumMeterMap) {
+        this.project_id = project_id
+
+        datumMeterMap.forEach(datum => {
+          if (this.device_id === null) {
+            if (datum.device_type === 10 && datum.total_used !== null && datum.total_used !== '') {
+              // this.cameraURList.push(datum)
+              this.device_id = datum.device_id
+              this.getAllData()
+              this.refreshData()
+            }
+          }
+
+        })
+        if (this.device_id === null) {
+          this.noMeterDianTips = "无电表数据"
+        }
+        // this.getAllData()
+        // this.refreshData()
+      },
       getAllData() {
         this.getCurrentData()
         this.getTodayHoursData()
@@ -161,7 +183,7 @@
           device_id: this.device_id,
         }
         this.$store.dispatch('QueryDatumMeter', param).then((MeterData) => {
-          //   console.log('MeterData', MeterData)
+          console.log('MeterData', MeterData)
           if (MeterData.length > 0) {
             this.total_used = MeterData[0].total_used
           }

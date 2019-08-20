@@ -82,7 +82,7 @@
                 <div class="text">现场视频监控</div>
               </div>
               <div class="main">
-                <Camera></Camera>
+                <Camera ref="carema"></Camera>
               </div>
             </div>
           </el-col>
@@ -107,10 +107,10 @@
             <!-- <Weather></Weather> -->
             <el-row>
               <el-col :span="12">
-                <MeterShui></MeterShui>
+                <MeterShui ref="meterShui"></MeterShui>
               </el-col>
               <el-col :span="12">
-                <MeterDian></MeterDian>
+                <MeterDian ref="meterDian"></MeterDian>
               </el-col>
             </el-row>
           </div>
@@ -219,13 +219,15 @@
             await this.initDevlist()
             console.log('personInfo1233', this.personInfo)
             console.log('this.datumMeterMap', this.datumMeterMap)
-            this.$refs.gateArea.init(this.project_id,this.datumMeterMap)
+            this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             this.$refs.messageArea.init(this.project_id)
             this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
             this.$refs.duty.init(this.project_id)
             this.$refs.inout.init(this.project_id)
-            
-            
+            this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
+            this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
+
+
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
