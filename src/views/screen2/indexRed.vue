@@ -38,7 +38,7 @@
             <div class="text">值班人员</div>
           </div>
           <div class="main">
-            <Duty></Duty>
+            <Duty ref="duty"></Duty>
           </div>
         </div>
         <div class="inout-area">
@@ -220,7 +220,10 @@
             console.log('personInfo1233', this.personInfo)
             console.log('this.datumMeterMap', this.datumMeterMap)
             this.$refs.gateArea.init(this.project_id,this.datumMeterMap)
+            this.$refs.messageArea.init(this.project_id)
             this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
+            this.$refs.duty.init(this.project_id)
+            
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'

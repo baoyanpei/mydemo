@@ -40,7 +40,7 @@
         reconnectTimes: 0, //重连次数
         topicCMD: '', //指令
 
-        project_id: 10000,
+        project_id: null,
         isShowMessage: true,
         color: '#FF0000',
         message_content: '',
@@ -71,8 +71,8 @@
       }
     },
     mounted() {
-      this.getMessage()
-      this.mqttConnect()
+      // this.getMessage()
+      // this.mqttConnect()
 
     },
     destroyed() {
@@ -80,6 +80,11 @@
       // clearTimeout(this.timerReconnectMqtt)
     },
     methods: {
+      init(project_id) {
+        this.project_id = project_id
+        this.getMessage()
+        this.mqttConnect()
+      },
       mqttConnect() {
         this.client.connect({
           userName: MQTT_USERNAME,
@@ -103,7 +108,7 @@
         console.log("收到消息-messgage:" + message.destinationName + message.payloadString);
         if (message.destinationName === `BIM/door/${this.project_id}/cmd`) {
           this.getMessage()
-        } 
+        }
         // this.updateData(message.payloadString)
       },
       onConnect() {

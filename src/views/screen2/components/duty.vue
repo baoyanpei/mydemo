@@ -26,7 +26,7 @@
     components: {},
     data() {
       return {
-        project_id: '10000',
+        project_id: null,
         personList: []
 
       }
@@ -44,12 +44,16 @@
 
     },
     mounted() {
-      this.getProjectDutyDay()
+      // this.getProjectDutyDay()
     },
     destroyed() {
 
     },
     methods: {
+      init(project_id) {
+        this.project_id = project_id
+        this.getProjectDutyDay()
+      },
       getProjectDutyDay() {
         this.personList = []
         let param = {
