@@ -5,7 +5,8 @@
 
 <template>
   <div class="screen-duty">
-    <div class="list-duty">
+    <div v-if="hasDuty === false" class="noDutyTip">{{noDutyTip}}</div>
+    <div v-if="hasDuty === true" class="list-duty">
       <div v-for="person in personList" :key="person.id" class="item-duty">
         <div class="person-line">
           <div class="person-index">{{person.index}}</div>
@@ -27,7 +28,9 @@
     data() {
       return {
         project_id: null,
-        personList: []
+        personList: [],
+        hasDuty: true,
+        noDutyTip: ''
 
       }
     },
@@ -82,6 +85,12 @@
             //   const person = persons[0]
             //   this.zhiban = `${person.name} ${person.mobile}`
             // }
+          }
+          if (this.personList.length > 0) {
+            this.hasDuty = true
+          } else {
+            this.hasDuty = false
+            this.noDutyTip = '当前没有设置值班人员'
           }
           // console.log('this.personList', this.personList)
         }).catch(() => {

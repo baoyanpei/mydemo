@@ -183,7 +183,13 @@
       // this.mqttConnect()
     },
     watch: {
-
+      '$route'(to, from) {
+        console.log("totototo", to, from)
+        if (to.name === from.name && to.name === 'screen') {
+          // 修改地址栏参数后刷新
+          location.reload()
+        }
+      },
     },
     mounted() {
       moment.locale('zh-cn');
@@ -228,7 +234,7 @@
             this.$refs.weather.init(this.project_id, this.datumMeterMap)
             this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
             this.$refs.carema.openPlayer(this.datumMeterMap)
-            
+
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'

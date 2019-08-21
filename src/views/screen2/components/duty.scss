@@ -1,4 +1,12 @@
 .screen-duty {
+
+  .noDutyTip {
+    line-height: 70px;
+    text-align: center;
+    font-size: 20px;
+    color: #aaaaaa;
+  }
+
   .list-duty {
     padding-top: 5px;
     padding-left: 25px;
@@ -13,19 +21,23 @@
     .person-line {
       width: 340px;
       float: left;
+
       .person-index {
         float: left;
-        width: 50px;;
+        width: 50px;
+        ;
       }
 
       .person-zhibanren {
         float: left;
-        width: 80px;;
+        width: 80px;
+        ;
       }
 
       .person-name {
         float: left;
-        width: 80px;;
+        width: 80px;
+        ;
       }
 
       .person-mobile {
