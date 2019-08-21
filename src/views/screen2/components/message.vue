@@ -5,8 +5,8 @@
 <template>
   <div id="screen-message-info" class="screen-message-info">
     <!--  -->
-    <!-- <MessageDefault v-show="isShowMessage===false"></MessageDefault> -->
-    <div id="divMessage" style="position: relative;">
+    <div v-if="hasMessage === false" class="noMessageTip">{{noMessageTip}}</div>
+    <div v-id="hasMessage === true" id="divMessage" style="position: relative;">
       <div v-html="listData" class="divContent"></div>
       <div v-html="listData" class="divContent"></div>
       <div v-html="listData" class="divContent"></div>
@@ -33,6 +33,7 @@
     },
     data() {
       return {
+        noMessageTip: '',
         client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
         timerReconnectMqtt: null,
         isConnectMqtt: null, //是否已经连接
@@ -41,12 +42,12 @@
         topicCMD: '', //指令
 
         project_id: null,
-        isShowMessage: true,
         color: '#FF0000',
         message_content: '',
         listData: "",
         roll: true,
-        timeoutScroll: null
+        timeoutScroll: null,
+        hasMessage: true
       }
     },
     created() {
@@ -169,7 +170,6 @@
         }, 100) //120秒
       },
       getMessage() {
-        this.isShowMessage = false;
         this.listData = ""
         const param = {
           method: 'query',
@@ -184,17 +184,24 @@
             if (_msg.show_led === 1) {
               //   this.publishForm.msg = _msg.msg_cont
               this.listData = _msg.msg_cont
-              this.isShowMessage = true
+
             }
 
           }
-          setTimeout(() => {
-            this.refreshHeight()
-            // console.log('height', $('#divMessage').parent().height())
-            // console.log('divMessage', $('#divMessage').height())
-            // this.scrollTable()
+          if (this.listData.length > 0) {
+            this.hasMessage = true
+            setTimeout(() => {
+              this.refreshHeight()
+              // console.log('height', $('#divMessage').parent().height())
+              // console.log('divMessage', $('#divMessage').height())
+              // this.scrollTable()
 
-          }, 5000) //120秒
+            }, 5000) //120秒
+          } else {
+            this.hasMessage = false
+            this.noMessageTip = "当前没有设置公告"
+          }
+
         })
       },
     }
