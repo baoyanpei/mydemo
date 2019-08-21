@@ -457,7 +457,7 @@
         await this.clearDB()
         Cookies.set('IndexDBDataVer', this.indexed_ver)
       }
-      await this.initDevlist()
+
 
       this.initMouse()
 
@@ -465,32 +465,7 @@
       // window.onresize = this.onWindowResize;
 
       // this.mqttConnect()
-      towerGroup = new THREE.Group() // 塔机
-      towerGroup.name = "towerGroup";
-      if (scene) {
-        scene.add(towerGroup)
-        towerGroup.position.set(60, 22, 0); // 红 绿
-        modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
-      };
 
-
-      elevatorGroup = new THREE.Group() // 升降机
-      elevatorGroup.name = "elevatorGroup";
-      if (scene) {
-        scene.add(elevatorGroup)
-        elevatorGroup.position.set(78.5, 24, 0);
-      };
-      modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
-
-      sectionGroup = new THREE.Group() // 升降机轨道
-      sectionGroup.name = "sectionGroup";
-      if (scene) {
-        scene.add(sectionGroup)
-        sectionGroup.position.set(80, 26, 0); // 红 绿
-      };
-      LoadSection(sectionGroup, 67)
-      this.queryPersonGroup()
-      this.addDataToDB()
     },
     beforeDestroy() {
       // $('#screen-loT-canvas3d').empty()
@@ -523,6 +498,35 @@
     },
     destroyed() {},
     methods: {
+      async init() {
+        await this.initDevlist()
+        towerGroup = new THREE.Group() // 塔机
+        towerGroup.name = "towerGroup";
+        if (scene) {
+          scene.add(towerGroup)
+          towerGroup.position.set(60, 22, 0); // 红 绿
+          modifyTower(towerGroup, "T1", this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+        };
+
+
+        elevatorGroup = new THREE.Group() // 升降机
+        elevatorGroup.name = "elevatorGroup";
+        if (scene) {
+          scene.add(elevatorGroup)
+          elevatorGroup.position.set(78.5, 24, 0);
+        };
+        modifyElevator(elevatorGroup, "E1", 0, false) //名称，高度，门的开启状态
+
+        sectionGroup = new THREE.Group() // 升降机轨道
+        sectionGroup.name = "sectionGroup";
+        if (scene) {
+          scene.add(sectionGroup)
+          sectionGroup.position.set(80, 26, 0); // 红 绿
+        };
+        LoadSection(sectionGroup, 67)
+        this.queryPersonGroup()
+        this.addDataToDB()
+      },
       clearDB() {
         return new Promise((resolve, reject) => {
           let modelDB = null
@@ -1006,7 +1010,7 @@
 
       },
       initPerson(obj) {
-        
+
         this.editPerson(obj)
       },
       editPerson(obj) {
