@@ -104,7 +104,6 @@
             <div class="text">水表/电表</div>
           </div>
           <div class="main">
-            <!-- <Weather></Weather> -->
             <el-row>
               <el-col :span="12">
                 <MeterShui ref="meterShui"></MeterShui>
@@ -228,7 +227,7 @@
             this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
             this.$refs.weather.init(this.project_id, this.datumMeterMap)
             this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
-            
+            this.$refs.carema.openPlayer(this.datumMeterMap)
             
           } else {
             this.canShow = false

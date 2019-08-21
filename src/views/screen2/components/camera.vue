@@ -5,7 +5,8 @@
 
 <template>
   <div class="screen-camera">
-    <div id="playerArea" v-html='source'></div>
+    <div v-if="hasCamera === false" class="noCameraTips">{{noCameraTips}}</div>
+    <div v-if="hasCamera === true" id="playerArea" v-html='source'></div>
   </div>
 </template>
 <script>
@@ -20,11 +21,13 @@
     components: {},
     data() {
       return {
+        noCameraTips: '', // 该项目没有配置监控视频
         player: null,
         timerReplay: null,
         isPlay: false, //是否开始播放
         source: playerHTML,
-        cameraURList: []
+        cameraURList: [],
+        hasCamera: true
       }
     },
     props: {
@@ -52,39 +55,29 @@
 
     },
     async mounted() {
-      await this.initDevlist()
-      console.log('this.cameraURList', this.cameraURList)
-      this.initPlayer()
-      this.refreshData()
+      // this.initPlayer()
+      // this.refreshData()
     },
     destroyed() {
 
     },
     methods: {
-      initDevlist() {
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: 'devlist',
-            project_id: 10000
+      openPlayer(datumMeterMap) {
+        // this.project_id = project_id
+        datumMeterMap.forEach(datum => {
+          if (datum.device_type === 16 && datum.video_url.length > 0 && datum.stable === 1) {
+            this.cameraURList.push(datum)
           }
-          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
-            
-            data.forEach(datum => {
-              if (datum.device_type === 16 && datum.video_url.length > 0 && datum.stable === 1) {
-                
-                this.cameraURList.push(datum)
-              }
-
-            })
-            // console.log('this.cameraURList', this.cameraURList)
-            resolve()
-          }).catch((e) => {
-            console.log(e)
-            resolve()
-          })
-
-
         })
+        // console.log('this.cameraURList', this.cameraURList)
+        if (this.cameraURList.length > 0) {
+          this.initPlayer()
+          this.refreshData()
+        } else {
+          this.hasCamera = false
+          this.noCameraTips = '该项目没有配置监控视频'
+        }
+
       },
       getPlayerHTML(url) {
         //rtmp://rtmp.open.ys7.com/openlive/6afc96f4599c4708b8323fddc5b4cea2

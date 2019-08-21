@@ -9,6 +9,13 @@
   overflow: hidden;
   border-radius: 3px;
 
+  .noCameraTips {
+    line-height: 370px;
+    text-align: center;
+    font-size: 20px;
+    color: #aaaaaa;
+  }
+
   #screen_carame_player {
     max-width: 460px;
     height: 450px;
