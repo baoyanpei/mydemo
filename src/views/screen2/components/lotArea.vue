@@ -743,13 +743,6 @@
       },
       unitTotalAdd(addTotal) {
         this.totalUnit = this.totalUnit + addTotal
-        // if (this.totalUnit == 1) {
-        //   console.log('aaaaaa')
-        //   for (let i = 0, len = unitGroups.length; i < len; i++) {
-        //     unitGroups[i].visible = false
-        //   }
-        // }
-
       },
 
       unitRemove(unit) {
@@ -941,11 +934,6 @@
           console.log('name', _mesh.name, device.DEVICE_TYPE)
           this.showHideTip(device.DEVICE_TYPE)
 
-          // let _mesh1 = scene.getObjectByName(_mesh.name + "_b", true)
-          // _mesh1.visible = false
-          // console.log('type', type, _mesh1)
-
-
         }
         thisbt.src = `/static/${pic_url}` //"shuibiao.png";
 
@@ -967,9 +955,6 @@
           thisbt.innerHTML =
             "<div class='css2-txt-box-name'>电表</span><img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
 
-          // thisbt.innerHTML = "<div class='css2-txt-box'>电表：<span id='divDianBiao" + device.DEVICE_ID + "'> " + aaa
-          //   .total_used +
-          //   "</span> 度</div><img id='iconCloseDianBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
           thisbt.id = "tipDianBiao"
         } else if (device.DEVICE_TYPE === 11) {
           // 水表
@@ -978,18 +963,13 @@
           thisbt.id = "tipShuiBiao"
           thisbt.innerHTML =
             "<div class='css2-txt-box-name'>水表</span><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
-          // thisbt.innerHTML = "<div class='css2-txt-box'>水表：<span id='divShuiBiao" + device.DEVICE_ID + "'> " + bbb
-          //   .total_used +
-          //   "</span> 吨</div><img id='iconCloseShuiBiao' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
+
         } else if (device.DEVICE_TYPE === 15) {
 
           let _h = "<div class='css2-txt-box2-name'>"
           _h = _h + "<span id='divHJJCY'> 环境检测仪 </span>"
           _h = _h + "</div><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
 
-          // let _h = "<div class='css2-txt-box2'>"
-          // _h = _h + "<span id='divHJJCY'> 环境检测仪 </span>"
-          // _h = _h + "</div><img id='iconCloseHJJCY' class='iconTipClose' src='/static/icon/closeIcon.png'/>"
           thisbt.id = "tipHJJCY"
           thisbt.innerHTML = _h
         }
@@ -1026,18 +1006,7 @@
 
       },
       initPerson(obj) {
-        // if (obj.name=="84:0d:8e:81:d4:3c"){
-        //     obj.name = "x";
-        //     editPerson(obj)
-        //     obj.name = "x1";
-        //     obj.x = obj.x1;
-        //     obj.y = obj.y1;
-        //     editPerson(obj)
-        // }
-        //editPerson(obj)
-        // obj.name = obj.name + "_1";
-        // obj.x = obj.x1;
-        // obj.y = obj.y1;
+        
         this.editPerson(obj)
       },
       editPerson(obj) {
@@ -1082,8 +1051,6 @@
                 color: 0xFFFF00
               });
           }
-          //var personMaterial = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
-          //var personMaterial = new THREE.MeshLambertMaterial({color: obj.hatColor});
           let person = new THREE.Mesh(personGeometry, personMaterial);
           person.userData.INFO = obj
           person.geometry.verticesNeedUpdate = true;
