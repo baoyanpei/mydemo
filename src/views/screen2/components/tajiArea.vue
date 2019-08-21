@@ -99,7 +99,12 @@
             }
           }
         })
-
+        if (this.topicTJ1 === '') {
+          this.$refs.taji.noDevice()
+        }
+        if (this.topicTJ2 === '') {
+          this.$refs.shenjiangji.noDevice()
+        }
         this.mqttConnect()
 
         window.addEventListener("online", () => {

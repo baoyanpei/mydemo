@@ -12,54 +12,57 @@
         <span>升降机数据</span>
       </el-col>
     </el-row>
-    <el-row>
-      <el-col :span="8">
-        <div class="grid-content label">
-          高度：
-        </div>
-      </el-col>
-      <el-col :span="16">
-        <div class="grid-content">
-          {{sjjData.sjjgd}} 米
-        </div>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="8">
-        <div class="grid-content label">
-          楼层：
-        </div>
-      </el-col>
-      <el-col :span="16">
-        <div class="grid-content">
-          {{sjjData.sjjlc}} 层
-        </div>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="8">
-        <div class="grid-content label">
-          笼门状态：
-        </div>
-      </el-col>
-      <el-col :span="16">
-        <div class="grid-content">
-          {{sjjData.mzt}}
-        </div>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="8">
-        <div class="grid-content label">
-          上报时间：
-        </div>
-      </el-col>
-      <el-col :span="16">
-        <div class="grid-content">
-          {{sjjData.sbsj}}
-        </div>
-      </el-col>
-    </el-row>
+    <div v-if="hasDevice === false" class="noTJSjjTip">{{noTJSjjTip}}</div>
+    <div v-if="hasDevice === true">
+      <el-row>
+        <el-col :span="8">
+          <div class="grid-content label">
+            高度：
+          </div>
+        </el-col>
+        <el-col :span="16">
+          <div class="grid-content">
+            {{sjjData.sjjgd}} 米
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <div class="grid-content label">
+            楼层：
+          </div>
+        </el-col>
+        <el-col :span="16">
+          <div class="grid-content">
+            {{sjjData.sjjlc}} 层
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <div class="grid-content label">
+            笼门状态：
+          </div>
+        </el-col>
+        <el-col :span="16">
+          <div class="grid-content">
+            {{sjjData.mzt}}
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <div class="grid-content label">
+            上报时间：
+          </div>
+        </el-col>
+        <el-col :span="16">
+          <div class="grid-content">
+            {{sjjData.sbsj}}
+          </div>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
@@ -74,7 +77,8 @@
           sbsj: '-',
           mzt: '-'
         },
-
+        noTJSjjTip: '',
+        hasDevice: true
 
       }
     },
@@ -103,7 +107,12 @@
             break;
         }
         this.sjjData.sbsj = moment(data.RTime).format("HH:mm:ss")
+        this.hasDevice = true
       },
+      noDevice() {
+        this.hasDevice = false
+        this.noTJSjjTip = '未配置升降机'
+      }
     },
     watch: {
 

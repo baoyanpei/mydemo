@@ -6,7 +6,7 @@
   <div id="screen-message-info" class="screen-message-info">
     <!--  -->
     <div v-if="hasMessage === false" class="noMessageTip">{{noMessageTip}}</div>
-    <div v-id="hasMessage === true" id="divMessage" style="position: relative;">
+    <div v-if="hasMessage === true" id="divMessage" style="position: relative;">
       <div v-html="listData" class="divContent"></div>
       <div v-html="listData" class="divContent"></div>
       <div v-html="listData" class="divContent"></div>
