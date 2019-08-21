@@ -234,7 +234,7 @@
             this.$refs.weather.init(this.project_id, this.datumMeterMap)
             this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
             this.$refs.carema.openPlayer(this.datumMeterMap)
-
+            this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
