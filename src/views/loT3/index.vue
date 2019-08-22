@@ -104,7 +104,7 @@
 
   let fov = 35 //35 this.gui.fov //拍摄距离  视野角值越大，场景中的物体越小
   let near = 1 //相机离视体积最近的距离
-  let far = 1000 //相机离视体积最远的距离
+  let far = 2000 //相机离视体积最远的距离
   let aspect = (window.innerWidth) / (window.innerHeight); //纵横比
   let scene = null
   let camera = null
@@ -454,7 +454,7 @@
         console.log('init init init init')
         await this.initDevlist()
         // window.onresize = this.onWindowResize;
-
+        
 
         this.datumMeterMap.forEach(datum => {
 
@@ -538,6 +538,9 @@
             }
           }
         })
+        // towerGroup.position.set(-17, -234, -2.7); // 红 绿
+        // modifyTower(towerGroup, "T1", 75, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+
         // this.loadSceneHandle()
         // this.autoSaveControlState()
         this.queryPersonGroup()
@@ -1023,7 +1026,7 @@
       },
       addWifiDeviceLabel(deviceData) {
         let paramsJson = JSON.parse(deviceData.params_json)
-        console.log('deviceData', deviceData, paramsJson)
+        // console.log('deviceData', deviceData, paramsJson)
         // let deviceData = this.datumMeterMap.get(device.DEVICE_ID)
         let thisbt = document.createElement('img');
 
@@ -1043,7 +1046,7 @@
         //X,Y坐标来自于传入数据
         lable.position.x = paramsJson.pos_y / 1000 - 0.1;
         lable.position.y = paramsJson.pos_x / 1000 + 0.1;
-        console.log('lable.position', lable.position)
+        // console.log('lable.position', lable.position)
         deviceGroup.add(lable);
       },
       addNormalDeviceLabel(deviceData, picName) {
