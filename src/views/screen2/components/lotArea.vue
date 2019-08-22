@@ -1405,6 +1405,7 @@
           thisbt.id = obj.mac;
           thisbt.style.pointerEvents = 'auto'
           thisbt.onclick = async () => {
+            return
             // 查询用户详细信息
             // console.log('obj', obj)
             // let mac = 

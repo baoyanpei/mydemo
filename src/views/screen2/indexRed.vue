@@ -6,6 +6,7 @@
   <div class="screen-index-container" style="margin: 0px;">
     <el-row>
       <div class="header">
+        <div class="project—name">{{project_name}}</div>
         <div class="now-time">{{todayDate}}</div>
       </div>
 
@@ -172,6 +173,7 @@
         totalInoutPerson: '0',
         datumMeterMap: new Map(),
         project_id: null,
+        project_name: '',
         personInfo: null,
         canShow: true
       }
@@ -218,6 +220,7 @@
             // console.log('project', project)
             if (project.project_id === projectID) {
               this.project_id = projectID
+              this.project_name = project.project_name
             }
           })
           if (this.project_id !== null) {

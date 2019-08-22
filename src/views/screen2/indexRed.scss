@@ -40,9 +40,25 @@ $box-border-color: #ECA198;
     height: 90px;
   }
 
+  .project—name{
+    text-align: center;
+    top: 20px;
+    height:40px;
+    position: relative;
+    font-size: 40px;
+    font-weight: 600;
+    margin: 0px auto;
+    width: 100%;
+    // color: #FFFFFF;
+    background-image:-webkit-linear-gradient(bottom,#FFD8CE,#f4dddb,#FFFFFF); 
+    -webkit-background-clip:text; 
+    -webkit-text-fill-color:transparent; 
+  }
+
   .now-time {
     text-align: center;
-    top: 70px;
+    top: 25px;
+    
     position: relative;
     margin: 0px auto;
     width: 100%;
