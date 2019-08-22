@@ -293,10 +293,10 @@
           let geom = unit.GEOM
           if (geom !== '') {
 
-            let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
-              '/static/')
             // let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
-            //   '')
+            //   '/static/')
+            let meshJsonURL = geom.replace('/data/root_www/bim_proj/',
+              '')
             // console.log('meshJsonURL', meshJsonURL)
             let mesh = await this.getJsonFile(meshJsonURL)
             if (mesh === null) {
