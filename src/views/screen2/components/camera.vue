@@ -37,14 +37,15 @@
 
     },
     created() {
-      playerHTML = this.getPlayerHTML('rtmp://rtmp.open.ys7.com/openlive/6afc96f4599c4708b8323fddc5b4cea2')
-      this.source = playerHTML
+      // playerHTML = this.getPlayerHTML('rtmp://rtmp.open.ys7.com/openlive/6afc96f4599c4708b8323fddc5b4cea2')
+      // this.source = playerHTML
       window.addEventListener("online", () => {
         if (this.isPlay === false) {
-          let sources = document.getElementById('playerArea');
-          sources.innerHTML = playerHTML
-          this.initPlayer()
-          this.player.play();
+          this.playVideo()
+          // let sources = document.getElementById('playerArea');
+          // sources.innerHTML = playerHTML
+          // this.initPlayer()
+          // this.player.play();
         }
       }); // offline网络连接事件        
       window.addEventListener("offline", () => {
@@ -69,9 +70,17 @@
             this.cameraURList.push(datum)
           }
         })
-        // console.log('this.cameraURList', this.cameraURList)
+        console.log('this.cameraURList', this.cameraURList)
         if (this.cameraURList.length > 0) {
-          this.initPlayer()
+          // this.initPlayer()
+
+          playerHTML = this.getPlayerHTML('')
+          this.source = playerHTML
+          setTimeout(() => {
+            if (this.isPlay === false) {
+              this.playVideo()
+            }
+          }, 3 * 1000)
           this.refreshData()
         } else {
           this.hasCamera = false
@@ -96,10 +105,11 @@
         console.log('rePlay')
         this.timerReplay = setTimeout(() => {
           if (this.isPlay === false) {
-            let sources = document.getElementById('playerArea');
-            sources.innerHTML = playerHTML
-            this.initPlayer()
-            this.player.play();
+            this.playVideo()
+            // let sources = document.getElementById('playerArea');
+            // sources.innerHTML = playerHTML
+            // this.initPlayer()
+            // this.player.play();
           }
           this.rePlay()
         }, 10 * 1000)
@@ -123,7 +133,14 @@
           this.rePlay()
           this.refreshData()
         }, 120 * 1000) //20秒
-      }
+      },
+      playVideo() {
+        let sources = document.getElementById('playerArea');
+        sources.innerHTML = playerHTML
+        console.log('playerHTML', playerHTML)
+        this.initPlayer()
+        this.player.play();
+      },
     },
 
   }
