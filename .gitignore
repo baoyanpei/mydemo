@@ -20,3 +20,4 @@ selenium-debug.log
 
 package-lock.json
 static/bim_ifc/*
+static/model/*
