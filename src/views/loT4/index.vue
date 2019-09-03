@@ -4,7 +4,9 @@
 </style>
 <template>
   <div class="loT4-index">
-    <div id="viewer-local"></div>
+    <div id="viewer-local">
+      <div v-if="noModelTip!==''" class="noModelTip">{{noModelTip}}</div>
+    </div>
 
   </div>
 </template>
@@ -37,7 +39,7 @@
   };
 
 
-  function init3DView() {
+  function init3DView(modelURL) {
 
     Autodesk.Viewing.Initializer(options, function () {
       element = document.getElementById('viewer-local');
@@ -50,7 +52,7 @@
 
       // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
       // onLoadSuccess, onLoadError);
-      viewer.loadModel("/static/model/qingyang/3d.svf", undefined, onLoadSuccess, onLoadError);
+      viewer.loadModel(modelURL, undefined, onLoadSuccess, onLoadError);
       // viewer.loadModel("/static/model/tianshui/3d.svf", undefined, onLoadSuccess, onLoadError);
 
 
@@ -70,25 +72,61 @@
     components: {},
     data() {
       return {
-
+        noModelTip: ''
       }
     },
     computed: {
+      project_id() {
+        return this.$store.state.project.project_id
+      },
+    },
+    watch: {
+      project_id(curVal, oldVal) {
+        console.log('project_idproject_idproject_id', curVal, oldVal)
+        if (oldVal !== null) {
+          // this.clearData()
+          location.reload()
 
+        }
+        if (curVal !== null) {
+          let _url = this.getModelUrl()
+          if (_url !== '') {
+            this.noModelTip = ''
+            init3DView(_url)
+          } else {
+            this.noModelTip = '当前项目没有模型'
+          }
+
+        }
+
+      },
     },
     created() {
 
     },
     mounted() {
       console.log('lot4-index-mounted')
-      init3DView()
+      // init3DView()
 
     },
     destroyed() {
       // window.removeEventListener('hashchange', this.afterQRScan)
     },
     methods: {
+      getModelUrl() {
+        let _url = ''
+        switch (this.project_id) {
+          case 10000:
+            _url = '/static/model/qingyang/3d.svf';
+            break;
 
+          case 10004:
+            _url = '/static/model/tianshui/3d.svf';
+            break;
+
+        }
+        return _url
+      }
     }
   }
 

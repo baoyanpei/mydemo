@@ -3,4 +3,10 @@
   // padding: 10px;
   background-color: #FFFFFF;
 
+  .noModelTip {
+    line-height: calc(100vh - 34px);
+    text-align: center;
+    font-size: 30px;
+    font-weight: 600;
+  }
 }
