@@ -59,6 +59,7 @@
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "paho.mqtt.js": "^2.0.5",
+    "react": "^16.9.0",
     "screenfull": "3.3.2",
     "showdown": "1.8.6",
     "simplemde": "1.11.2",
