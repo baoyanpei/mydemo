@@ -4,15 +4,42 @@
 </style>
 <template>
   <div class="loT4-index">
+    <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao" v-on:mqttShenJiangJi="mqttShenJiangJi">
+    </mqttBim>
     <div id="viewer-local">
       <div v-if="noModelTip!==''" class="noModelTip">{{noModelTip}}</div>
     </div>
-
+    <div class="divDataTadiao">
+      <div style="padding-bottom: 5px;font-size: 14px;">塔吊</div>
+      <div>塔吊高度：<span id="td_tdgd">{{tdData.tdgd}}</span> 米</div>
+      <div>大臂角度：<span id="td_dbjd">{{tdData.dbjd}}</span> 度</div>
+      <div>小车距离：<span id="td_xcjl">{{tdData.xcjl}}</span> 米</div>
+      <div>吊钩线长：<span id="td_dgxc">{{tdData.dgxc}}</span> 米</div>
+      <div>上报时间：<span id="td_sbsj">{{tdData.sbsj}}</span></div>
+    </div>
+    <div class="divDataShenJiangJi">
+      <div style="padding-bottom: 5px;font-size: 14px;">升降机</div>
+      <div>高度：<span id="sjj_gd">{{sjjData.sjjgd}}</span> 米</div>
+      <div>楼层：<span id="sjj_lc">{{sjjData.sjjlc}}</span> 层</div>
+      <div>笼门状态：<span id="sjj_lmzt">{{sjjData.mzt}}</span> </div>
+      <div>上报时间：<span id="sjj_sbsj">{{sjjData.sbsj}}</span></div>
+    </div>
+    <div v-show="showWeatherInfo" class="divDataWeather">
+      <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(3)" title="关闭" /> -->
+      <div style="padding-bottom: 5px;font-size: 14px;">环境检测仪</div>
+      <div>温度：<span>{{weather_data.temp}}</span> °C</div>
+      <div>湿度：<span>{{weather_data.h}}</span> %</div>
+      <div>噪声：<span>{{weather_data.noise}}</span> db</div>
+      <div>扬尘：<span>{{weather_data.pm10}}</span> ug/m</div>
+      <div>PM2.5：<span>{{weather_data.pm2_5}}</span> ug/m</div>
+      <div>风速：<span>{{ weather_data.wind }}</span> 级</div>
+    </div>
   </div>
 </template>
 
 <script>
   import './Viewing.Extension.MeshSelection'
+  import moment from 'moment'
   // import './Viewing.Extension.PointCloudMarkup/PointCloudMarkup/PointCloudMarkup.js'
   let towerGroup = null // 塔机
   let elevatorGroup = null // 升降机
@@ -20,6 +47,7 @@
 
   let datumMeterMap = new Map()
   let towerHeight = null;
+  import mqttBim from "./components/mqttBim"
   let config = {
     extensions: [
       // "Autodesk.Viewing.ZoomWindow",
@@ -284,7 +312,9 @@
   function initMarker() {
     console.log('viewer.container', viewer.container)
     //delegate the mouse click event
-    $(viewer.container).bind("click", onMouseClick);
+
+    // 在场景中通过点击添加圆圈标记
+    // $(viewer.container).bind("click", onMouseClick);
 
     //delegate the event of CAMERA_CHANGE_EVENT
     viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, function (rt) {
@@ -308,7 +338,7 @@
           pushpinModelPt.z, ));
         //update the SVG position.
         divEle.css({
-          'left': screenpoint.x - pushpinModelPt.radius * 2 ,
+          'left': screenpoint.x - pushpinModelPt.radius * 2,
           'top': screenpoint.y - pushpinModelPt.radius
         });
       }
@@ -373,8 +403,8 @@
     $(parent).append(htmlMarker);
     $('#mymk' + randomId).css({
       'pointer-events': 'none',
-      'width': '20px',
-      'height': '20px',
+      'width': '10px',
+      'height': '10px',
       'position': 'absolute',
       'overflow': 'visible'
     });
@@ -382,13 +412,13 @@
     //build the svg element and draw a circle
     $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
     var snap = Snap($('#mysvg' + randomId)[0]);
-    var rad = 12;
+    var rad = 7;
     var circle = snap.paper.circle(14, 14, rad);
     circle.attr({
       fill: "#FF8888",
       fillOpacity: 0.6,
       stroke: "#FF0000",
-      strokeWidth: 3
+      strokeWidth: 1
     });
 
     //set the position of the SVG
@@ -408,11 +438,40 @@
   }
   export default {
     name: 'Lot4-index',
-    components: {},
+    components: {
+      mqttBim
+    },
     data() {
       return {
         noModelTip: '',
         // towerHeight: 0, // 塔吊高度 28米
+        showTadiaoInfo: true,
+        showShenjiangjiInfo: true,
+        showWeatherInfo: true,
+        showShuibiaoInfo: true,
+        showDianbiaoInfo: true,
+        tdData: { // 塔吊面板数据
+          tdgd: 0,
+          dbjd: '-',
+          xcjl: '-',
+          dgxc: '-',
+          sbsj: '-'
+        },
+        sjjData: { //升降机面板数据
+          sjjgd: '-',
+          sjjlc: '-',
+          sbsj: '-',
+          mzt: '-'
+        },
+        weather_data: {
+          temp: '-',
+          h: '-',
+          noise: '-',
+          wind: '-',
+          pm10: '-',
+          pm2_5: '-'
+        },
+        
       }
     },
     computed: {
@@ -494,7 +553,100 @@
 
         })
       },
+      mqttWeather(data) {
+        // console.log('weather', data)
+        const _data = JSON.parse(data)
+        console.log('_data', _data)
+        /*
+        let _h = "环境检测仪<br/>"
+        _h = _h + "温度：" + _data.temp + "°C &nbsp;&nbsp;&nbsp;&nbsp;"
+        _h = _h + "湿度：" + _data.h + "% <br/>"
+        _h = _h + "噪声：" + _data.noise + "db &nbsp;&nbsp;&nbsp;&nbsp;"
+        _h = _h + "扬尘：" + _data.pm10 + "ug/m <br/>"
+        _h = _h + "PM2.5：" + _data.pm2_5 + "ug/m &nbsp;&nbsp;&nbsp;&nbsp;"
+        _h = _h + "风速：" + _data.wind + "级 <br/>"
+        _h = _h + "<span style='font-size:10px;'>服务器时间：" + moment(_data.cdate).format("HH:mm:ss") + "</span><br/>"
+        */
+        this.weather_data = _data
+        // $('#divHJJCY').html(_h)
+        // this.$refs.weather.updateData(_data)
 
+      },
+      mqttTaDiao(cmd, data) { //塔吊
+        // console.log('塔吊', cmd)
+        switch (cmd) {
+          case "RealtimeDataCrane": // 2.3 上报塔机实时数据（专用）
+            const _data = JSON.parse(data)
+            // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
+            // console.log('RealtimeDataCrane', _data)
+            if (towerGroup !== null) {
+              modifyTower(towerGroup, `T${_data.HxzId}`, this.towerHeight, _data.Angle, _data.RRange, _data
+                .Height); //名称，高度，大臂角度，小车距离，吊钩线长
+
+              $("#td_dbjd").html(_data.Angle)
+              $("#td_xcjl").html(_data.RRange)
+              $("#td_dgxc").html(_data.Height)
+              $("#td_sbsj").html(moment(_data.RTime).format("HH:mm:ss"))
+            }
+
+
+
+            break
+        }
+      },
+      mqttShenJiangJi(cmd, data) { //升降机
+        // console.log('升降机', cmd)
+        let _data = null
+        switch (cmd) {
+          case "RealtimeDataElevator": // 2.11上报升降机实时数据（专用）
+            _data = JSON.parse(data)
+            // console.log('RealtimeDataElevator', _data)
+            // console.log('高度', _data.Height)
+            // 获取数据之后调用方法初始化或者调整状态
+            let doorOpen = true
+            if (_data.DoorState === '0') {
+              doorOpen = false
+            }
+            if (elevatorGroup === null) {
+              return
+            }
+            modifyElevator(elevatorGroup, `E${_data.HxzId}`, _data.Height, doorOpen) //名称，高度，门的开启状态
+
+            $("#sjj_gd").html(_data.Height)
+            $("#sjj_lc").html(_data.Floor)
+            $("#sjj_sbsj").html(moment(_data.RTime).format("HH:mm:ss"))
+            /*
+            0:内外笼门全关
+            1:内外笼门全开
+            2:仅内笼门开
+            3:仅外笼门开
+            */
+            switch (_data.DoorState) {
+              case "0":
+                $("#sjj_lmzt").html('内外笼门全关')
+                break;
+              case "1":
+                $("#sjj_lmzt").html('内外笼门全开')
+                break;
+              case "2":
+                $("#sjj_lmzt").html('仅内笼门开')
+                break;
+              case "3":
+                $("#sjj_lmzt").html('仅外笼门开')
+                break;
+            }
+
+            // this.$refs.taji.updateData(_data)
+            // this.$refs.shenjiangji.updateData(_data)
+            break
+          case "WorkDataElevator": // 2.11上报升降机工作循环数据（专用）
+            _data = JSON.parse(data)
+            // console.log('WorkDataElevator', _data)
+
+            // this.$refs.taji.updateData(_data)
+            break
+        }
+      },
     },
 
   }
