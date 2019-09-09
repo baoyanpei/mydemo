@@ -6,10 +6,11 @@
   <div class="loT4-index">
     <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao" v-on:mqttShenJiangJi="mqttShenJiangJi">
     </mqttBim>
+    <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
     <div id="viewer-local">
       <div v-if="noModelTip!==''" class="noModelTip">{{noModelTip}}</div>
     </div>
-    <div class="divDataTadiao">
+    <div v-show="showTadiaoInfo" class="divDataTadiao">
       <div style="padding-bottom: 5px;font-size: 14px;">塔吊</div>
       <div>塔吊高度：<span id="td_tdgd">{{tdData.tdgd}}</span> 米</div>
       <div>大臂角度：<span id="td_dbjd">{{tdData.dbjd}}</span> 度</div>
@@ -17,7 +18,7 @@
       <div>吊钩线长：<span id="td_dgxc">{{tdData.dgxc}}</span> 米</div>
       <div>上报时间：<span id="td_sbsj">{{tdData.sbsj}}</span></div>
     </div>
-    <div class="divDataShenJiangJi">
+    <div v-show="showShenjiangjiInfo" class="divDataShenJiangJi">
       <div style="padding-bottom: 5px;font-size: 14px;">升降机</div>
       <div>高度：<span id="sjj_gd">{{sjjData.sjjgd}}</span> 米</div>
       <div>楼层：<span id="sjj_lc">{{sjjData.sjjlc}}</span> 层</div>
@@ -34,20 +35,36 @@
       <div>PM2.5：<span>{{weather_data.pm2_5}}</span> ug/m</div>
       <div>风速：<span>{{ weather_data.wind }}</span> 级</div>
     </div>
+    <div v-show="showShuibiaoInfo" class="divDataShuibiao">
+      <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(4)" title="关闭" /> -->
+      <div style="padding-bottom: 5px;font-size: 14px;">水表</div>
+      <div>当前用量：<span>{{shuibiaoTotalUsed}}</span> 吨</div>
+
+    </div>
+    <div v-show="showDianbiaoInfo" class="divDataDianbiao">
+      <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(5)" title="关闭" /> -->
+      <div style="padding-bottom: 5px;font-size: 14px;">电表</div>
+      <div>当前用量：{{dianbiaoTotalUsed}} 度</div>
+
+    </div>
   </div>
 </template>
 
 <script>
   import './Viewing.Extension.MeshSelection'
   import moment from 'moment'
+  import mqttBim from "./components/mqttBim"
+  import historyLocation from "./components/historyLocation"
   // import './Viewing.Extension.PointCloudMarkup/PointCloudMarkup/PointCloudMarkup.js'
   let towerGroup = null // 塔机
   let elevatorGroup = null // 升降机
   let sectionGroup = null // 升降机轨道
 
+  let personGroup = null
+
   let datumMeterMap = new Map()
   let towerHeight = null;
-  import mqttBim from "./components/mqttBim"
+
   let config = {
     extensions: [
       // "Autodesk.Viewing.ZoomWindow",
@@ -103,6 +120,7 @@
     }
     initData()
     initMarker()
+
     console.log('success');
 
 
@@ -124,7 +142,7 @@
     // 异步获取模型的属性
     viewer.getProperties(_dbIds[0],
       function (elements) {
-        console.log('elements', elements)
+        // console.log('elements', elements)
         // var totalMass = 0;
         // for (var i = 0; i < elements.length; i++) {
         //     totalMass += elements[i].properties[0].displayValue;
@@ -165,7 +183,7 @@
         let _x = (max.x - min.x) / 2;
         let _y = (max.y - min.y) / 2;
         let _z = (max.z - min.z) / 2;
-        console.log(_x, _y, _z)
+        // console.log(_x, _y, _z)
       })
 
 
@@ -176,6 +194,7 @@
   }
 
   function initData() {
+
     datumMeterMap.forEach(datum => {
       // console.log('datum', datum)
       if (datum.device_type === 13) { // 塔机
@@ -207,8 +226,12 @@
         let paramsJson = JSON.parse(datum.params_json)
         // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
         // elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
-        elevatorGroup.position.set(230, 45, 30);
-        modifyElevator(elevatorGroup, `E${datum.device_id}`, 0, false) //名称，高度，门的开启状态
+        elevatorGroup.position.set(230, 60, 0);
+
+        // var screenpoint11 = viewer.worldToClient(new THREE.Vector3(0, 0, 0));
+        // viewer.worldToClient()
+        // console.log('screenpoint11', screenpoint11)
+        modifyElevator(elevatorGroup, `E${datum.device_id}`, -125 / 3, false) //名称，高度，门的开启状态
         viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
       } else if (datum.device_type === 100) { // 升降机轨道
 
@@ -219,7 +242,8 @@
 
         let paramsJson = JSON.parse(datum.params_json)
         // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-        sectionGroup.position.set(234, 50, -127);
+        sectionGroup.position.set(234, 65, -125);
+        // console.log('paramsJson.height', paramsJson.height)
         LoadSection(sectionGroup, paramsJson.height)
         viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
 
@@ -310,7 +334,7 @@
   // let viewer = viewer
 
   function initMarker() {
-    console.log('viewer.container', viewer.container)
+    // console.log('viewer.container', viewer.container)
     //delegate the mouse click event
 
     // 在场景中通过点击添加圆圈标记
@@ -344,10 +368,16 @@
       }
     });
 
+    // drawPushpin({
+    //   x: -67.44389071112374,
+    //   y: -80.14724222255938,
+    //   z: -1.148294448852539
+    // });
+
     drawPushpin({
-      x: -67.44389071112374,
-      y: -80.14724222255938,
-      z: -1.148294448852539
+      x: 0,
+      y: 0,
+      z: 0
     });
   }
 
@@ -439,7 +469,8 @@
   export default {
     name: 'Lot4-index',
     components: {
-      mqttBim
+      mqttBim,
+      historyLocation
     },
     data() {
       return {
@@ -471,7 +502,8 @@
           pm10: '-',
           pm2_5: '-'
         },
-        
+        shuibiaoTotalUsed: '-',
+        dianbiaoTotalUsed: '-',
       }
     },
     computed: {
@@ -513,7 +545,13 @@
           this.noModelTip = ''
           await this.initDevlist()
           init3DView(_url)
+          this.$refs.historyLocation.getLocationHisData(this.project_id)
         } else {
+          this.showTadiaoInfo = false
+          this.showShenjiangjiInfo = false
+          this.showWeatherInfo = false
+          this.showShuibiaoInfo = false
+          this.showDianbiaoInfo = false
           this.noModelTip = '当前项目没有模型'
         }
 
@@ -543,7 +581,38 @@
             // console.log('QueryDatumMeter - data', data)
             data.forEach(datum => {
               datumMeterMap.set(datum.device_id, datum)
+
+
             })
+            let _hasDianBiao = false
+            datumMeterMap.forEach(datum => {
+              if (datum.device_type === 11) { // 水表
+
+                this.shuibiaoTotalUsed = datum.total_used
+                if (datum.params_json !== '' && datum.params_json !== null) {
+                  let paramsJson = JSON.parse(datum.params_json)
+                  if (paramsJson.pos_x !== undefined) {
+                    // this.addNormalDeviceLabel(datum, 'shuibiao.png')
+                    // this.addTxtBoxByPosition(datum)
+                  }
+                }
+              } else if (datum.device_type === 10 && _hasDianBiao === false) { // 电表
+                _hasDianBiao = true
+                this.dianbiaoTotalUsed = datum.total_used
+
+                if (datum.params_json !== '' && datum.params_json !== null) {
+                  let paramsJson = JSON.parse(datum.params_json)
+                  if (paramsJson.pos_x !== undefined) {
+                    // this.addNormalDeviceLabel(datum, 'dianbiao.png')
+                    // this.addTxtBoxByPosition(datum)
+                  }
+
+                }
+
+              }
+
+            })
+            this.updateDeviceData()
             resolve()
           }).catch((e) => {
             console.log(e)
@@ -553,10 +622,39 @@
 
         })
       },
+      updateDeviceData() {
+        setTimeout(() => {
+          const param = {
+            method: 'devlist',
+            project_id: this.project_id
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((deviceList) => {
+            deviceList.forEach(device => {
+              // this.datumMeterMap.set(datum.device_id, datum)
+              if (device.device_type === 10) { // 电表
+                // console.log('devicdianbiaoTotalUsede1234', device)
+                this.dianbiaoTotalUsed = device.total_used
+                $('#divDianBiao' + device.device_id).html(device.total_used)
+
+              } else if (device.device_type === 11) { // 水表
+                // console.log('shuibiaoTotalUsed', device)
+                this.shuibiaoTotalUsed = device.total_used
+                $('#divShuiBiao' + device.device_id).html(device.total_used)
+              }
+            })
+            this.updateDeviceData()
+          }).catch((e) => {
+            console.log(e)
+          })
+        }, 60 * 1000)
+
+
+
+      },
       mqttWeather(data) {
         // console.log('weather', data)
         const _data = JSON.parse(data)
-        console.log('_data', _data)
+        // console.log('_data', _data)
         /*
         let _h = "环境检测仪<br/>"
         _h = _h + "温度：" + _data.temp + "°C &nbsp;&nbsp;&nbsp;&nbsp;"
@@ -610,7 +708,7 @@
             if (elevatorGroup === null) {
               return
             }
-            modifyElevator(elevatorGroup, `E${_data.HxzId}`, _data.Height, doorOpen) //名称，高度，门的开启状态
+            modifyElevator(elevatorGroup, `E${_data.HxzId}`, _data.Height - (125 / 3), doorOpen) //名称，高度，门的开启状态
 
             $("#sjj_gd").html(_data.Height)
             $("#sjj_lc").html(_data.Floor)
@@ -647,6 +745,199 @@
             break
         }
       },
+      initPerson(obj) {
+        this.editPerson(obj)
+      },
+      editPerson(obj) {
+        if (personGroup === null) {
+          personGroup = new THREE.Group()
+          personGroup.name = "personGroup";
+          viewer.overlays.impl.addOverlay('custom-scene', personGroup)
+        }
+
+        let ex = personGroup.getObjectByName(obj.name, true)
+        if (ex) {
+          // ex.position.x = obj.x/1000-20.8;
+          ex.position.x = obj.x / 1000;
+          // ex.position.y = obj.y/1000-38.9;
+          ex.position.y = obj.y / 1000;
+          let thisb = $('#' + obj.mac)[0];
+          if (thisb != undefined) {
+            thisb.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
+          }
+          ex.userData.INFO = obj
+        } else {
+          let personGeometry = new THREE.SphereGeometry(0.2);
+          //颜色根据传入的信息变化（白，蓝，黄，红）
+          let hatColor = Math.floor(Math.random() * 4.99) + 1;
+          switch (hatColor) {
+            case 1:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0x00FFFF
+              });
+              break;
+            case 2:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0xFF0000
+              });
+              break;
+            case 3:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0x0000FF
+              });
+              break;
+            case 4:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0x00FF00
+              });
+              break;
+            default:
+              var personMaterial = new THREE.MeshLambertMaterial({
+                color: 0xFFFF00
+              });
+          }
+          let person = new THREE.Mesh(personGeometry, personMaterial);
+          person.userData.INFO = obj
+          person.geometry.verticesNeedUpdate = true;
+          person.geometry.normalsNeedUpdate = true;
+
+          /*
+          // 创建DIV跟随
+          let thisbt = document.createElement('button');
+          thisbt.className = 'locationLabel'
+          thisbt.style.marginTop = '-1em';
+          thisbt.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
+          thisbt.id = obj.mac;
+          thisbt.style.pointerEvents = 'auto'
+          thisbt.onclick = async () => {
+            return
+            // 查询用户详细信息
+            // console.log('obj', obj)
+            // let mac = 
+            const _personInfoList = await this.getPersonInfo(obj.mac)
+            console.log('_personInfoList', _personInfoList)
+            if (_personInfoList.length === 0) {
+              this.$message({
+                message: '未查询到此人员信息',
+                type: 'error'
+              })
+            } else {
+              let _personInfo = _personInfoList[0]
+              const param = {
+                show: true,
+                ..._personInfo
+              }
+              this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
+
+              })
+            }
+
+          }
+
+
+          // console.log('thisbt', thisbt)
+          let lable = new CSS2DObject(thisbt);
+          // console.log('lable', lable)
+          // lable.position.copy(ex.position);
+          // console.log('lable', lable)
+
+          let pName = Math.round(obj.x / 500) + ',' + Math.round(obj.y / 500)
+
+          lable.position.z = this.getLablePosition(pName);
+
+          lable.name = obj.name + "_b";
+          */
+          //Z坐标来自于所属楼层的Z坐标中心点
+          console.log('objobjobj', obj)
+          // person.position.z = (obj.layer - 1) * 3.5 + 1.6;
+          // //X,Y坐标来自于传入数据
+          // person.position.x = obj.x / 1000;
+          // person.position.y = obj.y / 1000;
+
+          person.position.z = (obj.layer - 1) * 3.5 + 1.6;
+          //X,Y坐标来自于传入数据
+          person.position.x = obj.x / 1000;
+          person.position.y = obj.y / 1000;
+          //name来自于传入的数据
+          person.name = obj.name;
+          // person.add(lable)
+          //person.visible = inBuilding(person,boxes[floorIndex-1]);
+          personGroup.add(person);
+
+
+          viewer.loadExtension('Viewing.Extension.MeshSelection').then(
+            function (externalExtension) {
+
+              const geometry = new THREE.BoxGeometry(
+                5,
+                5,
+                5)
+
+              const color = Math.floor(Math.random() * 16777215)
+
+              const material = new THREE.MeshPhongMaterial({
+                specular: new THREE.Color(color),
+                side: THREE.DoubleSide,
+                reflectivity: 0.0,
+                color
+              })
+              // var material = new THREE.MeshPhongMaterial({
+              //   map: THREE.ImageUtils.loadTexture('/static/icon/zhaji.gif')
+              // });
+              const materials = viewer.impl.getMaterials()
+
+              materials.addMaterial(
+                color.toString(16),
+                material,
+                true)
+
+              // var loader = new THREE.TextureLoader();
+
+              // var texture = loader.load("/static/icon/wifiDevice.png");
+
+
+              // loader.load(
+              //   // resource URL
+              //   '/static/icon/wifiDevice.png',
+
+              //   // onLoad callback
+              //   function (texture) {
+              //     // in this example we create the material when the texture is loaded
+              //     var material = new THREE.MeshBasicMaterial({
+              //       map: texture
+              //     });
+              //   },
+
+              //   // onProgress callback currently not supported
+              //   undefined,
+
+              //   // onError callback
+              //   function (err) {
+              //     console.error('An error happened.');
+              //   }
+              // );
+
+              // var material = new THREE.MeshBasicMaterial({
+              //   color: 0xff0000,
+              //   map: texture
+              // });
+              const mesh = new THREE.Mesh(geometry, material)
+
+              mesh.position.x = obj.x / 1000; //-71
+              mesh.position.y = obj.y / 1000; //-81
+              mesh.position.z = (obj.layer - 1) * 3.5 + 1.6 - 127;
+              console.log('mesh.position', mesh.position)
+              // mesh['userData'] = Math.random() * 10 + 5.0
+              // this.viewer.impl.scene.add(mesh)
+
+              // this.viewer.impl.sceneUpdated(true)
+              externalExtension.sayHello('Bob', mesh)
+            }
+          )
+
+        }
+      },
+
     },
 
   }
