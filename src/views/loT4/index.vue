@@ -4,9 +4,10 @@
 </style>
 <template>
   <div class="loT4-index">
-    <mqttBim v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao" v-on:mqttShenJiangJi="mqttShenJiangJi">
-    </mqttBim>
+
+    <mqttBim ref="mqttBim" v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao" v-on:mqttShenJiangJi="mqttShenJiangJi"></mqttBim>
     <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
+    <mqttLocation ref="mqttLocation" v-on:initPerson="initPerson"></mqttLocation>
     <div id="viewer-local">
       <div v-if="noModelTip!==''" class="noModelTip">{{noModelTip}}</div>
     </div>
@@ -54,6 +55,7 @@
   import './Viewing.Extension.MeshSelection'
   import moment from 'moment'
   import mqttBim from "./components/mqttBim"
+  import mqttLocation from "./components/mqttLocation"
   import historyLocation from "./components/historyLocation"
   // import './Viewing.Extension.PointCloudMarkup/PointCloudMarkup/PointCloudMarkup.js'
   let towerGroup = null // 塔机
@@ -470,11 +472,13 @@
     name: 'Lot4-index',
     components: {
       mqttBim,
-      historyLocation
+      historyLocation,
+      mqttLocation
     },
     data() {
       return {
         noModelTip: '',
+        datumMeterMap: new Map(),
         // towerHeight: 0, // 塔吊高度 28米
         showTadiaoInfo: true,
         showShenjiangjiInfo: true,
@@ -546,6 +550,8 @@
           await this.initDevlist()
           init3DView(_url)
           this.$refs.historyLocation.getLocationHisData(this.project_id)
+          this.$refs.mqttLocation.init(this.project_id)
+          this.$refs.mqttBim.init(this.project_id, this.datumMeterMap)
         } else {
           this.showTadiaoInfo = false
           this.showShenjiangjiInfo = false
@@ -584,6 +590,7 @@
 
 
             })
+            this.datumMeterMap = datumMeterMap
             let _hasDianBiao = false
             datumMeterMap.forEach(datum => {
               if (datum.device_type === 11) { // 水表
