@@ -65,15 +65,33 @@ class MeshSelectionExtension extends Autodesk.Viewing.Extension {
   deactivate() {
 
   }
-  sayHello(name, mesh) {
-    console.log(`${name} hello`)
-    this.intersectMeshes = [
-      // this.addMesh(mesh),
-      // this.addMesh(mesh),
-      // this.addMesh(mesh),
-      // this.addMesh(mesh),
-      this.addMesh(mesh)
-    ]
+  addPersonToView(mesh) {
+    // console.log(`${name} hello`)
+    // this.intersectMeshes = [
+    // this.addMesh(mesh),
+    // this.addMesh(mesh),
+    // this.addMesh(mesh),
+    // this.addMesh(mesh)
+
+
+    // ]
+    console.log('this.intersectMeshes', this.intersectMeshes)
+    let isExist = false
+    this.intersectMeshes.forEach(_mesh => {
+      // let _userData = mesh.userData
+      if (_mesh.userData.personID === mesh.userData.personID) {
+        isExist = true
+        _mesh.position.x = mesh.position.x
+        _mesh.position.y = mesh.position.y
+        _mesh.position.z = mesh.position.z
+        this.viewer.impl.sceneUpdated(true)
+      }
+    })
+
+    if (isExist === false) {
+      this.intersectMeshes.push(this.addMesh(mesh))
+    }
+
   }
   /////////////////////////////////////////////////////////
   // Unload callback
@@ -212,8 +230,13 @@ class MeshSelectionExtension extends Autodesk.Viewing.Extension {
 
     if (selections.length) {
 
-      console.log('Custom meshes selected:')
+      console.log('Custom meshes selected:', selections[0].object)
       console.log(selections[0].object.userData)
+
+      // selections[0].object.position.x = 1; //-71
+      // selections[0].object.position.y = 1; //-81
+      // selections[0].object.position.z = 0;
+
       window.dispatchEvent(new CustomEvent('onExtEvent', {
         'detail': {
           id: selections[0].object.userData,

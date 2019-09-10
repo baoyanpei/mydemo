@@ -5,13 +5,14 @@
 <template>
   <div class="loT4-index">
 
-    <mqttBim ref="mqttBim" v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao" v-on:mqttShenJiangJi="mqttShenJiangJi"></mqttBim>
+    <mqttBim ref="mqttBim" v-on:mqttWeather="mqttWeather" v-on:mqttTaDiao="mqttTaDiao"
+      v-on:mqttShenJiangJi="mqttShenJiangJi"></mqttBim>
     <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
     <mqttLocation ref="mqttLocation" v-on:initPerson="initPerson"></mqttLocation>
     <div id="viewer-local">
       <div v-if="noModelTip!==''" class="noModelTip">{{noModelTip}}</div>
     </div>
-    <div v-show="showTadiaoInfo" class="divDataTadiao">
+    <div v-show="showTadiaoInfo" class="divDataTadiao" @click="aaaa">
       <div style="padding-bottom: 5px;font-size: 14px;">塔吊</div>
       <div>塔吊高度：<span id="td_tdgd">{{tdData.tdgd}}</span> 米</div>
       <div>大臂角度：<span id="td_dbjd">{{tdData.dbjd}}</span> 度</div>
@@ -19,14 +20,14 @@
       <div>吊钩线长：<span id="td_dgxc">{{tdData.dgxc}}</span> 米</div>
       <div>上报时间：<span id="td_sbsj">{{tdData.sbsj}}</span></div>
     </div>
-    <div v-show="showShenjiangjiInfo" class="divDataShenJiangJi">
+    <div v-show="showShenjiangjiInfo" class="divDataShenJiangJi" @click="bbbb">
       <div style="padding-bottom: 5px;font-size: 14px;">升降机</div>
       <div>高度：<span id="sjj_gd">{{sjjData.sjjgd}}</span> 米</div>
       <div>楼层：<span id="sjj_lc">{{sjjData.sjjlc}}</span> 层</div>
       <div>笼门状态：<span id="sjj_lmzt">{{sjjData.mzt}}</span> </div>
       <div>上报时间：<span id="sjj_sbsj">{{sjjData.sbsj}}</span></div>
     </div>
-    <div v-show="showWeatherInfo" class="divDataWeather">
+    <div v-show="showWeatherInfo" class="divDataWeather" @click="cccc">
       <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(3)" title="关闭" /> -->
       <div style="padding-bottom: 5px;font-size: 14px;">环境检测仪</div>
       <div>温度：<span>{{weather_data.temp}}</span> °C</div>
@@ -67,6 +68,8 @@
   let datumMeterMap = new Map()
   let towerHeight = null;
 
+  let externalExtensionPerson = null
+
   let config = {
     extensions: [
       // "Autodesk.Viewing.ZoomWindow",
@@ -95,23 +98,25 @@
 
 
   function init3DView(modelURL) {
+    return new Promise((resolve, reject) => {
+      Autodesk.Viewing.Initializer(options, function () {
+        element = document.getElementById('viewer-local');
+        viewer = new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+        var startedCode = viewer.start();
+        if (startedCode > 0) {
+          console.error('Failed to create a Viewer: WebGL not supported.');
+          return;
+        }
 
-    Autodesk.Viewing.Initializer(options, function () {
-      element = document.getElementById('viewer-local');
-      viewer = new Autodesk.Viewing.Private.GuiViewer3D(element, config);
-      var startedCode = viewer.start();
-      if (startedCode > 0) {
-        console.error('Failed to create a Viewer: WebGL not supported.');
-        return;
-      }
+        // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
+        // onLoadSuccess, onLoadError);
+        viewer.loadModel(modelURL, undefined, onLoadSuccess, onLoadError);
+        resolve()
+        // viewer.loadModel("/static/model/tianshui/3d.svf", undefined, onLoadSuccess, onLoadError);
+      });
 
-      // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
-      // onLoadSuccess, onLoadError);
-      viewer.loadModel(modelURL, undefined, onLoadSuccess, onLoadError);
-      // viewer.loadModel("/static/model/tianshui/3d.svf", undefined, onLoadSuccess, onLoadError);
+    })
 
-
-    });
   }
 
   function onLoadSuccess(event) {
@@ -255,75 +260,6 @@
           if (paramsJson.pos_x !== undefined) {
             console.log(datum.device_type, paramsJson.pos_x)
             // this.addCameraDeviceLabel(datum)
-
-            viewer.loadExtension('Viewing.Extension.MeshSelection').then(
-              function (externalExtension) {
-
-                const geometry = new THREE.BoxGeometry(
-                  10,
-                  2,
-                  10)
-
-                const color = Math.floor(Math.random() * 16777215)
-
-                // const material = new THREE.MeshPhongMaterial({
-                //   specular: new THREE.Color(color),
-                //   side: THREE.DoubleSide,
-                //   reflectivity: 0.0,
-                //   color
-                // })
-                var material = new THREE.MeshPhongMaterial({
-                  map: THREE.ImageUtils.loadTexture('/static/icon/zhaji.gif')
-                });
-                const materials = viewer.impl.getMaterials()
-
-                materials.addMaterial(
-                  color.toString(16),
-                  material,
-                  true)
-
-                // var loader = new THREE.TextureLoader();
-
-                // var texture = loader.load("/static/icon/wifiDevice.png");
-
-
-                // loader.load(
-                //   // resource URL
-                //   '/static/icon/wifiDevice.png',
-
-                //   // onLoad callback
-                //   function (texture) {
-                //     // in this example we create the material when the texture is loaded
-                //     var material = new THREE.MeshBasicMaterial({
-                //       map: texture
-                //     });
-                //   },
-
-                //   // onProgress callback currently not supported
-                //   undefined,
-
-                //   // onError callback
-                //   function (err) {
-                //     console.error('An error happened.');
-                //   }
-                // );
-
-                // var material = new THREE.MeshBasicMaterial({
-                //   color: 0xff0000,
-                //   map: texture
-                // });
-                const mesh = new THREE.Mesh(geometry, material)
-
-                mesh.position.x = -71
-                mesh.position.y = -81
-                mesh.position.z = -1.1
-                // mesh['userData'] = Math.random() * 10 + 5.0
-                // this.viewer.impl.scene.add(mesh)
-
-                // this.viewer.impl.sceneUpdated(true)
-                externalExtension.sayHello('Bob', mesh)
-              }
-            )
           }
         }
       }
@@ -376,11 +312,11 @@
     //   z: -1.148294448852539
     // });
 
-    drawPushpin({
-      x: 0,
-      y: 0,
-      z: 0
-    });
+    // drawPushpin({
+    //   x: 0,
+    //   y: 0,
+    //   z: 0
+    // });
   }
 
   function onMouseClick(event) {
@@ -548,7 +484,9 @@
         if (_url !== '') {
           this.noModelTip = ''
           await this.initDevlist()
-          init3DView(_url)
+
+          await init3DView(_url)
+          await this.initExtPerson()
           this.$refs.historyLocation.getLocationHisData(this.project_id)
           this.$refs.mqttLocation.init(this.project_id)
           this.$refs.mqttBim.init(this.project_id, this.datumMeterMap)
@@ -560,6 +498,17 @@
           this.showDianbiaoInfo = false
           this.noModelTip = '当前项目没有模型'
         }
+
+      },
+      initExtPerson() {
+        return new Promise((resolve, reject) => {
+          viewer.loadExtension('Viewing.Extension.MeshSelection').then(
+            function (externalExtension) {
+              externalExtensionPerson = externalExtension
+              resolve()
+            }
+          )
+        })
 
       },
       getModelUrl() {
@@ -753,198 +702,119 @@
         }
       },
       initPerson(obj) {
-        this.editPerson(obj)
-      },
-      editPerson(obj) {
-        if (personGroup === null) {
-          personGroup = new THREE.Group()
-          personGroup.name = "personGroup";
-          viewer.overlays.impl.addOverlay('custom-scene', personGroup)
+        // if (personGroup === null) {
+        //   personGroup = new THREE.Group()
+        //   personGroup.name = "personGroup";
+        //   viewer.overlays.impl.addOverlay('custom-scene', personGroup)
+        // }
+
+        //Z坐标来自于所属楼层的Z坐标中心点
+        console.log('objobjobj', obj)
+
+
+        let _position = {
+          x: obj.x / 1000,
+          y: obj.y / 1000,
+          z: (obj.layer - 1) * 3.5 + 1.6 - 127
         }
-
-        let ex = personGroup.getObjectByName(obj.name, true)
-        if (ex) {
-          // ex.position.x = obj.x/1000-20.8;
-          ex.position.x = obj.x / 1000;
-          // ex.position.y = obj.y/1000-38.9;
-          ex.position.y = obj.y / 1000;
-          let thisb = $('#' + obj.mac)[0];
-          if (thisb != undefined) {
-            thisb.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
-          }
-          ex.userData.INFO = obj
-        } else {
-          let personGeometry = new THREE.SphereGeometry(0.2);
-          //颜色根据传入的信息变化（白，蓝，黄，红）
-          let hatColor = Math.floor(Math.random() * 4.99) + 1;
-          switch (hatColor) {
-            case 1:
-              var personMaterial = new THREE.MeshLambertMaterial({
-                color: 0x00FFFF
-              });
-              break;
-            case 2:
-              var personMaterial = new THREE.MeshLambertMaterial({
-                color: 0xFF0000
-              });
-              break;
-            case 3:
-              var personMaterial = new THREE.MeshLambertMaterial({
-                color: 0x0000FF
-              });
-              break;
-            case 4:
-              var personMaterial = new THREE.MeshLambertMaterial({
-                color: 0x00FF00
-              });
-              break;
-            default:
-              var personMaterial = new THREE.MeshLambertMaterial({
-                color: 0xFFFF00
-              });
-          }
-          let person = new THREE.Mesh(personGeometry, personMaterial);
-          person.userData.INFO = obj
-          person.geometry.verticesNeedUpdate = true;
-          person.geometry.normalsNeedUpdate = true;
-
-          /*
-          // 创建DIV跟随
-          let thisbt = document.createElement('button');
-          thisbt.className = 'locationLabel'
-          thisbt.style.marginTop = '-1em';
-          thisbt.innerText = obj.name + ' -- ' + obj.datatime.substr(11, 5);
-          thisbt.id = obj.mac;
-          thisbt.style.pointerEvents = 'auto'
-          thisbt.onclick = async () => {
-            return
-            // 查询用户详细信息
-            // console.log('obj', obj)
-            // let mac = 
-            const _personInfoList = await this.getPersonInfo(obj.mac)
-            console.log('_personInfoList', _personInfoList)
-            if (_personInfoList.length === 0) {
-              this.$message({
-                message: '未查询到此人员信息',
-                type: 'error'
-              })
-            } else {
-              let _personInfo = _personInfoList[0]
-              const param = {
-                show: true,
-                ..._personInfo
-              }
-              this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
-
-              })
-            }
-
-          }
-
-
-          // console.log('thisbt', thisbt)
-          let lable = new CSS2DObject(thisbt);
-          // console.log('lable', lable)
-          // lable.position.copy(ex.position);
-          // console.log('lable', lable)
-
-          let pName = Math.round(obj.x / 500) + ',' + Math.round(obj.y / 500)
-
-          lable.position.z = this.getLablePosition(pName);
-
-          lable.name = obj.name + "_b";
-          */
-          //Z坐标来自于所属楼层的Z坐标中心点
-          console.log('objobjobj', obj)
-          // person.position.z = (obj.layer - 1) * 3.5 + 1.6;
-          // //X,Y坐标来自于传入数据
-          // person.position.x = obj.x / 1000;
-          // person.position.y = obj.y / 1000;
-
-          person.position.z = (obj.layer - 1) * 3.5 + 1.6;
-          //X,Y坐标来自于传入数据
-          person.position.x = obj.x / 1000;
-          person.position.y = obj.y / 1000;
-          //name来自于传入的数据
-          person.name = obj.name;
-          // person.add(lable)
-          //person.visible = inBuilding(person,boxes[floorIndex-1]);
-          personGroup.add(person);
-
-
-          viewer.loadExtension('Viewing.Extension.MeshSelection').then(
-            function (externalExtension) {
-
-              const geometry = new THREE.BoxGeometry(
-                5,
-                5,
-                5)
-
-              const color = Math.floor(Math.random() * 16777215)
-
-              const material = new THREE.MeshPhongMaterial({
-                specular: new THREE.Color(color),
-                side: THREE.DoubleSide,
-                reflectivity: 0.0,
-                color
-              })
-              // var material = new THREE.MeshPhongMaterial({
-              //   map: THREE.ImageUtils.loadTexture('/static/icon/zhaji.gif')
-              // });
-              const materials = viewer.impl.getMaterials()
-
-              materials.addMaterial(
-                color.toString(16),
-                material,
-                true)
-
-              // var loader = new THREE.TextureLoader();
-
-              // var texture = loader.load("/static/icon/wifiDevice.png");
-
-
-              // loader.load(
-              //   // resource URL
-              //   '/static/icon/wifiDevice.png',
-
-              //   // onLoad callback
-              //   function (texture) {
-              //     // in this example we create the material when the texture is loaded
-              //     var material = new THREE.MeshBasicMaterial({
-              //       map: texture
-              //     });
-              //   },
-
-              //   // onProgress callback currently not supported
-              //   undefined,
-
-              //   // onError callback
-              //   function (err) {
-              //     console.error('An error happened.');
-              //   }
-              // );
-
-              // var material = new THREE.MeshBasicMaterial({
-              //   color: 0xff0000,
-              //   map: texture
-              // });
-              const mesh = new THREE.Mesh(geometry, material)
-
-              mesh.position.x = obj.x / 1000; //-71
-              mesh.position.y = obj.y / 1000; //-81
-              mesh.position.z = (obj.layer - 1) * 3.5 + 1.6 - 127;
-              console.log('mesh.position', mesh.position)
-              // mesh['userData'] = Math.random() * 10 + 5.0
-              // this.viewer.impl.scene.add(mesh)
-
-              // this.viewer.impl.sceneUpdated(true)
-              externalExtension.sayHello('Bob', mesh)
-            }
-          )
-
-        }
+        this.addPersonMesh(obj.name, obj, _position)
       },
+      addPersonMesh(name, userData, position) {
+        const geometry = new THREE.BoxGeometry(
+          5,
+          5,
+          5)
 
+        const color = '#FF0000' //Math.floor(Math.random() * 16777215)
+        console.log('color', color)
+        const material = new THREE.MeshPhongMaterial({
+          specular: new THREE.Color(color),
+          side: THREE.DoubleSide,
+          reflectivity: 0.0,
+          color
+        })
+        // var material = new THREE.MeshPhongMaterial({
+        //   map: THREE.ImageUtils.loadTexture('/static/icon/zhaji.gif')
+        // });
+        const materials = viewer.impl.getMaterials()
+
+        materials.addMaterial(
+          color.toString(16),
+          material,
+          true)
+
+        // var loader = new THREE.TextureLoader();
+
+        // var texture = loader.load("/static/icon/wifiDevice.png");
+
+
+        // loader.load(
+        //   // resource URL
+        //   '/static/icon/wifiDevice.png',
+
+        //   // onLoad callback
+        //   function (texture) {
+        //     // in this example we create the material when the texture is loaded
+        //     var material = new THREE.MeshBasicMaterial({
+        //       map: texture
+        //     });
+        //   },
+
+        //   // onProgress callback currently not supported
+        //   undefined,
+
+        //   // onError callback
+        //   function (err) {
+        //     console.error('An error happened.');
+        //   }
+        // );
+
+        // var material = new THREE.MeshBasicMaterial({
+        //   color: 0xff0000,
+        //   map: texture
+        // });
+        const mesh = new THREE.Mesh(geometry, material)
+
+        mesh.position.x = position.x; //-71
+        mesh.position.y = position.y; //-81
+        mesh.position.z = position.z;
+        mesh.name = name;
+        mesh.userData = userData
+        console.log('mesh.position', mesh.position)
+        // mesh['userData'] = Math.random() * 10 + 5.0
+        // this.viewer.impl.scene.add(mesh)
+
+        // this.viewer.impl.sceneUpdated(true)
+        externalExtensionPerson.addPersonToView(mesh)
+      },
+      aaaa() {
+        console.log('aaaa-click')
+
+        let _position = {
+          x: 30,
+          y: 30,
+          z: 0
+        }
+        let obj = {
+          personID: 100001
+        }
+        this.addPersonMesh('test', obj, _position)
+      },
+      bbbb() {
+        console.log('bbbb-click')
+        let _position = {
+          x: 10,
+          y: 10,
+          z: 120
+        }
+        let obj = {
+          personID: 100001
+        }
+        this.addPersonMesh('test', obj, _position)
+      },
+      cccc(){
+        console.log('ccc-click')
+      }
     },
 
   }
