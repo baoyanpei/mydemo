@@ -60,7 +60,8 @@
               <div class="text">智慧工地</div>
             </div>
             <div class="main">
-              <LotArea ref="lotArea"></LotArea>
+              <!-- <LotArea ref="lotArea"></LotArea> -->
+              <LotArea4 ref="lotArea4"></LotArea4>
             </div>
           </div>
         </el-row>
@@ -142,7 +143,8 @@
   import Weather from './components/weather'
   import Camera from './components/camera'
   import TajiArea from './components/tajiArea'
-  import LotArea from './components/lotArea'
+  // import LotArea from './components/lotArea'
+  import LotArea4 from './components/lotArea4'
   import MeterShui from './components/meterShui'
   import MeterDian from './components/meterDian'
   import Message from './components/Message'
@@ -158,7 +160,8 @@
       Weather,
       Camera,
       TajiArea,
-      LotArea,
+      // LotArea,
+      LotArea4,
       Duty,
       Vehicle,
       MeterShui,
@@ -237,7 +240,8 @@
             this.$refs.weather.init(this.project_id, this.datumMeterMap)
             this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
             this.$refs.carema.openPlayer(this.datumMeterMap)
-            this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
+            // this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
+            this.$refs.lotArea4.init(this.project_id, this.datumMeterMap)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
