@@ -79,7 +79,8 @@ class MeshSelectionExtension extends Autodesk.Viewing.Extension {
     let isExist = false
     this.intersectMeshes.forEach(_mesh => {
       // let _userData = mesh.userData
-      if (_mesh.userData.personID === mesh.userData.personID) {
+      if (_mesh.userData.mac === mesh.userData.mac) {
+        console.log('userData',mesh.userData)
         isExist = true
         _mesh.position.x = mesh.position.x
         _mesh.position.y = mesh.position.y
@@ -90,6 +91,18 @@ class MeshSelectionExtension extends Autodesk.Viewing.Extension {
 
     if (isExist === false) {
       this.intersectMeshes.push(this.addMesh(mesh))
+    }
+  }
+
+  removePersonFromView(perosn) {
+
+    for (let i = 0; i < this.intersectMeshes.length; i++) {
+      let _mesh = this.intersectMeshes[i]
+      if (_mesh.userData.mac === perosn.mac) {
+        this.removeMesh(_mesh)
+        this.intersectMeshes.splice(i, 1)
+        break
+      }
     }
 
   }
@@ -136,6 +149,10 @@ class MeshSelectionExtension extends Autodesk.Viewing.Extension {
     this.viewer.impl.sceneUpdated(true)
 
     return mesh
+  }
+  removeMesh(mesh) {
+    this.viewer.impl.scene.remove(mesh)
+    this.viewer.impl.sceneUpdated(true)
   }
 
   /////////////////////////////////////////////////////////

@@ -3,11 +3,21 @@
   // padding: 10px;
   background-color: #FFFFFF;
 
+  .mymlLabel {
+    background-color: #333333;
+    color: #EEEEEE;
+    opacity: 0.5;
+    font-size: 12px;
+    margin: 2px;
+    text-align: center
+  }
+
   .noModelTip {
     line-height: calc(100vh - 34px);
     text-align: center;
     font-size: 30px;
     font-weight: 600;
+
   }
 
   .divDataTadiao {
@@ -80,6 +90,7 @@
     font-size: 12px;
     color: #eeeeee;
     z-index: 2;
+
     div {
       line-height: 16px;
     }
@@ -98,6 +109,7 @@
     font-size: 12px;
     color: #eeeeee;
     z-index: 2;
+
     div {
       line-height: 16px;
     }

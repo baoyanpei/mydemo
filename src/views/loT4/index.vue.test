@@ -69,8 +69,6 @@
   let towerHeight = null;
 
   let externalExtensionPerson = null
-
-  var globalOffset = null
   let urns = []
   let config = {
     extensions: [
@@ -116,11 +114,21 @@
         for (var i = 0; i < modelURLList.length; i++) {
           if (i === 0) {
             viewer.loadModel(modelURLList[i], undefined, onLoadSuccess, onLoadError);
+            // urns.splice(0, 1);
+          } else {
+            // var globalOffset = viewer.model.getData().globalOffset; //Get it from first model 
+            // var options = {
+            //   globalOffset: globalOffset
+            // }
+            // // viewer.loadModel(path, options);
+            // viewer.loadModel(modelURLList[i],options);
+            // urns.splice(0, 1);
           }
 
         }
 
         resolve()
+        // viewer.loadModel("/static/model/tianshui/3d.svf", undefined, onLoadSuccess, onLoadError);
       });
 
     })
@@ -130,10 +138,8 @@
   function onLoadSuccess(event) {
     // 加载其他的组合模型
     let getModels = viewer.impl.modelQueue().getModels()
-    globalOffset = getModels[0].getData().globalOffset; //Get it from first model 
-    console.log('globalOffset', globalOffset)
     for (var i = 1; i < urns.length; i++) {
-
+      var globalOffset = getModels[0].getData().globalOffset; //Get it from first model 
       var options = {
         globalOffset: globalOffset
       }
@@ -156,10 +162,27 @@
       Autodesk.Viewing.SELECTION_CHANGED_EVENT,
       onSelectionChanged
     );
-
+    // viewer.addEventListener(
+    //   Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+    //   _onGeometryLoaded
+    // );
   }
 
-
+  function _onGeometryLoaded(event) {
+    console.log('event', event)
+    if (urns.length <= 0) {
+      viewer.removeEventListener(
+        Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+        _onGeometryLoaded
+      );
+      return;
+    }
+    console.log('urns', urns)
+    viewer.loadModel(urns[0], {
+      globalOffset: event.model.getData().globalOffset
+    });
+    urns.splice(0, 1);
+  }
   var onSelectionChanged = function (event) {
     console.log('viewer', viewer)
     console.log('event', event)
@@ -238,7 +261,7 @@
         towerHeight = paramsJson.height
         // this.tdData.tdgd = this.towerHeight
         // towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-        towerGroup.position.set(80, 36, -91); // 红 绿
+        towerGroup.position.set(80, 36, -100); // 红 绿
 
         modifyTower(towerGroup, `T${datum.device_id}`, towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
         console.log('viewer', viewer)
@@ -260,7 +283,7 @@
         // var screenpoint11 = viewer.worldToClient(new THREE.Vector3(0, 0, 0));
         // viewer.worldToClient()
         // console.log('screenpoint11', screenpoint11)
-        modifyElevator(elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
+        modifyElevator(elevatorGroup, `E${datum.device_id}`, -90 / 3, false) //名称，高度，门的开启状态
         viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
       } else if (datum.device_type === 100) { // 升降机轨道
 
@@ -378,7 +401,6 @@
   //   return text;
   // }
 
-  // 人员在线的标记
   function drawPushpinPerson(pushpinModelPt, id, name) {
     console.log('idididid', id)
     //convert 3D position to 2D screen coordination
@@ -535,7 +557,10 @@
         }
         if (curVal !== null) {
           this.init()
+
+
         }
+
       },
     },
     created() {
@@ -543,8 +568,12 @@
     },
     mounted() {
       console.log('lot4-index-mounted')
+      // init3DView()
+
     },
-    destroyed() {},
+    destroyed() {
+      // window.removeEventListener('hashchange', this.afterQRScan)
+    },
     methods: {
       async init() {
         let _urlList = this.getModelUrl()
@@ -634,8 +663,11 @@
                     // this.addNormalDeviceLabel(datum, 'dianbiao.png')
                     // this.addTxtBoxByPosition(datum)
                   }
+
                 }
+
               }
+
             })
             this.updateDeviceData()
             resolve()
@@ -680,6 +712,16 @@
         // console.log('weather', data)
         const _data = JSON.parse(data)
         // console.log('_data', _data)
+        /*
+        let _h = "环境检测仪<br/>"
+        _h = _h + "温度：" + _data.temp + "°C &nbsp;&nbsp;&nbsp;&nbsp;"
+        _h = _h + "湿度：" + _data.h + "% <br/>"
+        _h = _h + "噪声：" + _data.noise + "db &nbsp;&nbsp;&nbsp;&nbsp;"
+        _h = _h + "扬尘：" + _data.pm10 + "ug/m <br/>"
+        _h = _h + "PM2.5：" + _data.pm2_5 + "ug/m &nbsp;&nbsp;&nbsp;&nbsp;"
+        _h = _h + "风速：" + _data.wind + "级 <br/>"
+        _h = _h + "<span style='font-size:10px;'>服务器时间：" + moment(_data.cdate).format("HH:mm:ss") + "</span><br/>"
+        */
         this.weather_data = _data
         // $('#divHJJCY').html(_h)
         // this.$refs.weather.updateData(_data)
@@ -701,6 +743,9 @@
               $("#td_dgxc").html(_data.Height)
               $("#td_sbsj").html(moment(_data.RTime).format("HH:mm:ss"))
             }
+
+
+
             break
         }
       },
@@ -720,7 +765,7 @@
             if (elevatorGroup === null) {
               return
             }
-            modifyElevator(elevatorGroup, `E${_data.HxzId}`, _data.Height - (91 / 3), doorOpen) //名称，高度，门的开启状态
+            modifyElevator(elevatorGroup, `E${_data.HxzId}`, _data.Height - (125 / 3), doorOpen) //名称，高度，门的开启状态
 
             $("#sjj_gd").html(_data.Height)
             $("#sjj_lc").html(_data.Floor)
@@ -752,22 +797,34 @@
           case "WorkDataElevator": // 2.11上报升降机工作循环数据（专用）
             _data = JSON.parse(data)
             // console.log('WorkDataElevator', _data)
+
             // this.$refs.taji.updateData(_data)
             break
         }
       },
       initPerson(obj) {
+        // if (personGroup === null) {
+        //   personGroup = new THREE.Group()
+        //   personGroup.name = "personGroup";
+        //   viewer.overlays.impl.addOverlay('custom-scene', personGroup)
+        // }
+
+        //Z坐标来自于所属楼层的Z坐标中心点
         console.log('objobjobj', obj)
-        console.log('globalOffset', globalOffset)
+
+
         let _position = {
-          x: obj.x / 1000 - 62,
-          y: obj.y / 1000 - 37,
-          z: (obj.layer - 1) * 3.5 + 1.6 - 91
+          x: obj.x / 1000,
+          y: obj.y / 1000,
+          z: (obj.layer - 1) * 3.5 + 1.6 - 127
         }
         this.addPersonMesh(obj.name, obj, _position)
       },
       addPersonMesh(name, userData, position) {
-        const geometry = new THREE.BoxGeometry(5, 5, 5)
+        const geometry = new THREE.BoxGeometry(
+          5,
+          5,
+          5)
 
         const color = '#FF0000' //Math.floor(Math.random() * 16777215)
         console.log('color', color)
@@ -777,7 +834,9 @@
           reflectivity: 0.0,
           color
         })
-
+        // var material = new THREE.MeshPhongMaterial({
+        //   map: THREE.ImageUtils.loadTexture('/static/icon/zhaji.gif')
+        // });
         const materials = viewer.impl.getMaterials()
 
         materials.addMaterial(
@@ -785,6 +844,36 @@
           material,
           true)
 
+        // var loader = new THREE.TextureLoader();
+
+        // var texture = loader.load("/static/icon/wifiDevice.png");
+
+
+        // loader.load(
+        //   // resource URL
+        //   '/static/icon/wifiDevice.png',
+
+        //   // onLoad callback
+        //   function (texture) {
+        //     // in this example we create the material when the texture is loaded
+        //     var material = new THREE.MeshBasicMaterial({
+        //       map: texture
+        //     });
+        //   },
+
+        //   // onProgress callback currently not supported
+        //   undefined,
+
+        //   // onError callback
+        //   function (err) {
+        //     console.error('An error happened.');
+        //   }
+        // );
+
+        // var material = new THREE.MeshBasicMaterial({
+        //   color: 0xff0000,
+        //   map: texture
+        // });
         const mesh = new THREE.Mesh(geometry, material)
 
         mesh.position.x = position.x; //-71
@@ -793,6 +882,10 @@
         mesh.name = name;
         mesh.userData = userData
         console.log('mesh.position', mesh.position)
+        // mesh['userData'] = Math.random() * 10 + 5.0
+        // this.viewer.impl.scene.add(mesh)
+
+        // this.viewer.impl.sceneUpdated(true)
         externalExtensionPerson.addPersonToView(mesh)
         drawPushpinPerson({
           x: position.x,
