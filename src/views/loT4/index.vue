@@ -327,17 +327,7 @@
     //   y: -256.6158517922297,
     //   z: -33.46542876355482
     // }, 'lot4', '摄像头');
-    // drawPushpin({
-    //   x: -67.44389071112374,
-    //   y: -80.14724222255938,
-    //   z: -1.148294448852539
-    // });
 
-    // drawPushpin({
-    //   x: 0,
-    //   y: 0,
-    //   z: 0
-    // });
   }
 
   function onMouseClick(event) {
@@ -573,12 +563,12 @@
         switch (this.project_id) {
           case 10000:
 
-            _urlList = ['/static/model/qingyang0/3d.svf'];
+            // _urlList = ['/static/model/qingyang0/3d.svf'];
 
-            // _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
-            //   '/static/model/qingyang-menzheng/3d.svf',
-            //   '/static/model/qingyang-bingfang/3d.svf',
-            // ];
+            _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
+              '/static/model/qingyang-menzheng/3d.svf',
+              '/static/model/qingyang-bingfang/3d.svf',
+            ];
             break;
 
           case 10004:
@@ -624,7 +614,7 @@
                   x: paramsJson.pos_x,
                   y: paramsJson.pos_y,
                   z: paramsJson.pos_z
-                }, datum.device_id, `${datum.device_name}`);
+                }, datum.device_id, `${datum.device_name}`, datum);
               }
             }
           } else if (datum.device_type === 10 && _hasDianBiao === false) { // 电表
@@ -637,7 +627,7 @@
                   x: paramsJson.pos_x,
                   y: paramsJson.pos_y,
                   z: paramsJson.pos_z
-                }, datum.device_id, `${datum.device_name}`);
+                }, datum.device_id, `${datum.device_name}`, datum);
               }
             }
           } else if (datum.device_type === 15) { // 环境检测仪
@@ -648,7 +638,7 @@
                   x: paramsJson.pos_x,
                   y: paramsJson.pos_y,
                   z: paramsJson.pos_z
-                }, datum.device_id, `${datum.device_name}`);
+                }, datum.device_id, `${datum.device_name}`, datum);
               }
 
             }
@@ -661,7 +651,7 @@
                   x: paramsJson.pos_x,
                   y: paramsJson.pos_y,
                   z: paramsJson.pos_z
-                }, datum.device_id, `摄像头:${datum.device_name}`);
+                }, datum.device_id, `摄像头:${datum.device_name}`, datum);
               }
             }
           }
@@ -820,7 +810,7 @@
 
 
       },
-      drawPushpinLot(pushpinModelPt, id, name) {
+      drawPushpinLot(pushpinModelPt, id, name, data) {
         console.log('idididid', id)
         //convert 3D position to 2D screen coordination
         var screenpoint = viewer.worldToClient(
@@ -834,12 +824,36 @@
         var parent = viewer.container
         $(parent).append(htmlMarker);
         $('#mymk' + randomId).css({
-          'pointer-events': 'none',
+          // 'pointer-events': 'none',
           'width': '80px',
           // 'height': '16px',
           'position': 'absolute',
           'overflow': 'visible',
         });
+        $('#mymk' + randomId).click(() => {
+          console.log('data', data)
+          if (data.device_type === 16) {
+            let deviceData = data
+            if (deviceData === undefined) {
+              this.$message({
+                message: '此摄像头未配置数据',
+                type: 'error'
+              })
+            } else if (deviceData.video_url === '') {
+              this.$message({
+                message: '此摄像头无法直播',
+                type: 'error'
+              })
+            } else {
+              const param = {
+                show: true,
+                deviceData: deviceData
+              }
+              this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+            }
+          }
+        })
+
 
         //build the svg element and draw a circle
         // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
