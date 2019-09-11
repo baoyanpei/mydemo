@@ -292,7 +292,7 @@
     //delegate the mouse click event
 
     // 在场景中通过点击添加圆圈标记
-    $(viewer.container).bind("click", onMouseClick);
+    // $(viewer.container).bind("click", onMouseClick);
 
     //delegate the event of CAMERA_CHANGE_EVENT
     viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, function (rt) {
@@ -599,35 +599,8 @@
             // console.log('QueryDatumMeter - data', data)
             data.forEach(datum => {
               datumMeterMap.set(datum.device_id, datum)
-
-
             })
             this.datumMeterMap = datumMeterMap
-            let _hasDianBiao = false
-            datumMeterMap.forEach(datum => {
-              if (datum.device_type === 11) { // 水表
-
-                this.shuibiaoTotalUsed = datum.total_used
-                if (datum.params_json !== '' && datum.params_json !== null) {
-                  let paramsJson = JSON.parse(datum.params_json)
-                  if (paramsJson.pos_x !== undefined) {
-                    // this.addNormalDeviceLabel(datum, 'shuibiao.png')
-                    // this.addTxtBoxByPosition(datum)
-                  }
-                }
-              } else if (datum.device_type === 10 && _hasDianBiao === false) { // 电表
-                _hasDianBiao = true
-                this.dianbiaoTotalUsed = datum.total_used
-
-                if (datum.params_json !== '' && datum.params_json !== null) {
-                  let paramsJson = JSON.parse(datum.params_json)
-                  if (paramsJson.pos_x !== undefined) {
-                    // this.addNormalDeviceLabel(datum, 'dianbiao.png')
-                    // this.addTxtBoxByPosition(datum)
-                  }
-                }
-              }
-            })
             this.updateDeviceData()
             resolve()
           }).catch((e) => {
@@ -639,8 +612,48 @@
         })
       },
       addDevlist() {
+        let _hasDianBiao = false
         this.datumMeterMap.forEach(datum => {
-          if (datum.device_type === 16 || datum.device_type === 18) { // 摄像头
+          if (datum.device_type === 11) { // 水表
+
+            this.shuibiaoTotalUsed = datum.total_used
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                this.drawPushpinLot({
+                  x: paramsJson.pos_x,
+                  y: paramsJson.pos_y,
+                  z: paramsJson.pos_z
+                }, datum.device_id, `${datum.device_name}`);
+              }
+            }
+          } else if (datum.device_type === 10 && _hasDianBiao === false) { // 电表
+            _hasDianBiao = true
+            this.dianbiaoTotalUsed = datum.total_used
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                this.drawPushpinLot({
+                  x: paramsJson.pos_x,
+                  y: paramsJson.pos_y,
+                  z: paramsJson.pos_z
+                }, datum.device_id, `${datum.device_name}`);
+              }
+            }
+          } else if (datum.device_type === 15) { // 环境检测仪
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                this.drawPushpinLot({
+                  x: paramsJson.pos_x,
+                  y: paramsJson.pos_y,
+                  z: paramsJson.pos_z
+                }, datum.device_id, `${datum.device_name}`);
+              }
+
+            }
+
+          } else if (datum.device_type === 16 || datum.device_type === 18) { // 摄像头
             if (datum.params_json !== '' && datum.params_json !== null) {
               let paramsJson = JSON.parse(datum.params_json)
               if (paramsJson.pos_x !== undefined) {
