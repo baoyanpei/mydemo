@@ -161,7 +161,7 @@
 
 
   var onSelectionChanged = function (event) {
-    console.log('viewer', viewer)
+    // console.log('viewer', viewer)
     console.log('event', event)
     // console.log(" >LJason< 日志：点击位置", viewer.clientToWorld(event.offsetX, event.offsetY, false).intersectPoint);
     // console.log(event.dbIdArray);
@@ -203,6 +203,7 @@
           console.log('frag matrix:' + JSON.stringify(fm));
         }, true)
         */
+        /*
         var tree = viewer.overlays.impl.model.getData().instanceTree;
         var tmpBox = new Float32Array(6);
         tree.getNodeBox(dbid, tmpBox);
@@ -212,7 +213,8 @@
         let _x = (max.x - min.x) / 2;
         let _y = (max.y - min.y) / 2;
         let _z = (max.z - min.z) / 2;
-        // console.log(_x, _y, _z)
+        console.log(_x, _y, _z)
+        */
       })
 
 
@@ -276,14 +278,6 @@
         LoadSection(sectionGroup, paramsJson.height)
         viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
 
-      } else if (datum.device_type === 16 || datum.device_type === 18) { // 摄像头
-        if (datum.params_json !== '' && datum.params_json !== null) {
-          let paramsJson = JSON.parse(datum.params_json)
-          if (paramsJson.pos_x !== undefined) {
-            console.log(datum.device_type, paramsJson.pos_x)
-            // this.addCameraDeviceLabel(datum)
-          }
-        }
       }
     })
 
@@ -298,7 +292,7 @@
     //delegate the mouse click event
 
     // 在场景中通过点击添加圆圈标记
-    // $(viewer.container).bind("click", onMouseClick);
+    $(viewer.container).bind("click", onMouseClick);
 
     //delegate the event of CAMERA_CHANGE_EVENT
     viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, function (rt) {
@@ -328,6 +322,11 @@
       }
     });
 
+    // drawPushpinLot({
+    //   x: -12.590157398363942,
+    //   y: -256.6158517922297,
+    //   z: -33.46542876355482
+    // }, 'lot4', '摄像头');
     // drawPushpin({
     //   x: -67.44389071112374,
     //   y: -80.14724222255938,
@@ -347,7 +346,7 @@
       x: event.clientX,
       y: event.clientY
     };
-
+    console.log('screenPoint', screenPoint)
     //get the selected 3D position of the object
 
     //viewer canvas might have offset from the webpage.
@@ -356,14 +355,16 @@
     var hitTest = viewer.impl.hitTest(screenPoint.x - viewer_pos.x,
       screenPoint.y - viewer_pos.y, true);
 
-    var hitTest = viewer.impl.hitTest(screenPoint.x, screenPoint.y, true);
+    // var hitTest = viewer.impl.hitTest(screenPoint.x, screenPoint.y, true);
     console.log('hitTest', hitTest)
     if (hitTest) {
-      drawPushpin({
+      let _position = {
         x: hitTest.intersectPoint.x,
         y: hitTest.intersectPoint.y,
         z: hitTest.intersectPoint.z
-      });
+      }
+      drawPushpin(_position);
+      console.log('_position', _position)
     }
   }
 
@@ -395,24 +396,13 @@
     $('#mymk' + randomId).css({
       'pointer-events': 'none',
       'width': '50px',
-      'height': '20px',
+      'height': '16px',
       'position': 'absolute',
       'overflow': 'visible',
     });
 
-    //build the svg element and draw a circle
-    $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
-
     var snap = Snap($('#mysvg' + randomId)[0]);
-    var rad = 7;
-    var circle = snap.paper.circle(14, 14, rad);
-    circle.attr({
-      fill: "#FF8888",
-      fillOpacity: 0.6,
-      stroke: "#FF0000",
-      strokeWidth: 1
-    });
-
+    var rad = 27;
     //set the position of the SVG
     //adjust to make the circle center is the position of the click point
     var $container = $('#mymk' + randomId);
@@ -428,7 +418,7 @@
     var storeData = JSON.stringify(pushpinModelPt);
     div.data('3DData', storeData);
   }
-
+  //
   function drawPushpin(pushpinModelPt, id, name) {
     console.log('idididid', id)
     //convert 3D position to 2D screen coordination
@@ -556,6 +546,7 @@
           this.$refs.historyLocation.getLocationHisData(this.project_id)
           this.$refs.mqttLocation.init(this.project_id)
           this.$refs.mqttBim.init(this.project_id, this.datumMeterMap)
+          await this.addDevlist()
         } else {
           this.showTadiaoInfo = false
           this.showShenjiangjiInfo = false
@@ -645,6 +636,22 @@
           })
 
 
+        })
+      },
+      addDevlist() {
+        this.datumMeterMap.forEach(datum => {
+          if (datum.device_type === 16 || datum.device_type === 18) { // 摄像头
+            if (datum.params_json !== '' && datum.params_json !== null) {
+              let paramsJson = JSON.parse(datum.params_json)
+              if (paramsJson.pos_x !== undefined) {
+                this.drawPushpinLot({
+                  x: paramsJson.pos_x,
+                  y: paramsJson.pos_y,
+                  z: paramsJson.pos_z
+                }, datum.device_id, `摄像头:${datum.device_name}`);
+              }
+            }
+          }
         })
       },
       updateDeviceData() {
@@ -758,10 +765,9 @@
       },
       initPerson(obj) {
         console.log('objobjobj', obj)
-        console.log('globalOffset', globalOffset)
         let _position = {
           x: obj.x / 1000 - 62,
-          y: obj.y / 1000 - 37,
+          y: obj.y / 1000 - 37 + 150,
           z: (obj.layer - 1) * 3.5 + 1.6 - 91
         }
         this.addPersonMesh(obj.name, obj, _position)
@@ -770,7 +776,6 @@
         const geometry = new THREE.BoxGeometry(5, 5, 5)
 
         const color = '#FF0000' //Math.floor(Math.random() * 16777215)
-        console.log('color', color)
         const material = new THREE.MeshPhongMaterial({
           specular: new THREE.Color(color),
           side: THREE.DoubleSide,
@@ -799,6 +804,49 @@
           y: position.y,
           z: position.z
         }, userData.mac, name);
+
+
+      },
+      drawPushpinLot(pushpinModelPt, id, name) {
+        console.log('idididid', id)
+        //convert 3D position to 2D screen coordination
+        var screenpoint = viewer.worldToClient(
+          new THREE.Vector3(pushpinModelPt.x,
+            pushpinModelPt.y,
+            pushpinModelPt.z, ));
+        $('#mymk' + randomId).remove()
+        //build the div container
+        var randomId = id; //makeid();
+        var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>';
+        var parent = viewer.container
+        $(parent).append(htmlMarker);
+        $('#mymk' + randomId).css({
+          'pointer-events': 'none',
+          'width': '80px',
+          // 'height': '16px',
+          'position': 'absolute',
+          'overflow': 'visible',
+        });
+
+        //build the svg element and draw a circle
+        // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
+
+        var snap = Snap($('#mysvg' + randomId)[0]);
+        var rad = 27;
+        //set the position of the SVG
+        //adjust to make the circle center is the position of the click point
+        var $container = $('#mymk' + randomId);
+        $container.css({
+          'left': screenpoint.x - rad * 2,
+          'top': screenpoint.y - rad
+        });
+
+        //store 3D point data to the DOM
+        var div = $('#mymk' + randomId);
+        //add radius info with the 3D data
+        pushpinModelPt.radius = rad;
+        var storeData = JSON.stringify(pushpinModelPt);
+        div.data('3DData', storeData);
       },
       aaaa() {
         console.log('aaaa-click')
