@@ -171,50 +171,7 @@
     // 异步获取模型的属性
     viewer.getProperties(_dbIds[0],
       function (elements) {
-        // console.log('elements', elements)
-        // var totalMass = 0;
-        // for (var i = 0; i < elements.length; i++) {
-        //     totalMass += elements[i].properties[0].displayValue;
-        // }
-        // console.log(totalMass);
-
-
         var dbid = elements.dbId;
-        /*
-
-        var bounds = new THREE.Box3();
-        var box = new THREE.Box3();
-        var instanceTree = viewer.overlays.impl.model.getData().instanceTree;
-        var fragList = viewer.overlays.impl.model.getFragmentList();
-
-        instanceTree.enumNodeFragments(dbid, (fragId) => {
-          console.log('fragId:' + fragId);
-
-          //某几何单元的全局坐标系包围盒
-          fragList.getWorldBounds(fragId, box)
-          //合并计算最终整个构件包围盒
-          bounds.union(box);
-
-          //某几何单元的全局坐标系变换矩阵
-          //从中读取平移或旋转数值
-          //由于构件的几何单元应该都是同步变换，所以这些矩阵初始值应该是一样的
-          var fm = new THREE.Matrix4();
-          fragList.getWorldMatrix(fragId, fm);
-          console.log('frag matrix:' + JSON.stringify(fm));
-        }, true)
-        */
-        /*
-        var tree = viewer.overlays.impl.model.getData().instanceTree;
-        var tmpBox = new Float32Array(6);
-        tree.getNodeBox(dbid, tmpBox);
-
-        var min = new THREE.Vector3(tmpBox[0], tmpBox[1], tmpBox[2]);
-        var max = new THREE.Vector3(tmpBox[3], tmpBox[4], tmpBox[5]);
-        let _x = (max.x - min.x) / 2;
-        let _y = (max.y - min.y) / 2;
-        let _z = (max.z - min.z) / 2;
-        console.log(_x, _y, _z)
-        */
       })
 
 
@@ -371,7 +328,7 @@
 
   // 人员在线的标记
   function drawPushpinPerson(pushpinModelPt, id, name) {
-    console.log('idididid', id)
+    // console.log('idididid', id)
     //convert 3D position to 2D screen coordination
     var screenpoint = viewer.worldToClient(
       new THREE.Vector3(pushpinModelPt.x,
@@ -391,7 +348,7 @@
       'overflow': 'visible',
     });
 
-    var snap = Snap($('#mysvg' + randomId)[0]);
+    // var snap = Snap($('#mysvg' + randomId)[0]);
     var rad = 27;
     //set the position of the SVG
     //adjust to make the circle center is the position of the click point
@@ -410,7 +367,7 @@
   }
   //
   function drawPushpin(pushpinModelPt, id, name) {
-    console.log('idididid', id)
+    // console.log('idididid', id)
     //convert 3D position to 2D screen coordination
     var screenpoint = viewer.worldToClient(
       new THREE.Vector3(pushpinModelPt.x,
@@ -563,12 +520,12 @@
         switch (this.project_id) {
           case 10000:
 
-            // _urlList = ['/static/model/qingyang0/3d.svf'];
+            _urlList = ['/static/model/qingyang0/3d.svf'];
 
-            _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
-              '/static/model/qingyang-menzheng/3d.svf',
-              '/static/model/qingyang-bingfang/3d.svf',
-            ];
+            // _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
+            //   '/static/model/qingyang-menzheng/3d.svf',
+            //   '/static/model/qingyang-bingfang/3d.svf',
+            // ];
             break;
 
           case 10004:
@@ -811,7 +768,7 @@
 
       },
       drawPushpinLot(pushpinModelPt, id, name, data) {
-        console.log('idididid', id)
+        // console.log('idididid', id)
         //convert 3D position to 2D screen coordination
         var screenpoint = viewer.worldToClient(
           new THREE.Vector3(pushpinModelPt.x,
@@ -858,7 +815,7 @@
         //build the svg element and draw a circle
         // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
 
-        var snap = Snap($('#mysvg' + randomId)[0]);
+        // var snap = Snap($('#mysvg' + randomId)[0]);
         var rad = 27;
         //set the position of the SVG
         //adjust to make the circle center is the position of the click point

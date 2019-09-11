@@ -1,5 +1,15 @@
 .loT4-index {
   height: calc(100vh - 34px);
+
+  #viewer-local {
+    .adsk-viewing-viewer {
+      width: calc(100vw - 40px) !important;
+    }
+
+  }
+
+  
+
   // padding: 10px;
   background-color: #FFFFFF;
 
