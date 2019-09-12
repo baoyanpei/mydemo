@@ -215,7 +215,7 @@
         let paramsJson = JSON.parse(datum.params_json)
         // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
         // elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
-        elevatorGroup.position.set(230, 60, 0);
+        elevatorGroup.position.set(181, 34, 0);// y 前后
 
         // var screenpoint11 = viewer.worldToClient(new THREE.Vector3(0, 0, 0));
         // viewer.worldToClient()
@@ -231,7 +231,7 @@
 
         let paramsJson = JSON.parse(datum.params_json)
         // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-        sectionGroup.position.set(234, 65, -90);
+        sectionGroup.position.set(185, 39, -90);
         // console.log('paramsJson.height', paramsJson.height)
         LoadSection(sectionGroup, paramsJson.height)
         viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
@@ -523,12 +523,12 @@
         switch (this.project_id) {
           case 10000:
 
-            _urlList = ['/static/model/qingyang0/3d.svf'];
+            // _urlList = ['/static/model/qingyang0/3d.svf'];
 
-            // _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
-            //   '/static/model/qingyang-menzheng/3d.svf',
-            //   '/static/model/qingyang-bingfang/3d.svf',
-            // ];
+            _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
+              '/static/model/qingyang-menzheng/3d.svf',
+              '/static/model/qingyang-bingfang/3d.svf',
+            ];
             break;
 
           case 10004:

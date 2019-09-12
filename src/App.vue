@@ -185,6 +185,10 @@
 
 </script>
 <style>
+  /*表格*/
+  table td, th{
+    border: 0px solid #000 !important; 
+  }
   .hr1 {
     border-top: 1px solid #eeeeee;
     border-bottom: 0px;

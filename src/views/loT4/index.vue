@@ -528,12 +528,12 @@
         switch (this.project_id) {
           case 10000:
 
-            _urlList = ['/static/model/qingyang0/3d.svf'];
+            // _urlList = ['/static/model/qingyang0/3d.svf'];
 
-            // _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
-            //   '/static/model/qingyang-menzheng/3d.svf',
-            //   '/static/model/qingyang-bingfang/3d.svf',
-            // ];
+            _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
+              '/static/model/qingyang-menzheng/3d.svf',
+              '/static/model/qingyang-bingfang/3d.svf',
+            ];
             break;
 
           case 10004:
