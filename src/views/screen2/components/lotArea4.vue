@@ -54,11 +54,11 @@
 </template>
 
 <script>
-  import '../../lot4/Viewing.Extension.MeshSelection'
+  import '../../loT4/Viewing.Extension.MeshSelection'
   import moment from 'moment'
-  import mqttBim from "../../lot4/components/mqttBim"
-  import mqttLocation from "../../lot4/components/mqttLocation"
-  import historyLocation from "../../lot4/components/historyLocation"
+  import mqttBim from "../../loT4/components/mqttBim"
+  import mqttLocation from "../../loT4/components/mqttLocation"
+  import historyLocation from "../../loT4/components/historyLocation"
   // import './Viewing.Extension.PointCloudMarkup/PointCloudMarkup/PointCloudMarkup.js'
   let towerGroup = null // 塔机
   let elevatorGroup = null // 升降机

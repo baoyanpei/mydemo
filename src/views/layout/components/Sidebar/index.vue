@@ -24,7 +24,7 @@
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
       </el-menu-item> -->
-      <el-menu-item index="/lot3/index">
+      <el-menu-item index="/lot4/index">
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
       </el-menu-item>

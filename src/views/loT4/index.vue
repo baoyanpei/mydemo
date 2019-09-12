@@ -214,7 +214,7 @@
         let paramsJson = JSON.parse(datum.params_json)
         // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
         // elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
-        elevatorGroup.position.set(230, 60, 0);
+        elevatorGroup.position.set(181, 34, 0);// y 前后
 
         // var screenpoint11 = viewer.worldToClient(new THREE.Vector3(0, 0, 0));
         // viewer.worldToClient()
@@ -230,7 +230,7 @@
 
         let paramsJson = JSON.parse(datum.params_json)
         // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-        sectionGroup.position.set(234, 65, -90);
+        sectionGroup.position.set(185, 39, -90);
         // console.log('paramsJson.height', paramsJson.height)
         LoadSection(sectionGroup, paramsJson.height)
         viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
@@ -480,10 +480,17 @@
     },
     mounted() {
       console.log('lot4-index-mounted')
+      this.init()
+
     },
     destroyed() {},
     methods: {
       async init() {
+        console.log('lot4-init-init')
+        if (this.project_id === null) {
+          return
+        }
+        console.log('lot4-init-init-OK')
         let _urlList = this.getModelUrl()
         if (_urlList.length !== 0) {
           this.noModelTip = ''
@@ -517,6 +524,7 @@
       },
       getModelUrl() {
         let _urlList = []
+        console.log('this.project_id', this.project_id)
         switch (this.project_id) {
           case 10000:
 
@@ -833,6 +841,7 @@
         div.data('3DData', storeData);
       },
       aaaa() {
+        return
         console.log('aaaa-click')
 
         let _position = {
@@ -846,6 +855,7 @@
         this.addPersonMesh('test', obj, _position)
       },
       bbbb() {
+        return
         console.log('bbbb-click')
         let _position = {
           x: 10,
@@ -858,6 +868,7 @@
         this.addPersonMesh('test', obj, _position)
       },
       cccc() {
+        return
         console.log('ccc-click')
         let obj = {
           mac: '20-5d-47-6e-55-9e'
