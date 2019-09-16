@@ -143,6 +143,7 @@
 
     viewer.fitToView()
     viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+    
     if (!viewer.overlays.hasScene('custom-scene')) {
       viewer.overlays.addScene('custom-scene');
     }
@@ -156,7 +157,7 @@
       Autodesk.Viewing.SELECTION_CHANGED_EVENT,
       onSelectionChanged
     );
-
+    // addToolbar(toolbarConfig,viewer);
   }
 
 
@@ -193,14 +194,14 @@
         towerGroup.name = "towerGroup";
         towerGroup.scale.set(3, 3, 3)
         let paramsJson = JSON.parse(datum.params_json)
-        console.log('paramsJson', paramsJson)
+        // console.log('paramsJson', paramsJson)
         towerHeight = paramsJson.height
         // this.tdData.tdgd = this.towerHeight
         // towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
         towerGroup.position.set(80, 36, -91); // 红 绿
 
         modifyTower(towerGroup, `T${datum.device_id}`, towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
-        console.log('viewer', viewer)
+        // console.log('viewer', viewer)
         viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
       } else if (datum.device_type === 12) { // 升降机
         // $('.divDataShenJiangJi').show()
@@ -209,18 +210,16 @@
         elevatorGroup.name = "elevatorGroup";
 
         elevatorGroup.scale.set(3, 3, 3)
-        // modifyElevator(elevatorGroup, `E22332`, 0, false) //名称，高度，门的开启状态
 
         let paramsJson = JSON.parse(datum.params_json)
         // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
         // elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
-        elevatorGroup.position.set(181, 34, 0);// y 前后
-
-        // var screenpoint11 = viewer.worldToClient(new THREE.Vector3(0, 0, 0));
-        // viewer.worldToClient()
-        // console.log('screenpoint11', screenpoint11)
-        modifyElevator(elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
+        elevatorGroup.position.set(181, 34, 0); // y 前后
         viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+        // viewer.impl.scene.add(elevatorGroup);
+
+        modifyElevator(elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
+
       } else if (datum.device_type === 100) { // 升降机轨道
 
         sectionGroup = new THREE.Group()
@@ -232,8 +231,11 @@
         // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
         sectionGroup.position.set(185, 39, -90);
         // console.log('paramsJson.height', paramsJson.height)
-        LoadSection(sectionGroup, paramsJson.height)
+        // viewer.impl.scene.add(sectionGroup);
         viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
+        LoadSection(sectionGroup, paramsJson.height)
+
+
 
       }
     })
@@ -414,6 +416,137 @@
     pushpinModelPt.radius = rad;
     var storeData = JSON.stringify(pushpinModelPt);
     div.data('3DData', storeData);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////
+  // custom toobar config 
+  var toolbarConfig = {
+    'id': 'toolbar_id_1',
+    'containerId': 'toolbarContainer',
+    'subToolbars': [{
+        'id': 'subToolbar_id_non_radio_1',
+        'isRadio': false,
+        'visible': true,
+        'buttons': [{
+            'id': 'buttonRotation',
+            'buttonText': 'Rotation',
+            'tooltip': 'Ratate the model at X direction',
+            'cssClassName': 'glyphicon glyphicon glyphicon-play-circle',
+            'iconUrl': 'Images/3d_rotation.png',
+            'onclick': buttonRotationClick
+          },
+          {
+            'id': 'buttonExplode',
+            'buttonText': 'Explode',
+            'tooltip': 'Explode the model',
+            'cssClassName': '',
+            'iconUrl': 'Images/explode_icon.jpg',
+            'onclick': buttonExplodeClick
+          }
+
+        ]
+      },
+      {
+        'id': 'subToolbar_id_radio_1',
+        'isRadio': true,
+        'visible': true,
+        'buttons': [{
+            'id': 'radio_button1',
+            'buttonText': 'radio_button1',
+            'tooltip': 'this is tooltip for radio button1',
+            'cssClassName': '',
+            'iconUrl': '',
+            'onclick': radioButton1ClickCallback
+          },
+          {
+            'id': 'radio_button2',
+            'buttonText': 'radio_button2',
+            'tooltip': 'this is tooltip for radio button2',
+            'cssClassName': '',
+            'iconUrl': '',
+            'onclick': radioButton2ClickCallback
+          }
+
+        ]
+      }
+    ]
+
+  };
+
+  function buttonRotationClick(e) {
+
+
+  }
+
+
+  function buttonExplodeClick() {
+
+  }
+
+
+  function button2ClickCallback(e) {
+    alert('Button2 is clicked');
+  }
+
+  function radioButton1ClickCallback(e) {
+    alert('radio Button1 is clicked');
+  }
+
+  function radioButton2ClickCallback(e) {
+    alert('radio Button2 is clicked');
+  }
+
+  function addToolbar(toolbarConfig, viewer) {
+    //find the container element in client webpage first
+    var containter = document.getElementById(toolbarConfig.containerId);
+
+    // if no toolbar container on client's webpage, create one and append it to viewer
+    if (!containter) {
+      containter = document.createElement('div');
+      containter.id = 'custom_toolbar';
+      //'position: relative;top: 75px;left: 0px;z-index: 200;';
+      containter.style.position = 'relative';
+      containter.style.top = '75px';
+      containter.style.left = '0px';
+      containter.style.zIndex = '200';
+      viewer.clientContainer.appendChild(containter);
+    }
+
+    //create a toolbar
+    var toolbar = new Autodesk.Viewing.UI.ToolBar(containter);
+
+    for (var i = 0, len = toolbarConfig.subToolbars.length; i < len; i++) {
+      var stb = toolbarConfig.subToolbars[i];
+      //create a subToolbar
+      var subToolbar = toolbar.addSubToolbar(stb.id, stb.isRadio);
+      subToolbar.setToolVisibility(stb.visible);
+
+      //create buttons
+      for (var j = 0, len2 = stb.buttons.length; j < len2; j++) {
+        var btn = stb.buttons[j];
+        var button = Autodesk.Viewing.UI.ToolBar.createMenuButton(btn.id, btn.tooltip, btn.onclick);
+        //set css calss if availible
+        if (btn.cssClassName) {
+          button.className = btn.cssClassName;
+        }
+        //set button text if availible
+        if (btn.buttonText) {
+          var btnText = document.createElement('span');
+          btnText.innerText = btn.buttonText;
+          button.appendChild(btnText);
+        }
+        //set icon image if availible
+        if (btn.iconUrl) {
+          var ico = document.createElement('img');
+          ico.src = btn.iconUrl;
+          ico.className = 'toolbar-button';
+          button.appendChild(ico);
+        }
+        //add button to sub toolbar
+        toolbar.addToSubToolbar(stb.id, button);
+      }
+    }
   }
   export default {
     name: 'Lot4-index',
@@ -695,8 +828,12 @@
             if (elevatorGroup === null) {
               return
             }
+            console.log('升降机高度', `E${_data.HxzId}`, _data.Height, _data.Height - (91 / 3))
+            // viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
             modifyElevator(elevatorGroup, `E${_data.HxzId}`, _data.Height - (91 / 3), doorOpen) //名称，高度，门的开启状态
-
+            // viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+            // viewer.impl.invalidate(true);
+            // viewer.overlays.impl.sceneUpdated(true)
             $("#sjj_gd").html(_data.Height)
             $("#sjj_lc").html(_data.Floor)
             $("#sjj_sbsj").html(moment(_data.RTime).format("HH:mm:ss"))
@@ -841,9 +978,14 @@
         div.data('3DData', storeData);
       },
       aaaa() {
-        return
+        viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
+        modifyElevator(elevatorGroup, `E18090302`, 30, false) //名称，高度，门的开启状态
+        viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+        // viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
+        // viewer.refresh(true)
+        console.log('-->', viewer.impl)
         console.log('aaaa-click')
-
+        return
         let _position = {
           x: 30,
           y: 30,
@@ -855,6 +997,9 @@
         this.addPersonMesh('test', obj, _position)
       },
       bbbb() {
+        viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
+        modifyElevator(elevatorGroup, `E18090302`, -10, false) //名称，高度，门的开启状态
+        viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
         return
         console.log('bbbb-click')
         let _position = {
