@@ -8,12 +8,12 @@
     <div v-if="hasVehicleDevice === false" class="noVehicleDeviceTips">{{noVehicleDeviceTips}}</div>
     <div v-if="hasVehicleDevice === true">
       <el-row>
-        <el-col :span="8">
+        <el-col :span="9">
           <el-table class="screen-vehicle-table" ref="vehicleTable" stripe :data="vehicleList" height="320px"
             :empty-text="vehicleTableEmptyText" style="width: 100%" size="mini" :show-header="true" border
             :row-class-name="tableRowClassName" :resizabl="false">
 
-            <el-table-column property="lisence" label="车牌号" align="center" header-align="center">
+            <el-table-column property="lisence_show" label="车牌号" align="center" header-align="center">
             </el-table-column>
             <el-table-column property="created_time" label="进场时间" align="center" header-align="center">
               <template slot-scope="scope">
@@ -23,8 +23,8 @@
 
           </el-table>
         </el-col>
-        <el-col :span="16">
-          <div style='padding-left: 20px;' class="last-vehicle">
+        <el-col :span="15">
+          <div style='padding-left: 10px;' class="last-vehicle">
             <div class="title">最新进场车牌号码</div>
             <div class="lisence">
               <div class="lisence-letter">{{lastVehicle.lisence[0]}}</div>
@@ -132,10 +132,11 @@
         }
 
         this.$store.dispatch('QueryVehicleGate', param).then((vehicleDataList) => {
-          // console.log('vehicleDataList', vehicleDataList)
+          console.log('vehicleDataList', vehicleDataList)
           this.vehicleList = lodash.chunk(vehicleDataList, 8)[0]
           this.vehicleList.forEach(data => {
             data.lisence = data.lisence.replace(data.lisence_type, '')
+            data['lisence_show'] = `${data.lisence} (${data.lisence_type})`
             // console.log('data', data.lisence.replace(data.lisence_type, ''))
           });
           this.lastVehicle = vehicleDataList[0]
