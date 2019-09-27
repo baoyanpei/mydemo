@@ -143,7 +143,7 @@
     }
 
     viewer.fitToView()
-    viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+    viewer.setBackgroundColor(6, 17, 34, 255, 255, 255);
     if (!viewer.overlays.hasScene('custom-scene')) {
       viewer.overlays.addScene('custom-scene');
     }
@@ -429,11 +429,11 @@
         noModelTip: '',
         datumMeterMap: new Map(),
         // towerHeight: 0, // 塔吊高度 28米
-        showTadiaoInfo: true,
-        showShenjiangjiInfo: true,
-        showWeatherInfo: true,
-        showShuibiaoInfo: true,
-        showDianbiaoInfo: true,
+        showTadiaoInfo: false,
+        showShenjiangjiInfo: false,
+        showWeatherInfo: false,
+        showShuibiaoInfo: false,
+        showDianbiaoInfo: false,
         tdData: { // 塔吊面板数据
           tdgd: 0,
           dbjd: '-',
@@ -523,12 +523,12 @@
         switch (this.project_id) {
           case 10000:
 
-            // _urlList = ['/static/model/qingyang0/3d.svf'];
+            _urlList = ['/static/model/qingyang0/3d.svf'];
 
-            _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
-              '/static/model/qingyang-menzheng/3d.svf',
-              '/static/model/qingyang-bingfang/3d.svf',
-            ];
+            // _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
+            //   '/static/model/qingyang-menzheng/3d.svf',
+            //   '/static/model/qingyang-bingfang/3d.svf',
+            // ];
             break;
 
           case 10004:

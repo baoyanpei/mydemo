@@ -5,24 +5,45 @@
 <template>
   <div class="screen3-index-container" style="margin: 0px;">
     <LotArea ref="lotArea"></LotArea>
-    <el-row>
-      <div class="header">
-        <div class="project—name">{{project_name}}</div>
-        <div class="now-time">{{todayDate}}</div>
-      </div>
-    </el-row>
+    <div class="screen-header">
+      <el-row>
+        <div class="header">
+          <div class="project—name">{{project_name}}</div>
+          <div class="now-time">{{todayDate}}</div>
+        </div>
+      </el-row>
+    </div>
+
     <div v-show="canShow===false" class="errTips">{{errTips}}</div>
+    <div v-show="canShow===true" class="screen-main">
+      <el-row>
+        <el-col :span="5">
+          <div class="gate-area">
+            <div class="title">
+              <img src="/static/screen/red/titleBg.png" class="bg" />
+              <div class="text">门禁管理</div>
+            </div>
+            <div class="main">
+              <GateArea ref="gateArea" v-on:gateMessage="gateMessage"></GateArea>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+
   </div>
 </template>
 
 <script>
   import moment from 'moment'
   import LotArea from './components/lotArea'
+  import GateArea from './components/gateArea'
   export default {
     directives: {},
     name: 'screen3-index',
     components: {
-      LotArea
+      LotArea,
+      GateArea
     },
     data() {
       return {
@@ -85,6 +106,7 @@
             await this.initDevlist()
             console.log('personInfo1233', this.personInfo)
             console.log('this.datumMeterMap', this.datumMeterMap)
+            this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
           } else {
             this.canShow = false
