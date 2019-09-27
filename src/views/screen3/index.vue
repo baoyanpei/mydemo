@@ -121,7 +121,6 @@
             console.log('this.datumMeterMap', this.datumMeterMap)
             this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
             this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
-            
             this.$refs.messageArea.init(this.project_id)
           } else {
             this.canShow = false

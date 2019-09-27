@@ -12,43 +12,6 @@
     <div id="viewer-local">
       <div v-if="noModelTip!==''" class="noModelTip">{{noModelTip}}</div>
     </div>
-    <div v-show="showTadiaoInfo" class="divDataTadiao" @click="aaaa">
-      <div style="padding-bottom: 5px;font-size: 14px;">塔吊</div>
-      <div>塔吊高度：<span id="td_tdgd">{{tdData.tdgd}}</span> 米</div>
-      <div>大臂角度：<span id="td_dbjd">{{tdData.dbjd}}</span> 度</div>
-      <div>小车距离：<span id="td_xcjl">{{tdData.xcjl}}</span> 米</div>
-      <div>吊钩线长：<span id="td_dgxc">{{tdData.dgxc}}</span> 米</div>
-      <div>上报时间：<span id="td_sbsj">{{tdData.sbsj}}</span></div>
-    </div>
-    <div v-show="showShenjiangjiInfo" class="divDataShenJiangJi" @click="bbbb">
-      <div style="padding-bottom: 5px;font-size: 14px;">升降机</div>
-      <div>高度：<span id="sjj_gd">{{sjjData.sjjgd}}</span> 米</div>
-      <div>楼层：<span id="sjj_lc">{{sjjData.sjjlc}}</span> 层</div>
-      <div>笼门状态：<span id="sjj_lmzt">{{sjjData.mzt}}</span> </div>
-      <div>上报时间：<span id="sjj_sbsj">{{sjjData.sbsj}}</span></div>
-    </div>
-    <div v-show="showWeatherInfo" class="divDataWeather" @click="cccc">
-      <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(3)" title="关闭" /> -->
-      <div style="padding-bottom: 5px;font-size: 14px;">环境检测仪</div>
-      <div>温度：<span>{{weather_data.temp}}</span> °C</div>
-      <div>湿度：<span>{{weather_data.h}}</span> %</div>
-      <div>噪声：<span>{{weather_data.noise}}</span> db</div>
-      <div>扬尘：<span>{{weather_data.pm10}}</span> ug/m</div>
-      <div>PM2.5：<span>{{weather_data.pm2_5}}</span> ug/m</div>
-      <div>风速：<span>{{ weather_data.wind }}</span> 级</div>
-    </div>
-    <div v-show="showShuibiaoInfo" class="divDataShuibiao">
-      <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(4)" title="关闭" /> -->
-      <div style="padding-bottom: 5px;font-size: 14px;">水表</div>
-      <div>当前用量：<span>{{shuibiaoTotalUsed}}</span> 吨</div>
-
-    </div>
-    <div v-show="showDianbiaoInfo" class="divDataDianbiao">
-      <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(5)" title="关闭" /> -->
-      <div style="padding-bottom: 5px;font-size: 14px;">电表</div>
-      <div>当前用量：{{dianbiaoTotalUsed}} 度</div>
-
-    </div>
   </div>
 
 </template>
@@ -143,7 +106,7 @@
     }
 
     viewer.fitToView()
-    viewer.setBackgroundColor(6, 17, 34, 255, 255, 255);
+    viewer.setBackgroundColor(22, 39, 61, 5, 9, 13);
     if (!viewer.overlays.hasScene('custom-scene')) {
       viewer.overlays.addScene('custom-scene');
     }
@@ -246,13 +209,6 @@
   // let viewer = viewer
 
   function initMarker() {
-    // console.log('viewer.container', viewer.container)
-    //delegate the mouse click event
-
-    // 在场景中通过点击添加圆圈标记
-    // $(viewer.container).bind("click", onMouseClick);
-
-    //delegate the event of CAMERA_CHANGE_EVENT
     viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, function (rt) {
 
       //find out all pushpin markups
