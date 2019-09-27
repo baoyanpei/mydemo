@@ -23,8 +23,19 @@
               <img src="/static/screen/red/titleBg.png" class="bg" />
               <div class="text">门禁管理</div>
             </div>
+
             <div class="main">
+              <div class="bg"></div>
               <GateArea ref="gateArea" v-on:gateMessage="gateMessage"></GateArea>
+            </div>
+          </div>
+          <div class="message-area">
+            <div class="title">
+              <img src="/static/screen/red/titleBg.png" class="bg" />
+              <div class="text">公告栏</div>
+            </div>
+            <div class="main">
+              <Message ref="messageArea"></Message>
             </div>
           </div>
         </el-col>
@@ -38,12 +49,14 @@
   import moment from 'moment'
   import LotArea from './components/lotArea'
   import GateArea from './components/gateArea'
+  import Message from './components/Message'
   export default {
     directives: {},
     name: 'screen3-index',
     components: {
       LotArea,
-      GateArea
+      GateArea,
+      Message
     },
     data() {
       return {
@@ -106,8 +119,10 @@
             await this.initDevlist()
             console.log('personInfo1233', this.personInfo)
             console.log('this.datumMeterMap', this.datumMeterMap)
-            this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
+            this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
+            
+            this.$refs.messageArea.init(this.project_id)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
@@ -166,7 +181,7 @@
       },
       gateMessage(data) {
         console.log('gateMessage', data)
-        this.$refs.lotArea.gateData(data)
+        // this.$refs.lotArea.gateData(data)
       },
     }
   }
