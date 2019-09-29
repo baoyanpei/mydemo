@@ -23,8 +23,8 @@ $box-border-color: #ECA198;
   min-height: 1080px;
   max-height: 1080px;
 
-  background-color: #fff;
-  // background-image: -webkit-linear-gradient(top, #16273d, #0f1a28, #1c1c1c);
+  // background-color: #fff;
+  background-image: -webkit-linear-gradient(top, #16273d, #0f1a28, #1c1c1c);
   //   background-image: url(/static/screen/red/bg.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -438,6 +438,13 @@ $box-border-color: #ECA198;
       padding: 0px 0px 0px 0px;
       position: relative;
       top: -15px;
+
+      .bg {
+        background-color: #000000;
+        height: 100%;
+        width: 100%;
+        opacity: 0.2;
+      }
     }
   }
 

@@ -15,48 +15,48 @@
     <div v-if="hasDevice === false" class="noTJSjjTip">{{noTJSjjTip}}</div>
     <div v-if="hasDevice === true">
       <el-row>
-        <el-col :span="8">
+        <el-col :span="10">
           <div class="grid-content label">
             高度：
           </div>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
           <div class="grid-content">
             {{sjjData.sjjgd}} 米
           </div>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="10">
           <div class="grid-content label">
             楼层：
           </div>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
           <div class="grid-content">
             {{sjjData.sjjlc}} 层
           </div>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="10">
           <div class="grid-content label">
             笼门状态：
           </div>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
           <div class="grid-content">
             {{sjjData.mzt}}
           </div>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="10">
           <div class="grid-content label">
             上报时间：
           </div>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
           <div class="grid-content">
             {{sjjData.sbsj}}
           </div>
