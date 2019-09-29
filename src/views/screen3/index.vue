@@ -50,15 +50,16 @@
               <Duty ref="duty"></Duty>
             </div>
           </div>
-          <!-- <div class="inout-area">
+          <div class="inout-area">
             <div class="title">
               <img src="/static/screen/red/titleBg.png" class="bg" style="width: 150px;" />
               <div class="text">场内人员{{totalInoutPerson}}人</div>
             </div>
             <div class="main">
+                <div class="bg"></div>
               <Inout ref="inout" v-on:inoutTotalPerson="inoutTotalPerson"></Inout>
             </div>
-          </div> -->
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -72,6 +73,7 @@
   import GateArea from './components/gateArea'
   import Message from './components/Message'
   import Duty from './components/duty'
+  import Inout from './components/inout'
   export default {
     directives: {},
     name: 'screen3-index',
@@ -79,7 +81,8 @@
       LotArea,
       GateArea,
       Message,
-      Duty
+      Duty,
+      Inout
     },
     data() {
       return {
@@ -146,6 +149,7 @@
             this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             this.$refs.messageArea.init(this.project_id)
             this.$refs.duty.init(this.project_id)
+            this.$refs.inout.init(this.project_id)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
