@@ -136,6 +136,7 @@
               <div class="text">进场车辆</div>
             </div>
             <div class="main">
+                <Vehicle ref="vehicle"></Vehicle>
             </div>
           </div>
         </el-col>
@@ -157,6 +158,7 @@
   import MeterShui from './components/meterShui'
   import MeterDian from './components/meterDian'
   import TajiArea from './components/tajiArea'
+  import Vehicle from './components/vehicle'
   export default {
     directives: {},
     name: 'screen3-index',
@@ -170,7 +172,8 @@
       Weather,
       MeterShui,
       MeterDian,
-      TajiArea
+      TajiArea,
+      Vehicle
     },
     data() {
       return {
@@ -233,16 +236,17 @@
             await this.initDevlist()
             // console.log('personInfo1233', this.personInfo)
             // console.log('this.datumMeterMap', this.datumMeterMap)
-            this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
+            // this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
             // this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             // this.$refs.messageArea.init(this.project_id)
             // this.$refs.duty.init(this.project_id)
             // this.$refs.inout.init(this.project_id)
             // this.$refs.carema.openPlayer(this.datumMeterMap)
             // this.$refs.weather.init(this.project_id, this.datumMeterMap)
-            this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
-            this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
-            this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
+            // this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
+            // this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
+            // this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
+            this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
