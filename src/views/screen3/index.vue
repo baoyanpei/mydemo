@@ -10,6 +10,7 @@
         <div class="header">
           <div class="project—name">{{project_name}}</div>
           <div class="now-time">{{todayDate}}</div>
+          <div class="title-bg"><img src="/static/screen/red/title.png"/></div>
         </div>
       </el-row>
     </div>
@@ -49,6 +50,15 @@
               <Duty ref="duty"></Duty>
             </div>
           </div>
+          <!-- <div class="inout-area">
+            <div class="title">
+              <img src="/static/screen/red/titleBg.png" class="bg" style="width: 150px;" />
+              <div class="text">场内人员{{totalInoutPerson}}人</div>
+            </div>
+            <div class="main">
+              <Inout ref="inout" v-on:inoutTotalPerson="inoutTotalPerson"></Inout>
+            </div>
+          </div> -->
         </el-col>
       </el-row>
     </div>
