@@ -1,5 +1,5 @@
 .screen-meter-dian {
-  padding: 5px 15px;
+  padding: 0px 15px;
 
   .noMeterDianTips {
     line-height: 230px;
@@ -18,7 +18,7 @@
       font: 20px 'Roboto Slab', sans-serif;
       font-weight: 600;
       width: 21px;
-      height: 40px;
+      height: 30px;
       background-image: url(/static/screen/red/box2.gif);
       background-repeat: no-repeat;
       color: #E3A3AA;
@@ -37,7 +37,7 @@
 
     .total-used {
       font-size: 16px;
-      padding: 10px 0px;
+      padding: 5px 0px;
     }
 
     .total-today {

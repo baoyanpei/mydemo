@@ -120,6 +120,23 @@
               </el-row>
             </div>
           </div>
+          <div class="taji-area">
+            <div class="title">
+              <img src="/static/screen/red/titleBg.png" class="bg" />
+              <div class="text">塔机/升降机</div>
+            </div>
+            <div class="main">
+              <TajiArea ref="tajiArea"></TajiArea>
+            </div>
+          </div>
+          <div class="vehicle-area">
+            <div class="title">
+              <img src="/static/screen/red/titleBg.png" class="bg" />
+              <div class="text">进场车辆</div>
+            </div>
+            <div class="main">
+            </div>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -138,6 +155,7 @@
   import Weather from './components/weather'
   import MeterShui from './components/meterShui'
   import MeterDian from './components/meterDian'
+  import TajiArea from './components/tajiArea'
   export default {
     directives: {},
     name: 'screen3-index',
@@ -151,6 +169,7 @@
       Weather,
       MeterShui,
       MeterDian,
+      TajiArea
     },
     data() {
       return {
@@ -222,6 +241,7 @@
             // this.$refs.weather.init(this.project_id, this.datumMeterMap)
             this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
             this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
+            this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
