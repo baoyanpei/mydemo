@@ -7,7 +7,7 @@
   <div class="screen-meter-shui">
     <div v-if="device_id === null" class="noMeterShuiTips">{{noMeterShuiTips}}</div>
     <div v-if="device_id !== null" class="data-area">
-      <div class="label">当前水表读数</div>
+      <!-- <div class="label">当前水表读数</div> -->
       <div class="total-used">
         <div class="item-box">{{total_used[0]}}</div>
         <div class="item-box">{{total_used[1]}}</div>
@@ -18,11 +18,11 @@
       <div class="total-today-label">今日用水量</div>
       <div class="total-today">{{total_today}} 吨</div>
     </div>
-    <div v-if="device_id !== null">
+    <!-- <div v-if="device_id !== null">
       <echart ref="echarts-shuibiao" :options="option" class="echarts-shuibiao" theme="infographic"
         style="width:100%;height: 170px;">
       </echart>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
