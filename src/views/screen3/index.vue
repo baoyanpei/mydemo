@@ -39,6 +39,16 @@
               <Message ref="messageArea"></Message>
             </div>
           </div>
+          <div class="duty-area">
+            <div class="title">
+              <img src="/static/screen/red/titleBg.png" class="bg" />
+              <div class="text">值班人员</div>
+            </div>
+            <div class="main">
+              <div class="bg"></div>
+              <Duty ref="duty"></Duty>
+            </div>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -51,13 +61,15 @@
   import LotArea from './components/lotArea'
   import GateArea from './components/gateArea'
   import Message from './components/Message'
+  import Duty from './components/duty'
   export default {
     directives: {},
     name: 'screen3-index',
     components: {
       LotArea,
       GateArea,
-      Message
+      Message,
+      Duty
     },
     data() {
       return {
@@ -123,6 +135,7 @@
             // this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
             this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             this.$refs.messageArea.init(this.project_id)
+            this.$refs.duty.init(this.project_id)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
