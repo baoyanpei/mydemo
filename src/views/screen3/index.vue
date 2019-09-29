@@ -92,6 +92,18 @@
             </el-col>
           </el-row>
         </el-col>
+        <el-col :span="6">
+          <div class="weather-area">
+            <div class="title">
+              <img src="/static/screen/red/titleBg.png" class="bg" />
+              <div class="text">环境检测仪</div>
+            </div>
+            <div class="main">
+              <div class="bg"></div>
+              <Weather ref="weather"></Weather>
+            </div>
+          </div>
+        </el-col>
       </el-row>
     </div>
 
@@ -106,6 +118,7 @@
   import Duty from './components/duty'
   import Inout from './components/inout'
   import Camera from './components/camera'
+  import Weather from './components/weather'
   export default {
     directives: {},
     name: 'screen3-index',
@@ -115,7 +128,8 @@
       Message,
       Duty,
       Inout,
-      Camera
+      Camera,
+      Weather
     },
     data() {
       return {
@@ -184,6 +198,7 @@
             // this.$refs.duty.init(this.project_id)
             // this.$refs.inout.init(this.project_id)
             // this.$refs.carema.openPlayer(this.datumMeterMap)
+            this.$refs.weather.init(this.project_id, this.datumMeterMap)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
