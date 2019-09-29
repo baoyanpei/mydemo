@@ -1,0 +1,26 @@
+.screen-camera {
+
+  // padding: 20px 20px 20px 20px;
+  margin: 0px 0px 0px 0px;
+  //   border-radius: 30px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  height: 375px;
+  overflow: hidden;
+  border-radius: 3px;
+
+  .noCameraTips {
+    line-height: 370px;
+    text-align: center;
+    font-size: 20px;
+    color: #aaaaaa;
+  }
+
+  #screen_carame_player {
+    max-width: 460px;
+    height: 450px;
+    margin-top: -40px;
+    // margin-left: -25px;
+    // overflow: hidden;
+  }
+}

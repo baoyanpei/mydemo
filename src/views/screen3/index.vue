@@ -10,7 +10,7 @@
         <div class="header">
           <div class="project—name">{{project_name}}</div>
           <div class="now-time">{{todayDate}}</div>
-          <div class="title-bg"><img src="/static/screen/red/title.png"/></div>
+          <div class="title-bg"><img src="/static/screen/red/title.png" /></div>
         </div>
       </el-row>
     </div>
@@ -56,10 +56,41 @@
               <div class="text">场内人员{{totalInoutPerson}}人</div>
             </div>
             <div class="main">
-                <div class="bg"></div>
+              <div class="bg"></div>
               <Inout ref="inout" v-on:inoutTotalPerson="inoutTotalPerson"></Inout>
             </div>
           </div>
+        </el-col>
+        <el-col :span="13">
+          <el-row>
+            <div class="center-area">
+              <div class="main">
+              </div>
+            </div>
+          </el-row>
+          <el-row>
+            <el-col :span="14">
+              <div class="task-area">
+                <div class="title">
+                  <img src="/static/screen/red/titleBg.png" class="bg" style="width: 150px;" />
+                  <div class="text">最新任务</div>
+                </div>
+                <div class="main">
+                </div>
+              </div>
+            </el-col>
+            <el-col :span="10">
+              <div class="vedio-area">
+                <div class="title">
+                  <img src="/static/screen/red/titleBg.png" class="bg" style="width: 150px;" />
+                  <div class="text">现场视频监控</div>
+                </div>
+                <div class="main">
+                  <Camera ref="carema"></Camera>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
         </el-col>
       </el-row>
     </div>
@@ -74,6 +105,7 @@
   import Message from './components/Message'
   import Duty from './components/duty'
   import Inout from './components/inout'
+  import Camera from './components/camera'
   export default {
     directives: {},
     name: 'screen3-index',
@@ -82,7 +114,8 @@
       GateArea,
       Message,
       Duty,
-      Inout
+      Inout,
+      Camera
     },
     data() {
       return {
@@ -146,10 +179,11 @@
             // console.log('personInfo1233', this.personInfo)
             // console.log('this.datumMeterMap', this.datumMeterMap)
             // this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
-            this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
-            this.$refs.messageArea.init(this.project_id)
-            this.$refs.duty.init(this.project_id)
-            this.$refs.inout.init(this.project_id)
+            // this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
+            // this.$refs.messageArea.init(this.project_id)
+            // this.$refs.duty.init(this.project_id)
+            // this.$refs.inout.init(this.project_id)
+            // this.$refs.carema.openPlayer(this.datumMeterMap)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
