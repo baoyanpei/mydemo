@@ -103,6 +103,23 @@
               <Weather ref="weather"></Weather>
             </div>
           </div>
+          <div class="meter-area">
+            <div class="title">
+              <img src="/static/screen/red/titleBg.png" class="bg" />
+              <div class="text">水表/电表</div>
+            </div>
+            <div class="main">
+              <div class="bg"></div>
+              <el-row class="meter-main">
+                <el-col :span="12">
+                  <MeterShui ref="meterShui"></MeterShui>
+                </el-col>
+                <el-col :span="12">
+                  <MeterDian ref="meterDian"></MeterDian>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -119,6 +136,8 @@
   import Inout from './components/inout'
   import Camera from './components/camera'
   import Weather from './components/weather'
+  import MeterShui from './components/meterShui'
+  import MeterDian from './components/meterDian'
   export default {
     directives: {},
     name: 'screen3-index',
@@ -129,7 +148,9 @@
       Duty,
       Inout,
       Camera,
-      Weather
+      Weather,
+      MeterShui,
+      MeterDian,
     },
     data() {
       return {
@@ -198,7 +219,9 @@
             // this.$refs.duty.init(this.project_id)
             // this.$refs.inout.init(this.project_id)
             // this.$refs.carema.openPlayer(this.datumMeterMap)
-            this.$refs.weather.init(this.project_id, this.datumMeterMap)
+            // this.$refs.weather.init(this.project_id, this.datumMeterMap)
+            this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
+            this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'
