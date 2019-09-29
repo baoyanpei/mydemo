@@ -23,8 +23,8 @@ $box-border-color: #ECA198;
   min-height: 1080px;
   max-height: 1080px;
 
-  // background-color: #fff;
-  background-image: -webkit-linear-gradient(top, #16273d, #0f1a28, #1c1c1c);
+  background-color: #fff;
+  // background-image: -webkit-linear-gradient(top, #16273d, #0f1a28, #1c1c1c);
   //   background-image: url(/static/screen/red/bg.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -146,11 +146,19 @@ $box-border-color: #ECA198;
     .main {
       @extend %box-border;
       height: 130px;
-      padding: 15px 0px 10px 0px;
+      // padding: 15px 0px 10px 0px;
 
       position: relative;
       top: -15px;
       overflow: hidden;
+
+      .bg {
+        background-color: #000000;
+        opacity: 0.5;
+        height: 100%;
+        width: 100%;
+        opacity: 0.2;
+      }
     }
   }
 

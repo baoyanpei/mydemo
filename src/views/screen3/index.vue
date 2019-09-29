@@ -35,6 +35,7 @@
               <div class="text">公告栏</div>
             </div>
             <div class="main">
+              <div class="bg"></div>
               <Message ref="messageArea"></Message>
             </div>
           </div>
@@ -117,9 +118,9 @@
           })
           if (this.project_id !== null) {
             await this.initDevlist()
-            console.log('personInfo1233', this.personInfo)
-            console.log('this.datumMeterMap', this.datumMeterMap)
-            this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
+            // console.log('personInfo1233', this.personInfo)
+            // console.log('this.datumMeterMap', this.datumMeterMap)
+            // this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
             this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             this.$refs.messageArea.init(this.project_id)
           } else {

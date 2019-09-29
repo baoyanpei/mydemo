@@ -1,10 +1,13 @@
 .screen-message-info {
+  position: absolute;
+  top:0px;
+
   font-size: 1rem;
-  margin: 0px 5px 5px 5px;
+  margin: 15px 5px 5px 5px;
   padding: 0px 10px 0px 10px;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  // background-color: rgba(0, 0, 0, 0.1);
+  // border: 1px solid rgba(0, 0, 0, 0.1);
   height: 100px;
   width: 386px;
   line-height: 30px;
@@ -12,7 +15,7 @@
   font-weight: 600;
   overflow-y: auto;
   color: #E78163;
-  position: relative;
+  // position: relative;
 
   .noMessageTip {
     line-height: 100px;
