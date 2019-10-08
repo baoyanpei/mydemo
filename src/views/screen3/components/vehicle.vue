@@ -9,7 +9,7 @@
     <div v-if="hasVehicleDevice === true">
 
       <el-row class="vehicle-info">
-        <el-col :span="12" >
+        <el-col :span="12">
           <div style='padding-left: 10px;' class="last-vehicle">
             <div class="title">最新进场车牌号码</div>
             <div class="lisence">
@@ -30,16 +30,26 @@
       </el-row>
       <el-row>
         <div class="vehicle-list">
-          <div class="vehicle-list-item">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item ">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item ">甘M30989 10/20 20:39</div>
-          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
+          <div v-if="vehicleList[0]!==undefined" class="vehicle-list-item">
+            {{vehicleList[0].lisence_show}}
+          </div>
+          <div v-if="vehicleList[1]!==undefined" class="vehicle-list-item vehicle-list-item1">
+            {{vehicleList[1].lisence_show}}</div>
+          <div v-if="vehicleList[2]!==undefined" class="vehicle-list-item vehicle-list-item1">
+            {{vehicleList[2].lisence_show}}</div>
+          <div v-if="vehicleList[3]!==undefined" class="vehicle-list-item">{{vehicleList[3].lisence_show}}</div>
+          <div v-if="vehicleList[4]!==undefined" class="vehicle-list-item">{{vehicleList[4].lisence_show}}</div>
+          <div v-if="vehicleList[5]!==undefined" class="vehicle-list-item vehicle-list-item1">
+            {{vehicleList[5].lisence_show}}</div>
+          <div v-if="vehicleList[6]!==undefined" class="vehicle-list-item vehicle-list-item1">
+            {{vehicleList[6].lisence_show}}</div>
+          <div v-if="vehicleList[7]!==undefined" class="vehicle-list-item ">{{vehicleList[7].lisence_show}}</div>
+          <div v-if="vehicleList[8]!==undefined" class="vehicle-list-item ">
+            {{vehicleList[8].lisence_show}}
+          </div>
+          <div v-if="vehicleList[9]!==undefined" class="vehicle-list-item vehicle-list-item1">
+            {{vehicleList[9].lisence_show}}
+          </div>
         </div>
 
         <!-- <el-col :span="9">
@@ -166,13 +176,22 @@
         }
 
         this.$store.dispatch('QueryVehicleGate', param).then((vehicleDataList) => {
-          console.log('vehicleDataList', vehicleDataList)
-          this.vehicleList = lodash.chunk(vehicleDataList, 8)[0]
+          // console.log('vehicleDataList', vehicleDataList)
+          this.vehicleList = lodash.chunk(vehicleDataList, 10)[0]
           this.vehicleList.forEach(data => {
             data.lisence = data.lisence.replace(data.lisence_type, '')
-            data['lisence_show'] = `${data.lisence} (${data.lisence_type})`
+            let _time = moment(data.created_time).format("M-DD HH:mm")
+            data['lisence_show'] = `${data.lisence}(${data.lisence_type}) ${_time}`
             // console.log('data', data.lisence.replace(data.lisence_type, ''))
           });
+          // console.log('this.vehicleList.length', this.vehicleList.length)
+          for (let i = 0; i < (10 - this.vehicleList.length); i++) {
+            // console.log('i', i)
+            this.vehicleList.push({
+              'lisence_show': ''
+            })
+          }
+          console.log('this.vehicleList', this.vehicleList)
           this.lastVehicle = vehicleDataList[0]
         }).catch(() => {
           //   this.loading = false
