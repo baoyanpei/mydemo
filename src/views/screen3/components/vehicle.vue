@@ -51,40 +51,6 @@
             {{vehicleList[9].lisence_show}}
           </div>
         </div>
-
-        <!-- <el-col :span="9">
-          <el-table class="screen-vehicle-table" ref="vehicleTable" stripe :data="vehicleList" height="320px"
-            :empty-text="vehicleTableEmptyText" style="width: 100%" size="mini" :show-header="true" border
-            :row-class-name="tableRowClassName" :resizabl="false">
-
-            <el-table-column property="lisence_show" label="车牌号" align="center" header-align="center">
-            </el-table-column>
-            <el-table-column property="created_time" label="进场时间" align="center" header-align="center">
-              <template slot-scope="scope">
-                <span v-html="createTimeHTML(scope.row.created_time)"></span>
-              </template>
-            </el-table-column>
-
-          </el-table>
-        </el-col> -->
-        <!-- <el-col :span="15">
-          <div style='padding-left: 10px;' class="last-vehicle">
-            <div class="title">最新进场车牌号码</div>
-            <div class="lisence">
-              <div class="lisence-letter">{{lastVehicle.lisence[0]}}</div>
-              <div class="lisence-letter">{{lastVehicle.lisence[1]}}</div>
-              <div class="lisence-letter">{{lastVehicle.lisence[2]}}</div>
-              <div class="lisence-letter">{{lastVehicle.lisence[3]}}</div>
-              <div class="lisence-letter">{{lastVehicle.lisence[4]}}</div>
-              <div class="lisence-letter">{{lastVehicle.lisence[5]}}</div>
-              <div class="lisence-letter">{{lastVehicle.lisence[6]}}</div>
-            </div>
-            <div class="in-time">进场时间：<br />{{lastVehicle.created_time}}</div>
-
-            <img :src="lastVehicle.pic" class="vehicle-img" />
-          </div>
-
-        </el-col> -->
       </el-row>
     </div>
 
