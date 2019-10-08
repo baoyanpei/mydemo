@@ -76,6 +76,8 @@
                   <div class="text">最新任务</div>
                 </div>
                 <div class="main">
+                  <div class="bg"></div>
+                  <Tasks ref="tasks"></Tasks>
                 </div>
               </div>
             </el-col>
@@ -136,7 +138,7 @@
               <div class="text">进场车辆</div>
             </div>
             <div class="main">
-                <Vehicle ref="vehicle"></Vehicle>
+              <Vehicle ref="vehicle"></Vehicle>
             </div>
           </div>
         </el-col>
@@ -159,6 +161,7 @@
   import MeterDian from './components/meterDian'
   import TajiArea from './components/tajiArea'
   import Vehicle from './components/vehicle'
+  import Tasks from './components/tasks'
   export default {
     directives: {},
     name: 'screen3-index',
@@ -173,7 +176,8 @@
       MeterShui,
       MeterDian,
       TajiArea,
-      Vehicle
+      Vehicle,
+      Tasks
     },
     data() {
       return {
@@ -246,7 +250,9 @@
             // this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
             // this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
             // this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
-            this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
+            // this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
+            this.$refs.tasks.init(this.project_id)
+
           } else {
             this.canShow = false
             this.errTips = '项目ID错误或您没有查看权限'

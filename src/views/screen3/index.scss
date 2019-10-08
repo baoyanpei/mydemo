@@ -286,9 +286,17 @@ $box-border-color: #ECA198;
     .main {
       @extend %box-border;
       height: 370px;
-      padding: 20px 0px 10px 0px;
+      padding: 0px 0px 10px 0px;
       position: relative;
       top: -15px;
+
+      .bg {
+        background-color: #000000;
+        opacity: 0.5;
+        height: 100%;
+        width: 100%;
+        opacity: 0.2;
+      }
     }
   }
 
