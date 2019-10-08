@@ -8,8 +8,8 @@
     <div v-if="hasVehicleDevice === false" class="noVehicleDeviceTips">{{noVehicleDeviceTips}}</div>
     <div v-if="hasVehicleDevice === true">
 
-      <el-row>
-        <el-col :span="12">
+      <el-row class="vehicle-info">
+        <el-col :span="12" >
           <div style='padding-left: 10px;' class="last-vehicle">
             <div class="title">最新进场车牌号码</div>
             <div class="lisence">
@@ -29,26 +29,19 @@
         </el-col>
       </el-row>
       <el-row>
-        <table>
-          <tbody>
-            <tr>
-              <td>甘M30989 10/20 20:39</td>
-              <td>甘M30989 10/20 20:39</td>
-            </tr>
-            <tr>
-              <td>甘M30989 10/20 20:39</td>
-              <td>甘M30989 10/20 20:39</td>
-            </tr>
-            <tr>
-              <td>甘M30989 10/20 20:39</td>
-              <td>甘M30989 10/20 20:39</td>
-            </tr>
-            <tr>
-              <td>甘M30989 10/20 20:39</td>
-              <td>甘M30989 10/20 20:39</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="vehicle-list">
+          <div class="vehicle-list-item">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item ">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item ">甘M30989 10/20 20:39</div>
+          <div class="vehicle-list-item vehicle-list-item1">甘M30989 10/20 20:39</div>
+        </div>
+
         <!-- <el-col :span="9">
           <el-table class="screen-vehicle-table" ref="vehicleTable" stripe :data="vehicleList" height="320px"
             :empty-text="vehicleTableEmptyText" style="width: 100%" size="mini" :show-header="true" border
