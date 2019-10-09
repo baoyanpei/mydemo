@@ -68,7 +68,8 @@
       urns = modelURLList
       Autodesk.Viewing.Initializer(options, function () {
         element = document.getElementById('viewer-local');
-        viewer = new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+        // viewer = new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+        viewer = new Autodesk.Viewing.Viewer3D(element, config);
         var startedCode = viewer.start();
         if (startedCode > 0) {
           console.error('Failed to create a Viewer: WebGL not supported.');
@@ -106,7 +107,7 @@
     }
 
     viewer.fitToView()
-    viewer.setBackgroundColor(22, 39, 61, 5, 9, 13);
+    viewer.setBackgroundColor(22, 39, 61, 13, 20, 51);
     if (!viewer.overlays.hasScene('custom-scene')) {
       viewer.overlays.addScene('custom-scene');
     }

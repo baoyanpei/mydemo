@@ -24,11 +24,14 @@
   }
 
   .noModelTip {
-    line-height: 500px;
+    position: absolute;
+    width: 100%;
+    top:35%;
     text-align: center;
     font-size: 30px;
     font-weight: 600;
     color: #aaaaaa;
+    margin: 0 auto;
 
   }
 

@@ -2,7 +2,7 @@ $box-border-color: #ECA198;
 
 %box-border {
   border: 3px solid $box-border-color;
-  // box-shadow: 0 0 10px #d43982; //d43982
+  box-shadow: 0 0 10px #d43982; //d43982
   border-radius: 5px;
   // background-color: #000000;
   // opacity:0.5;
@@ -414,6 +414,7 @@ $box-border-color: #ECA198;
         position: absolute;
         padding: 10px 0px 10px 0px;
         top: 0px;
+        width: 100%;
       }
     }
   }
