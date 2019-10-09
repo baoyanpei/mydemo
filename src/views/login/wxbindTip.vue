@@ -1,9 +1,9 @@
 <template>
   <div class="login-tip-container">
     <a href="/#/login">
-      <img src="/static/login/logo1.png" class="logo1" />
+      <img src="/static/login/logo3.png" class="logo1" />
     </a>
-    <img src="/static/login/logo2.png" class="logo2" />
+    <img src="/static/login/logo4.png" class="logo2" />
     <div class="wx-bind-border">
       <div class="wx-bind-container">
         <div class="loginTipForm">
@@ -15,7 +15,7 @@
               </a>
             </div>
           </div>
-          <div>1.您未关注“易得信息”微信公众号，扫描下方二维码关注“易得信息”</div>
+          <div>1.您未关注“易正信息”微信公众号，扫描下方二维码关注“易正信息”</div>
           <div style="text-align: center"><img src="/static/login/tips/wx_qrcode.jpg" width="260" /></div>
           <div>2.点击公众号“我的”按钮输入手机号后，注册账号</div>
           <div style="text-align: center"><img src="/static/login/tips/wx_login.png" width="260" /></div>

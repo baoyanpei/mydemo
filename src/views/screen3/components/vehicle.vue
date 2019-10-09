@@ -11,7 +11,7 @@
       <el-row class="vehicle-info">
         <el-col :span="12">
           <div style='padding-left: 10px;' class="last-vehicle">
-            <div class="title">最新进场车牌号码</div>
+            <div class="title">进出场车牌号码</div>
             <div class="lisence">
               <div class="lisence-letter">{{lastVehicle.lisence[0]}}</div>
               <div class="lisence-letter">{{lastVehicle.lisence[1]}}</div>
@@ -21,7 +21,7 @@
               <div class="lisence-letter">{{lastVehicle.lisence[5]}}</div>
               <div class="lisence-letter">{{lastVehicle.lisence[6]}}</div>
             </div>
-            <div class="in-time">进场时间：{{lastVehicle.created_time}}</div>
+            <div class="in-time">时间：{{lastVehicle.created_time}}</div>
           </div>
         </el-col>
         <el-col :span="12">

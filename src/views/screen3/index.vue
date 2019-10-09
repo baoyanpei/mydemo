@@ -88,6 +88,7 @@
                   <div class="text">现场视频监控</div>
                 </div>
                 <div class="main">
+                  <div class="bg"></div>
                   <Camera ref="carema"></Camera>
                 </div>
               </div>
@@ -135,9 +136,10 @@
           <div class="vehicle-area">
             <div class="title">
               <img src="/static/screen/red/titleBg.png" class="bg" />
-              <div class="text">进场车辆</div>
+              <div class="text">进出场车辆</div>
             </div>
             <div class="main">
+              <div class="bg"></div>
               <Vehicle ref="vehicle"></Vehicle>
             </div>
           </div>
@@ -238,9 +240,9 @@
           })
           if (this.project_id !== null) {
             await this.initDevlist()
-            // console.log('personInfo1233', this.personInfo)
-            // console.log('this.datumMeterMap', this.datumMeterMap)
-            this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
+            console.log('personInfo1233', this.personInfo)
+            console.log('this.datumMeterMap', this.datumMeterMap)
+            // this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
             this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             this.$refs.messageArea.init(this.project_id)
             this.$refs.duty.init(this.project_id)
