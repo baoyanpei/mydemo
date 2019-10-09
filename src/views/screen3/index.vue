@@ -242,7 +242,7 @@
             await this.initDevlist()
             console.log('personInfo1233', this.personInfo)
             console.log('this.datumMeterMap', this.datumMeterMap)
-            // this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
+            this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
             this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
             this.$refs.messageArea.init(this.project_id)
             this.$refs.duty.init(this.project_id)
