@@ -11,6 +11,9 @@
         </el-option>
       </el-select>
       <div class="right-menu">
+        <el-button type="primary" style="top:0px;position: relative;" @click="openScreenHandle">
+          <icon name="desktop" scale="1.4" style="line-height: 20px;"></icon> <span>项目看板</span>
+        </el-button>
         <el-button type="primary" style="top:0px;position: relative;" @click="tongxunluHandle">
           <icon name="users" scale="1.4" style="line-height: 20px;"></icon> <span>通讯录</span>
         </el-button>
@@ -106,7 +109,7 @@
       project_option() {
         return this.$store.state.project.project_option
       },
-      project_list(){
+      project_list() {
         return this.$store.state.project.project_list
       },
       org_name: {
@@ -135,6 +138,9 @@
         this.$router.push({
           path: '/tongxunlu'
         })
+      },
+      openScreenHandle() {
+        window.open(`/#/screen3?project_id=${this.project_id}`, '_blank');
       },
       userHandler() {
 
