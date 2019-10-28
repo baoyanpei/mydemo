@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <img src="/static/login/logo3.png" class="logo1" />
-    <img src="/static/login/logo4.png" class="logo2" />
+    <!-- <img src="/static/login/logo4.png" class="logo2" /> -->
     <el-form ref="loginForm" :model="loginForm" class="login-form" auto-complete="on" label-position="left"
       :validate-on-rule-change="true">
       <div class="loginFormBg">
