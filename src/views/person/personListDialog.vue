@@ -1,15 +1,79 @@
 <style lang="scss">
   @import "./personListDialog";
+  @font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?fwubr6');
+  src:  url('fonts/icomoon.eot?fwubr6#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?fwubr6') format('truetype'),
+    url('fonts/icomoon.woff?fwubr6') format('woff'),
+    url('fonts/icomoon.svg?fwubr6#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
 
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-credentials_icon:before {
+  content: "\e900";
+}
+.icon-jishu:before {
+  content: "\e901";
+}
+.icon-hetong:before {
+  content: "\e902";
+}
+.icon-qiapian .path1:before {
+  content: "\e903";
+  color: rgb(68, 68, 68);
+}
+.icon-qiapian .path2:before {
+  content: "\e904";
+  margin-left: -1em;
+  color: rgb(68, 68, 68);
+}
+.icon-qiapian .path3:before {
+  content: "\e905";
+  margin-left: -1em;
+  color: rgb(0, 216, 160);
+}
+.icon-shiti:before {
+  content: "\e906";
+}
+.icon-geren:before {
+  content: "\e907";
+}
+.icon-anquandunpai:before {
+  content: "\e908";
+}
+.icon-anquan:before {
+  content: "\e909";
+}
+.iconred{
+  color: red;
+}
 </style>
 <template>
   <el-dialog :modal="false" width="820px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
-    @open="openPersonListDialogHandle" :visible.sync="personListDialog.show" title="人员信息">
+    @open="openPersonListDialogHandle" :visible.sync="personListDialog.show" title="人员信息" v-dialogDrag>
     <div id="person-list-from" class="person-list-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
         <div>
           <el-form-item prop="GroupList" label="部门">
-            <el-cascader placeholder="请选择部门" style="width: 230px;" @change="groupChangeHandle"
+            <el-cascader placeholder="请选择部门" @change="groupChangeHandle"
               v-model="personInoutForm.GroupList" :options="optionGroups" filterable change-on-select size="mini">
             </el-cascader>
             <el-tooltip placement="right">
@@ -31,6 +95,15 @@
               </el-option>
             </el-select>
           </el-form-item>
+
+          <el-form-item prop="lackid" label="缺少资料">
+            <el-select v-model="lackdata.lackid" name="lackid" placeholder="请选择缺少资料（可选）" @change="persionChangeLackdata" size="mini">
+              <el-option v-for="item in lackdata" :key="item.lackid" :label="item.label"
+                :value="item.lackid">
+              </el-option>
+            </el-select>
+          </el-form-item>
+
           <el-form-item>
             <el-button type="success" :loading="loading" icon="el-icon-search"
               @click.native.prevent="handleSubmit(false)" size="mini">查询</el-button>
@@ -54,29 +127,44 @@
             <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
           </template>
         </el-table-column>
-        <!-- <el-table-column property="mobile" label="电话" width="100" header-align="center">
-              </el-table-column> -->
+        <el-table-column property="" align="center" sortable label="资料" width="140" header-align="center">
+          <template slot-scope="scope"><!--八种缺少的资料 datum_uploaded-->
+                <el-button type="text" size="small">
+                  <!--<span>{{scope.row.datum_uploaded}}</span>-->
+                  <i class="icon-geren" :class="{'redicon':scope.row.datum_uploaded.substring(0,1) == 1}"></i>
+                  <i class="icon-credentials_icon" :class="{'redicon':scope.row.datum_uploaded.substring(1,2) == 1}"></i>
+                  <i class="icon-anquandunpai" :class="{'redicon':scope.row.datum_uploaded.substring(7,8) == 1}"></i>
+                  <i class="icon-hetong" :class="{'redicon':scope.row.datum_uploaded.substring(6,7) == 1}"></i>
+                  <i class="icon-anquan" :class="{'redicon':scope.row.datum_uploaded.substring(5,6) == 1}"></i>
+                  <i class="icon-jishu" :class="{'redicon':scope.row.datum_uploaded.substring(4,5) == 1}"></i>
+                  <i class="icon-shiti" :class="{'redicon':scope.row.datum_uploaded.substring(3,4) == 1}"></i>
+                  <i class="el-icon-tickets" :class="{'redicon':scope.row.datum_uploaded.substring(2,3) == 1}"></i>
+                </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column property="mobile" align="center" label="电话" width="100" header-align="center">
+        </el-table-column>
         <el-table-column property="group_name_level[0]" align="center" sortable label="部门" width="90"
           header-align="center">
         </el-table-column>
-        <el-table-column property="group_name_level[1]" align="center" sortable label="班组" width="100"
+        <el-table-column property="group_name_level[1]" align="center" sortable label="专业" width="100"
           header-align="center">
         </el-table-column>
         <el-table-column property="project_pos_name" align="center" sortable label="工种" width="80"
           header-align="center">
         </el-table-column>
-        <el-table-column property="education" align="center" sortable label="学历" width="80" header-align="center">
+        <el-table-column property="education" align="center" sortable label="学历" width="70" header-align="center">
         </el-table-column>
-        <el-table-column property="created_time" sortable align="left" label="入职时间" width="120" header-align="center">
-          <template slot-scope="scope">
-            {{trantime(scope.row.created_time)}}
-          </template>
-        </el-table-column>
-        <el-table-column property="status" sortable align="center" label="人员状态" width="100" header-align="center">
-          <template slot-scope="scope">
-            <span v-html="statusName(scope.row,true)"></span>
-          </template>
-        </el-table-column>
+        <!--<el-table-column property="created_time" sortable align="left" label="入职时间" width="120" header-align="center">-->
+          <!--<template slot-scope="scope">-->
+            <!--{{trantime(scope.row.created_time)}}-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+        <!--<el-table-column property="status" sortable align="center" label="人员状态" width="100" header-align="center">-->
+          <!--<template slot-scope="scope">-->
+            <!--<span v-html="statusName(scope.row,true)"></span>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="warning" @click="handleOperClick(scope.row)">操作</el-button>
@@ -118,8 +206,14 @@
           this.$store.state.project.personListDialog = newValue
         }
       },
-      projectPersonList() {
-        return this.$store.state.project.projectPersonList
+      projectPersonList: {
+        // return this.$store.state.project.projectPersonList
+        get: function () {
+          return this.$store.state.project.projectPersonList
+        },
+        set: function (newValue) {
+          this.$store.state.project.projectPersonList = newValue
+        }
       },
       personListChanged() {
         return this.$store.state.project.personListChanged
@@ -131,11 +225,38 @@
         loading: false,
         optionGroups: [], //部门选择的数据
         optionsProjectPersion: [],
+        lackdata: [{
+          lackid: '1',
+          label: '入职照片'
+        }, {
+          lackid: '2',
+          label: '身份证扫描件'
+        }, {
+          lackid: '3',
+          label: '安全责任书'
+        }, {
+          lackid: '4',
+          label: '劳动合同'
+        }, {
+          lackid: '5',
+          label: '安全交底'
+        },{
+          lackid: '6',
+          label: '技术交底'
+        },{
+          lackid: '7',
+          label: '三级安全教育记录卡'
+        },{
+          lackid: '8',
+          label: '考试试题及结果'
+        }],
+        value: '',
         personInoutList: [],
         personInoutForm: {
           GroupList: ['all'], // 计划名称
           person_id: '', // 人员
           person_name: '',
+          datum_uploaded:''
         },
         isMatchPerson: false, // 是否匹配人员名称
         personInoutTableEmptyText: '请点击查询按钮进行查询',
@@ -235,7 +356,7 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
-          // console.log(this.projectPersonList)
+          console.log(this.projectPersonList)
           this.optionsProjectPersion = this.projectPersonList
           this.loadingInstance.close();
         }).catch(() => {
@@ -320,6 +441,7 @@
         }
         // console.log('this.isMatchPerson', this.isMatchPerson)
         if (this.isMatchPerson === true) {
+          // person.datum_uploaded = "10101010"
           this.personInoutList.push(person)
         }
 
@@ -372,11 +494,6 @@
         // console.log("this.optionGroups", this.optionGroups)
       },
       handleSubmit(isExport) {
-        // console.log('isExport', isExport)
-
-        // console.log(this.personInoutForm)
-        // -> store module ->api
-        // console.log(sTime, eTime)
         this.personInoutList = []
         this.totalPerson = 0
         this.getProjectPersonInout(isExport)
@@ -409,10 +526,10 @@
         // }
         import('@/vendor/Export2Excel').then(excel => {
           const tHeader = ['序号', '姓名', '电话', '部门', '班组', '工种',
-            '学历', '入职时间', '人员状态'
+            '学历', '入职时间', '人员状态','资料'
           ]
           const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'project_pos_name', 'education',
-            'created_time', 'statusName'
+            'created_time', 'statusName','datum_uploaded'
           ]
           let list = []
           let xuhao = 0
@@ -477,20 +594,29 @@
         }))
       },
       persionChangeHandle(value) {
-        // console.log(';value', value)
         if (value !== '') {
-
+          console.log(value)
           let _person = {};
           _person = this.projectPersonList.find((item) => { //这里的userList就是上面遍历的数据源
             return item.person_id === value; //筛选出匹配数据
           });
-          this.personInoutForm.person_name = _person.name
-          // console.log('_person', _person)
-          // console.log(_person.name); //我这边的name就是对应label的
+          // this.personInoutForm.person_name = _person.name
         } else {
-          this.personInoutForm.person_name = ''
+          // this.personInoutForm.person_name = ''
         }
         // console.log('this.personInoutForm.person_name', this.personInoutForm.person_name)
+      },
+      persionChangeLackdata(value){//查找资料
+        if(value !== ''){
+          console.log(value)//输出对应的id
+          let _Lackdata = [];
+          this.personInoutList = this.projectPersonList.filter((item)=>{
+            // console.log(item.datum_uploaded.substring(value-1,value))
+            return item.datum_uploaded.substring(value-1,value)==='1'    //查找出来00000000中筛选出数据
+          });
+          console.log('this.personInoutList',this.personInoutList)
+        } else {
+        }
       },
       groupChangeHandle() {}
     },

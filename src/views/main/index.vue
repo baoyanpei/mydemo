@@ -9,14 +9,14 @@
     </div> -->
 
 
-    <CountInfoBoard ref="count_info"></CountInfoBoard>
-    <div class="gate-area-div">
+    <CountInfoBoard ref="count_info"></CountInfoBoard><!--人员组别清单-->
+    <div class="gate-area-div"><!--具体人员清单-->
       <GeteArea ref="gateArea"></GeteArea>
     </div>
     <div class="yizheng-logo">
-      <img src="/static/yizheng-logo.png"/>
+      <img src="/static/yizheng-logo.png"/><!--易正科技图标LOGO-->
     </div>
-    <div class="bim-toolbar">
+    <div class="bim-toolbar"><!--底部图标按钮-->
       <!--v-draggable-->
       <!-- <div class="bim-toolbar1">
         <div>
@@ -126,7 +126,7 @@
 
   const MQTT_SERVICE = 'ws://d1.mq.tddata.net:8083/mqtt' // mqtt服务地址
   const MQTT_USERNAME = 'BIM_messager' // mqtt连接用户名
-  const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码 
+  const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码
   const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
 
   // import $ from 'jquery'
@@ -301,8 +301,8 @@
 
 
         /*
-        新赠一个统计消息 BIM/door/xxx{project_id}/count   
-        {'person': {'count_in': 1}, 'vip': {'count_in': 1}, 'all_count_in': 2} 
+        新赠一个统计消息 BIM/door/xxx{project_id}/count
+        {'person': {'count_in': 1}, 'vip': {'count_in': 1}, 'all_count_in': 2}
         进场人数统计 person：普通，vip 为vip进场数，'all_count_in'总进场数
         */
 
@@ -326,6 +326,7 @@
         })
       },
       personListDialogHandle() {
+        console.log("人员信息")
         const param = {
           show: true,
         }

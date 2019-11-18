@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 import VueWorker from 'vue-worker'
-
+import './directives.js'//窗口拖動
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import Element from 'element-ui'

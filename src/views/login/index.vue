@@ -23,7 +23,7 @@
         </div>
         <div style="padding:0px 35px 0px 35px">
           <el-form-item prop="username" :rules="ruleUsername">
-            <span class="svg-container svg-container_login">
+            <span class="svg-container svg-container_login"><!--输入账号框前面的icon-->
               <svg-icon icon-class="user" />
             </span>
             <el-input v-model="loginForm.username" :placeholder="$t('login.username')" name="username" type="text"
@@ -32,17 +32,17 @@
           <el-row :gutter="20">
             <el-col :span="13">
               <el-form-item prop="password" :rules="rulePassword">
-                <span class="svg-container">
+                <span class="svg-container"><!--输入密码的输入框前面的icon-->
                   <svg-icon icon-class="password" />
                 </span>
                 <el-input :type="passwordType" v-model="loginForm.password" :placeholder="$t('login.password')"
                   name="password" auto-complete="on" @keyup.enter.native="handleLogin" style="width:65%;" />
-                <span class="show-pwd" @click="showPwd">
+                <span class="show-pwd" @click="showPwd"><!--点击显示密码再点击影藏密码格式-->
                   <svg-icon icon-class="eye" />
                 </span>
               </el-form-item>
             </el-col>
-            <el-col :span="11">
+            <el-col :span="11"><!--获取验证码的按钮-->
               <el-button type="primary" @click="getSmsCode" class="btnSmsCode"
                 :disabled="btnSmsCode.disable || time > 0">{{
                 btnSmsCodeText }}</el-button>
