@@ -88,7 +88,7 @@
         </div>
         <div>
           <el-form-item prop="person_id" label="人员姓名">
-            <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle" filterable
+            <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle"
               clearable placeholder="请填写人员名字（可选）" size="mini">
               <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`"
                 :value="item.person_id">
@@ -97,7 +97,7 @@
           </el-form-item>
 
           <el-form-item prop="lackid" label="缺少资料">
-            <el-select v-model="lackdata.lackid" name="lackid" placeholder="请选择缺少资料（可选）" @change="persionChangeLackdata" size="mini">
+            <el-select v-model="lackdata.lackid" name="lackid" placeholder="请选择缺少资料（可选）" @change="handleSubmit(false)" clearable size="mini">
               <el-option v-for="item in lackdata" :key="item.lackid" :label="item.label"
                 :value="item.lackid">
               </el-option>
@@ -131,14 +131,15 @@
           <template slot-scope="scope"><!--八种缺少的资料 datum_uploaded-->
                 <el-button type="text" size="small">
                   <!--<span>{{scope.row.datum_uploaded}}</span>-->
-                  <i class="icon-geren" :class="{'redicon':scope.row.datum_uploaded.substring(0,1) == 1}"></i>
-                  <i class="icon-credentials_icon" :class="{'redicon':scope.row.datum_uploaded.substring(1,2) == 1}"></i>
-                  <i class="icon-anquandunpai" :class="{'redicon':scope.row.datum_uploaded.substring(7,8) == 1}"></i>
-                  <i class="icon-hetong" :class="{'redicon':scope.row.datum_uploaded.substring(6,7) == 1}"></i>
-                  <i class="icon-anquan" :class="{'redicon':scope.row.datum_uploaded.substring(5,6) == 1}"></i>
-                  <i class="icon-jishu" :class="{'redicon':scope.row.datum_uploaded.substring(4,5) == 1}"></i>
-                  <i class="icon-shiti" :class="{'redicon':scope.row.datum_uploaded.substring(3,4) == 1}"></i>
-                  <i class="el-icon-tickets" :class="{'redicon':scope.row.datum_uploaded.substring(2,3) == 1}"></i>
+                 <!--{{Math.pow(2,8)&parseInt(scope.row.datum_uploaded,2)>0}}-->
+                  <i title="入职照片" class="icon-geren" :class="{'redicon':(Math.pow(2,8)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                  <i title="身份证扫描件" class="icon-credentials_icon" :class="{'redicon':(Math.pow(2,7)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                  <i title="安全责任书" class="icon-anquandunpai" :class="{'redicon':(Math.pow(2,6)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                  <i title="劳动合同" class="icon-hetong" :class="{'redicon':(Math.pow(2,5)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                  <i title="安全交底" class="icon-anquan" :class="{'redicon':(Math.pow(2,4)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                  <i title="技术交底" class="icon-jishu" :class="{'redicon':(Math.pow(2,3)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                  <i title="三级安全教育记录卡" class="icon-shiti" :class="{'redicon':(Math.pow(2,2)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                  <i title="考试试题及结果" class="el-icon-tickets" :class="{'redicon':(Math.pow(2,1)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
                 </el-button>
           </template>
         </el-table-column>
@@ -226,28 +227,28 @@
         optionGroups: [], //部门选择的数据
         optionsProjectPersion: [],
         lackdata: [{
-          lackid: '1',
+          lackid: '8',
           label: '入职照片'
         }, {
-          lackid: '2',
+          lackid: '7',
           label: '身份证扫描件'
         }, {
-          lackid: '3',
+          lackid: '1',
           label: '安全责任书'
         }, {
-          lackid: '4',
+          lackid: '2',
           label: '劳动合同'
         }, {
-          lackid: '5',
+          lackid: '3',
           label: '安全交底'
         },{
-          lackid: '6',
+          lackid: '4',
           label: '技术交底'
         },{
-          lackid: '7',
+          lackid: '5',
           label: '三级安全教育记录卡'
         },{
-          lackid: '8',
+          lackid: '6',
           label: '考试试题及结果'
         }],
         value: '',
@@ -377,21 +378,12 @@
       },
       getProjectPersonInout(isExport) {
         this.loading = true
-
         const param = {
           method: 'query_person_list',
           project_id: this.project_id,
-          // in_status: 1,
-          // bt: bt,
-          // et: et
         }
-        // const countDay = moment(et).diff(moment(bt), 'days') + 1
-        // console.log('countDay', countDay)
         this.$store.dispatch('QueryProjectPersons', param).then((personList) => {
-          console.log('personList', personList)
-          console.log('personInoutForm', this.personInoutForm)
           personList.forEach(item => {
-            // item.countDay = countDay
             let groupMatch = []
             if (this.personInoutForm.GroupList[0] === 'all') {
               this.checkPerson(item)
@@ -407,14 +399,20 @@
                 this.checkPerson(item)
               }
             }
-
           })
-          // console.log('this.personInoutList', this.personInoutList)
+          console.log('lackdata.lackid',this.lackdata.lackid)//进行对资料的筛选
+          if (this.lackdata.lackid !==undefined){
+            this.persionChangeLackdata()
+          }
+
           this.totalPerson = this.personInoutList.length;
           this.loading = false
           if (this.personInoutList.length === 0) {
             this.personInoutTableEmptyText = "没有查询到符合条件的数据，请更换条件后再进行查询"
           }
+
+
+          // this.persionChangeLackdata()
           if (isExport === true) {
             this.exportExcelSubmit()
           }
@@ -439,7 +437,6 @@
             this.isMatchPerson = false
           }
         }
-        // console.log('this.isMatchPerson', this.isMatchPerson)
         if (this.isMatchPerson === true) {
           // person.datum_uploaded = "10101010"
           this.personInoutList.push(person)
@@ -497,6 +494,7 @@
         this.personInoutList = []
         this.totalPerson = 0
         this.getProjectPersonInout(isExport)
+
       },
       exportExcelSubmit() {
         let filename = '人员信息'
@@ -607,14 +605,14 @@
         // console.log('this.personInoutForm.person_name', this.personInoutForm.person_name)
       },
       persionChangeLackdata(value){//查找资料
-        if(value !== ''){
-          console.log(value)//输出对应的id
+        if(this.lackdata.lackid !== ''){
+          console.log(this.lackdata.lackid)//输出对应的id
+          console.log('this.personInoutList1',this.personInoutList)
           let _Lackdata = [];
-          this.personInoutList = this.projectPersonList.filter((item)=>{
-            // console.log(item.datum_uploaded.substring(value-1,value))
-            return item.datum_uploaded.substring(value-1,value)==='1'    //查找出来00000000中筛选出数据
+          this.personInoutList = this.personInoutList.filter((item)=>{
+            return (Math.pow(2,this.lackdata.lackid)&parseInt(item.datum_uploaded,2))===0   //查找出来00000000中筛选出数据
           });
-          console.log('this.personInoutList',this.personInoutList)
+          console.log('this.personInoutList2',this.personInoutList)
         } else {
         }
       },
