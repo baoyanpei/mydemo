@@ -64,6 +64,7 @@
     "showdown": "1.8.6",
     "simplemde": "1.11.2",
     "sortablejs": "1.7.0",
+    "three": "^0.110.0",
     "three-css2drender": "^1.0.0",
     "three-orbitcontrols": "^2.102.1",
     "threejs-full-es6": "^5.1.0",
