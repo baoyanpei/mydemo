@@ -70,7 +70,7 @@
             <div class="online-area">
               <div class="title">
                 <img src="/static/screen/red/titleBg.png" class="bg" style="width: 150px;" />
-                <div class="text">进出场车辆</div>
+                <div class="text">车辆进出场管理</div>
               </div>
               <div class="main">
                 <Vehicle ref="vehicle"></Vehicle>
