@@ -43,6 +43,19 @@
                 <div>
                   <el-button @click="handleNameClick(person_item)" class="btnName" type="text" size="small">
                     {{person_item.name}}</el-button>
+                  <!--有的颜色色号1abc9c,没有的话ababab-->
+                  <span class="iconspan">(
+                    <!--{{person_item.datum_uploaded}}-->
+                    <span class="linehui" :class="{'linelv':(person_item.datum_uploaded.slice(0,1))==1}">|</span>
+                    <span class="linehui" :class="{'linelv':(person_item.datum_uploaded.slice(1,2))==1}">|</span>
+                    <span class="linehui" :class="{'linelv':(person_item.datum_uploaded.slice(2,3))==1}">|</span>
+                    <span class="linehui" :class="{'linelv':(person_item.datum_uploaded.slice(3,4))==1}">|</span>
+                    <span class="linehui" :class="{'linelv':(person_item.datum_uploaded.slice(4,5))==1}">|</span>
+                    <span class="linehui" :class="{'linelv':(person_item.datum_uploaded.slice(5,6))==1}">|</span>
+                    <span class="linehui" :class="{'linelv':(person_item.datum_uploaded.slice(6,7))==1}">|</span>
+                    <span class="linehui" :class="{'linelv':(person_item.datum_uploaded.slice(7,8))==1}">|</span>
+                    <!--<span class="linehui" :class="{'red':(item.datum_uploaded).substring(0,1)==0}">|</span>-->
+                    )</span>
                 </div>
                 <div v-if="isToday===1">入场时间:{{trantime(person_item.last_in_time)}}</div>
                 <div v-if="isToday===0">最后入场时间:{{trantime(person_item.last_in_log.created_time)}}</div>
@@ -218,7 +231,8 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
-          // console.log(this.projectPersonList)
+          console.log('接口返回数据',this.projectPersonList)
+          // this.projectPersonList.forEach
           this.optionsProjectPersion = this.projectPersonList
           this.loadingInstance.close();
         }).catch(() => {
@@ -350,6 +364,7 @@
         this.totalPerson = 0
         this.$store.dispatch('QueryProjectPersonNowIn', param).then((personNowInDataList) => {
           personNowInDataList.forEach(item => {
+            // item['datum_uploaded'] = '1010101010'//添加模拟数据
             let groupMatch = []
             if (this.personNowinDialog.group_names !== undefined && this.personNowinDialog.group_names !== '') {
               if (this.personNowinDialog.group_names.length === 1) {
@@ -384,9 +399,10 @@
 
           })
           this.personNowInMap.forEach(item => {
-            this.personNowInMapList.push(item)
+            console.log(item.person_list)
+            this.personNowInMapList.push(item)//五大类型数据填充
           })
-          console.log('this.personNowInMap', this.personNowInMapList)
+          // console.log('this.personNowInMap', this.personNowInMapList)
           this.totalPerson = this.personNowInList.length;
           this.loading = false
           this.loadingDialog.close()

@@ -2,6 +2,8 @@ import {
   queryDatumMeter,
   queryDatumMeterDays,
   queryDatumMeterHours,
+  allpersondata,
+  allinfodictionary,
   queryLocationHis
 } from '@/api/datum'
 
@@ -48,6 +50,34 @@ const datum = {
         queryDatumMeterHours(param).then(response => {
           //   commit('SET_PROJECT_PERSON_LIST', response.data)
           resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    //任務列表信息
+    Allpersondata({
+      commit
+    },param){
+      return new Promise((resolve, reject) => {
+        allpersondata(param).then(response => {
+          let _data = {
+            data:response.data,
+            count:response.count
+          }
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    //配置表
+    Allinfodictionary({
+      commit
+    },param){
+      return new Promise((resolve, reject) => {
+        allinfodictionary(param).then(response => {
+          resolve(response)
         }).catch(error => {
           reject(error)
         })

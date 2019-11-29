@@ -85,24 +85,28 @@
               </el-checkbox>
             </el-tooltip>
           </el-form-item>
-        </div>
-        <div>
+
           <el-form-item prop="person_id" label="人员姓名">
             <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle"
-              clearable placeholder="请填写人员名字（可选）" size="mini">
+              clearable placeholder="请填写人员名字（可选）" filterable size="mini">
               <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`"
                 :value="item.person_id">
               </el-option>
             </el-select>
           </el-form-item>
+        </div>
+        <div>
+          <!--<el-form-item prop="lackid" label="缺失资料">-->
+            <!--<el-select v-model="lackdata.value" name="value" placeholder="请选择缺少资料（可多选）"  filterable @change="handleSubmit(false)" clearable size="mini">-->
+              <!--<el-option v-for="item in lackdata" :key="item.value" :label="item.label"-->
+                <!--:value="item.value">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+          <!--</el-form-item>-->
 
-          <el-form-item prop="lackid" label="缺少资料">
-            <el-select v-model="lackdata.lackid" name="lackid" placeholder="请选择缺少资料（可选）" @change="handleSubmit(false)" clearable size="mini">
-              <el-option v-for="item in lackdata" :key="item.lackid" :label="item.label"
-                :value="item.lackid">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <el-form-item prop="lackid" label="个人资料">
+            <el-cascader :options="lackdata" ref="cascaderAddr" :props="props" v-model="lackdatavalue" @change="handleSubmit(false)" collapse-tags></el-cascader>
+           </el-form-item>
 
           <el-form-item>
             <el-button type="success" :loading="loading" icon="el-icon-search"
@@ -226,31 +230,14 @@
         loading: false,
         optionGroups: [], //部门选择的数据
         optionsProjectPersion: [],
-        lackdata: [{
-          lackid: '8',
-          label: '入职照片'
-        }, {
-          lackid: '7',
-          label: '身份证扫描件'
-        }, {
-          lackid: '1',
-          label: '安全责任书'
-        }, {
-          lackid: '2',
-          label: '劳动合同'
-        }, {
-          lackid: '3',
-          label: '安全交底'
-        },{
-          lackid: '4',
-          label: '技术交底'
-        },{
-          lackid: '5',
-          label: '三级安全教育记录卡'
-        },{
-          lackid: '6',
-          label: '考试试题及结果'
-        }],
+        lackdatavalue:[],
+        personinto2:[],
+        props: { multiple: true },
+        lackdata: [
+          { value: '9', label: '全选' },
+          { value: '8', label: '入职照片' }, { value: '7', label: '身份证扫描件' }, { value: '1', label: '安全责任书' },
+          { value: '2', label: '劳动合同' }, { value: '3', label: '安全交底' },{ value: '4', label: '技术交底' },{ value: '5', label: '三级安全教育记录卡' },
+          { value: '6', label: '考试试题及结果' }],
         value: '',
         personInoutList: [],
         personInoutForm: {
@@ -400,10 +387,8 @@
               }
             }
           })
-          console.log('lackdata.lackid',this.lackdata.lackid)//进行对资料的筛选
-          if (this.lackdata.lackid !==undefined){
-            this.persionChangeLackdata()
-          }
+          // console.log('lackdata.lackid',this.lackdata.value)//进行对资料的筛选
+            this.personchange()
 
           this.totalPerson = this.personInoutList.length;
           this.loading = false
@@ -440,6 +425,7 @@
         if (this.isMatchPerson === true) {
           // person.datum_uploaded = "10101010"
           this.personInoutList.push(person)
+          this.personinto2.push(person)
         }
 
 
@@ -464,10 +450,10 @@
           value: 'all'
         })
         if (rootGroup !== undefined && rootGroup.length > 0) {
-          //1为管理部门 0为施工部门3为建设单位4为监理单位5为外部单位 grouptype类型说明
+          //1为管理部门 0为施工部门3为建设单位4为监理单位5为外部单位 grouptype类型说明,并且做了筛选这部操作
           // console.log("item.group.groups_type", item.group)
           rootGroup.forEach(item1 => {
-            if (item1.groups_type === 0 || item1.groups_type === 1) {
+            if (item1.groups_type === 0 || item1.groups_type === 1|| item1.groups_type === 10) {
               // console.log('item1', item1)
               let children = []
               if (item1.group !== undefined && item1.group.length > 0) {
@@ -499,7 +485,6 @@
       exportExcelSubmit() {
         let filename = '人员信息'
         if (this.personInoutForm.GroupList[0] !== 'all') {
-          // console.log('GroupList', this.personInoutForm.GroupList)
           if (this.personInoutForm.GroupList.length === 1) {
             let group0 = getGroupFromGroupsByGroupID(this.projectGroupList, this.personInoutForm.GroupList[0])
             // console.log('group0_name',group0_name)
@@ -604,13 +589,37 @@
         }
         // console.log('this.personInoutForm.person_name', this.personInoutForm.person_name)
       },
-      persionChangeLackdata(value){//查找资料
-        if(this.lackdata.lackid !== ''){
-          console.log(this.lackdata.lackid)//输出对应的id
+      personchange(){//资料框数据
+        if(this.lackdatavalue.length !==0){
+          if(this.lackdatavalue==='9'){
+            this.lackdatavalue=[]
+            this.lackdatavalue.push('8','7','6','5','4','3','2','1')
+            for(let i=0;i<this.lackdatavalue.length;i++){
+              this.personInoutList = this.personinto2.filter((item)=>{
+              return (Math.pow(2,parseInt(this.lackdatavalue[i]))&parseInt(item.datum_uploaded,2))>0
+            });
+            }
+          }else{
+            console.log(this.lackdatavalue)
+             for(let i=0;i<this.lackdatavalue.length;i++){
+              this.personInoutList = this.personinto2.filter((item)=>{
+              return (Math.pow(2,parseInt(this.lackdatavalue[i]))&parseInt(item.datum_uploaded,2))>0
+
+            });
+              // console.log(this.personInoutList)
+            }
+          }
+        }
+    },
+      persionChangeLackdata(){//查找资料
+        if(this.lackdata.value !== ''){
+          console.log(this.lackdata.value)//输出对应的id
           console.log('this.personInoutList1',this.personInoutList)
-          let _Lackdata = [];
           this.personInoutList = this.personInoutList.filter((item)=>{
-            return (Math.pow(2,this.lackdata.lackid)&parseInt(item.datum_uploaded,2))===0   //查找出来00000000中筛选出数据
+            console.log(this.lackdata.value)
+            console.log(Math.pow(2,this.lackdata.value))
+            console.log(parseInt(item.datum_uploaded,2))
+            return (Math.pow(2,this.lackdata.value)&parseInt(item.datum_uploaded,2))===0   //查找出来00000000中筛选出数据
           });
           console.log('this.personInoutList2',this.personInoutList)
         } else {

@@ -5,10 +5,8 @@
 <template>
   <div class="tongxunlu-container" style="margin: 0px;">
     <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
-      <el-tab-pane label="项目通讯录" name="xmtxl">
+      <el-tab-pane label="项目通讯录" name="xmtxl"></el-tab-pane>
 
-      </el-tab-pane>
-      <!-- <el-tab-pane label="公司通讯录" name="second"></el-tab-pane> -->
       <el-tab-pane label="外部通讯录" name="wbtxl"></el-tab-pane>
     </el-tabs>
     <el-row :gutter="10">
@@ -22,18 +20,7 @@
               <el-button slot="append" @click="searchHandle">搜索</el-button>
             </el-input>
           </el-row>
-          <!--
-            <el-row type="flex" class="row-bg" style="padding: 5px;">
-              <el-radio-group v-model="radio3">
-                <el-radio-button label="组织架构">
-                  <icon name="users" scale="1"></icon> 组织架构
-                </el-radio-button>
-                <el-radio-button label="角色">
-                  <icon name="user" scale="0.8"></icon> 角色
-                </el-radio-button>
-              </el-radio-group>
-            </el-row>
-            -->
+
           <el-row type="flex" class="row-bg">
             <el-tree ref="groupTree" accordion :data="treeListData" :expand-on-click-node="false" node-key="group_id"
               :props="defaultProps" :empty-text="emptyTextTree" :highlight-current=true @node-click="groupTreeNodeClick"></el-tree>
@@ -42,13 +29,6 @@
       </el-col>
       <el-col :span="20">
         <div class="grid-content bg-purple-light">
-          <!-- <el-row type="flex" class="row-bg" style="padding: 5px;">
-            <el-breadcrumb separator-class="el-icon-arrow-right">
-              <el-breadcrumb-item :to="{ path: '/' }">庆阳市妇女儿童医院项目</el-breadcrumb-item>
-              <el-breadcrumb-item :to="{ path: '/' }"></el-breadcrumb-item>
-            </el-breadcrumb>
-          </el-row> -->
-
           <el-collapse v-model="activeNames">
             <el-collapse-item title="" name="group_list">
               <template slot="title">
@@ -64,13 +44,6 @@
                 </div>
               </el-row>
               <el-row type="flex" class="row-bg" style="padding: 10px;">
-                <!-- <el-collapse v-model="activeNames" @change="handleChange" style="width: 100%" accordion>
-                      <el-collapse-item v-for="(item,index) in childGroupData" :key="index" :name="item.group_id">
-                        <template slot="title">
-                          {{item.group_name}}
-                        </template>
-                      </el-collapse-item>
-                    </el-collapse> -->
 
                 <el-table ref="singleTable" :data="childGroupData" empty-text="没有下级部门" highlight-current-row
                   @current-change="handleCurrentChange" style="width: 100%" size="small" :show-header="false">
@@ -213,7 +186,7 @@
       contactListHandleRowClick(data, event, column) {
         console.log("data", data)
         // return;
-        
+
       },
       reloadData() {
         this.treeListData = []
@@ -231,8 +204,6 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
-          // console.log(this.projectPersonList)
-          // this.optionsProjectPersion = this.projectPersonList
           this.projectPersonList.forEach(person => {
 
             person.pinyin = pinyin.convertToPinyin(person.name)
@@ -481,10 +452,10 @@
         必选：
         project_id:
         可选
-        id :person_id 
+        id :person_id
         mobile:
         name：模糊查询
-        card_type:# 逗号分割，不填为全部类型 4 临时卡 
+        card_type:# 逗号分割，不填为全部类型 4 临时卡
         可选参数都不带，都取全部列表
         status: 人员状态 -1注销0正常 2离职 3手动注销10是默认值  1需要激活：没有标示 默认状态是 全部
 

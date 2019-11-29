@@ -84,3 +84,33 @@ export function queryLocationHis(data) {
     data: data
   })
 }
+
+
+// task/index.vue    接受全部任務列表信息
+export function allpersondata(data) {
+  // console.log("allpersondata",data)
+  return request({
+    url:'api/oa/workflow',
+    method:'post',
+    data:data,
+    baseURL: 'http://w.yidebim.com:3004'
+  })
+}
+
+export function allinfodictionary(data) {
+  return request({
+    url:'api/oa/helper',
+    method:'post',
+    data:data,
+    baseURL: 'http://w.yidebim.com:3004'
+  })
+}
+// export function getuserlistinfo(data) {
+//   // console.log("allpersondata",data)
+//   return request({
+//     url:'api/oa/workflow',
+//     method:'post',
+//     data:data,
+//     baseURL: 'http://w.yidebim.com:3004'
+//   })
+// }

@@ -12,6 +12,12 @@
         <font-awesome-icon icon="home" />
         <span slot="title">首页</span>
       </el-menu-item>
+
+      <el-menu-item index="/task">
+        <font-awesome-icon icon="calendar-alt" />
+        <span slot="title">任务列表</span>
+      </el-menu-item>
+
       <el-menu-item index="/kqtj">
         <font-awesome-icon icon="chart-bar" />
         <span slot="title">统计分析</span>

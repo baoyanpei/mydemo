@@ -106,6 +106,15 @@ export const constantRouterMap = [{
           icon: 'dashboard',
           noCache: true
         }
+      }, {
+        path: 'task',
+        component: () => import('@/views/task/index'),
+        name: 'task',
+        meta: {
+          title: 'task',
+          icon: 'dashboard',
+          noCache: true
+        }
       },
       {
         path: 'tjfx',
