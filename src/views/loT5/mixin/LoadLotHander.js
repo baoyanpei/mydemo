@@ -1,3 +1,4 @@
+import moment from 'moment'
 export default {
   name: 'Lot5-index',
   components: {},
@@ -10,7 +11,6 @@ export default {
       sectionGroup: null, // 升降机轨道
       personGroup: null,
       datumMeterMap: new Map(),
-      towerHeight: null,
       externalExtensionPerson: null,
       globalOffset: null,
       options: {
@@ -21,7 +21,7 @@ export default {
       },
       noModelTip: '',
       // datumMeterMap: new Map(),
-      // towerHeight: 0, // 塔吊高度 28米
+      towerHeight: 0, // 塔吊高度 28米
       showTadiaoInfo: true,
       showShenjiangjiInfo: true,
       showWeatherInfo: true,
@@ -106,8 +106,9 @@ export default {
       let _urlList = this.getModelUrl()
       if (_urlList.length !== 0) {
         this.noModelTip = ''
-        await this.initDevlist()
+
         await this.init3DView(_urlList)
+        await this.initDevlist()
         await this.initExtPerson()
         this.$refs.historyLocation.getLocationHisData(this.project_id)
         this.$refs.mqttLocation.init(this.project_id)
@@ -121,39 +122,91 @@ export default {
         this.showDianbiaoInfo = false
         this.noModelTip = '当前项目没有模型'
       }
-
     },
     init3DView(modelURLList) {
       return new Promise((resolve, reject) => {
         this.urns = modelURLList
-        Autodesk.Viewing.Initializer(this.options, () => {
+        Autodesk.Viewing.Initializer(this.options, async () => {
           this.element = document.getElementById('viewer-local');
           this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
           let startedCode = this.viewer.start();
           if (startedCode > 0) {
             console.error('Failed to create a Viewer: WebGL not supported.');
-            return;
+            return
           }
-
+          let _Plist = []
           // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
           // onLoadSuccess, onLoadError);
           for (var i = 0; i < modelURLList.length; i++) {
-            if (i === 0) {
-              this.viewer.loadModel(modelURLList[i], undefined, this.onLoadSuccess, this.onLoadError);
-            }
-
+            let p = await this.loadModel(modelURLList[i], i)
+            _Plist.push(p)
           }
 
-          resolve()
-        });
+          Promise.all(_Plist).then(result => {
+            console.log('Promise.all', result)
+            // _viewPointList.forEach(itemList => {
+            //   this.viewPointAllList = [...this.viewPointAllList, ...itemList]
+            // })
+            if (!this.viewer.overlays.hasScene('custom-scene')) {
+              this.viewer.overlays.addScene('custom-scene')
+            }
+            this.initData()
+            this.initMarker()
+            console.log('success')
+            this.viewer.addEventListener(
+              Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+              this.onSelectionChanged
+            )
+            resolve()
+            // console.log("this.viewPointAllList", this.viewPointAllList);
+          })
+          // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
+          // onLoadSuccess, onLoadError);
+          //   for (var i = 0; i < modelURLList.length; i++) {
+          //     if (i === 0) {
+          //       this.viewer.loadModel(modelURLList[i], undefined, this.onLoadSuccess, this.onLoadError);
+          //     }
+          //   }
 
+          //   resolve()
+        })
       })
-
     },
+    loadModel(modelURL, index) {
+      return new Promise((resolve, reject) => {
+        console.log('iiiiii', index)
+        if (index === 0) {
+          this.viewer.loadModel(modelURL, undefined, resLoadSuccess => {
+            console.log('resLoadSuccess', resLoadSuccess)
+            let getModels = this.viewer.impl.modelQueue().getModels()
+            this.globalOffset = getModels[0].getData().globalOffset // Get it from first model 
+            console.log('globalOffset', this.globalOffset)
+            this.viewer.fitToView()
+            this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255)
+            this.viewer.setGroundShadow(false)
+            this.viewer.setReverseZoomDirection(true) // true 滚动向前为放大
+            // unloadModel(model)
+
+            // this.saveStatus = JSON.stringify(this.viewer.getState());
+            // this.addCustomToolBar()
+            // this.addViewpointToolBar()
+            resolve(index)
+          }, this.onLoadError)
+        } else {
+          let options = {
+            globalOffset: this.globalOffset
+          }
+          this.viewer.loadModel(modelURL, options, resLoadSuccess => {
+            resolve(index)
+          })
+        }
+      })
+    },
+    /*
     onLoadSuccess(event) {
       // 加载其他的组合模型
       let getModels = this.viewer.impl.modelQueue().getModels()
-      this.globalOffset = getModels[0].getData().globalOffset; //Get it from first model 
+      this.globalOffset = getModels[0].getData().globalOffset // Get it from first model 
       console.log('globalOffset', this.globalOffset)
       for (let i = 1; i < this.urns.length; i++) {
 
@@ -173,7 +226,7 @@ export default {
       this.initData()
       this.initMarker()
 
-      console.log('success');
+      console.log('success')
 
 
       this.viewer.addEventListener(
@@ -181,7 +234,7 @@ export default {
         this.onSelectionChanged
       );
       // addToolbar(toolbarConfig,viewer);
-    },
+    },*/
     onLoadError(event) {
       console.log('fail');
     },
@@ -197,11 +250,11 @@ export default {
           this.towerGroup.name = "towerGroup";
           this.towerGroup.scale.set(3, 3, 3)
           let paramsJson = JSON.parse(datum.params_json)
-          // console.log('paramsJson', paramsJson)
+          console.log('paramsJson123', paramsJson)
           this.towerHeight = paramsJson.height
-          // this.tdData.tdgd = this.towerHeight
+          this.tdData.tdgd = this.towerHeight
           // towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-          this.towerGroup.position.set(80, 36, -91); // 红 绿
+          this.towerGroup.position.set(80, 36, -91) // 红 绿
 
           modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
           // console.log('viewer', viewer)
@@ -303,12 +356,12 @@ export default {
       switch (this.project_id) {
         case 10000:
 
-          _urlList = ['/static/model/qingyang0/3d.svf'];
+          //   _urlList = ['/static/model/qingyang0/3d.svf'];
 
-          // _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
-          //   '/static/model/qingyang-menzheng/3d.svf',
-          //   '/static/model/qingyang-bingfang/3d.svf',
-          // ];
+          _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
+            '/static/model/qingyang-menzheng/3d.svf',
+            '/static/model/qingyang-bingfang/3d.svf',
+          ];
           break;
 
         case 10004:
