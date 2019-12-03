@@ -3,7 +3,8 @@ import {
   queryPropertyListByProID,
   queryFloorListByBudID,
   queryModListByFloorID,
-  queryModelByID
+  queryModelByID,
+  getItemInfoListByItemIDs
 } from '@/api/model3d'
 import {
   // getOriStr,
@@ -510,7 +511,19 @@ const model3d = {
           'param': param
         })
       })
-    }
+    },
+    GetItemInfoListByItemIDs({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        getItemInfoListByItemIDs(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          console.log(error)
+          reject(error)
+        })
+      })
+    },
   }
 }
 

@@ -3,7 +3,8 @@ import {
   loginByWXQRCode,
   logout,
   getUserInfo,
-  getSmsCode
+  getSmsCode,
+  // exchangeToken
 } from '@/api/login'
 import {
   getToken,
@@ -222,7 +223,21 @@ const user = {
           reject(error)
         })
       })
-    }
+    },
+
+    // ExchangeToken({
+    //   commit
+    // }, param) {
+    //   return new Promise((resolve, reject) => {
+    //     exchangeToken(param).then(response => {
+    //       // const _data = response.data
+    //       console.log('ExchangeToken', response)
+    //       resolve(response)
+    //     }).catch(error => {
+    //       reject(error)
+    //     })
+    //   })
+    // }
   }
 }
 

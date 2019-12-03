@@ -63,3 +63,13 @@ export function queryModelByID(data) {
     data: data
   })
 }
+
+export function getItemInfoListByItemIDs(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/bcp/web',
+    method: 'post',
+    data: data,
+    baseURL: 'http://admin.yidebim.com'
+  })
+}

@@ -1,4 +1,7 @@
 import moment from 'moment'
+import {
+  getToken
+} from '@/utils/auth'
 export default {
   name: 'Lot5-index',
   components: {},
@@ -19,6 +22,8 @@ export default {
         useConsolidation: true,
         useADP: false
       },
+      ModelUrlList: [],
+      LoadItemIDList: [],
       noModelTip: '',
       // datumMeterMap: new Map(),
       towerHeight: 0, // 塔吊高度 28米
@@ -103,11 +108,18 @@ export default {
         return
       }
       console.log('lot5init-init-OK')
-      let _urlList = this.getModelUrl()
-      if (_urlList.length !== 0) {
+      this.getModelUrl()
+      //   let _token = getToken()
+      //   console.log('_token', _token)
+      if (this.LoadItemIDList.length !== 0) {
+        await this.getItemInfoListByItemIDs()
+      }
+
+      console.log('this.ModelUrlList', this.ModelUrlList)
+      if (this.ModelUrlList.length !== 0) {
         this.noModelTip = ''
 
-        await this.init3DView(_urlList)
+        await this.init3DView()
         await this.initDevlist()
         await this.initExtPerson()
         this.$refs.historyLocation.getLocationHisData(this.project_id)
@@ -123,22 +135,62 @@ export default {
         this.noModelTip = '当前项目没有模型'
       }
     },
-    init3DView(modelURLList) {
+    // exchangeToken(token) {
+    //   return new Promise((resolve, reject) => {
+    //     const param = {
+    //       method: 'exchange_token',
+    //       from: 'oa',
+    //       token: token
+    //     }
+    //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+    //       console.log('ExchangeToken - resultData', resultData)
+    //       if (resultData.status === 'success') {
+    //         this.access_token = resultData.access_token
+    //         resolve()
+    //       } else {
+    //         // console.log("123123123")
+    //         this.tip_message = resultData.msg
+    //         reject(resultData.msg)
+    //       }
+    //     })
+    //   })
+
+    // },
+    getItemInfoListByItemIDs() {
+      // console.log('this.project_id', this.project_id)
       return new Promise((resolve, reject) => {
-        this.urns = modelURLList
+        const param = {
+          method: 'GetItemInfoListByItemIDs',
+          // project_id: this.project_id,
+          item_id: this.LoadItemIDList.join(',')
+
+        }
+        this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
+          console.log('_itemList_itemList', _itemList)
+          _itemList.forEach(item => {
+            this.ModelUrlList.push(item.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          })
+          console.log('this.itemInfoList', this.itemInfoList)
+          resolve()
+        })
+      })
+    },
+    init3DView() {
+      return new Promise((resolve, reject) => {
+        // this.urns = this.ModelUrlList
         Autodesk.Viewing.Initializer(this.options, async () => {
           this.element = document.getElementById('viewer-local');
-          this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
-          let startedCode = this.viewer.start();
+          this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config)
+          let startedCode = this.viewer.start()
           if (startedCode > 0) {
-            console.error('Failed to create a Viewer: WebGL not supported.');
+            console.error('Failed to create a Viewer: WebGL not supported.')
             return
           }
           let _Plist = []
           // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
           // onLoadSuccess, onLoadError);
-          for (var i = 0; i < modelURLList.length; i++) {
-            let p = await this.loadModel(modelURLList[i], i)
+          for (var i = 0; i < this.ModelUrlList.length; i++) {
+            let p = await this.loadModel(this.ModelUrlList[i], i)
             _Plist.push(p)
           }
 
@@ -351,25 +403,23 @@ export default {
 
     },
     getModelUrl() {
-      let _urlList = []
       console.log('this.project_id', this.project_id)
       switch (this.project_id) {
         case 10000:
-
+          //   this.LoadItemIDList = [1335, 1336, 1337, 1338]
+          this.LoadItemIDList = [1335]
           //   _urlList = ['/static/model/qingyang0/3d.svf'];
-
-          _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
-            '/static/model/qingyang-menzheng/3d.svf',
-            '/static/model/qingyang-bingfang/3d.svf',
-          ];
+          // await this.getItemInfoListByItemIDs(itemIDList.join(','))
+          //   _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
+          //     '/static/model/qingyang-menzheng/3d.svf',
+          //     '/static/model/qingyang-bingfang/3d.svf',
+          //   ];
           break;
 
         case 10004:
-          _urlList = ['/static/model/tianshui/3d.svf'];
+          this.LoadItemIDList = [1351]
           break;
-
       }
-      return _urlList
     },
     initDevlist() {
       return new Promise((resolve, reject) => {
