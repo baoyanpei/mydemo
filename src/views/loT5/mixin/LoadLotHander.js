@@ -126,6 +126,8 @@ export default {
         this.$refs.mqttLocation.init(this.project_id)
         this.$refs.mqttBim.init(this.project_id, this.datumMeterMap)
         await this.addDevlist()
+        this.initData()
+        this.initMarker()
       } else {
         this.showTadiaoInfo = false
         this.showShenjiangjiInfo = false
@@ -202,8 +204,7 @@ export default {
             if (!this.viewer.overlays.hasScene('custom-scene')) {
               this.viewer.overlays.addScene('custom-scene')
             }
-            this.initData()
-            this.initMarker()
+
             console.log('success')
             this.viewer.addEventListener(
               Autodesk.Viewing.SELECTION_CHANGED_EVENT,
@@ -291,11 +292,8 @@ export default {
       console.log('fail');
     },
     initData() {
-
       this.datumMeterMap.forEach(datum => {
-        // console.log('datum', datum)
         if (datum.device_type === 13) { // 塔机
-
           // {"pos_x":60,"pos_y":22,"pos_z":0,"height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090311/#"}
           // $('.divDataTadiao').show()
           this.towerGroup = new THREE.Group()
@@ -305,9 +303,9 @@ export default {
           console.log('paramsJson123', paramsJson)
           this.towerHeight = paramsJson.height
           this.tdData.tdgd = this.towerHeight
-          // towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-          this.towerGroup.position.set(80, 36, -91) // 红 绿
-
+          this.towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+          // this.towerGroup.position.set(80, 36, -91) // 红 绿
+          // this.towerGroup.position.set(142, 436, 15) // 红 绿
           modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
           // console.log('viewer', viewer)
           this.viewer.overlays.impl.addOverlay('custom-scene', this.towerGroup)
@@ -315,7 +313,7 @@ export default {
           // $('.divDataShenJiangJi').show()
 
           this.elevatorGroup = new THREE.Group()
-          this.elevatorGroup.name = "elevatorGroup";
+          this.elevatorGroup.name = 'elevatorGroup'
 
           this.elevatorGroup.scale.set(3, 3, 3)
 
@@ -354,7 +352,7 @@ export default {
       // delegate the mouse click event
 
       // 在场景中通过点击添加圆圈标记
-      //   $(this.viewer.container).bind('click', this.onMouseClick)
+      // $(this.viewer.container).bind('click', this.onMouseClick)
 
       // delegate the event of CAMERA_CHANGE_EVENT
       this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
@@ -366,16 +364,16 @@ export default {
         for (var index in DOMeles) {
 
           // get each DOM element
-          let DOMEle = DOMeles[index];
-          let divEle = $('#' + DOMEle.id);
+          let DOMEle = DOMeles[index]
+          let divEle = $('#' + DOMEle.id)
           // get out the 3D coordination
-          let val = divEle.data('3DData');
-          let pushpinModelPt = JSON.parse(val);
+          let val = divEle.data('3DData')
+          let pushpinModelPt = JSON.parse(val)
           // get the updated screen point
           let screenpoint = this.viewer.worldToClient(new THREE.Vector3(
             pushpinModelPt.x,
             pushpinModelPt.y,
-            pushpinModelPt.z, ));
+            pushpinModelPt.z))
           // update the SVG position.
           divEle.css({
             'left': screenpoint.x - pushpinModelPt.radius * 2,
@@ -491,7 +489,7 @@ export default {
                 x: paramsJson.pos_x,
                 y: paramsJson.pos_y,
                 z: paramsJson.pos_z
-              }, datum.device_id, `摄像头:${datum.device_name}`, datum);
+              }, datum.device_id, `摄像头:${datum.device_name}`, datum)
             }
           }
         }
