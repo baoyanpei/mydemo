@@ -59,235 +59,219 @@
   import mqttLocation from "./components/mqttLocation"
   import historyLocation from "./components/historyLocation"
   // import './Viewing.Extension.PointCloudMarkup/PointCloudMarkup/PointCloudMarkup.js'
-  let towerGroup = null // 塔机
-  let elevatorGroup = null // 升降机
-  let sectionGroup = null // 升降机轨道
+  // let towerGroup = null // 塔机
+  // let elevatorGroup = null // 升降机
+  // let sectionGroup = null // 升降机轨道
 
-  let personGroup = null
+  // let personGroup = null
 
-  let datumMeterMap = new Map()
-  let towerHeight = null;
+  // let datumMeterMap = new Map()
+  // let towerHeight = null;
 
-  let externalExtensionPerson = null
+  // let externalExtensionPerson = null
 
-  var globalOffset = null
-  let urns = []
-  let config = {
-    extensions: [
-      // "Autodesk.Viewing.ZoomWindow",
-      // "markup3d",
-      // "Autodesk.Section"
-      // "Autodesk.Viewing.MarkupsCore",
-      // "Autodesk.Viewing.AxisHelper"
-    ],
-    disabledExtensions: {
-      measure: false,
-      section: false,
-    },
-    memory: {
-      limit: 32 * 1024 // 32 GB
-    }
-  };
-
-  var element = null; // document.getElementById('viewer-local');
-  var viewer = null; //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
-  var options = {
-    env: 'Local',
-    offline: 'true',
-    useConsolidation: true,
-    useADP: false
-  };
+  // var globalOffset = null
 
 
-  async function init3DView(modelURLList) {
-    return new Promise((resolve, reject) => {
-      urns = modelURLList
-      Autodesk.Viewing.Initializer(options, function () {
-        element = document.getElementById('viewer-local');
-        viewer = new Autodesk.Viewing.Private.GuiViewer3D(element, config);
-        var startedCode = viewer.start();
-        if (startedCode > 0) {
-          console.error('Failed to create a Viewer: WebGL not supported.');
-          return;
-        }
-
-        // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
-        // onLoadSuccess, onLoadError);
-        for (var i = 0; i < modelURLList.length; i++) {
-          if (i === 0) {
-            viewer.loadModel(modelURLList[i], undefined, onLoadSuccess, onLoadError);
-          }
-
-        }
-
-        resolve()
-      });
-
-    })
-
-  }
-
-  function onLoadSuccess(event) {
-    // 加载其他的组合模型
-    let getModels = viewer.impl.modelQueue().getModels()
-    globalOffset = getModels[0].getData().globalOffset; //Get it from first model 
-    console.log('globalOffset', globalOffset)
-    for (var i = 1; i < urns.length; i++) {
-
-      var options = {
-        globalOffset: globalOffset
-      }
-      // viewer.loadModel(path, options);
-      viewer.loadModel(urns[i], options);
-    }
-
-    viewer.fitToView()
-    viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-
-    if (!viewer.overlays.hasScene('custom-scene')) {
-      viewer.overlays.addScene('custom-scene');
-    }
-    initData()
-    initMarker()
-
-    console.log('success');
+  // var element = null; // document.getElementById('viewer-local');
+  // var viewer = null; //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+  // var options = {
+  //   env: 'Local',
+  //   offline: 'true',
+  //   useConsolidation: true,
+  //   useADP: false
+  // };
 
 
-    viewer.addEventListener(
-      Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-      onSelectionChanged
-    );
-    // addToolbar(toolbarConfig,viewer);
-  }
+  // async function init3DView(modelURLList) {
+  //   return new Promise((resolve, reject) => {
+  //     urns = modelURLList
+  //     Autodesk.Viewing.Initializer(options, function () {
+  //       element = document.getElementById('viewer-local');
+  //       viewer = new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+  //       var startedCode = viewer.start();
+  //       if (startedCode > 0) {
+  //         console.error('Failed to create a Viewer: WebGL not supported.');
+  //         return;
+  //       }
+
+  //       // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
+  //       // onLoadSuccess, onLoadError);
+  //       for (var i = 0; i < modelURLList.length; i++) {
+  //         if (i === 0) {
+  //           viewer.loadModel(modelURLList[i], undefined, onLoadSuccess, onLoadError);
+  //         }
+
+  //       }
+
+  //       resolve()
+  //     });
+
+  //   })
+
+  // }
+
+  // function onLoadSuccess(event) {
+  //   // 加载其他的组合模型
+  //   let getModels = viewer.impl.modelQueue().getModels()
+  //   globalOffset = getModels[0].getData().globalOffset; //Get it from first model 
+  //   console.log('globalOffset', globalOffset)
+  //   for (var i = 1; i < urns.length; i++) {
+
+  //     var options = {
+  //       globalOffset: globalOffset
+  //     }
+  //     // viewer.loadModel(path, options);
+  //     viewer.loadModel(urns[i], options);
+  //   }
+
+  //   viewer.fitToView()
+  //   viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+
+  //   if (!viewer.overlays.hasScene('custom-scene')) {
+  //     viewer.overlays.addScene('custom-scene');
+  //   }
+  //   initData()
+  //   initMarker()
+
+  //   console.log('success');
 
 
-  var onSelectionChanged = function (event) {
-    // console.log('viewer', viewer)
-    console.log('event', event)
-    // console.log(" >LJason< 日志：点击位置", viewer.clientToWorld(event.offsetX, event.offsetY, false).intersectPoint);
-    // console.log(event.dbIdArray);
-    let _dbIds = event.dbIdArray
-
-    // Asyncronous method that gets object properties
-    // 异步获取模型的属性
-    viewer.getProperties(_dbIds[0],
-      function (elements) {
-        var dbid = elements.dbId;
-      })
+  //   viewer.addEventListener(
+  //     Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+  //     onSelectionChanged
+  //   );
+  //   // addToolbar(toolbarConfig,viewer);
+  // }
 
 
-  };
+  // var onSelectionChanged = function (event) {
+  //   // console.log('viewer', viewer)
+  //   console.log('event', event)
+  //   // console.log(" >LJason< 日志：点击位置", viewer.clientToWorld(event.offsetX, event.offsetY, false).intersectPoint);
+  //   // console.log(event.dbIdArray);
+  //   let _dbIds = event.dbIdArray
 
-  function onLoadError(event) {
-    console.log('fail');
-  }
+  //   // Asyncronous method that gets object properties
+  //   // 异步获取模型的属性
+  //   viewer.getProperties(_dbIds[0],
+  //     function (elements) {
+  //       var dbid = elements.dbId;
+  //     })
 
-  function initData() {
 
-    datumMeterMap.forEach(datum => {
-      // console.log('datum', datum)
-      if (datum.device_type === 13) { // 塔机
+  // };
 
-        // {"pos_x":60,"pos_y":22,"pos_z":0,"height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090311/#"}
-        // $('.divDataTadiao').show()
-        towerGroup = new THREE.Group()
-        towerGroup.name = "towerGroup";
-        towerGroup.scale.set(3, 3, 3)
-        let paramsJson = JSON.parse(datum.params_json)
-        // console.log('paramsJson', paramsJson)
-        towerHeight = paramsJson.height
-        // this.tdData.tdgd = this.towerHeight
-        // towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-        towerGroup.position.set(80, 36, -91); // 红 绿
+  // function onLoadError(event) {
+  //   console.log('fail');
+  // }
 
-        modifyTower(towerGroup, `T${datum.device_id}`, towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
-        // console.log('viewer', viewer)
-        viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
-      } else if (datum.device_type === 12) { // 升降机
-        // $('.divDataShenJiangJi').show()
+  // function initData() {
 
-        elevatorGroup = new THREE.Group()
-        elevatorGroup.name = "elevatorGroup";
+  //   datumMeterMap.forEach(datum => {
+  //     // console.log('datum', datum)
+  //     if (datum.device_type === 13) { // 塔机
 
-        elevatorGroup.scale.set(3, 3, 3)
+  //       // {"pos_x":60,"pos_y":22,"pos_z":0,"height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090311/#"}
+  //       // $('.divDataTadiao').show()
+  //       towerGroup = new THREE.Group()
+  //       towerGroup.name = "towerGroup";
+  //       towerGroup.scale.set(3, 3, 3)
+  //       let paramsJson = JSON.parse(datum.params_json)
+  //       // console.log('paramsJson', paramsJson)
+  //       towerHeight = paramsJson.height
+  //       // this.tdData.tdgd = this.towerHeight
+  //       // towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+  //       towerGroup.position.set(80, 36, -91); // 红 绿
 
-        let paramsJson = JSON.parse(datum.params_json)
-        // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
-        // elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
-        elevatorGroup.position.set(181, 34, 0); // y 前后
-        viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
-        // viewer.impl.scene.add(elevatorGroup);
+  //       modifyTower(towerGroup, `T${datum.device_id}`, towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+  //       // console.log('viewer', viewer)
+  //       viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
+  //     } else if (datum.device_type === 12) { // 升降机
+  //       // $('.divDataShenJiangJi').show()
 
-        modifyElevator(elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
+  //       elevatorGroup = new THREE.Group()
+  //       elevatorGroup.name = "elevatorGroup";
 
-      } else if (datum.device_type === 100) { // 升降机轨道
+  //       elevatorGroup.scale.set(3, 3, 3)
 
-        sectionGroup = new THREE.Group()
-        sectionGroup.name = "sectionGroup";
+  //       let paramsJson = JSON.parse(datum.params_json)
+  //       // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
+  //       // elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
+  //       elevatorGroup.position.set(181, 34, 0); // y 前后
+  //       viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+  //       // viewer.impl.scene.add(elevatorGroup);
 
-        sectionGroup.scale.set(3, 3, 3)
+  //       modifyElevator(elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
 
-        let paramsJson = JSON.parse(datum.params_json)
-        // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-        sectionGroup.position.set(185, 39, -90);
-        // console.log('paramsJson.height', paramsJson.height)
-        // viewer.impl.scene.add(sectionGroup);
-        viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
-        LoadSection(sectionGroup, paramsJson.height)
+  //     } else if (datum.device_type === 100) { // 升降机轨道
+
+  //       sectionGroup = new THREE.Group()
+  //       sectionGroup.name = "sectionGroup";
+
+  //       sectionGroup.scale.set(3, 3, 3)
+
+  //       let paramsJson = JSON.parse(datum.params_json)
+  //       // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+  //       sectionGroup.position.set(185, 39, -90);
+  //       // console.log('paramsJson.height', paramsJson.height)
+  //       // viewer.impl.scene.add(sectionGroup);
+  //       viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
+  //       LoadSection(sectionGroup, paramsJson.height)
 
 
 
-      }
-    })
+  //     }
+  //   })
 
-    // viewer.loadExtension('Viewing.Extension.MeshSelection').then(
+  //   // viewer.loadExtension('Viewing.Extension.MeshSelection').then(
 
-    // )
-  }
+  //   // )
+  // }
   // let viewer = viewer
 
-  function initMarker() {
-    // console.log('viewer.container', viewer.container)
-    //delegate the mouse click event
+  // function initMarker() {
+  //   // console.log('viewer.container', viewer.container)
+  //   //delegate the mouse click event
 
-    // 在场景中通过点击添加圆圈标记
-    // $(viewer.container).bind("click", onMouseClick);
+  //   // 在场景中通过点击添加圆圈标记
+  //   // $(viewer.container).bind("click", onMouseClick);
 
-    //delegate the event of CAMERA_CHANGE_EVENT
-    viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, function (rt) {
+  //   //delegate the event of CAMERA_CHANGE_EVENT
+  //   viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, function (rt) {
 
-      //find out all pushpin markups
-      var $eles = $("div[id^='mymk']");
-      var DOMeles = $eles.get();
+  //     //find out all pushpin markups
+  //     var $eles = $("div[id^='mymk']");
+  //     var DOMeles = $eles.get();
 
-      for (var index in DOMeles) {
+  //     for (var index in DOMeles) {
 
-        //get each DOM element
-        var DOMEle = DOMeles[index];
-        var divEle = $('#' + DOMEle.id);
-        //get out the 3D coordination
-        var val = divEle.data('3DData');
-        var pushpinModelPt = JSON.parse(val);
-        //get the updated screen point
-        var screenpoint = viewer.worldToClient(new THREE.Vector3(
-          pushpinModelPt.x,
-          pushpinModelPt.y,
-          pushpinModelPt.z, ));
-        //update the SVG position.
-        divEle.css({
-          'left': screenpoint.x - pushpinModelPt.radius * 2,
-          'top': screenpoint.y - pushpinModelPt.radius
-        });
-      }
-    });
+  //       //get each DOM element
+  //       var DOMEle = DOMeles[index];
+  //       var divEle = $('#' + DOMEle.id);
+  //       //get out the 3D coordination
+  //       var val = divEle.data('3DData');
+  //       var pushpinModelPt = JSON.parse(val);
+  //       //get the updated screen point
+  //       var screenpoint = viewer.worldToClient(new THREE.Vector3(
+  //         pushpinModelPt.x,
+  //         pushpinModelPt.y,
+  //         pushpinModelPt.z, ));
+  //       //update the SVG position.
+  //       divEle.css({
+  //         'left': screenpoint.x - pushpinModelPt.radius * 2,
+  //         'top': screenpoint.y - pushpinModelPt.radius
+  //       });
+  //     }
+  //   });
 
-    // drawPushpinLot({
-    //   x: -12.590157398363942,
-    //   y: -256.6158517922297,
-    //   z: -33.46542876355482
-    // }, 'lot4', '摄像头');
+  //   // drawPushpinLot({
+  //   //   x: -12.590157398363942,
+  //   //   y: -256.6158517922297,
+  //   //   z: -33.46542876355482
+  //   // }, 'lot5', '摄像头');
 
-  }
+  // }
 
   function onMouseClick(event) {
 
@@ -418,138 +402,8 @@
     div.data('3DData', storeData);
   }
 
-
-  /////////////////////////////////////////////////////////////////////
-  // custom toobar config 
-  var toolbarConfig = {
-    'id': 'toolbar_id_1',
-    'containerId': 'toolbarContainer',
-    'subToolbars': [{
-        'id': 'subToolbar_id_non_radio_1',
-        'isRadio': false,
-        'visible': true,
-        'buttons': [{
-            'id': 'buttonRotation',
-            'buttonText': 'Rotation',
-            'tooltip': 'Ratate the model at X direction',
-            'cssClassName': 'glyphicon glyphicon glyphicon-play-circle',
-            'iconUrl': 'Images/3d_rotation.png',
-            'onclick': buttonRotationClick
-          },
-          {
-            'id': 'buttonExplode',
-            'buttonText': 'Explode',
-            'tooltip': 'Explode the model',
-            'cssClassName': '',
-            'iconUrl': 'Images/explode_icon.jpg',
-            'onclick': buttonExplodeClick
-          }
-
-        ]
-      },
-      {
-        'id': 'subToolbar_id_radio_1',
-        'isRadio': true,
-        'visible': true,
-        'buttons': [{
-            'id': 'radio_button1',
-            'buttonText': 'radio_button1',
-            'tooltip': 'this is tooltip for radio button1',
-            'cssClassName': '',
-            'iconUrl': '',
-            'onclick': radioButton1ClickCallback
-          },
-          {
-            'id': 'radio_button2',
-            'buttonText': 'radio_button2',
-            'tooltip': 'this is tooltip for radio button2',
-            'cssClassName': '',
-            'iconUrl': '',
-            'onclick': radioButton2ClickCallback
-          }
-
-        ]
-      }
-    ]
-
-  };
-
-  function buttonRotationClick(e) {
-
-
-  }
-
-
-  function buttonExplodeClick() {
-
-  }
-
-
-  function button2ClickCallback(e) {
-    alert('Button2 is clicked');
-  }
-
-  function radioButton1ClickCallback(e) {
-    alert('radio Button1 is clicked');
-  }
-
-  function radioButton2ClickCallback(e) {
-    alert('radio Button2 is clicked');
-  }
-
-  function addToolbar(toolbarConfig, viewer) {
-    //find the container element in client webpage first
-    var containter = document.getElementById(toolbarConfig.containerId);
-
-    // if no toolbar container on client's webpage, create one and append it to viewer
-    if (!containter) {
-      containter = document.createElement('div');
-      containter.id = 'custom_toolbar';
-      //'position: relative;top: 75px;left: 0px;z-index: 200;';
-      containter.style.position = 'relative';
-      containter.style.top = '75px';
-      containter.style.left = '0px';
-      containter.style.zIndex = '200';
-      viewer.clientContainer.appendChild(containter);
-    }
-
-    //create a toolbar
-    var toolbar = new Autodesk.Viewing.UI.ToolBar(containter);
-
-    for (var i = 0, len = toolbarConfig.subToolbars.length; i < len; i++) {
-      var stb = toolbarConfig.subToolbars[i];
-      //create a subToolbar
-      var subToolbar = toolbar.addSubToolbar(stb.id, stb.isRadio);
-      subToolbar.setToolVisibility(stb.visible);
-
-      //create buttons
-      for (var j = 0, len2 = stb.buttons.length; j < len2; j++) {
-        var btn = stb.buttons[j];
-        var button = Autodesk.Viewing.UI.ToolBar.createMenuButton(btn.id, btn.tooltip, btn.onclick);
-        //set css calss if availible
-        if (btn.cssClassName) {
-          button.className = btn.cssClassName;
-        }
-        //set button text if availible
-        if (btn.buttonText) {
-          var btnText = document.createElement('span');
-          btnText.innerText = btn.buttonText;
-          button.appendChild(btnText);
-        }
-        //set icon image if availible
-        if (btn.iconUrl) {
-          var ico = document.createElement('img');
-          ico.src = btn.iconUrl;
-          ico.className = 'toolbar-button';
-          button.appendChild(ico);
-        }
-        //add button to sub toolbar
-        toolbar.addToSubToolbar(stb.id, button);
-      }
-    }
-  }
   export default {
-    name: 'Lot4-index',
+    name: 'Lot5-index',
     components: {
       mqttBim,
       historyLocation,
@@ -557,8 +411,24 @@
     },
     data() {
       return {
-        noModelTip: '',
+        element: null, // document.getElementById('viewer-local');
+        viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+        towerGroup: null, // 塔机
+        elevatorGroup: null, // 升降机
+        sectionGroup: null, // 升降机轨道
+        personGroup: null,
         datumMeterMap: new Map(),
+        towerHeight: null,
+        externalExtensionPerson: null,
+        globalOffset: null,
+        options: {
+          env: 'Local',
+          offline: 'true',
+          useConsolidation: true,
+          useADP: false
+        },
+        noModelTip: '',
+        // datumMeterMap: new Map(),
         // towerHeight: 0, // 塔吊高度 28米
         showTadiaoInfo: true,
         showShenjiangjiInfo: true,
@@ -588,6 +458,23 @@
         },
         shuibiaoTotalUsed: '-',
         dianbiaoTotalUsed: '-',
+        urns: [],
+        config: {
+          extensions: [
+            // "Autodesk.Viewing.ZoomWindow",
+            // "markup3d",
+            // "Autodesk.Section"
+            // "Autodesk.Viewing.MarkupsCore",
+            // "Autodesk.Viewing.AxisHelper"
+          ],
+          disabledExtensions: {
+            measure: false,
+            section: false,
+          },
+          memory: {
+            limit: 32 * 1024 // 32 GB
+          }
+        }
       }
     },
     computed: {
@@ -612,23 +499,23 @@
 
     },
     mounted() {
-      console.log('lot4-index-mounted')
+      console.log('lot5-index-mounted')
       this.init()
 
     },
     destroyed() {},
     methods: {
       async init() {
-        console.log('lot4-init-init')
+        console.log('lot5-init-init')
         if (this.project_id === null) {
           return
         }
-        console.log('lot4-init-init-OK')
+        console.log('lot5init-init-OK')
         let _urlList = this.getModelUrl()
         if (_urlList.length !== 0) {
           this.noModelTip = ''
           await this.initDevlist()
-          await init3DView(_urlList)
+          await this.init3DView(_urlList)
           await this.initExtPerson()
           this.$refs.historyLocation.getLocationHisData(this.project_id)
           this.$refs.mqttLocation.init(this.project_id)
@@ -644,11 +531,177 @@
         }
 
       },
+      init3DView(modelURLList) {
+        return new Promise((resolve, reject) => {
+          this.urns = modelURLList
+          Autodesk.Viewing.Initializer(this.options, () => {
+            this.element = document.getElementById('viewer-local');
+            this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
+            let startedCode = this.viewer.start();
+            if (startedCode > 0) {
+              console.error('Failed to create a Viewer: WebGL not supported.');
+              return;
+            }
+
+            // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
+            // onLoadSuccess, onLoadError);
+            for (var i = 0; i < modelURLList.length; i++) {
+              if (i === 0) {
+                this.viewer.loadModel(modelURLList[i], undefined, this.onLoadSuccess, this.onLoadError);
+              }
+
+            }
+
+            resolve()
+          });
+
+        })
+
+      },
+      onLoadSuccess(event) {
+        // 加载其他的组合模型
+        let getModels = this.viewer.impl.modelQueue().getModels()
+        this.globalOffset = getModels[0].getData().globalOffset; //Get it from first model 
+        console.log('globalOffset', this.globalOffset)
+        for (let i = 1; i < this.urns.length; i++) {
+
+          let options = {
+            globalOffset: this.globalOffset
+          }
+          // viewer.loadModel(path, options);
+          this.viewer.loadModel(urns[i], options);
+        }
+
+        this.viewer.fitToView()
+        this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+
+        if (!this.viewer.overlays.hasScene('custom-scene')) {
+          this.viewer.overlays.addScene('custom-scene');
+        }
+        this.initData()
+        this.initMarker()
+
+        console.log('success');
+
+
+        this.viewer.addEventListener(
+          Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+          this.onSelectionChanged
+        );
+        // addToolbar(toolbarConfig,viewer);
+      },
+      onLoadError(event) {
+        console.log('fail');
+      },
+      initData() {
+
+        this.datumMeterMap.forEach(datum => {
+          // console.log('datum', datum)
+          if (datum.device_type === 13) { // 塔机
+
+            // {"pos_x":60,"pos_y":22,"pos_z":0,"height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090311/#"}
+            // $('.divDataTadiao').show()
+            this.towerGroup = new THREE.Group()
+            this.towerGroup.name = "towerGroup";
+            this.towerGroup.scale.set(3, 3, 3)
+            let paramsJson = JSON.parse(datum.params_json)
+            // console.log('paramsJson', paramsJson)
+            this.towerHeight = paramsJson.height
+            // this.tdData.tdgd = this.towerHeight
+            // towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+            this.towerGroup.position.set(80, 36, -91); // 红 绿
+
+            modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+            // console.log('viewer', viewer)
+            this.viewer.overlays.impl.addOverlay('custom-scene', this.towerGroup)
+          } else if (datum.device_type === 12) { // 升降机
+            // $('.divDataShenJiangJi').show()
+
+            this.elevatorGroup = new THREE.Group()
+            this.elevatorGroup.name = "elevatorGroup";
+
+            this.elevatorGroup.scale.set(3, 3, 3)
+
+            let paramsJson = JSON.parse(datum.params_json)
+            // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
+            // elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
+            this.elevatorGroup.position.set(181, 34, 0); // y 前后
+            this.viewer.overlays.impl.addOverlay('custom-scene', this.elevatorGroup)
+            // viewer.impl.scene.add(elevatorGroup);
+
+            modifyElevator(this.elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
+
+          } else if (datum.device_type === 100) { // 升降机轨道
+
+            this.sectionGroup = new THREE.Group()
+            this.sectionGroup.name = "sectionGroup";
+
+            this.sectionGroup.scale.set(3, 3, 3)
+
+            let paramsJson = JSON.parse(datum.params_json)
+            // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+            this.sectionGroup.position.set(185, 39, -90);
+            // console.log('paramsJson.height', paramsJson.height)
+            // viewer.impl.scene.add(sectionGroup);
+            this.viewer.overlays.impl.addOverlay('custom-scene', this.sectionGroup)
+            LoadSection(this.sectionGroup, paramsJson.height)
+
+
+
+          }
+        })
+
+        // viewer.loadExtension('Viewing.Extension.MeshSelection').then(
+
+        // )
+      },
+      initMarker() {
+        // console.log('viewer.container', viewer.container)
+        //delegate the mouse click event
+
+        // 在场景中通过点击添加圆圈标记
+        // $(viewer.container).bind("click", onMouseClick);
+
+        //delegate the event of CAMERA_CHANGE_EVENT
+        this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
+
+          //find out all pushpin markups
+          var $eles = $("div[id^='mymk']");
+          var DOMeles = $eles.get();
+
+          for (var index in DOMeles) {
+
+            //get each DOM element
+            var DOMEle = DOMeles[index];
+            var divEle = $('#' + DOMEle.id);
+            //get out the 3D coordination
+            var val = divEle.data('3DData');
+            var pushpinModelPt = JSON.parse(val);
+            //get the updated screen point
+            var screenpoint = this.viewer.worldToClient(new THREE.Vector3(
+              pushpinModelPt.x,
+              pushpinModelPt.y,
+              pushpinModelPt.z, ));
+            //update the SVG position.
+            divEle.css({
+              'left': screenpoint.x - pushpinModelPt.radius * 2,
+              'top': screenpoint.y - pushpinModelPt.radius
+            });
+          }
+        });
+
+        // drawPushpinLot({
+        //   x: -12.590157398363942,
+        //   y: -256.6158517922297,
+        //   z: -33.46542876355482
+        // }, 'lot5', '摄像头');
+
+      },
       initExtPerson() {
         return new Promise((resolve, reject) => {
-          viewer.loadExtension('Viewing.Extension.MeshSelection').then(
-            function (externalExtension) {
-              externalExtensionPerson = externalExtension
+          this.viewer.loadExtension('Viewing.Extension.MeshSelection').then(
+            (externalExtension) => {
+              this.externalExtensionPerson = externalExtension
               resolve()
             }
           )
@@ -661,12 +714,12 @@
         switch (this.project_id) {
           case 10000:
 
-            // _urlList = ['/static/model/qingyang0/3d.svf'];
+            _urlList = ['/static/model/qingyang0/3d.svf'];
 
-            _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
-              '/static/model/qingyang-menzheng/3d.svf',
-              '/static/model/qingyang-bingfang/3d.svf',
-            ];
+            // _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
+            //   '/static/model/qingyang-menzheng/3d.svf',
+            //   '/static/model/qingyang-bingfang/3d.svf',
+            // ];
             break;
 
           case 10004:
@@ -686,9 +739,9 @@
           this.$store.dispatch('QueryDatumMeter', param).then((data) => {
             // console.log('QueryDatumMeter - data', data)
             data.forEach(datum => {
-              datumMeterMap.set(datum.device_id, datum)
+              this.datumMeterMap.set(datum.device_id, datum)
             })
-            this.datumMeterMap = datumMeterMap
+            // this.datumMeterMap = datumMeterMap
             this.updateDeviceData()
             resolve()
           }).catch((e) => {
@@ -800,8 +853,8 @@
             const _data = JSON.parse(data)
             // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
             // console.log('RealtimeDataCrane', _data)
-            if (towerGroup !== null) {
-              modifyTower(towerGroup, `T${_data.HxzId}`, this.towerHeight, _data.Angle, _data.RRange, _data
+            if (this.towerGroup !== null) {
+              modifyTower(this.towerGroup, `T${_data.HxzId}`, this.towerHeight, _data.Angle, _data.RRange, _data
                 .Height); //名称，高度，大臂角度，小车距离，吊钩线长
 
               $("#td_dbjd").html(_data.Angle)
@@ -868,6 +921,20 @@
             break
         }
       },
+      onSelectionChanged(event) {
+        // console.log('viewer', viewer)
+        console.log('event', event)
+        // console.log(" >LJason< 日志：点击位置", viewer.clientToWorld(event.offsetX, event.offsetY, false).intersectPoint);
+        // console.log(event.dbIdArray);
+        let _dbIds = event.dbIdArray
+
+        // Asyncronous method that gets object properties
+        // 异步获取模型的属性
+        this.viewer.getProperties(_dbIds[0],
+          (elements) => {
+            let dbid = elements.dbId;
+          })
+      },
       initPerson(obj) {
         console.log('objobjobj', obj)
         let _position = {
@@ -888,7 +955,7 @@
           color
         })
 
-        const materials = viewer.impl.getMaterials()
+        const materials = this.viewer.impl.getMaterials()
 
         materials.addMaterial(
           color.toString(16),
@@ -915,7 +982,7 @@
       drawPushpinLot(pushpinModelPt, id, name, data) {
         // console.log('idididid', id)
         //convert 3D position to 2D screen coordination
-        var screenpoint = viewer.worldToClient(
+        var screenpoint = this.viewer.worldToClient(
           new THREE.Vector3(pushpinModelPt.x,
             pushpinModelPt.y,
             pushpinModelPt.z, ));
@@ -923,7 +990,7 @@
         //build the div container
         var randomId = id; //makeid();
         var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>';
-        var parent = viewer.container
+        var parent = this.viewer.container
         $(parent).append(htmlMarker);
         $('#mymk' + randomId).css({
           // 'pointer-events': 'none',
@@ -978,12 +1045,12 @@
         div.data('3DData', storeData);
       },
       aaaa() {
-        viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
-        modifyElevator(elevatorGroup, `E18090302`, 30, false) //名称，高度，门的开启状态
-        viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+        this.viewer.overlays.impl.removeOverlay('custom-scene', this.elevatorGroup)
+        modifyElevator(this.elevatorGroup, `E18090302`, 30, false) //名称，高度，门的开启状态
+        this.viewer.overlays.impl.addOverlay('custom-scene', this.elevatorGroup)
         // viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
         // viewer.refresh(true)
-        console.log('-->', viewer.impl)
+        console.log('-->', this.viewer.impl)
         console.log('aaaa-click')
         return
         let _position = {
