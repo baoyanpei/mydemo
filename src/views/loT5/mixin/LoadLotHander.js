@@ -383,7 +383,7 @@ export default {
       console.log('this.project_id', this.project_id)
       switch (this.project_id) {
         case 10000:
-            this.LoadItemIDList = [1335, 1337, 1338]
+          this.LoadItemIDList = [100025, 1335, 1337, 1338]
           // this.LoadItemIDList = [1335]
           //   _urlList = ['/static/model/qingyang0/3d.svf'];
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
