@@ -56,7 +56,7 @@
   import LoadLotMixin from './mixin/LoadLotHander'
 
   import './Viewing.Extension.MeshSelection'
-  
+
   import mqttBim from "./components/mqttBim"
   import mqttLocation from "./components/mqttLocation"
   import historyLocation from "./components/historyLocation"
@@ -71,14 +71,27 @@
     mixins: [LoadLotMixin],
     data() {
       return {
-        
+
       }
     },
     computed: {
-
+      project_id() {
+        return this.$store.state.project.project_id
+      }
     },
     watch: {
+      project_id(curVal, oldVal) {
+        console.log('project_idproject_idproject_id', curVal, oldVal)
+        if (oldVal !== null) {
+          // this.clearData()
+          location.reload()
 
+        }
+        if (curVal !== null) {
+          this.useFrom = "lot"
+          this.init(curVal)
+        }
+      },
     },
     created() {
 
@@ -88,7 +101,7 @@
     },
     destroyed() {},
     methods: {
-      
+
     },
 
   }

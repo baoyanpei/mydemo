@@ -7,6 +7,8 @@ export default {
   components: {},
   data() {
     return {
+      projID: null,
+      useFrom: '', // 用途来源  'screen':大屏, 'lot':物联网  
       element: null, // document.getElementById('viewer-local');
       viewer: null, // new Autodesk.Viewing.Private.GuiViewer3D(element, config);
       towerGroup: null, // 塔机
@@ -75,36 +77,38 @@ export default {
     }
   },
   computed: {
-    project_id() {
-      return this.$store.state.project.project_id
-    }
+    // project_id() {
+    //   return this.$store.state.project.project_id
+    // }
   },
   watch: {
-    project_id(curVal, oldVal) {
-      console.log('project_idproject_idproject_id', curVal, oldVal)
-      if (oldVal !== null) {
-        // this.clearData()
-        location.reload()
+    // project_id(curVal, oldVal) {
+    //   console.log('project_idproject_idproject_id', curVal, oldVal)
+    //   if (oldVal !== null) {
+    //     // this.clearData()
+    //     location.reload()
 
-      }
-      if (curVal !== null) {
-        this.init()
-      }
-    },
+    //   }
+    //   if (curVal !== null) {
+    //     this.init()
+    //   }
+    // },
   },
   created() {
 
   },
   mounted() {
     console.log('lot5-index-mounted')
-    this.init()
+    // this.init()
 
   },
   destroyed() {},
   methods: {
-    async init() {
+    async init(projectId) {
+      console.log('this.useFrom', this.useFrom)
       console.log('lot5-init-init')
-      if (this.project_id === null) {
+      this.projID = projectId
+      if (this.projID === null) {
         return
       }
       console.log('lot5init-init-OK')
@@ -122,9 +126,9 @@ export default {
         await this.init3DView()
         await this.initDevlist()
         await this.initExtPerson()
-        this.$refs.historyLocation.getLocationHisData(this.project_id)
-        this.$refs.mqttLocation.init(this.project_id)
-        this.$refs.mqttBim.init(this.project_id, this.datumMeterMap)
+        this.$refs.historyLocation.getLocationHisData(this.projID)
+        this.$refs.mqttLocation.init(this.projID)
+        this.$refs.mqttBim.init(this.projID, this.datumMeterMap)
         await this.addDevlist()
         this.initData()
         this.initMarker()
@@ -138,11 +142,11 @@ export default {
       }
     },
     getItemInfoListByItemIDs() {
-      // console.log('this.project_id', this.project_id)
+      // console.log('this.projID', this.projID)
       return new Promise((resolve, reject) => {
         const param = {
           method: 'GetItemInfoListByItemIDs',
-          // project_id: this.project_id,
+          // project_id: this.projID,
           item_id: this.LoadItemIDList.join(',')
 
         }
@@ -208,13 +212,19 @@ export default {
       return new Promise((resolve, reject) => {
         console.log('iiiiii', index)
         if (index === 0) {
-          this.viewer.loadModel(modelURL, undefined, resLoadSuccess => {
+          this.viewer.loadModel(modelURL, undefined, (resLoadSuccess) => {
             console.log('resLoadSuccess', resLoadSuccess)
             let getModels = this.viewer.impl.modelQueue().getModels()
             this.globalOffset = getModels[0].getData().globalOffset // Get it from first model 
             console.log('globalOffset', this.globalOffset)
-            this.viewer.fitToView()
-            this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255)
+            // this.viewer.fitToView()
+            if (this.useFrom === 'screen') {
+              this.viewer.fitToView()
+              this.viewer.setBackgroundColor(22, 39, 61, 13, 20, 51)
+            } else {
+              this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255)
+            }
+
             this.viewer.setGroundShadow(false)
             this.viewer.setReverseZoomDirection(true) // true 滚动向前为放大
             // unloadModel(model)
@@ -228,7 +238,7 @@ export default {
           let options = {
             globalOffset: this.globalOffset
           }
-          this.viewer.loadModel(modelURL, options, resLoadSuccess => {
+          this.viewer.loadModel(modelURL, options, (resLoadSuccess) => {
             resolve(index)
           })
         }
@@ -306,9 +316,8 @@ export default {
           modifyElevator(this.elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
 
         } else if (datum.device_type === 100) { // 升降机轨道
-
           this.sectionGroup = new THREE.Group()
-          this.sectionGroup.name = "sectionGroup";
+          this.sectionGroup.name = 'sectionGroup'
 
           this.sectionGroup.scale.set(3, 3, 3)
 
@@ -380,29 +389,28 @@ export default {
 
     },
     getModelUrl() {
-      console.log('this.project_id', this.project_id)
-      switch (this.project_id) {
+      console.log('this.projID', this.projID)
+      switch (this.projID) {
         case 10000:
-          this.LoadItemIDList = [100025, 1335, 1337, 1338]
-          // this.LoadItemIDList = [1335]
+          // this.LoadItemIDList = [100025, 1335, 1337, 1338]
+          this.LoadItemIDList = [1335]
           //   _urlList = ['/static/model/qingyang0/3d.svf'];
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           //   _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
           //     '/static/model/qingyang-menzheng/3d.svf',
           //     '/static/model/qingyang-bingfang/3d.svf',
           //   ];
-          break;
-
+          break
         case 10004:
           this.LoadItemIDList = [1351]
-          break;
+          break
       }
     },
     initDevlist() {
       return new Promise((resolve, reject) => {
         const param = {
           method: 'devlist',
-          project_id: this.project_id
+          project_id: this.projID
         }
         // this.datumMeterMap = new Map()
         this.$store.dispatch('QueryDatumMeter', param).then((data) => {
@@ -468,7 +476,7 @@ export default {
                 x: paramsJson.pos_x,
                 y: paramsJson.pos_y,
                 z: paramsJson.pos_z
-              }, datum.device_id, `摄像头:${datum.device_name}`, datum)
+              }, datum.device_id, `${datum.device_name}`, datum)
             }
           }
         }
@@ -478,7 +486,7 @@ export default {
       setTimeout(() => {
         const param = {
           method: 'devlist',
-          project_id: this.project_id
+          project_id: this.projID
         }
         this.$store.dispatch('QueryDatumMeter', param).then((deviceList) => {
           deviceList.forEach(device => {

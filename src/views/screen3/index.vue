@@ -152,7 +152,7 @@
 
 <script>
   import moment from 'moment'
-  import LotArea from './components/lotArea'
+  import LotArea from './components/lotArea2'
   import GateArea from './components/gateArea'
   import Message from './components/Message'
   import Duty from './components/duty'
