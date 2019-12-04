@@ -137,27 +137,6 @@ export default {
         this.noModelTip = '当前项目没有模型'
       }
     },
-    // exchangeToken(token) {
-    //   return new Promise((resolve, reject) => {
-    //     const param = {
-    //       method: 'exchange_token',
-    //       from: 'oa',
-    //       token: token
-    //     }
-    //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-    //       console.log('ExchangeToken - resultData', resultData)
-    //       if (resultData.status === 'success') {
-    //         this.access_token = resultData.access_token
-    //         resolve()
-    //       } else {
-    //         // console.log("123123123")
-    //         this.tip_message = resultData.msg
-    //         reject(resultData.msg)
-    //       }
-    //     })
-    //   })
-
-    // },
     getItemInfoListByItemIDs() {
       // console.log('this.project_id', this.project_id)
       return new Promise((resolve, reject) => {
@@ -404,8 +383,8 @@ export default {
       console.log('this.project_id', this.project_id)
       switch (this.project_id) {
         case 10000:
-          //   this.LoadItemIDList = [1335, 1336, 1337, 1338]
-          this.LoadItemIDList = [1335]
+            this.LoadItemIDList = [1335, 1337, 1338]
+          // this.LoadItemIDList = [1335]
           //   _urlList = ['/static/model/qingyang0/3d.svf'];
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           //   _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
