@@ -14,6 +14,7 @@
         <div class="item-box">{{total_used[2]}}</div>
         <div class="item-box">{{total_used[3]}}</div>
         <div class="item-box">{{total_used[4]}}</div>
+        <div class="item-box">{{total_used[5]}}</div>
       </div>
       <div class="total-today-label">今日用电量</div>
       <div class="total-today">{{total_today}} 度</div>
@@ -194,7 +195,7 @@
         })
       },
       FillZero(p) {
-        return new Array(5 - (p + '').length + 1).join('0') + p;
+        return new Array(6 - (p + '').length + 1).join('0') + p;
       },
       getTodayHoursData() {
         const _param = {

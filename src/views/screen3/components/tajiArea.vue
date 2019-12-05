@@ -6,7 +6,7 @@
 <template>
   <div class="screen-taji-area">
 
-    <el-row >
+    <el-row>
       <el-col :span="12">
         <TadiaoTaji ref="taji"></TadiaoTaji>
       </el-col>
@@ -45,6 +45,7 @@
         topicTJ1: '', // 塔机
         topicTJ2: '', // 升降机
         TJ_DeviceID: '', // 塔机
+        TJ_Height: '', // 塔机的高度
         SJJ_DeviceID: '', // 升降机
         project_id: null,
 
@@ -101,6 +102,10 @@
           } else if (datum.device_type === 13 && datum.params_json.length > 0) { // 塔机
             const params_json = JSON.parse(datum.params_json)
 
+            const _tj_height = params_json.height
+            if (_tj_height !== undefined) {
+              this.TJ_Height = _tj_height
+            }
             const _mqtt = params_json.mqtt
             if (_mqtt !== undefined && _mqtt !== '') {
               this.topicTJ1 = _mqtt
@@ -227,7 +232,7 @@
           case "RealtimeDataCrane": // 2.3 上报塔机实时数据（专用）
             const _data = JSON.parse(data)
             console.log('RealtimeDataCrane', _data)
-            this.$refs.taji.updateData(_data)
+            this.$refs.taji.updateData(_data,this.TJ_Height)
             break
         }
       },

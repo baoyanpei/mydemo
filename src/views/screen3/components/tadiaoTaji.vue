@@ -81,13 +81,12 @@
 </template>
 <script>
   import moment from 'moment'
-  const TOWER_HEIGHT = 75 //塔吊高度
   export default {
     components: {},
     data() {
       return {
         tdData: {
-          tdgd: TOWER_HEIGHT,
+          tdgd: '-',
           dbjd: '-',
           xcjl: '-',
           dgxc: '-',
@@ -104,7 +103,8 @@
 
     },
     methods: {
-      updateData(data) {
+      updateData(data,height) {
+        this.tdData.tdgd = height
         this.tdData.dbjd = data.Angle
         this.tdData.xcjl = data.RRange
         this.tdData.dgxc = data.Height
