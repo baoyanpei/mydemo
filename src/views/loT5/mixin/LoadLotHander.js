@@ -152,8 +152,15 @@ export default {
         }
         this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
           console.log('_itemList_itemList', _itemList)
+          let _itemMap = new Map()
+
           _itemList.forEach(item => {
-            this.ModelUrlList.push(item.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+            _itemMap.set(item.ITEM_ID, item)
+            // this.ModelUrlList.push(item.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          })
+          this.LoadItemIDList.forEach(itemID => {
+            let _itemInfo = _itemMap.get(itemID)
+            this.ModelUrlList.push(_itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
           })
           console.log('this.itemInfoList', this.itemInfoList)
           resolve()
@@ -229,6 +236,7 @@ export default {
               this.viewer.fitToView()
               this.viewer.setBackgroundColor(22, 39, 61, 13, 20, 51)
             } else {
+              this.viewer.fitToView()
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255)
             }
 
@@ -347,7 +355,7 @@ export default {
       // delegate the mouse click event
 
       // 在场景中通过点击添加圆圈标记
-      $(this.viewer.container).bind('click', this.onMouseClick)
+      // $(this.viewer.container).bind('click', this.onMouseClick)
 
       // delegate the event of CAMERA_CHANGE_EVENT
       this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
@@ -400,7 +408,7 @@ export default {
       switch (this.projID) {
         case 10000:
           // this.LoadItemIDList = [100025, 1335, 1337, 1338]
-          this.LoadItemIDList = [100025]
+          this.LoadItemIDList = [100025, 1335, 1337, 1338]
           //   _urlList = ['/static/model/qingyang0/3d.svf'];
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           //   _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',

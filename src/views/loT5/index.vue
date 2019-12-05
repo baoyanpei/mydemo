@@ -97,6 +97,9 @@
 
     },
     mounted() {
+      if (this.project_id !== undefined && this.project_id !== '') {
+        this.init(this.project_id)
+      }
 
     },
     destroyed() {},
