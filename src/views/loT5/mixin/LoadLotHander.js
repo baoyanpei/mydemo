@@ -163,6 +163,7 @@ export default {
     init3DView() {
       return new Promise((resolve, reject) => {
         // this.urns = this.ModelUrlList
+
         Autodesk.Viewing.Initializer(this.options, async () => {
           this.element = document.getElementById('viewer-local');
           this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config)
@@ -171,6 +172,10 @@ export default {
             console.error('Failed to create a Viewer: WebGL not supported.')
             return
           }
+          // this.viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, (model) => {
+          //   console.log('Autodesk.Viewing.GEOMETRY_LOADED_EVENT', model)
+          //   this.viewer.hide(118)
+          // })
           let _Plist = []
           // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
           // onLoadSuccess, onLoadError);
@@ -193,6 +198,8 @@ export default {
               Autodesk.Viewing.SELECTION_CHANGED_EVENT,
               this.onSelectionChanged
             )
+
+
             resolve()
             // console.log("this.viewPointAllList", this.viewPointAllList);
           })
@@ -293,9 +300,9 @@ export default {
           this.towerHeight = paramsJson.height
           this.tdData.tdgd = this.towerHeight
           this.towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-          // this.towerGroup.position.set(80, 36, -91) // 红 绿
-          // this.towerGroup.position.set(142, 436, 15) // 红 绿
-          modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+          // this.towerGroup.position.set(54, 526, -26) // 红 绿
+          modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight + 15, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+          // this.viewer.hide(118)
           // console.log('viewer', viewer)
           this.viewer.overlays.impl.addOverlay('custom-scene', this.towerGroup)
         } else if (datum.device_type === 12) { // 升降机
@@ -308,13 +315,13 @@ export default {
 
           let paramsJson = JSON.parse(datum.params_json)
           // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
-          // elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
-          this.elevatorGroup.position.set(181, 34, 0); // y 前后
+          this.elevatorGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z);
+          // this.elevatorGroup.position.set(181, 34, 0) // y 前后
           this.viewer.overlays.impl.addOverlay('custom-scene', this.elevatorGroup)
           // viewer.impl.scene.add(elevatorGroup);
 
           modifyElevator(this.elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
-
+          // this.viewer.hide(118)
         } else if (datum.device_type === 100) { // 升降机轨道
           this.sectionGroup = new THREE.Group()
           this.sectionGroup.name = 'sectionGroup'
@@ -322,8 +329,8 @@ export default {
           this.sectionGroup.scale.set(3, 3, 3)
 
           let paramsJson = JSON.parse(datum.params_json)
-          // sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
-          this.sectionGroup.position.set(185, 39, -90);
+          this.sectionGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z) // 红 绿
+          // this.sectionGroup.position.set(185, 39, -90);
           // console.log('paramsJson.height', paramsJson.height)
           // viewer.impl.scene.add(sectionGroup);
           this.viewer.overlays.impl.addOverlay('custom-scene', this.sectionGroup)
@@ -340,7 +347,7 @@ export default {
       // delegate the mouse click event
 
       // 在场景中通过点击添加圆圈标记
-      // $(this.viewer.container).bind('click', this.onMouseClick)
+      $(this.viewer.container).bind('click', this.onMouseClick)
 
       // delegate the event of CAMERA_CHANGE_EVENT
       this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
@@ -393,7 +400,7 @@ export default {
       switch (this.projID) {
         case 10000:
           // this.LoadItemIDList = [100025, 1335, 1337, 1338]
-          this.LoadItemIDList = [1335]
+          this.LoadItemIDList = [100025]
           //   _urlList = ['/static/model/qingyang0/3d.svf'];
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           //   _urlList = ['/static/model/qingyang0/3d.svf', '/static/model/qingyang-houqingbaozhang/3d.svf',
@@ -559,6 +566,11 @@ export default {
             $("#td_xcjl").html(_data.RRange)
             $("#td_dgxc").html(_data.Height)
             $("#td_sbsj").html(moment(_data.RTime).format("HH:mm:ss"))
+            // this.viewer.hide(118)
+            if (this.projID === 10004) {
+              this.hideNode(118) // 隐藏一个塔吊
+            }
+
           }
           break
       }
@@ -621,7 +633,7 @@ export default {
     },
     onSelectionChanged(event) {
       // console.log('viewer', viewer)
-      console.log('event', event)
+      console.log('onSelectionChanged - event', event)
       // console.log(" >LJason< 日志：点击位置", viewer.clientToWorld(event.offsetX, event.offsetY, false).intersectPoint);
       // console.log(event.dbIdArray);
       let _dbIds = event.dbIdArray
@@ -631,6 +643,7 @@ export default {
       this.viewer.getProperties(_dbIds[0],
         (elements) => {
           let dbid = elements.dbId;
+          console.log('dbid', dbid)
         })
     },
     initPerson(obj) {
@@ -826,7 +839,20 @@ export default {
       var storeData = JSON.stringify(pushpinModelPt)
       div.data('3DData', storeData)
     },
+    hideNode(nodeId) { // 隐藏构件
+      let _isNodeVisible = this.viewer.isNodeVisible(nodeId)
+      if (_isNodeVisible === true) {
+        this.viewer.hide(nodeId)
+      }
+    },
     aaaa() {
+      // if (this.projID === 10004) {
+      console.log("isNodeVisible", this.viewer.isNodeVisible(118))
+      let ishide = this.viewer.hide(118)
+      // console.log('ishide', ishide,this.viewer.model.id)
+      console.log('this.viewer.getHiddenNodes()', this.viewer.getHiddenNodes())
+      // }
+      return
       this.viewer.overlays.impl.removeOverlay('custom-scene', this.elevatorGroup)
       modifyElevator(this.elevatorGroup, `E18090302`, 30, false) //名称，高度，门的开启状态
       this.viewer.overlays.impl.addOverlay('custom-scene', this.elevatorGroup)
