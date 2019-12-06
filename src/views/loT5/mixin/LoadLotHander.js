@@ -231,12 +231,12 @@ export default {
             let getModels = this.viewer.impl.modelQueue().getModels()
             this.globalOffset = getModels[0].getData().globalOffset // Get it from first model 
             console.log('globalOffset', this.globalOffset)
-            // this.viewer.fitToView()
+            this.viewer.fitToView()
             if (this.useFrom === 'screen') {
-              this.viewer.fitToView()
+              // this.viewer.fitToView()
               this.viewer.setBackgroundColor(22, 39, 61, 13, 20, 51)
             } else {
-              this.viewer.fitToView()
+              // this.viewer.fitToView()
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255)
             }
 
@@ -301,6 +301,7 @@ export default {
           // {"pos_x":60,"pos_y":22,"pos_z":0,"height":75,"mqtt":"BIM/Sets/zhgd/DEYE/18090311/#"}
           // $('.divDataTadiao').show()
           this.towerGroup = new THREE.Group()
+          this.towerGroup.visible = false
           this.towerGroup.name = "towerGroup";
           this.towerGroup.scale.set(3, 3, 3)
           let paramsJson = JSON.parse(datum.params_json)
@@ -308,6 +309,7 @@ export default {
           this.towerHeight = paramsJson.height
           this.tdData.tdgd = this.towerHeight
           this.towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+          console.log('this.towerGroupthis.towerGroupthis.towerGroup', this.towerGroup)
           // this.towerGroup.position.set(54, 526, -26) // 红 绿
           modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight + 15, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
           // this.viewer.hide(118)
@@ -573,17 +575,20 @@ export default {
             $("#td_dbjd").html(_data.Angle)
             $("#td_xcjl").html(_data.RRange)
             $("#td_dgxc").html(_data.Height)
-            $("#td_sbsj").html(moment(_data.RTime).format("HH:mm:ss"))
-            // this.viewer.hide(118)
+            $("#td_sbsj").html(moment(_data.RTime).format('HH:mm:ss'))
             if (this.projID === 10004) {
-              this.hideNode(118) // 隐藏一个塔吊
+              if (this.towerGroup !== null && this.towerGroup.visible !== undefined && this.towerGroup.visible === false) {
+                console.log('this.towerGroup.visible', this.towerGroup.visible)
+                this.towerGroup.visible = true
+                // console.log("isNodeVisible", this.viewer.isNodeVisible(118))
+                this.hideNode(118) // 隐藏一个塔吊
+              }
             }
-
           }
           break
       }
     },
-    mqttShenJiangJi(cmd, data) { //升降机
+    mqttShenJiangJi(cmd, data) { // 升降机
       // console.log('升降机', cmd)
       let _data = null
       switch (cmd) {
@@ -855,8 +860,14 @@ export default {
     },
     aaaa() {
       // if (this.projID === 10004) {
-      console.log("isNodeVisible", this.viewer.isNodeVisible(118))
-      let ishide = this.viewer.hide(118)
+      if (this.towerGroup !== null && this.towerGroup.visible !== undefined && this.towerGroup.visible === false) {
+        console.log('this.towerGroup.visible', this.towerGroup.visible)
+        this.towerGroup.visible = true
+        // console.log("isNodeVisible", this.viewer.isNodeVisible(118))
+        let ishide = this.viewer.hide(118)
+      }
+
+
       // console.log('ishide', ishide,this.viewer.model.id)
       console.log('this.viewer.getHiddenNodes()', this.viewer.getHiddenNodes())
       // }
