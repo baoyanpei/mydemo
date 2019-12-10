@@ -17,7 +17,7 @@
       <div>塔吊高度：<span id="td_tdgd">{{tdData.tdgd}}</span> 米</div>
       <div>大臂角度：<span id="td_dbjd">{{tdData.dbjd}}</span> 度</div>
       <div>小车距离：<span id="td_xcjl">{{tdData.xcjl}}</span> 米</div>
-      <div>吊钩线长：<span id="td_dgxc">{{tdData.dgxc}}</span> 米</div>
+      <div>吊钩高度：<span id="td_dggd">{{tdData.dggd}}</span> 米</div>
       <div>上报时间：<span id="td_sbsj">{{tdData.sbsj}}</span></div>
     </div>
     <div v-show="showShenjiangjiInfo" class="divDataShenJiangJi" @click="bbbb">

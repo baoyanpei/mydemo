@@ -53,12 +53,12 @@
       <el-row>
         <el-col :span="10">
           <div class="grid-content label">
-            吊钩线长：
+            吊钩高度：
           </div>
         </el-col>
         <el-col :span="14">
           <div class="grid-content">
-            {{tdData.dgxc}} 米
+            {{tdData.dggd}} 米
           </div>
         </el-col>
       </el-row>
@@ -89,7 +89,7 @@
           tdgd: '-',
           dbjd: '-',
           xcjl: '-',
-          dgxc: '-',
+          dggd: '-',
           sbsj: '-'
         },
         noTJTdTip: '',
@@ -105,10 +105,10 @@
     methods: {
       updateData(data,height) {
         this.tdData.tdgd = height
-        this.tdData.dbjd = data.Angle
-        this.tdData.xcjl = data.RRange
-        this.tdData.dgxc = data.Height
-        this.tdData.sbsj = moment(data.RTime).format("HH:mm:ss")
+        this.tdData.dbjd = data.rotate // 回转
+        this.tdData.xcjl = data.extent // 幅度  小车距离
+        this.tdData.dggd = data.height // 吊钩高度
+        this.tdData.sbsj = moment(data.created_time).format("HH:mm:ss")
         this.hasDevice = true
 
       },

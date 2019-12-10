@@ -38,7 +38,7 @@ export default {
         tdgd: 0,
         dbjd: '-',
         xcjl: '-',
-        dgxc: '-',
+        dggd: '-',
         sbsj: '-'
       },
       sjjData: { // 升降机面板数据
@@ -561,31 +561,56 @@ export default {
       // this.$refs.weather.updateData(_data)
 
     },
-    mqttTaDiao(cmd, data) { // 塔吊
-      // console.log('塔吊', cmd)
-      switch (cmd) {
-        case 'RealtimeDataCrane': // 2.3 上报塔机实时数据（专用）
-          const _data = JSON.parse(data)
-          // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
-          // console.log('RealtimeDataCrane', _data)
-          if (this.towerGroup !== null) {
-            modifyTower(this.towerGroup, `T${_data.HxzId}`, this.towerHeight, _data.Angle, _data.RRange, _data
-              .Height) // 名称，高度，大臂角度，小车距离，吊钩线长
+    // mqttTaDiao(cmd, data) { // 塔吊
+    //   // console.log('塔吊', cmd)
+    //   switch (cmd) {
+    //     case 'RealtimeDataCrane': // 2.3 上报塔机实时数据（专用）
+    //       const _data = JSON.parse(data)
+    //       // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
+    //       // console.log('RealtimeDataCrane', _data)
+    //       if (this.towerGroup !== null) {
+    //         modifyTower(this.towerGroup, `T${_data.HxzId}`, this.towerHeight, _data.Angle, _data.RRange, _data
+    //           .Height) // 名称，高度，大臂角度，小车距离，吊钩线长
 
-            $("#td_dbjd").html(_data.Angle)
-            $("#td_xcjl").html(_data.RRange)
-            $("#td_dgxc").html(_data.Height)
-            $("#td_sbsj").html(moment(_data.RTime).format('HH:mm:ss'))
-            if (this.projID === 10004) {
-              if (this.towerGroup !== null && this.towerGroup.visible !== undefined && this.towerGroup.visible === false) {
-                console.log('this.towerGroup.visible', this.towerGroup.visible)
-                this.towerGroup.visible = true
-                // console.log("isNodeVisible", this.viewer.isNodeVisible(118))
-                this.hideNode(118) // 隐藏一个塔吊
-              }
-            }
+    //         $("#td_dbjd").html(_data.Angle)
+    //         $("#td_xcjl").html(_data.RRange)
+    //         $("#td_dggd").html(_data.Height)
+    //         $("#td_sbsj").html(moment(_data.RTime).format('HH:mm:ss'))
+    //         if (this.projID === 10004) {
+    //           if (this.towerGroup !== null && this.towerGroup.visible !== undefined && this.towerGroup.visible === false) {
+    //             console.log('this.towerGroup.visible', this.towerGroup.visible)
+    //             this.towerGroup.visible = true
+    //             // console.log("isNodeVisible", this.viewer.isNodeVisible(118))
+    //             this.hideNode(118) // 隐藏一个塔吊
+    //           }
+    //         }
+    //       }
+    //       break
+    //   }
+    // },
+    mqttTaDiao(cmd, data) { // 塔吊
+      console.log('塔吊', cmd, data)
+      const _data = JSON.parse(data)
+      // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
+      // console.log('RealtimeDataCrane', _data)
+      if (this.towerGroup !== null) {
+        let _dgxc = this.towerHeight - _data.height // 吊钩线长
+
+        modifyTower(this.towerGroup, `T${_data.device_id}`, this.towerHeight, _data.rotate, _data.extent, _dgxc)
+        // 名称，高度，大臂角度，小车距离，吊钩线长
+        console.log('塔吊_data', _data)
+        $("#td_dbjd").html(_data.rotate) // 回转
+        $("#td_xcjl").html(_data.extent) // 幅度
+        $("#td_dggd").html(_data.height) // 吊钩高度
+        $("#td_sbsj").html(moment(_data.created_time).format('HH:mm:ss')) // moment(_data.RTime).format('HH:mm:ss')
+        if (this.projID === 10004) {
+          if (this.towerGroup !== null && this.towerGroup.visible !== undefined && this.towerGroup.visible === false) {
+            console.log('this.towerGroup.visible', this.towerGroup.visible)
+            this.towerGroup.visible = true
+            // console.log("isNodeVisible", this.viewer.isNodeVisible(118))
+            this.hideNode(118) // 隐藏一个塔吊
           }
-          break
+        }
       }
     },
     mqttShenJiangJi(cmd, data) { // 升降机
