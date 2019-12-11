@@ -70,12 +70,16 @@ $box-border-color: #ECA198;
 
   .now-time {
     text-align: center;
-    top: 25px;
-
-    position: relative;
+    top: 22px;
+    position: absolute;
     margin: 0px auto;
     width: 100%;
-    color: #eeeeee;
+    color: white;
+    width: 400px;
+    right: 100px;
+    z-index: 1000;
+    font-size: 24px;
+    font-weight: 600;
   }
 
   .screen-loT5 {
@@ -373,7 +377,7 @@ $box-border-color: #ECA198;
         opacity: 0.5;
       }
 
-      
+
     }
   }
 
