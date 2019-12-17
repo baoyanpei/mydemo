@@ -421,6 +421,10 @@ export default {
         case 10004:
           this.LoadItemIDList = [1351]
           break
+        case 10018:
+          this.LoadItemIDList = [1351]
+          // this.projID = 10004
+          break
       }
     },
     initDevlist() {
@@ -603,7 +607,7 @@ export default {
         $("#td_xcjl").html(_data.extent) // 幅度
         $("#td_dggd").html(_data.height) // 吊钩高度
         $("#td_sbsj").html(moment(_data.created_time).format('HH:mm:ss')) // moment(_data.RTime).format('HH:mm:ss')
-        if (this.projID === 10004) {
+        if (this.projID === 10004 || this.projID === 10018) {
           if (this.towerGroup !== null && this.towerGroup.visible !== undefined && this.towerGroup.visible === false) {
             console.log('this.towerGroup.visible', this.towerGroup.visible)
             this.towerGroup.visible = true
