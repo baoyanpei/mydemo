@@ -151,8 +151,8 @@ export function queryLogsPersonComfirm(data) {
 query_vehicle_logs
         project_id,
         lisence:车牌模糊查询
-        
-        可选参数: 
+
+        可选参数:
         bt 开始时间
         et 结束时间
         return {"status":"success","msg":'',"data":[]}
@@ -165,7 +165,7 @@ export function queryVehicleGate(data) {
   })
 }
 
-/* 
+/*
 query_person_inday(self, params):
         '''
         查询一段时间内用户在场天数
@@ -182,10 +182,10 @@ export function queryProjectPersonInDay(data) {
   })
 }
 
-/* 
+/*
 检查用户是否可以访问
 /api/info/person
-method:checkPersonAccess 
+method:checkPersonAccess
 
 参数：
 project_id:
@@ -194,6 +194,7 @@ url:
 天气 tianqi_mobile
 门禁 menjin_mobile
 
+任务大厅任务详情 info_details
 人员考勤 huamingce_admin
 场内人员 changneiyuanyuan_admin
 通讯录 tongxunlu_admin
@@ -309,6 +310,8 @@ export function queryTjOnlineAgeByTime(data) {
   })
 }
 
+
+
 /*
 按统计时段内区域人数
 tj_online_area_by_time
@@ -381,7 +384,16 @@ method:card_opera
       #status: 人员状态 -1注销0正常1需要激活2离职3手动注销10是默认值
       status：人员状态 -1注销0正常1需要激活2离职3手动注销4开除10是默认值
 '''
+
+
 */
+export function persongroupchange(data) {//个人信息页面，组别信息更改
+  return request({
+    url: 'api/info/project',
+    method: 'post',
+    data: data
+  })
+}
 export function setCardOpera(data) {
   return request({
     url: 'api/info/user',
@@ -440,7 +452,7 @@ export function queryDutyWeek(data) {
 
 /*
 /api/info/project
-project_duty_day 
+project_duty_day
 查询项目值班表天
         参数:
         project_id

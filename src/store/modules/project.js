@@ -109,6 +109,11 @@ const project = {
       data: {},
       dialogTitle: '上工时间'
     },
+    taskInfoDialog:{//任务大厅，任务详情
+      refresh: 0,
+      show: false,
+      data: {}
+    },
     personInoutDialog: { //person进出窗口
       show: false,
       data: {}
@@ -229,6 +234,15 @@ const project = {
 
     },
 
+    SET_INFO_DIALOG: async (state, data) => { // 任务大厅，任务详情
+      state.taskInfoDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      // state.taskInfoDialog.dialogTitle = data.name + ' - 上工时间'
+      state.taskInfoDialog.refresh = genRandom(1, 1000)
+    },
+
+
+
 
     SET_PERSON_INOUT_DIALOG: async (state, data) => { // 人员考勤
       if (data.show === true) {
@@ -244,7 +258,7 @@ const project = {
         state.personInoutDialog = data
       }
     },
-    SET_PERSON_LIST_DIALOG: async (state, data) => { // 人员考勤
+     SET_PERSON_LIST_DIALOG: async (state, data) => { // 人员信息
       if (data.show === true) {
         const _hasPermission = await hasPermissionToOperation({
           project_id: state.project_id,
@@ -467,11 +481,18 @@ const project = {
       rootState
     }, param) {
       return new Promise((resolve, reject) => {
-        // console.log('project_id', rootState.project.project_id)
-
-        // console.log('_hasPermissionToOperation')
-        // return
         commit('SET_PERSON_INOUT_DIALOG', param)
+        resolve()
+
+      })
+    },
+    SetInfoDialog({
+      commit,
+      rootState
+    }, param) {
+      return new Promise((resolve, reject) => {
+        console.log(param)
+        commit('SET_INFO_DIALOG', param)
         resolve()
 
       })
@@ -651,7 +672,7 @@ const project = {
         })
       })
     },
-    
+
     // 设置人证校验是否为本人
     setProjectInfo({
       commit

@@ -2,7 +2,8 @@ import {
   queryPersonOnlineMax,
   queryPersonInfo,
   queryTjOnlineAgeByTime,
-  queryTjOnlineAreaByTime
+  queryTjOnlineAreaByTime,
+  persongroupchange
 } from '@/api/person'
 
 const person = {
@@ -118,6 +119,17 @@ const person = {
         })
       })
     },
+    PersonGroupChange({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        persongroupchange(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
     //按统计时段内区域人数
     queryTjOnlineAreaByTime({
       commit
@@ -131,8 +143,6 @@ const person = {
         })
       })
     }
-
-
   }
 }
 

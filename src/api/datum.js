@@ -105,12 +105,24 @@ export function allinfodictionary(data) {
     baseURL: 'http://w.yidebim.com:3004'
   })
 }
-// export function getuserlistinfo(data) {
-//   // console.log("allpersondata",data)
-//   return request({
-//     url:'api/oa/workflow',
-//     method:'post',
-//     data:data,
-//     baseURL: 'http://w.yidebim.com:3004'
-//   })
-// }
+
+
+export function postmomment(data) {//上传评论信息
+  return request({
+    url:'api/oa/comment',
+    method:'post',
+    data:data,
+    baseURL: 'http://w.yidebim.com:3004'
+  })
+}
+
+//安全巡检
+
+export function safeinspection(data) {//安全巡检页面
+  return request({
+    url:'api/oa/workflow',
+    method:'post',
+    data:data,
+    baseURL: 'http://w.yidebim.com:3004'
+  })
+}

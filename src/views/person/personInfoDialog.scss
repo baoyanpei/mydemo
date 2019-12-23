@@ -95,4 +95,25 @@
   #btnCopy{
     margin-left: 10px;
   }
+  .fatherchange{
+    position: relative;
+  }
+  .changeGroup{
+    width: 120px;
+    background: palegreen;
+    position: absolute;
+    border-radius: 5px;
+    left: 10px;
+    top: 120%;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .groupson{
+    width: 100%;
+    height: 25px;
+    padding-left: 10px;
+    line-height: 25px;
+    background: pink;
+    border-bottom: 1px solid #e5e5e5;
+  }
 }

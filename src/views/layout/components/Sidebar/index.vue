@@ -34,6 +34,10 @@
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
       </el-menu-item>
+      <el-menu-item index="/safety-inspection">
+        <font-awesome-icon icon="network-wired" />
+        <span slot="title">巡检管理</span>
+      </el-menu-item>
       <!--
       <el-menu-item index="/main1">
         <i class="el-icon-location"></i>

@@ -10,44 +10,44 @@
           <span>类别:</span>
           <template>
           <el-select v-model="value" placeholder="所有" style="width: 80px" class="btn1">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.label"></el-option>
           </el-select>
           </template>
 
           <span>类型:</span>
           <template>
-          <el-select v-model="value2" placeholder="所有" style="width: 110px" class="btn1" @change="typechange($event)">
-            <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.value2"></el-option>
+          <el-select v-model="value2" placeholder="所有" style="width: 110px" class="btn1">
+            <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.label2"></el-option>
           </el-select>
           </template>
 
           <span>状态:</span>
           <template>
           <el-select v-model="value3" placeholder="所有" style="width: 100px" class="btn1">
-            <el-option v-for="item in options3" :key="item.value3" :label="item.label" :value="item.value3"></el-option>
+            <el-option v-for="item in options3" :key="item.value3" :label="item.label" :value="item.label"></el-option>
           </el-select>
           </template>
           <el-button type="primary" @click="queryFun">查询</el-button>
 
           <div class="details" v-for="item in boxinfo1" :key="item.workId"> <!--任务信息模块-->
             <img :src=item.imgurl alt="">
-            <span class="titleword">{{item.title}}</span>
+            <span class="titleword" @click="infoshow(item)">{{item.title}}</span>
             <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
-            <div class="block">
-              <el-rate v-model="item.value" disabled :max=3></el-rate>
-            </div>
+            <!--<div class="statebox">{{item.state}}</div>-->
+            <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
             <br>
             <div class="peoplebox">
-              <h2>发起人:{{item.originator}}</h2>
+              <span class="originator_span">发起人: <span style="color: #383838">{{item.originator}}</span></span>
               <!--header   负责人-->
-               <h2 style="border-left: 1px solid #aaaab2;padding-left: 10px;" v-show=item.xian>负责人:{{item.header}}</h2>
+               <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838">{{item.header}}</span></span>
               <!--qualiter   质检人-->
-               <h2  style="border-left: 1px solid #aaaab2;padding-left: 10px;" v-show=item.xian2>质检人:{{item.qualiter}}</h2>
+               <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838">{{item.qualiter}}</span></span>
             </div>
-            <h3>发布时间:{{item.created}}</h3>
+            <span class="created_time">发布时间:<span style="color: #383838">{{item.created}}</span></span>
             <!--<h4>计划完成时间:{{item.endtime}}</h4>-->
             <br>
-            <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检'}">{{item.stateall}}</div>
+            <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检','ziliao':item.stateall==='资料'}">{{item.stateall}}</div>
+            <!--<div class="logobox">{{item.stateall}}</div>-->
             <div class="logobox" v-show=item.xian3>{{item.questions_type}}</div>
           </div>
           <!--@current-change当前页数///////@size-change每页多少条数据-->
@@ -100,6 +100,9 @@
     data() {
       return {
         bannertitle:'任务大厅(0)',
+        flow_word:'',
+        qtype_word:"",
+        loginname:'',
         currpage:1,
         pagesize: 20,
         boxinfo1:[],
@@ -124,7 +127,7 @@
           value:2,
         }],
         options: [{ value: '选项1', label: '任务' }, { value: '选项2', label: '通知' }, { value: '选项3', label: '会议' },
-          { value: '选项4', label: '资料' }],
+          { value: '选项4', label: '资料' },{ value: '选项5', label: '安全' }],
         value: '',
         options2: [{ value2: '1', label2: '安全' }, { value2: '2', label2: '质量' }, { value2: '3', label2: '技术' },
           { value2: '4', label2: '施工' }, { value2: '5', label2: '资料' }, { value2: '6', label2: '财务' },
@@ -144,6 +147,9 @@
       project_id() {
         return this.$store.state.project.project_id
       },
+      person_info(){
+        return this.$store.state.person.personInfo
+      }
     },
     watch: {
       project_id(curVal, oldVal) {
@@ -151,25 +157,28 @@
         this.currpage = 1
         this.thirdinterface()
         this.allpersondata()
+        // console.log("this.person_info",this.person_info)
       }
     },
     mounted(){
       if (this.project_id !== null) {
         this.currpage = 1
+        this.getPerson()
         this.thirdinterface()
         this.allpersondata()
+
       }
     },
     methods:{
       pagechange (e) {//每页多少条数据
       this.currpage = e
-      console.log(this.currpage)
+      // console.log(this.currpage)
       this.allpersondata()
         // this.secondpage()
     },
       secondpage(){
         this.boxinfo1=this.boxinfo
-        console.log('页面渲染页面数据',this.boxinfo1)
+        // console.log('页面渲染页面数据',this.boxinfo1)
         //整理筛选出需要传递的参数
         this.postdata=[]
         this.boxinfo1.forEach(item=>{
@@ -182,6 +191,19 @@
     handleSizeChange (e) {
       this.pagesize = e
     },
+      getPerson() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'query'
+          }
+          this.$store.dispatch('QueryPersonInfo', param).then((data) => {
+            console.log('当前登陆人员',data.person.name)
+            this.loginname=data.person.name
+          }).catch(() => {
+            resolve()
+          })
+        })
+      },
     allpersondata() {
       const _param = {
         method: 'query_task_all',
@@ -227,7 +249,7 @@
       this.$store.dispatch('Allpersondata', _param).then((data) => {
          // console.log("第二接口返回成功",data.data)
         this.listbox=data.data
-        console.log("第二接口数据",this.listbox)
+        // console.log("第二接口数据",this.listbox)
         let mar1=[]
         let map1= new Map()
         for(var i in this.listbox){
@@ -243,6 +265,8 @@
           item["xian"]=false//负责人显示
           item["xian2"]=false//质检人显示
           item["xian3"]=false//第二类人物类型
+
+          item["imgurl"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id='+item.workId+'&w=220'
           item["getinfo"]=map1.get(workId).info.flowNode[0]//获取到显示任务类型的配置数据
           item["originator"] = map1.get(workId).Start[0].userName//获取懂啊key值对应的数据   info.priority
           // console.log(item.getinfo)
@@ -278,7 +302,8 @@
               item.state = _node.status
               item["statecolor"]=_node.color
             }else{
-              item.state = item.getinfo
+              // item.state = item.getinfo
+              item.state = "已完成"
             }
           }
                                 //配置结束
@@ -295,7 +320,7 @@
         }
         this.$store.dispatch('Allinfodictionary', _param).then((data) => {
           this.thirdinfo=data
-          // console.log("第三接口",this.thirdinfo)
+          console.log("第三接口",this.thirdinfo)
           // for(var i in this.thirdinfo){
           //   console.log('---------',i,this.thirdinfo[i])
           // }
@@ -303,15 +328,84 @@
       },
 
       queryFun(){
-      },
-      typechange(event){
-        console.log("value2值为",this.value2)
-        this.options2.forEach(item => {
-          if (item.value2 === this.value2){
-            console.log(item.label2)
+        console.log("查询按钮获取信息",this.value,this.value2,this.value3)//flow_word
+        if(this.value=="任务"){//任务，通知，会议，资料,安全
+          this.flow_word="ProblemFindSolve01"
+        }
+        if(this.value=="会议"){
+          this.flow_word="Meeting01"
+        }
+        if(this.value=="通知"){
+          this.flow_word="Notice01"
+        }
+        if(this.value=="资料"){
+          this.flow_word="Documents01"
+        }
+        if(this.value=="安全"){
+          this.flow_word="SafetyInspection01"
+        }
+        if(this.value3=="进行中"){
+          this.qtype_word="inProgress"
+        }
+        if(this.value3=="已完成"){
+          this.qtype_word="hasDone"
+        }
+        console.log("this.qtype_word",this.qtype_word)
+        const _param = {
+        method: 'query_task_all_list',
+        project_id: this.project_id,
+        flow_id:this.flow_word,//value
+        qtype:this.qtype_word,//完成未完成
+        questions_type:this.value2,//安全，技术平台
+        keyword:"",//输入框
+        page:this.currpage
+      }
+      this.$store.dispatch('Allpersondata', _param).then((data) => {
+          console.log("查询按钮",data)
+          this.infonum=data.count
+          this.bannertitle="任务大厅("+data.count+")"
+        this.boxinfo1=[]
+        this.boxinfo=data.data
+        //事件监听flowid,判断任务类型
+        this.boxinfo.forEach(item=>{
+          // if(item.questions_type===''){
+          //   console.log('第二列表',item)
+          // }
+          if(item.flowId==="Meeting01"){
+            item.stateall='会议'
+          }
+          if(item.flowId==="ProblemFindSolve01"){
+            item.stateall='任务'
+          }
+          if(item.flowId==="SafetyInspection01"){
+            item.stateall='安全巡检'
+          }
+          if(item.flowId==="Notice01"){
+            item.stateall='通知'
           }
         })
-      }
+        //页面刷新自动去第一页
+        this.secondpage()
+      })
+      },
+      infoshow(index){
+        console.log("详情页面展示信息",index)
+        // console.log(this.boxinfo1.indexOf(index))   获取到当前元素的索引
+        const param = {
+          show: true,
+          data:index
+        }
+        this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
+        })
+      },
+      // typechange(event){
+      //   console.log("value2值为",this.value2)
+      //   this.options2.forEach(item => {
+      //     if (item.value2 === this.value2){
+      //       console.log(item.label2)
+      //     }
+      //   })
+      // }
     }
   }
 </script>
@@ -339,8 +433,9 @@
     width: 520px;
     height: 140px;
     border: 1px solid #e7e7e7;
-    border-radius: 10px;
+    border-radius: 5px;
     margin:15px auto;
+    position: relative;
   }
   .details img{
     width: 122px;
@@ -351,13 +446,17 @@
     float: left;
     border: 1px solid #000;
   }
+  .star_block{
+    position: absolute;
+    top: 35px;
+    right: 0;
+  }
   .titleword{
     display: block;
-    margin-top: 10px;
+    margin-top: 18px;
     font-size: 15px;
     font-weight: 500;
     width: 290px;
-    height: 35px;
     margin-left: 10px;
     float: left;
     overflow: hidden;
@@ -369,7 +468,7 @@
     width: 60px;
     height: 20px;
     border-radius: 10px;
-    background-color: #ff6700;
+    background-color: #BABABA;
     color: #fff;
     float: right;
     margin-right: 10px;
@@ -378,22 +477,34 @@
     text-align: center;
     line-height: 20px;
   }
+  .originator_span{
+    display: block;
+    margin-top: 7px;
+     margin-left: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    float: left;
+    color: #a8a8a8;
+    width: 100px;
+  }
   h2{
     margin-left: 10px;
     font-size: 13px;
     font-weight: 500;
     float: left;
-    color: #aaaab2;
+    color: #a8a8a8;
     width: 100px;
   }
-  h3{
+  .created_time{
     display: block;
+    margin-top: 7px;
     margin-left: 10px;
-    margin-top: -5px;
+    margin-bottom: 7px;
     width: 350px;
     font-size: 13px;
     font-weight: 500;
     float: left;
+    color: #a8a8a8;
   }
   h4{
     display: block;
@@ -409,30 +520,33 @@
   .logobox{
     float: left;
     width: 60px;
-    margin-left: 10px;
+    margin-left: 5px;
     height: 20px;
-    border-radius: 10px;
-    border: 1px solid #ff9900;
+    border: 1px solid #1abc9c;
     font-size: 12px;
     text-align: center;
     line-height: 18px;
-    color: #ff9900;
+    color: #1abc9c;
+  }
+  .ziliao{
+     border: 1px solid #3498DB;
+    color: #3498DB;
   }
   .yellow{
-    border: 1px solid yellowgreen;
-    color: yellowgreen;
+    border: 1px solid #1ABC9C;
+    color: #1ABC9C;
   }
   .zise{
-    border: 1px solid #FF00FF;
-    color: #FF00FF;
+    border: 1px solid #F04844;
+    color: #F04844;
   }
   .anquan{
-    border: 1px solid #0000FF;
-    color: #0000FF;
+    border: 1px solid #657180;
+    color: #657180;
          }
   .lvse{
-    border: 1px solid #66FF99;
-    color: #66FF99;
+    border: 1px solid #FFA847;
+    color: #FFA847;
   }
 
   /*状态信息颜色*/
@@ -440,12 +554,20 @@
     background-color: red;
   }
   .stategray{
-    background-color: gray;
+    background-color: #BABABA;
   }
   .stateyellow{
     background-color: yellowgreen;
   }
   .stategreen{
     background-color: green;
+  }
+  /*人物详情页面*/
+  .personinfo{
+    position: absolute;
+    left: 300px;
+    width: 50px;
+    height: 50px;
+    background-color: #1abc9c;
   }
 </style>

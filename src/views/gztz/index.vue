@@ -198,9 +198,7 @@
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
           console.log("ssss", this.projectPersonList)
-          // this.optionsProjectPersion = this.projectPersonList
           this.projectPersonList.forEach(person => {
-
             person.pinyin = pinyin.convertToPinyin(person.name)
           })
           this.appendPersonMount()

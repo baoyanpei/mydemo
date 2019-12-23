@@ -3,8 +3,10 @@ import {
   queryDatumMeterDays,
   queryDatumMeterHours,
   allpersondata,
+  postmomment,
   allinfodictionary,
-  queryLocationHis
+  queryLocationHis,
+  safeinspection
 } from '@/api/datum'
 
 const datum = {
@@ -77,6 +79,30 @@ const datum = {
     },param){
       return new Promise((resolve, reject) => {
         allinfodictionary(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    //上传评论信息
+    Postmomment({
+      commit
+    },param){
+      return new Promise((resolve, reject) => {
+        postmomment(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    //安全巡检页面safeinspection
+    SafeInspection({
+      commit
+    },param){
+      return new Promise((resolve, reject) => {
+        safeinspection(param).then(response => {
           resolve(response)
         }).catch(error => {
           reject(error)

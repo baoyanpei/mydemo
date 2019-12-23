@@ -318,8 +318,6 @@
       personNowInDialogHandle() {
         const param = {
           show: true,
-          // bt:moment().format('YYYY-MM-DD 00:00:00'),
-          // et:moment().format('YYYY-MM-DD 23:59:59')//HH:mm:ss
         }
         this.$store.dispatch('SetPersonNowInDialog', param).then(() => {}).catch(() => {
 

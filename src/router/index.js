@@ -117,6 +117,16 @@ export const constantRouterMap = [{
         }
       },
       {
+        path: 'safety-inspection',
+        component: () => import('@/views/safety/index'),
+        name: 'safety-inspection',
+        meta: {
+          title: 'safety-inspection',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
         path: 'tjfx',
         component: () => import('@/views/tjfx/index'),
         name: 'tjfx',

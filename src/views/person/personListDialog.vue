@@ -68,7 +68,7 @@
 </style>
 <template>
   <el-dialog :modal="false" width="820px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
-    @open="openPersonListDialogHandle" :visible.sync="personListDialog.show" title="人员信息" v-dialogDrag>
+    @open="openPersonListDialogHandle" @close="closediv" :visible.sync="personListDialog.show" title="人员信息" v-dialogDrag>
     <div id="person-list-from" class="person-list-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
         <div>
@@ -105,6 +105,8 @@
           <!--</el-form-item>-->
 
           <el-form-item prop="lackid" label="个人资料">
+            <!--personInoutList-->
+            <!--<el-cascader :options="lackdata" ref="cascaderAddr" :props="props" v-model="lackdatavalue" @change="titlechange()" collapse-tags></el-cascader>-->
             <el-cascader :options="lackdata" ref="cascaderAddr" :props="props" v-model="lackdatavalue" @change="handleSubmit(false)" collapse-tags></el-cascader>
            </el-form-item>
 
@@ -284,6 +286,10 @@
       },
     },
     methods: {
+      titlechange(){
+        this.personInoutList=[]
+        this.handleSubmit(false)
+      },
       trantime: (time) => {
         return moment(time).format('YYYY-MM-DD')
       },
@@ -344,7 +350,7 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
-          console.log(this.projectPersonList)
+          console.log("所有人员全部信息",this.projectPersonList)
           this.optionsProjectPersion = this.projectPersonList
           this.loadingInstance.close();
         }).catch(() => {
@@ -364,12 +370,15 @@
         })
       },
       getProjectPersonInout(isExport) {
+        this.personInoutList=[]
         this.loading = true
         const param = {
           method: 'query_person_list',
           project_id: this.project_id,
         }
         this.$store.dispatch('QueryProjectPersons', param).then((personList) => {
+          // this.lackdatavalue=[]
+          this.personInoutList=[]
           personList.forEach(item => {
             let groupMatch = []
             if (this.personInoutForm.GroupList[0] === 'all') {
@@ -441,7 +450,15 @@
         // });
 
       },
+      //关闭窗口
+      closediv(){
+        console.log("关闭窗口成功")
+        this.personinto2=[]
+        this.lackdatavalue=[]
+        this.personInoutList=[]
+      },
       appendGroupData() {
+        console.log("this.projectGroupList.group",this.projectGroupList.group)
         const rootGroup = this.projectGroupList.group
         this.optionGroups = []
         // console.log("teim", item)
@@ -549,6 +566,7 @@
 
       },
       handleNameClick(row) {
+        // console.log("rowwwwwwwwwwwwwwwwwww",row)
         const param = {
           show: true,
           ...row
@@ -600,8 +618,10 @@
             });
             }
           }else{
-            console.log(this.lackdatavalue)
+            console.log("-->",this.lackdatavalue)
+
              for(let i=0;i<this.lackdatavalue.length;i++){
+               console.log("-->personinto2",this.personinto2)
               this.personInoutList = this.personinto2.filter((item)=>{
               return (Math.pow(2,parseInt(this.lackdatavalue[i]))&parseInt(item.datum_uploaded,2))>0
 
@@ -610,15 +630,16 @@
             }
           }
         }
+        this.personinto2=[]
     },
       persionChangeLackdata(){//查找资料
         if(this.lackdata.value !== ''){
           console.log(this.lackdata.value)//输出对应的id
           console.log('this.personInoutList1',this.personInoutList)
           this.personInoutList = this.personInoutList.filter((item)=>{
-            console.log(this.lackdata.value)
-            console.log(Math.pow(2,this.lackdata.value))
-            console.log(parseInt(item.datum_uploaded,2))
+            // console.log(this.lackdata.value)
+            // console.log(Math.pow(2,this.lackdata.value))
+            // console.log(parseInt(item.datum_uploaded,2))
             return (Math.pow(2,this.lackdata.value)&parseInt(item.datum_uploaded,2))===0   //查找出来00000000中筛选出数据
           });
           console.log('this.personInoutList2',this.personInoutList)

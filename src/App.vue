@@ -23,6 +23,8 @@
     <InOutPersonDetailDialog></InOutPersonDetailDialog>
     <PersonGoOutDialog></PersonGoOutDialog>
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
+    <!--任务大厅任务详情对话框-->
+    <TaskInfoDialog></TaskInfoDialog>
     <!--人员详细信息对话框-->
     <PersonInfoDialog></PersonInfoDialog>
     <!--人员进出详细信息对话框-->
@@ -51,6 +53,8 @@
   import PersonFullCalender from './views/person/fullCalender'
   import PersonFacePercentDetailForm from './views/person/facePercentDetailForm'
   import InOutPersonDetailDialog from './views/person/inOutPersonDetailDialog'
+  //任务详情信息
+  import TaskInfoDialog from './views/taskinfo/info'
   // 人员信息信息dialog
   import PersonInfoDialog from './views/person/personInfoDialog'
 
@@ -86,6 +90,7 @@
       InoutForm,
       // NowinForm,
       NowinDialog,
+      TaskInfoDialog,
       PersonFullCalender,
       PersonFacePercentDetailForm,
       InOutPersonDetailDialog,

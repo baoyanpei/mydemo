@@ -14,11 +14,21 @@
             <!-- <div>(身份证照)</div> -->
           </el-col>
           <el-col :span="18" class="persion-info-txt" style="text-align: left;padding: 2px;">
-            <el-row :gutter="24">
-              <el-col :span="8">
+            <el-row :gutter="20">
+              <el-col :span="6">
                 部门：{{bumen}}
               </el-col>
-              <el-col :span="14">
+              <el-col :span="5" class="fatherchange">
+                <!--<div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"-->
+                     <!--@click="changegroup">更换组别</div>-->
+                <el-popover placement="right" width="400" trigger="click">
+                 <el-cascader-panel v-model="optionmodel" :options="optionGroups" @change="changevalue"></el-cascader-panel>
+                   <el-button type="primary" style="float: right;margin-top: 10px;" @click="open">确认</el-button>
+                  <div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"
+                     slot="reference" @click="changegroup">更换组别</div>
+              </el-popover>
+              </el-col>
+              <el-col :span="8">
                 班组：{{zhuanye}}
               </el-col>
             </el-row>
@@ -195,6 +205,7 @@
     data() {
 
       return {
+        radio: 3,
         activeTabName: 'rzzp',
         idcard_pic: '',
         entry_pic: '',
@@ -219,13 +230,24 @@
         loadingIdCardb: '',
         BtnKaiChuDisable: true,
         BtnZhuXiaoKaDisable: true,
-        BtnKaiChu: true
+        groupchange:false,
+        BtnKaiChu: true,
+        groupall:[],
+        songroup1:[],
+        newsongroup:[],
+        optionmodel:'',
+        optionGroups: [],
+        change_personid:0
 
       }
     },
     computed: {
       project_id() {
         return this.$store.state.project.project_id
+      },
+      projectGroupList() {
+        return this.$store.state.project.projectGroupList
+        // console.log("projectGroupList",projectGroupList)
       },
       personInfoDialog: {
         get: function () {
@@ -272,6 +294,54 @@
           timeFormat = moment(time).format('YYYY年MM月DD日')
         }
         return timeFormat
+      },
+      changegroup(){//更换组别
+        console.log("this.projectGroupList.group",this.projectGroupList.group)
+        const rootGroup = this.projectGroupList.group
+        this.optionGroups = []
+        if (rootGroup !== undefined && rootGroup.length > 0) {
+          //1为管理部门 0为施工部门3为建设单位4为监理单位5为外部单位 grouptype类型说明,并且做了筛选这部操作
+          // console.log("item.group.groups_type", item.group)
+          rootGroup.forEach(item1 => {
+            if (item1.groups_type === 0 || item1.groups_type === 1|| item1.groups_type === 10) {
+              // console.log('item1', item1)
+              let children = []
+              if (item1.group !== undefined && item1.group.length > 0) {
+                item1.group.forEach(item2 => {
+                  children.push({
+                    label: `${item2.group_name}`,
+                    value: item2.id,
+                  })
+                })
+
+              }
+              this.optionGroups.push({
+                label: `${item1.group_name}`,
+                value: item1.id,
+                children: children
+              })
+            }
+          });
+        }
+      },
+      changevalue(){
+        console.log("123321123",this.optionmodel[1])
+      },
+      open() {
+        this.$alert('<span>更换部门成功</span>', '更换部门提示', {
+          dangerouslyUseHTMLString: true
+        });
+        // console.log("个人更改信息",this.change_personid,this.optionmodel[1])
+        const param = {
+          method: 'set_person_props',
+          project_id: this.project_id,
+          person_id:this.change_personid,
+          group_id:this.optionmodel[1]
+        }
+        this.$store.dispatch('PersonGroupChange', param).then(() => {
+        }).catch(() => {
+
+        })
       },
       transStatus(status) {
         let _text = ''
@@ -343,6 +413,8 @@
         console.log('this.personInfoDialog', this.personInfoDialog)
         this.$store.dispatch('QueryProjectPerson', param).then((data_list) => {
           console.log("-data-->", data_list)
+          this.change_personid=data_list[0].person_id
+          console.log("projectGroupList",this.projectGroupList.group)
           const _personInfo = data_list[0]
           const _idcard_pic = _personInfo.idcard_pic
           if (_idcard_pic.length > 0) {
