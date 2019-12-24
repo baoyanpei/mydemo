@@ -6,7 +6,7 @@
 <template>
   <div class="screen-taji-area">
 
-    <el-row >
+    <el-row>
       <el-col :span="12">
         <TadiaoTaji ref="taji"></TadiaoTaji>
       </el-col>
@@ -45,8 +45,10 @@
         topicTJ1: '', // 塔机
         topicTJ2: '', // 升降机
         TJ_DeviceID: '', // 塔机
+        TJ_Height: '', // 塔机的高度
         SJJ_DeviceID: '', // 升降机
         project_id: null,
+        mqttMap: new Map()
 
       }
     },
@@ -97,14 +99,20 @@
             if (_mqtt !== undefined && _mqtt !== '') {
               this.topicTJ2 = _mqtt
               this.SJJ_DeviceID = datum.device_id.toString()
+              this.mqttMap.set(params_json.mqtt, datum)
             }
           } else if (datum.device_type === 13 && datum.params_json.length > 0) { // 塔机
             const params_json = JSON.parse(datum.params_json)
 
+            const _tj_height = params_json.height
+            if (_tj_height !== undefined) {
+              this.TJ_Height = _tj_height
+            }
             const _mqtt = params_json.mqtt
             if (_mqtt !== undefined && _mqtt !== '') {
               this.topicTJ1 = _mqtt
               this.TJ_DeviceID = datum.device_id.toString()
+              this.mqttMap.set(params_json.mqtt, datum)
             }
           }
         })
@@ -146,7 +154,19 @@
         console.log("收到消息 - mqttTJ:" + message.destinationName + message.payloadString);
 
         // this.updateData(message.payloadString)
-        this.mqttTJ(message)
+        // this.mqttTJ(message)
+
+
+        for (let [key, datum] of this.mqttMap) {
+          // console.log("mqttMap", this.mqttMap)
+          key = key.replace('#', '')
+          if (message.destinationName.startsWith(key)) {
+            if (datum.device_type === 13 || datum.device_type === 12) {
+              this.mqttTJ(message, datum)
+              break
+            }
+          }
+        };
       },
       onConnect() {
         console.log("onConnected");
@@ -196,40 +216,64 @@
           console.log("取消订阅成功！")
         }
       },
-      mqttTJ(data) {
+      // mqttTJ(data, datum) {
+      //   // console.log('mqttTJ', data)
+      //   const _destinationName = data.destinationName
+      //   const _payloadString = data.payloadString
+
+      //   //destinationNameArray => ["BIM", "Sets", "zhgd", "DEYE", "18090311", "RealtimeDataCrane"]
+      //   const destinationNameArray = _destinationName.split('/')
+      //   console.log('destinationNameArray111', destinationNameArray)
+
+      //   const TJNO = destinationNameArray[4].toString() //黑匣子编号
+      //   const _cmd = destinationNameArray[5] //指令
+      //   // console.log("--->TJNO", TJNO)
+      //   switch (TJNO) {
+      //     case this.TJ_DeviceID.toString(): // 塔吊
+      //       // console.log('塔吊', data)
+      //       this.mqttTaDiao(_cmd, _payloadString)
+      //       break;
+      //     case this.SJJ_DeviceID.toString(): // 升降机
+      //       // console.log('升降机', data)
+      //       // let _RealtimeDataElevatorName = this.topicTJ2.replace('#', 'RealtimeDataElevator')
+      //       // console.log('_RealtimeDataElevatorName', _RealtimeDataElevatorName)
+      //       // console.log('_destinationName', _destinationName)
+      //       this.mqttShenJiangJi(_cmd, _payloadString)
+      //       break;
+      //   }
+      // },
+      mqttTJ(data, datum) {
         // console.log('mqttTJ', data)
         const _destinationName = data.destinationName
         const _payloadString = data.payloadString
-
-        //destinationNameArray => ["BIM", "Sets", "zhgd", "DEYE", "18090311", "RealtimeDataCrane"]
         const destinationNameArray = _destinationName.split('/')
-        // console.log('destinationNameArray', destinationNameArray)
-        const TJNO = destinationNameArray[4].toString() //黑匣子编号
+        console.log('destinationNameArray111', destinationNameArray)
+
+
         const _cmd = destinationNameArray[5] //指令
-        // console.log("--->TJNO", TJNO)
-        switch (TJNO) {
-          case this.TJ_DeviceID.toString(): // 塔吊
-            // console.log('塔吊', data)
+        switch (datum.device_type) {
+          case 13: // 塔吊
             this.mqttTaDiao(_cmd, _payloadString)
             break;
-          case this.SJJ_DeviceID.toString(): // 升降机
-            // console.log('升降机', data)
-            // let _RealtimeDataElevatorName = this.topicTJ2.replace('#', 'RealtimeDataElevator')
-            // console.log('_RealtimeDataElevatorName', _RealtimeDataElevatorName)
-            // console.log('_destinationName', _destinationName)
+          case 12: // 升降机
             this.mqttShenJiangJi(_cmd, _payloadString)
             break;
         }
       },
+      // mqttTaDiao(cmd, data) { //塔吊
+      //   // console.log('塔吊', cmd)
+      //   switch (cmd) {
+      //     case "RealtimeDataCrane": // 2.3 上报塔机实时数据（专用）
+      //       const _data = JSON.parse(data)
+      //       console.log('RealtimeDataCrane', _data)
+      //       this.$refs.taji.updateData(_data,this.TJ_Height)
+      //       break
+      //   }
+      // },
       mqttTaDiao(cmd, data) { //塔吊
-        // console.log('塔吊', cmd)
-        switch (cmd) {
-          case "RealtimeDataCrane": // 2.3 上报塔机实时数据（专用）
-            const _data = JSON.parse(data)
-            console.log('RealtimeDataCrane', _data)
-            this.$refs.taji.updateData(_data)
-            break
-        }
+        const _data = JSON.parse(data)
+        console.log('mqttTaDiao', _data)
+        this.$refs.taji.updateData(_data, this.TJ_Height)
       },
       mqttShenJiangJi(cmd, data) { //升降机
         console.log('升降机', cmd)

@@ -143,7 +143,7 @@
         if (to.name !== "login" && to.name !== "wxbindtip" && this.personInfo === null) {
           this.getPerson()
         }
-        if (from.name === 'lot2-index' || from.name === 'lot3-index' || from.name === 'lot4-index') {
+        if (from.name === 'lot2-index' || from.name === 'lot3-index' || from.name === 'lot4-index' || from.name === 'lot5-index') {
           location.reload()
         }
       }

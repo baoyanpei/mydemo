@@ -49,6 +49,10 @@ http://mrdoob.github.io/stats.js/
 #### vue 实现复制到粘贴板功能需要依赖到 clipboard.js
 https://www.cnblogs.com/wyhlightstar/p/8950430.html
 
+#### Vue无缝滚动
+https://github.com/chenxuan0000/vue-seamless-scroll
+https://chenxuan0000.github.io/component-document/index_prod.html#/component/seamless-default
+
 ```cmd
 1、 首先需要安装依赖  * 出现错误的话，可以试试 cnpm
 

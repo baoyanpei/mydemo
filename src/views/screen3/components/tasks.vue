@@ -5,42 +5,59 @@
 
 <template>
   <div class="screen-tasks">
-    <div v-for="(item, i) in AllInstList" class="task-item">
-      <div class="task-left">
-        <img class="task-img" v-bind:src="item.imgSrc">
-      </div>
-      <div class="task-right">
-        <div class="task-detail1">
-          <div class="task-title">
-            {{item.title}}
+    <vue-seamless :data="AllInstList" :class-option="classOption" class="warp">
+      <!-- <ul class="item">
+        <li v-for="item in listData"><span class="title" v-text="item.title"></span><span class="date"
+            v-text="item.date"></span>
+        </li>
+      </ul>
+    </vue-seamless>
+    <vue-seamless :data="listData" :class-option="classOption" class="warp"> -->
+      <div class="item">
+        <div v-for="(item, i) in AllInstList" class="task-item">
+          <div class="task-left">
+            <img class="task-img" v-bind:src="item.imgSrc">
           </div>
-          <div class="task-status">
-            <span v-if="item.nodeId === 'Node2'" class="node2">待认领</span>
-            <span v-if="item.nodeId === 'Node3'" class="node3">待处理</span>
-            <span v-if="item.nodeId === 'Node5'" class="node5">待质检</span>
-            <span v-if="item.nodeId === 'Node1' || item.nodeId === 'End4' || item.nodeId === undefined" class="node1">已完成</span>
-          </div>
-        </div>
+          <div class="task-right">
+            <div class="task-detail1">
+              <div class="task-title">
+                {{item.title}}
+              </div>
+              <div class="task-status">
+                <span v-if="item.nodeId === 'Node2'" class="node2">待认领</span>
+                <span v-if="item.nodeId === 'Node3'" class="node3">待处理</span>
+                <span v-if="item.nodeId === 'Node5'" class="node5">待质检</span>
+                <span v-if="item.nodeId === 'Node1' || item.nodeId === 'End4' || item.nodeId === undefined"
+                  class="node1">已完成</span>
+              </div>
+            </div>
 
 
-        <div class="task-detail2">
-          <div class="task-type" v-html='item.typeDesc'></div>
-          <div class="task-creator">
-            发起人：{{item.creatorName}}
-          </div>
-          <div class="task-time">
-            {{item.sendTime}}
+            <div class="task-detail2">
+              <div class="task-type" v-html='item.typeDesc'></div>
+              <div class="task-creator">
+                发起人：{{item.creatorName}}
+              </div>
+              <div class="task-time">
+                {{item.sendTime}}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+    </vue-seamless>
+
   </div>
 </template>
 <script>
   import lodash from 'lodash'
   import moment from 'moment'
+  import vueSeamless from 'vue-seamless-scroll'
   export default {
-    components: {},
+    components: {
+      vueSeamless
+    },
     data() {
       return {
         project_id: null,
@@ -60,6 +77,34 @@
           "综合": ["#CDB79E"],
           "平台技术": ["#00B2EE"]
         },
+        // listData: [{
+        //   'title': '无缝滚动第一行无缝滚动第一行',
+        //   'date': '2017-12-16'
+        // }, {
+        //   'title': '无缝滚动第二行无缝滚动第二行',
+        //   'date': '2017-12-16'
+        // }, {
+        //   'title': '无缝滚动第三行无缝滚动第三行',
+        //   'date': '2017-12-16'
+        // }, {
+        //   'title': '无缝滚动第四行无缝滚动第四行',
+        //   'date': '2017-12-16'
+        // }, {
+        //   'title': '无缝滚动第五行无缝滚动第五行',
+        //   'date': '2017-12-16'
+        // }, {
+        //   'title': '无缝滚动第六行无缝滚动第六行',
+        //   'date': '2017-12-16'
+        // }, {
+        //   'title': '无缝滚动第七行无缝滚动第七行',
+        //   'date': '2017-12-16'
+        // }, {
+        //   'title': '无缝滚动第八行无缝滚动第八行',
+        //   'date': '2017-12-16'
+        // }, {
+        //   'title': '无缝滚动第九行无缝滚动第九行',
+        //   'date': '2017-12-16'
+        // }]
 
       }
     },
@@ -67,7 +112,13 @@
 
     },
     computed: {
-
+      classOption: function () {
+        return {
+          step: 0.6,
+          limitMoveNum: 5,
+          switchSingleStep: 105
+        }
+      }
     },
     created() {
 
@@ -96,7 +147,7 @@
           await this.getAllInstList()
           this.refreshData()
           // console.log('getVehicleGateData')
-        }, 60 * 1000)
+        }, 120 * 1000)
       },
       getInProgressInstList() {
         return new Promise((resolve, reject) => {
@@ -155,13 +206,18 @@
             this.AllInstList = [...this.AllInstList, ..._getHasDoneInstData.data]
           }
           this.AllInstList = lodash.orderBy(this.AllInstList, ['sendTime'], ['desc']);
-          if (this.AllInstList.length > 3) {
-            this.AllInstList.splice(3)
+          if (this.AllInstList.length > 10) {
+            this.AllInstList.splice(10)
           }
           this.AllInstList.forEach(item => {
             let _imgSrc = `https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id=${item.workId}&w=250`
             item['imgSrc'] = _imgSrc
-            let _typeColor = this.typecolor[item.questions_type][0]
+            // console.log(item.questions_type)
+            let _typeColor = '#CDB79E'
+            if (this.typecolor[item.questions_type] !== undefined) {
+              _typeColor = this.typecolor[item.questions_type][0]
+            }
+
             item['typeDesc'] =
               `<span style='background-color:${_typeColor}'>${item.questions_type}</span>`
           })

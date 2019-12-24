@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-
+// import requestBimApi from '@/utils/requestBimApi'
 // 短信验证码登录
 export function loginByUsername(username, password) {
   const data = {
@@ -62,3 +62,13 @@ export function getSmsCode(username) {
     data
   })
 }
+
+// 老平台和新平台的token转换
+// export function exchangeToken(data) {
+//   return requestBimApi({
+//     url: '/api/bcp/user',
+//     method: 'post',
+//     data,
+//     baseURL: 'http://admin.yidebim.com'
+//   })
+// }

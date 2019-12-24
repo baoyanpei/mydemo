@@ -246,6 +246,24 @@ export const constantRouterMap = [{
         CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
       }
     }]
+  },
+  {
+    path: '/lot5',// 此版本为模型从bim2轻量化平台获取
+    name: 'lot5',
+    component: Layout,
+    redirect: '/loT5/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/loT5/index'),
+      name: 'lot5-index',
+      meta: {
+        title: '物联网V5',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
   }
 
 

@@ -1,8 +1,15 @@
 .screen-tasks {
+  overflow: hidden;
+  height: 360px;
   position: absolute;
   top: 0px;
   padding: 20px 0px 10px 0px;
-
+  .warp {
+    // height: 260px;
+    width: 580px;
+    overflow: hidden;
+  }
+  pointer-events:-moz-only-whitespace;
   .task-item:not(:last-child) {
     border-bottom: 1px solid #705942;
     padding-bottom: 5px;
@@ -67,14 +74,17 @@
           .node2 {
             background-color: #FF0000;
           }
+
           .node3 {
             background-color: #FFCC00;
             color: #000000
           }
+
           .node5 {
             background-color: green;
             color: #FFFFFF
           }
+
           .node1 {
             background-color: gray;
             color: #000000
@@ -90,7 +100,7 @@
 
         .task-type {
           float: left;
-          width: 90px;
+          width: 120px;
 
           span {
             // background-color: #F9AF20;
@@ -102,7 +112,7 @@
 
         .task-creator {
           float: left;
-          width: 180px;
+          width: 150px;
         }
 
         .task-time {
