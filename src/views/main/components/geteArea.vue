@@ -15,7 +15,9 @@
       Gate
     },
     data() {
-      return {}
+      return {
+        deviceIDs: []
+      }
     },
     props: {
 
@@ -30,6 +32,32 @@
     },
 
     methods: {
+      initDevlist() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'devlist',
+            project_id: this.project_id
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            // console.log('QueryDatumMeter - data', data)
+            data.forEach(datum => {
+              // this.datumMeterMap.set(datum.device_id, datum)
+              if (datum.device_type === 14) {
+                // this.cameraURList.push(datum)
+                this.deviceIDs.push(datum.device_id)
+
+
+              }
+            })
+            resolve()
+          }).catch((e) => {
+            console.log(e)
+            resolve()
+          })
+
+
+        })
+      },
       receiveData(message) {
         // console.log('receive data', message)
         if (message.destinationName === this.topicCount) {
@@ -56,23 +84,39 @@
         // console.log('_gateID', _gateID)
         this.$refs[_gateID].updateData(_data)
       },
-      getProjectGatePerson() {
+      async getProjectGatePerson() {
         if (this.project_id !== null) {
+          await this.initDevlist()
           const param = {
             method: 'project_gateperson',
             project_id: this.project_id
           }
 
           this.$store.dispatch('QueryProjectGatePerson', param).then(() => {
-            //   console.log('this.projectGatePerson123', this.projectGatePerson)
-            for (let key in this.projectGatePerson) {
-              // console.log(key, this.projectGatePerson[key])
-              const GateData = this.projectGatePerson[key]
-              const _gateID = `gate${GateData.door_no}`
-              // console.log("_gateID", _gateID)
-              if (GateData !== undefined) {
-                this.$refs[_gateID].setProjectGatePerson(GateData)
+            console.log('this.projectGatePerson123', this.projectGatePerson)
+            // for (let key in this.projectGatePerson) {
+            //   // console.log(key, this.projectGatePerson[key])
+            //   const GateData = this.projectGatePerson[key]
+            //   const _gateID = `gate${GateData.door_no}`
+            //   // console.log("_gateID", _gateID)
+            //   if (GateData !== undefined) {
+            //     this.$refs[_gateID].setProjectGatePerson(GateData)
 
+            //   }
+            // }
+
+            for (let key in this.projectGatePerson) {
+              const GateData = this.projectGatePerson[key]
+
+              if (this.deviceIDs.indexOf(GateData.gate_sn) !== -1) {
+                const _gateID = `gate${GateData.door_no}`
+                // console.log("_gateID", _gateID)
+                // console.log('this.deviceIDs', this.deviceIDs)
+                // console.log('indexOf', this.deviceIDs.indexOf(GateData.gate_sn))
+                if (GateData !== undefined) {
+                  this.$refs[_gateID].setProjectGatePerson(GateData)
+
+                }
               }
             }
           }).catch(() => {
