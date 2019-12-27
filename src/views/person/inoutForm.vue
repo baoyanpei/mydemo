@@ -4,7 +4,7 @@
 </style>
 <template>
   <el-dialog :modal="false" width="520px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
-    @open="openPersonInoutDialogHandle" :visible.sync="personInoutDialog.show" title="人员考勤">
+    @open="openPersonInoutDialogHandle" :visible.sync="personInoutDialog.show" title=" 人员考勤" v-dialogDrag>
     <div id="inout-from" class="inout-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
         <el-form-item prop="InoutDaterange" label="时间范围" :rules="ruleInoutDaterange">

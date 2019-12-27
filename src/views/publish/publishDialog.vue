@@ -4,7 +4,7 @@
 </style>
 <template>
   <el-dialog :modal="false" width="550px" top="10vh" :lock-scroll="true" :close-on-click-modal="false"
-    @open="openPublishDialog" :visible.sync="publishDialog.show" title="发布管理">
+    @open="openPublishDialog" :visible.sync="publishDialog.show" title="发布管理" v-dialogDrag>
     <dutyForm></dutyForm>
     <div id="publish-dialog" class="publish-dialog">
       <el-form ref="publishForm" :model="publishForm" label-width="80px" :inline="true">

@@ -4,8 +4,8 @@
 <template>
 <div>
   <div class="left">
-    <el-tabs type="border-card">
-      <el-tab-pane :label="bannertitle">
+    <el-tabs type="border-card" v-model="activeName" @tab-click="mytask">
+      <el-tab-pane :label="bannertitle" name="first">
         <div class="taskbox1">
           <span>类别:</span>
           <template>
@@ -63,30 +63,27 @@
     </div>
       </el-tab-pane>
 
-      <el-tab-pane label="我的任务()">
+      <el-tab-pane :label="secondtitle" name="second">
         <div class="taskbox1">
-          <span>类别:</span>
-          <template>
-          <el-select v-model="value" placeholder="所有" style="width: 80px" class="btn1">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </template>
-
-      <span>类型:</span>
-      <template>
-      <el-select v-model="value2" placeholder="所有" style="width: 110px" class="btn1">
-        <el-option v-for="item in options2" :key="item.value2" :label="item.label" :value="item.value2"></el-option>
-      </el-select>
-    </template>
-
-      <span>状态:</span>
-      <template>
-      <el-select v-model="value4" placeholder="所有" style="width: 100px" class="btn1">
-        <el-option v-for="item in options4" :key="item.value4" :label="item.label" :value="item.value4"></el-option>
-      </el-select>
-      </template>
-      <el-button type="primary">查询</el-button>
-
+          <div class="details" v-for="item in boxinfo1" :key="item.workId"> <!--任务信息模块-->
+            <img :src=item.imgurl alt="">
+            <span class="titleword" @click="infoshow(item)">{{item.title}}</span>
+            <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
+            <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
+            <br>
+            <div class="peoplebox">
+              <span class="originator_span">发起人: <span style="color: #383838">{{item.sendUserName}}</span></span>
+              <!--&lt;!&ndash;header   负责人&ndash;&gt;-->
+               <!--<span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838">{{item.header}}</span></span>-->
+              <!--&lt;!&ndash;qualiter   质检人&ndash;&gt;-->
+               <!--<span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838">{{item.qualiter}}</span></span>-->
+            </div>
+            <span class="created_time">发布时间:<span style="color: #383838">{{item.sendTime}}</span></span>
+            <!--<h4>计划完成时间:{{item.endtime}}</h4>-->
+            <br>
+            <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检','ziliao':item.stateall==='资料'}">{{item.stateall}}</div>
+            <div class="logobox">{{item.questions_type}}</div>
+          </div>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -100,6 +97,9 @@
     data() {
       return {
         bannertitle:'任务大厅(0)',
+        secondtitle:"我的任务(0)",
+        activeName:'first',
+        mybox:[],//我的任务
         flow_word:'',
         qtype_word:"",
         loginname:'',
@@ -187,6 +187,18 @@
         })
         //调用接口
         this.getlistinfo()
+      },
+      secondpage2(){
+        // console.log('页面渲染页面数据',this.boxinfo1)
+        //整理筛选出需要传递的参数
+        this.postdata=[]
+        this.mybox.forEach(item=>{
+          this.postdata.push(item.workId)
+           item.imgurl='https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id='+item.workId+'&w=220'
+        })
+        console.log("shujujihe",this.postdata)
+        //调用接口
+        // this.getlistinfo()
       },
     handleSizeChange (e) {
       this.pagesize = e
@@ -321,9 +333,6 @@
         this.$store.dispatch('Allinfodictionary', _param).then((data) => {
           this.thirdinfo=data
           console.log("第三接口",this.thirdinfo)
-          // for(var i in this.thirdinfo){
-          //   console.log('---------',i,this.thirdinfo[i])
-          // }
         })
       },
 
@@ -398,14 +407,45 @@
         this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
         })
       },
-      // typechange(event){
-      //   console.log("value2值为",this.value2)
-      //   this.options2.forEach(item => {
-      //     if (item.value2 === this.value2){
-      //       console.log(item.label2)
-      //     }
-      //   })
-      // }
+      //我的任务
+      mytask(tab, event){
+        if(tab.name=='second'){
+          const _param = {
+            method: 'get_todo_list',
+            project_id: this.project_id,
+            qtype:"MatterRead,BackLog"
+          }
+          this.$store.dispatch('GetAllInstList', _param).then((data) => {
+            console.log("我的任务",data)
+            this.secondtitle="我的任务("+data.length+")"
+             this.boxinfo=[]
+            this.boxinfo1=[]
+            this.boxinfo=data
+            //事件监听flowid,判断任务类型
+            this.boxinfo.forEach(item=>{
+              // if(item.questions_type===''){
+              //   console.log('第二列表',item)
+              // }
+              if(item.flowId==="Meeting01"){
+                item.stateall='会议'
+              }
+              if(item.flowId==="ProblemFindSolve01"){
+                item.stateall='任务'
+              }
+              if(item.flowId==="SafetyInspection01"){
+                item.stateall='安全巡检'
+              }
+              if(item.flowId==="Notice01"){
+                item.stateall='通知'
+              }
+            })
+            //页面刷新自动去第一页
+            this.secondpage()
+          })
+        }else {
+          console.log(111)
+        }
+      }
     }
   }
 </script>

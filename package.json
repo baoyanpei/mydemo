@@ -61,6 +61,7 @@
     "paho.mqtt.js": "^2.0.5",
     "react": "^16.9.0",
     "screenfull": "3.3.2",
+    "scss": "^0.2.4",
     "showdown": "1.8.6",
     "simplemde": "1.11.2",
     "sortablejs": "1.7.0",

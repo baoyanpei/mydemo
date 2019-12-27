@@ -5,7 +5,7 @@
     <!-- <NowinForm></NowinForm> -->
     <el-dialog :modal="false" custom-class="ryxx-dialog" width="800px" top="1vh" :lock-scroll="true"
       :close-on-click-modal="false" @open="openPersonFullCalendarDialogHandle"
-      :visible.sync="personFullCalenderDialog.show" title="日历">
+      :visible.sync="personFullCalenderDialog.show" title="日历" v-dialogDrag>
       <PersonFullCalender></PersonFullCalender>
     </el-dialog>
     <el-dialog :modal="false" top="0.5vh" width="800px" :lock-scroll="true" :close-on-click-modal="false"

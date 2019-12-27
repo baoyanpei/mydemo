@@ -42,4 +42,14 @@
   .redicon{
     color: #29d2a4;
   }
+  .el-table th,.el-table td{
+    text-align: center;
+    border:none!important;
+  }
+  body .el-table th.gutter{
+    display: table-cell!important;
+  }
+  .el-table .cell {
+    padding: 0!important;
+  }
 }

@@ -6,7 +6,7 @@
   <div>
     <el-dialog :modal="false" custom-class="ryxx-dialog" width="700px" top="1vh" :lock-scroll="true"
       :close-on-click-modal="false" @open="openPersonNowInDialogHandle" :visible.sync="personNowinDialog.show"
-      :title="dialogTitle">
+      :title="dialogTitle" v-dialogDrag>
       <div id="nowin-dialog" class="nowin-dialog">
         <el-form ref="personInoutDialog" :model="personInoutDialog" label-width="80px" :inline="true">
           <el-form-item prop="GroupList" label="部门">
