@@ -7,6 +7,8 @@
     <el-tabs type="border-card" v-model="activeName" @tab-click="mytask">
       <el-tab-pane :label="bannertitle" name="first">
         <div class="taskbox1">
+          <el-input v-model="chaxuninput" placeholder="请输入姓名，标题搜索" style="width: 50%;display: block;margin-left:10px;margin-bottom: 0px" clearable></el-input>
+          <br>
           <span>类别:</span>
           <template>
           <el-select v-model="value" placeholder="所有" style="width: 80px" class="btn1">
@@ -37,11 +39,11 @@
             <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
             <br>
             <div class="peoplebox">
-              <span class="originator_span">发起人: <span style="color: #383838">{{item.originator}}</span></span>
+              <span class="originator_span">发起人: <span style="color: #383838" @click="handleNameClick(item.person_id1)">{{item.originator}}</span></span>
               <!--header   负责人-->
-               <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838">{{item.header}}</span></span>
+               <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838" @click="handleNameClick(item.person_id2)">{{item.header}}</span></span>
               <!--qualiter   质检人-->
-               <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838">{{item.qualiter}}</span></span>
+               <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838" @click="handleNameClick(item.person_id3)">{{item.qualiter}}</span></span>
             </div>
             <span class="created_time">发布时间:<span style="color: #383838">{{item.created}}</span></span>
             <!--<h4>计划完成时间:{{item.endtime}}</h4>-->
@@ -72,11 +74,11 @@
             <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
             <br>
             <div class="peoplebox">
-              <span class="originator_span">发起人: <span style="color: #383838">{{item.sendUserName}}</span></span>
-              <!--&lt;!&ndash;header   负责人&ndash;&gt;-->
-               <!--<span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838">{{item.header}}</span></span>-->
-              <!--&lt;!&ndash;qualiter   质检人&ndash;&gt;-->
-               <!--<span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838">{{item.qualiter}}</span></span>-->
+              <span class="originator_span" @click="handleNameClick(item.sendUserName)">发起人: <span style="color: #383838">{{item.sendUserName}}</span></span>
+              <!--header   负责人-->
+               <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838">{{item.header}}</span></span>
+              <!--qualiter   质检人-->
+               <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838">{{item.qualiter}}</span></span>
             </div>
             <span class="created_time">发布时间:<span style="color: #383838">{{item.sendTime}}</span></span>
             <!--<h4>计划完成时间:{{item.endtime}}</h4>-->
@@ -99,6 +101,8 @@
         bannertitle:'任务大厅(0)',
         secondtitle:"我的任务(0)",
         activeName:'first',
+        chaxuninput:'',
+        personlist:'',
         mybox:[],//我的任务
         flow_word:'',
         qtype_word:"",
@@ -149,6 +153,9 @@
       },
       person_info(){
         return this.$store.state.person.personInfo
+      },
+      projectPersonList() {//人员列表信息
+        return this.$store.state.project.projectPersonList
       }
     },
     watch: {
@@ -158,7 +165,7 @@
         this.thirdinterface()
         this.allpersondata()
         // console.log("this.person_info",this.person_info)
-      }
+      },
     },
     mounted(){
       if (this.project_id !== null) {
@@ -166,7 +173,7 @@
         this.getPerson()
         this.thirdinterface()
         this.allpersondata()
-
+        this.getpersonlist()
       }
     },
     methods:{
@@ -176,6 +183,17 @@
       this.allpersondata()
         // this.secondpage()
     },
+      getpersonlist(){//人员列表信息接口
+        const param = {
+          method: 'query_person_list',
+          project_id: this.project_id
+        }
+        this.$store.dispatch('QueryProjectPersons', param).then(() => {
+          console.log("人员信息projectPersonList",this.projectPersonList)
+        }).catch(() => {
+
+        })
+      },
       secondpage(){
         this.boxinfo1=this.boxinfo
         // console.log('页面渲染页面数据',this.boxinfo1)
@@ -225,6 +243,7 @@
       this.$store.dispatch('Allpersondata', _param).then((data) => {
         // console.log("第一接口返回成功")
         console.log('第一接口数据Allpersondata',data.data)
+        this.getpersonlist()
         this.infonum=data.count
         this.bannertitle="任务大厅("+data.count+")"
         this.boxinfo=[]
@@ -252,6 +271,22 @@
         this.secondpage()
       })
     },
+      handleNameClick(row) {//人物名字
+        console.log("人物列表",this.projectPersonList)
+        this.projectPersonList.forEach(item=>{
+          if(row==item.person_id){
+            this.personlist=item
+            console.log("符合的ID人",item)
+          }
+        })
+        const param = {
+          show: true,
+          ...this.personlist
+        }
+        this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
       getlistinfo(){
         const _param = {
         method: 'get_nodes_users_list',
@@ -277,7 +312,6 @@
           item["xian"]=false//负责人显示
           item["xian2"]=false//质检人显示
           item["xian3"]=false//第二类人物类型
-
           item["imgurl"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id='+item.workId+'&w=220'
           item["getinfo"]=map1.get(workId).info.flowNode[0]//获取到显示任务类型的配置数据
           item["originator"] = map1.get(workId).Start[0].userName//获取懂啊key值对应的数据   info.priority
@@ -288,18 +322,23 @@
           if(map1.get(workId).info!=undefined){
             item["value"]=map1.get(workId).info.priority//任务星级
           }
+          if(item.obj.Node2!=undefined){
+            item["person_id1"]=item.obj.Node1[0].userId//发起人ID
+          }
           if(item.flowId!=null){
             item["flowId2"]=item.flowId.slice(0,item.flowId.length-2)//截取字符，判断任务类型，和接口文档匹配
           }
           // console.log("-----node5username",item.obj.Node2[0])
           if(item.obj.Node2!=undefined){
             item["header"]=item.obj.Node2[0].userName//负责人
+            item["person_id2"]=item.obj.Node2[0].userId//负责人ID
             item.xian=true
           }else {
             item.xian=false
           }
           if(item.obj.Node5!=undefined){
             item["qualiter"]=item.obj.Node5[0].userName//质检人
+            item["person_id3"]=item.obj.Node5[0].userId//负责人ID
             item.xian2=true
           }else {
             item.xian2=false
@@ -366,7 +405,7 @@
         flow_id:this.flow_word,//value
         qtype:this.qtype_word,//完成未完成
         questions_type:this.value2,//安全，技术平台
-        keyword:"",//输入框
+        keyword:this.chaxuninput,//输入框
         page:this.currpage
       }
       this.$store.dispatch('Allpersondata', _param).then((data) => {

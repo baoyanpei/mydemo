@@ -3,9 +3,11 @@
   .topimgbox{
     width: 100%;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-start;
   }
   .topimgbox img{
-    width: 30%;
+    width: 100%;
     height: 150px;
   }
   .infobox{
@@ -188,16 +190,18 @@
   .imgbox_img1{
     width: 200px;
     height: 140px;
-    background-color: lightblue;
     float: left;
   }
   .rectification_imgbox{
     margin-top: 10px;
     width: 100%;
-    height: 140px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
   }
   .rectification{
-    /*height: 100%;*/
+    height: auto;
+    clear: both;
   }
   .statebox222{
     margin-top: 10px;
@@ -217,7 +221,6 @@
     border-radius: 50%;
     border: 1px solid #e5e5e5;
     color: #e5e5e5;
-    float: left;
     text-align: center;
     line-height: 40px;
     font-size: 20px;
@@ -262,8 +265,11 @@
             <div class="statebox_111" :class="{'statered':(taskInfoDialog.data.state==='待认领'),'stateyellow':(taskInfoDialog.data.state==='待处理'),'stategreen':(taskInfoDialog.data.state==='待质检'),'stategray':(taskInfoDialog.data.state==='已完成')}">{{taskInfoDialog.data.state}}</div>
             <!--图片1-->
               <div class="topimgbox">
-                <img :src=taskInfoDialog.data.imgurl alt="" @click="imgURL(taskInfoDialog.data.imgurl)">
+                <div v-for="item in this.imgbanner">
+                  <img :src=item.onlineurl alt="" @click="imgURL(item.onlineurl)">
+                </div>
               </div>
+            <br>
             <!--标题-->
               <span class="titleword">{{taskInfoDialog.data.title}}</span>
             <!--状态-->
@@ -295,13 +301,6 @@
               <input type="button" class="comments_btn" :value=commentvalue @click="commentfnc()">
             </div>
             <div class="receive_btn" v-show="claimbtn">认领:我来处理任务</div>
-            <!--待处理信息模块-->
-            <div class="todoinfo" v-show="todoinfoshow">
-              <el-input type="textarea" :rows="3" class="input1" placeholder="请输入内容" v-model="todotextarea"></el-input>
-              <div class="todobtn1"><i class="el-icon-plus"></i></div>
-              <div class="todobtn1"><i class="el-icon-link"></i></div>
-             <el-button type="primary" class="submitbtn">提交质检</el-button>
-            </div>
             <!--整改模块-->
             <div class="rectification" v-for="item in this.taskinfobox">
                <!--整改信息-->
@@ -314,10 +313,10 @@
                   <div class="pername_ball">{{item.firstname}}</div>
                   <span style="float: left;display: block;line-height: 40px;font-size: 16px">{{taskInfoDialog.data.header}}</span>
                 </div>
-                <!--图片集合2-->
+                <!--整改信息图片-->
                 <div class="rectification_imgbox" v-show="item[1].tpshow_1">
                   <div class="imgbox_img1" v-for="i in item[1].value">
-                    <img :src=i.imgurl111 alt="" style="height: 100%;width: 100%">
+                    <img :src=i.imgurl111 @click="imgURL(i.imgurl111)" alt="" style="height: 100%;width: 100%;margin-right: 15px;margin-top: 10px">
                   </div>
                 </div>
                 <!--整改信息文字-->
@@ -345,7 +344,7 @@
                   <!--<div class="rectification_imgbox" v-show="item.tpshow">-->
                   <div class="rectification_imgbox" v-show="item[4].tpshow">
                     <div class="imgbox_img1" v-for="o in item[4].value">
-                      <img :src=o.imgurl111 alt="" style="height: 100%;width: 100%">
+                      <img :src=o.imgurl111 @click="imgURL(o.imgurl111)" alt="" style="height: 100%;width: 100%">
                     </div>
                   </div>
                   <!--质检信息文字-->
@@ -365,6 +364,14 @@
                   </div>
               </div>
             </div>
+            <!--待处理信息模块-->
+            <div class="todoinfo" v-show="todoinfoshow">
+              <el-input type="textarea" :rows="3" class="input1" placeholder="请输入内容" v-model="todotextarea"></el-input>
+              <div class="todobtn1"><i class="el-icon-plus"></i></div>
+              <div class="todobtn1"><i class="el-icon-link"></i></div>
+             <el-button type="primary" class="submitbtn">提交质检</el-button>
+            </div>
+
           </div>
         </el-dialog>
     </div>
@@ -387,6 +394,7 @@
         progress_3_msg:"",
         progress_4:"待完成",
         progress_4_msg:"",
+        imgbanner:[],
         textarea: '',
         textarea1:'',//整改信息评论
         commentshow1:false,//整改信息输入框显示
@@ -472,7 +480,7 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
-          console.log("projectPersonList",this.projectPersonList)
+          console.log("人员信息projectPersonList",this.projectPersonList)
         }).catch(() => {
 
         })
@@ -520,6 +528,15 @@
       }
       this.$store.dispatch('GetAllInstList', _param).then((data) => {
         console.log("form表单数据",data)
+        this.imgbanner=data.form.basic[0].value
+        if(this.imgbanner.length!=0){
+          this.imgbanner.forEach(item=>{
+            item["onlineurl"]="https://buskey.cn/api/oa/workflow/thumbnail.jpg?f="+item.src+"&w=220"
+          })
+        }
+        if(this.imgbanner.length==0){
+
+        }
         this.TaskdetailsBox=data.form.modify_check
         for(var i=0;i<this.TaskdetailsBox.length;i++){
           let _index = this.TaskdetailsBox[i].count - 1
@@ -528,7 +545,6 @@
           }
           this.taskinfobox[_index].push(this.TaskdetailsBox[i])
         }
-
         this.taskinfobox.forEach(item=>{
           console.log("寻找图片地址",item)
           if(item.length==6){
@@ -679,6 +695,7 @@
         console.log("质检信息评论按钮")
       },
       handleNameClick(row) {//人物名字
+        console.log("人物名字",row)
         const param = {
           show: true,
           ...row
