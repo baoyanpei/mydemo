@@ -366,7 +366,7 @@
             </div>
             <!--待处理信息模块-->
             <div class="todoinfo" v-show="todoinfoshow">
-              <el-input type="textarea" :rows="3" class="input1" placeholder="请输入内容" v-model="todotextarea"></el-input>
+              <el-input type="textarea" :rows="3" class="input1" placeholder="请输入内容" v-model="todotextarea" style="width: 80%"></el-input>
               <div class="todobtn1"><i class="el-icon-plus"></i></div>
               <div class="todobtn1"><i class="el-icon-link"></i></div>
              <el-button type="primary" class="submitbtn">提交质检</el-button>
