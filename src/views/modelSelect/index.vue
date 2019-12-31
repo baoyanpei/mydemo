@@ -118,6 +118,9 @@
   import moment from 'moment'
   import lodash from 'lodash'
   import {
+    getToken
+  } from '@/utils/auth'
+  import {
     Message
   } from 'element-ui'
   const treeRoot = [{
@@ -146,7 +149,8 @@
         checkAll: false,
         isIndeterminate: false,
         newBuildName: '',
-        isNewBUildingShow: false
+        isNewBUildingShow: false,
+        access_token: null
       }
     },
     computed: {
@@ -181,7 +185,7 @@
     created() {
 
     },
-    mounted() {
+    async mounted() {
       // console.log('__PROJECT_ID', Cookies.get("PROJECT_ID"))
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
       this.project_id = parseInt(__PROJECT_ID)
@@ -193,6 +197,7 @@
         })()
       }
       // 
+      await this.exchangeToken(getToken())
       this.getItemListByProID()
     },
     beforeDestroy() {
@@ -201,6 +206,28 @@
       console.log('beforeDestroy')
     },
     methods: {
+      exchangeToken(token) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: "exchange_token",
+            from: 'oa',
+            token: token
+          }
+          this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+            console.log('ExchangeToken - resultData', resultData)
+            if (resultData.status === 'success') {
+              this.access_token = resultData.access_token
+              resolve()
+            } else {
+              // console.log("123123123")
+              this.tip_message = resultData.msg
+              reject(resultData.msg)
+            }
+
+          })
+        })
+
+      },
       clearData() {
         // this.treeData = []
         this.tableFilterData = []
@@ -241,7 +268,8 @@
         return new Promise((resolve, reject) => {
           const param = {
             method: 'project_items',
-            project_id: this.project_id
+            project_id: this.project_id,
+            access_token: this.access_token
           }
           this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
             // console.log('getProjectItemsAll - _itemList', _itemList)

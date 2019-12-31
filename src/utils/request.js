@@ -51,7 +51,10 @@ PC网页账号：admin_web
     // }
 
     // Do something before request is sent
-    if (store.getters.token) {
+    console.log('config.data', config.data.access_token)
+    if (config.data.access_token !== undefined) {
+      config.headers['Authorization'] = 'JWT ' + config.data.access_token
+    } else if (store.getters.token) {
       // console.log("--->", store.getters.token)
       // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
       // config.headers['X-Token'] = getToken()

@@ -64,6 +64,16 @@ export function getSmsCode(username) {
 }
 
 // 老平台和新平台的token转换
+export function exchangeToken(data) {
+  return request({
+    url: '/api/bcp/user',
+    method: 'post',
+    data,
+    baseURL: 'http://admin.yidebim.com'
+  })
+}
+
+// 老平台和新平台的token转换
 // export function exchangeToken(data) {
 //   return requestBimApi({
 //     url: '/api/bcp/user',
