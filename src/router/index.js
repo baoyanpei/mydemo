@@ -264,6 +264,24 @@ export const constantRouterMap = [{
         CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
       }
     }]
+  },
+  {
+    path: '/modelSelect',
+    name: 'modelSelect',
+    component: Layout,
+    redirect: '/modelSelect/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/modelSelect/index'),
+      name: 'model-select-index',
+      meta: {
+        title: '选择建筑',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
   }
 
 

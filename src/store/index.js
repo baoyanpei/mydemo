@@ -13,6 +13,7 @@ import msg from './modules/msg' // person
 import loT from './modules/loT' // 物联网
 import datum from './modules/datum' // 物联网
 import workflow from './modules/workflow' // 工作流
+import bim from './modules/bim' // BIM
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -31,7 +32,8 @@ const store = new Vuex.Store({
     msg,
     loT,
     datum,
-    workflow
+    workflow,
+    bim
   },
   getters
 })
