@@ -214,31 +214,31 @@
     justify-content: space-between;
   }
   .yuan{
-    width: 40px;
-    height: 40px;
-    margin-top: 20px;
+    width: 30px;
+    height: 30px;
+    margin-top: 30px;
     margin-bottom: 20px;
     border-radius: 50%;
     border: 1px solid #e5e5e5;
     color: #e5e5e5;
     text-align: center;
-    line-height: 40px;
+    line-height: 30px;
     font-size: 20px;
     float: left;
   }
   .span_name{
     width: 60px;
     height: 40px;
-    margin-top: 30px;
+    margin-top: 35px;
     text-align: center;
     font-size: 14px;
     float: left;
     margin-left: 10px;
   }
   .line_div{
-    width: 70px;
+    width: 40px;
     height: 2px;
-    margin-top: 39px;
+    margin-top: 45px;
     background-color: #e5e5e5;
     float: left;
   }
@@ -253,6 +253,38 @@
   }
   .bggreen{
     background-color: #1abc9c;
+  }
+
+
+  .el-row {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: yellowgreen;
+  }
+  .bg-purple {
+    background: yellowgreen;
+  }
+  .bg-purple-light {
+    background: yellowgreen;
+  }
+  .grid-content {
+    border-radius: 4px;
+    text-align: center;
+    line-height: 36px;
+    font-size: 20px;
+    color: #fff;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: yellowgreen;
   }
 </style>
 <template>
@@ -300,7 +332,6 @@
               <el-input type="textarea" :rows="1" placeholder="请输入内容" v-model="textarea" class="comments_input" v-show="commentshow"></el-input>
               <input type="button" class="comments_btn" :value=commentvalue @click="commentfnc()">
             </div>
-            <div class="receive_btn" v-show="claimbtn">认领:我来处理任务</div>
             <!--整改模块-->
             <div class="rectification" v-for="item in this.taskinfobox">
                <!--整改信息-->
@@ -371,7 +402,9 @@
               <div class="todobtn1"><i class="el-icon-link"></i></div>
              <el-button type="primary" class="submitbtn">提交质检</el-button>
             </div>
-
+            <el-row :gutter="10" v-show="claimbtn">
+              <el-col v-for="item in this.formdata" :span=item.spannum><div class="grid-content bg-purple" @click="tijiaofnc(item)">{{item.buttonName}}</div></el-col>
+            </el-row>
           </div>
         </el-dialog>
     </div>
@@ -410,7 +443,12 @@
         taskinfobox:[],//整改信息整理填充进
         commentsbox1:[],
         commentsbox2:[],
+        formdata:[],//form表单返回数据
         numarr:[],
+        btnform:[],
+        btnsubid:'',
+        btnworkid:'',
+        btnformnode:[],
         pinglunarr:[]
       }
     },
@@ -523,11 +561,27 @@
         method: 'get_flow_work',
         project_id: this.project_id,
         work_id:this.taskInfoDialog.data.workId,
-        track_id:'',
-        subjectionId:''
+        track_id:this.taskInfoDialog.data.trackId,
+        subjectionId:this.taskInfoDialog.data.subjectionId
       }
       this.$store.dispatch('GetAllInstList', _param).then((data) => {
         console.log("form表单数据",data)
+        this.btnform=data.form
+        this.btnformnode=data.flowNode
+        this.btnsubid=data.subjectionId
+        this.btnworkid=data.workId
+        this.formdata=data.flowButtons
+        console.log("this.fordate",this.formdata)
+        if(this.formdata!==""){
+          let num=this.formdata.length
+          this.formdata.forEach(item=>{
+            item["spannum"]=24/num
+            console.log("formdata",item)
+          })
+          this.claimbtn=true
+        }else {
+          this.claimbtn=false
+        }
         this.imgbanner=data.form.basic[0].value
         if(this.imgbanner.length!=0){
           this.imgbanner.forEach(item=>{
@@ -642,11 +696,6 @@
         }
         console.log("---------<><><><><><",this.pinglunarr)
         console.log("显示评论列表",this.commentsbox2)
-        if(this.taskInfoDialog.data.state==="待认领"){
-          this.claimbtn=true
-        }else {
-          this.claimbtn=false
-        }
         if(this.person_info.person.name!==""){
           // console.log("____________",this.taskInfoDialog.data.header===this.person_info.person.name)
           if(this.taskInfoDialog.data.header===this.person_info.person.name){
@@ -706,6 +755,20 @@
       },
       imgURL(index){
         window.open(index)
+      },
+      tijiaofnc(index){//提交按钮函数
+        const _param = {
+          method: 'submit_work',
+          project_id: this.project_id,
+          buttonAction:index,
+          form:this.btnform,
+          subjectionId:this.btnsubid,
+          workId:this.btnworkid,
+          flowNode:this.btnformnode,
+        }
+        this.$store.dispatch('GetAllInstList', _param).then((data) => {
+          console.log("按钮提交数据成功",data)
+        })
       }
     }
   }

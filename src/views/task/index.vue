@@ -31,9 +31,9 @@
           </template>
           <el-button type="primary" @click="queryFun">查询</el-button>
 
-          <div class="details" v-for="item in boxinfo1" :key="item.workId"> <!--任务信息模块-->
+          <div class="details" v-for="item in boxinfo1" @click="infoshow(item)"> <!--任务信息模块   @click="infoshow(item)"-->
             <img :src=item.imgurl alt="">
-            <span class="titleword" @click="infoshow(item)">{{item.title}}</span>
+            <span class="titleword">{{item.title}}</span>
             <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
             <!--<div class="statebox">{{item.state}}</div>-->
             <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
@@ -67,14 +67,14 @@
 
       <el-tab-pane :label="secondtitle" name="second">
         <div class="taskbox1">
-          <div class="details" v-for="item in boxinfo1" :key="item.workId"> <!--任务信息模块-->
+          <div class="details" v-for="(item,index) in boxinfo" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
             <img :src=item.imgurl alt="">
-            <span class="titleword" @click="infoshow(item)">{{item.title}}</span>
+            <span class="titleword">{{item.title}}</span>
             <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
             <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
             <br>
             <div class="peoplebox">
-              <span class="originator_span" @click="handleNameClick(item.sendUserName)">发起人: <span style="color: #383838">{{item.sendUserName}}</span></span>
+              <span class="originator_span" @click="handleNameClick(item.sendUserName)">发起人: <span style="color: #383838">{{item.originator}}</span></span>
               <!--header   负责人-->
                <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838">{{item.header}}</span></span>
               <!--qualiter   质检人-->
@@ -273,10 +273,11 @@
     },
       handleNameClick(row) {//人物名字
         console.log("人物列表",this.projectPersonList)
+        console.log("被选中的人",row)
         this.projectPersonList.forEach(item=>{
           if(row==item.person_id){
             this.personlist=item
-            console.log("符合的ID人",item)
+            console.log("符合的ID人",item.name)
           }
         })
         const param = {
@@ -330,6 +331,7 @@
           }
           // console.log("-----node5username",item.obj.Node2[0])
           if(item.obj.Node2!=undefined){
+            item["firstname"]=item.obj.Start[0].userName
             item["header"]=item.obj.Node2[0].userName//负责人
             item["person_id2"]=item.obj.Node2[0].userId//负责人ID
             item.xian=true
@@ -452,7 +454,7 @@
           const _param = {
             method: 'get_todo_list',
             project_id: this.project_id,
-            qtype:"MatterRead,BackLog"
+            qtype:"TodoList,BackLog,MatterRead"
           }
           this.$store.dispatch('GetAllInstList', _param).then((data) => {
             console.log("我的任务",data)

@@ -23,8 +23,9 @@
       type="selection"
       width="55">
     </el-table-column>
+       <!--prop="index"-->
     <el-table-column
-      prop="index"
+       prop="id"
       label="序号"
       width="50">
     </el-table-column>
