@@ -1,0 +1,138 @@
+.markup-tools {
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    z-index: 1000;
+  
+    .markup-tools-main {
+  
+      width: 423px;
+      height: 73px;
+      border: 1px solid #dddddd;
+      border-radius: 5px;
+      background: #FFFFFF;
+      font-size: 12px;
+      color: #2f2f2f;
+      padding: 5px;
+  
+      .title-area {
+        border-bottom: 1px solid #dbdbdb;
+        padding: 2px 0px 4px 0px;
+  
+  
+  
+      }
+  
+      .tools-main {
+        margin-top: 8px;
+        margin-left: 5px;
+  
+        .tools-button {
+          width: 32px;
+          height: 32px;
+          float: left;
+          text-align: center;
+          line-height: 30px;
+          margin-right: 10px;
+  
+          .tools-icon {
+            font-size: 30px;
+            font-weight: 100;
+          }
+        }
+      }
+    }
+  
+    .markup-tools-square {
+      /*小的三角形*/
+      left: 15px;
+      top: -8px;
+      position: relative;
+      width: 0;
+      height: 0;
+      border: 10px solid;
+      border-color: transparent transparent #FFFFFF;
+      z-index: 0;
+    }
+  
+    .markup-tools-ext {
+      width: 160px;
+      height: 30px;
+      // border: 1px solid #dddddd;
+      border-radius: 5px;
+      background: #FFFFFF;
+      font-size: 12px;
+      top: -10px;
+      position: relative;
+      // margin-top: 15px;
+      z-index: 1;
+  
+      .tools-button {
+        width: 15px;
+        height: 15px;
+        float: left;
+        text-align: center;
+        line-height: 30px;
+        margin-right: 10px;
+  
+  
+        .peng-dot1 {
+          width: 6px;
+          height: 6px;
+          border: 1px solid #c2c2c2;
+          border-radius: 100px;
+          background-color: #c2c2c2;
+          // opacity: 0.5;
+          margin: 12px;
+        }
+  
+        .peng-dot2 {
+          width: 8px;
+          height: 8px;
+          border: 1px solid #c2c2c2;
+          border-radius: 100px;
+          background-color: #c2c2c2;
+          // opacity: 0.5;
+          margin: 11px;
+        }
+  
+        .peng-dot3 {
+          width: 12px;
+          height: 12px;
+          border: 1px solid #c2c2c2;
+          border-radius: 100px;
+          background-color: #c2c2c2;
+          // opacity: 0.5;
+          margin: 9px;
+        }
+  
+        .color-rectangle1 {
+          width: 12px;
+          height: 12px;
+          // border: 1px solid #c2c2c2;
+          background-color: #FF0000;
+          // opacity: 0.5;
+          margin: 9px;
+        }
+  
+        .color-rectangle2 {
+          width: 12px;
+          height: 12px;
+          // border: 1px solid #c2c2c2;
+          background-color: #0000FF;
+          // opacity: 0.5;
+          margin: 9px;
+        }
+  
+        .color-rectangle3 {
+          width: 12px;
+          height: 12px;
+          // border: 1px solid #c2c2c2;
+          background-color: rgb(0, 247, 62);
+          // opacity: 0.5;
+          margin: 9px;
+        }
+      }
+    }
+  }
+  

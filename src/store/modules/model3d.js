@@ -33,9 +33,14 @@ const model3d = {
     modelDetailDialog: { // model-detail
       show: false,
       data: {}
-    }
+    },
+    modelDisplayData: null, // 模型页显示需要的参数
   },
   mutations: {
+    SET_MODEL_DISPLAY_DATA: async (state, data) => { // 花名册
+      state.modelDisplayData = data
+      console.log('modelDisplayData', state.modelDisplayData)
+    },
     SET_MODEL_DETAIL_DIALOG: async (state, data) => { // 人员考勤
       state.modelDetailDialog = data
       console.log("datadatadata", data)
@@ -150,6 +155,18 @@ const model3d = {
   },
 
   actions: {
+    SetModelDisplayData({
+      commit,
+      rootState
+    }, param) {
+      return new Promise((resolve, reject) => {
+
+        console.log('SetModelDetailDialog')
+        // return
+        commit('SET_MODEL_DISPLAY_DATA', param)
+        resolve()
+      })
+    },
     SetModelDetailDialog({
       commit,
       rootState

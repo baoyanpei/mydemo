@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 import VueWorker from 'vue-worker'
-import './directives.js'//窗口拖動
+import './directives.js' //窗口拖動
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import Element from 'element-ui'
@@ -56,11 +56,21 @@ import {
   faDesktop,
   faNetworkWired,
   faMagic,
-  faCrosshairs
+  faCrosshairs,
+  faLongArrowAltUp,
+  faSignature,
+  faFont
 } from '@fortawesome/free-solid-svg-icons'
+
+import {
+  faCircle,
+  faSquare,
+  faSave
+
+} from '@fortawesome/free-regular-svg-icons'
 // 图标来源
 // https://fontawesome.com/icons?d=gallery&s=solid&m=free
-library.add(faQrcode, faDesktop, faMagic, faNetworkWired, faCalendarCheck, faUser, faCrosshairs, faHome, faUserCog, faChartLine, faChartBar, faMobileAlt, faCoffee, faUserSecret, faCalendarAlt, faBookOpen, faAddressCard, faCalendarCheck, faCalendarPlus, faStreetView, faListAlt)
+library.add(faQrcode, faDesktop, faMagic, faCircle, faSquare, faLongArrowAltUp, faSignature, faFont, faSave, faNetworkWired, faCalendarCheck, faUser, faCrosshairs, faHome, faUserCog, faChartLine, faChartBar, faMobileAlt, faCoffee, faUserSecret, faCalendarAlt, faBookOpen, faAddressCard, faCalendarCheck, faCalendarPlus, faStreetView, faListAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('icon', Icon)
 Vue.use(VueWorker)
