@@ -31,9 +31,9 @@
           </template>
           <el-button type="primary" @click="queryFun">查询</el-button>
 
-          <div class="details" v-for="item in boxinfo1" @click="infoshow(item)"> <!--任务信息模块   @click="infoshow(item)"-->
+          <div class="details" v-for="item in boxinfo1" @click="infoshow(item)"> <!--任务信息模块-->
             <img :src=item.imgurl alt="">
-            <span class="titleword">{{item.title}}</span>
+            <span class="titleword" @click="infoshow(item)">{{item.title}}</span>
             <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
             <!--<div class="statebox">{{item.state}}</div>-->
             <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
@@ -273,7 +273,6 @@
     },
       handleNameClick(row) {//人物名字
         console.log("人物列表",this.projectPersonList)
-        console.log("被选中的人",row)
         this.projectPersonList.forEach(item=>{
           if(row==item.person_id){
             this.personlist=item

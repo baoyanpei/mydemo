@@ -403,7 +403,7 @@
              <el-button type="primary" class="submitbtn">提交质检</el-button>
             </div>
             <el-row :gutter="10" v-show="claimbtn">
-              <el-col v-for="item in this.formdata" :span=item.spannum><div class="grid-content bg-purple" @click="tijiaofnc(item)">{{item.buttonName}}</div></el-col>
+              <el-col v-for="item in this.formdata" :span=item.spannum :key="item.actionData.workId"><div class="grid-content bg-purple" @click="tijiaofnc(item)">{{item.buttonName}}</div></el-col>
             </el-row>
           </div>
         </el-dialog>
