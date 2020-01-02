@@ -62,7 +62,8 @@ export function getViewpointsByFileId(data) {
   return request({
     url: '/api/bcp/web',
     method: 'post',
-    data: data
+    data: data,
+    baseURL: 'http://admin.yidebim.com'
   })
 }
 
