@@ -1,0 +1,391 @@
+<style lang="scss">
+    @import "./xcxShow";
+  
+  </style>
+  <template>
+    <div id="model-display-index" class="model-display-index" style="margin: 0px;">
+      <div id="viewer-local"></div>
+      <div style="width:100vw; height:100vh;display:none;top:0px;left:0px;">
+        <canvas id="snapshot" style="position:absolute;"></canvas>
+      </div>
+      <div v-if="isShowViewPointArea" class="viewPointShowArea">
+        <div class="viewPointTitle">
+          <div class="title">
+            <span v-if="ViewPointType===2">普通视点</span>
+            <span v-if="ViewPointType===1">标定项目位置标准视点</span>
+            <span v-show="viewPointTitleName!==''">> {{viewPointTitleName}}</span> </div>
+        </div>
+        <!-- <img v-bind:src="viewPointImgUrl" class="viewPointImg" /> -->
+      </div>
+    </div>
+  </template>
+  
+  <script>
+    // let element = null; // document.getElementById('viewer-local');
+    // let viewer = null; //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+    import Cookies from 'js-cookie'
+    let Base64 = require('js-base64').Base64
+    export default {
+      directives: {
+      },
+      name: 'point-view-xcx-show',
+      components: {
+      },
+      data() {
+        return {
+          viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+          globalOffset: null,
+          urns: [],
+          element: null, //document.getElementById('viewer-local');
+          project_id: '',
+          token: '',
+          ViewPointType: 2, //2 普通视点
+          modelData: null,
+          itemList: [],
+          itemCurrentFileIdList: [], //当前显示模型的FILE
+          itemInfoList: [],
+          loadingSaveViewPoint: false, // 保存视点按钮加载
+          config: {
+            extensions: [
+              // "Autodesk.Viewing.ZoomWindow",
+              // "markup3d",
+              // "Autodesk.Section",
+              "Autodesk.Viewing.MarkupsCore",
+              // "Autodesk.Viewing.AxisHelper"
+            ],
+            disabledExtensions: {
+              measure: false,
+              section: false,
+            },
+            memory: {
+              limit: 32 * 1024 // 32 GB
+            }
+          },
+          options: {
+            env: 'Local',
+            offline: 'true',
+            useConsolidation: true,
+            useADP: false
+          },
+          MarkupsCore: null,
+          isShowToolbarMarker: false, //视点黑色工具条
+          isShowToolbarMarkerStyle: false, // 视点编辑工具条
+          isShowToolbarRestore: false,
+          isShowToolbarRestore2: false,
+          isShowViewPointArea: false,
+          isShowViewPointThumbArea: false, // 缩略图
+          isShowSaveMarkerArea: false, // 保存视点区域
+          markupsPersist: null,
+          viewerStatePersist: null,
+          nsu: null,
+          styleAttributes: ['stroke-width', 'stroke-color', 'stroke-opacity', 'stroke-linejoin', 'font-family',
+            'font-style', 'fill-opacity', 'font-size'
+          ],
+          styleObject: null,
+          markerStyle: {
+            strokeColor: '#FF0000',
+            strokeWidth: 1,
+            fontSize: 12
+          },
+          saveStatus: null,
+          saveMarkupStatus: null,
+          saveMarkupData: null,
+          startedRotate: false,
+          viewPointName: '', // 视点的标题
+          viewPointTitleName: '', //标题栏显示的视点名字
+          viewPointImgUrl: '',
+          isShowOldViewPoint: false //是否显示的是老的视点
+        }
+      },
+      computed: {
+        ViewPointCurrentShow() { // 视角列表选择的结果
+          return this.$store.state.viewPoint.ViewPointCurrentShow
+        },
+        personInfo() {
+          return this.$store.state.person.personInfo
+        }
+      },
+      created() {
+  
+      },
+      watch: {
+        ViewPointCurrentShow: { // 视角列表选择的结果发生改变
+          handler: function (newVal, oldVal) {
+            console.info('value changed ', newVal)
+            this.ShowViewPoint()
+            // if (newVal === true) {
+            // this.initData()
+            // this.getPersonInfo()
+            // }
+  
+          },
+          deep: true
+        },
+      },
+      mounted() {
+        const __PROJECT_ID = Cookies.get("PROJECT_ID")
+        this.project_id = parseInt(__PROJECT_ID)
+        this.init()
+  
+      },
+      beforeDestroy() {},
+      destroyed() {},
+      methods: {
+        async init() {
+          // this.project_id = 10000
+          let MODEL_DISPLAY_DATA = Cookies.get('MODEL_DISPLAY_DATA')
+          if (MODEL_DISPLAY_DATA === undefined) {
+            this.$router.push({
+              path: '/projectSelect'
+            })
+            return
+          } else {
+            this.modelData = JSON.parse(MODEL_DISPLAY_DATA)
+          }
+          this.itemList = this.modelData.item_list
+          console.log('this.itemList', this.itemList)
+          let itemIDList = []
+          this.itemList.forEach(item => {
+            itemIDList.push(item.ITEM_ID)
+            this.itemCurrentFileIdList.push(item.FILE_ID)
+          })
+          console.log('itemIDList', itemIDList, itemIDList.join(','))
+          await this.getItemInfoListByItemIDs(itemIDList.join(','))
+          // console.log('this.itemInfoList', this.itemInfoList)
+          let _urlList = this.getModelUrl()
+          // console.log('_urlList', _urlList)
+          if (_urlList.length !== 0) {
+            await this.init3DView(_urlList)
+            console.log('init3DView - complete')
+            this.viewer.addEventListener(
+              Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+              this.onSelectionChanged
+            );
+  
+          } else {
+  
+          }
+  
+        },
+        init3DView(modelURLList) {
+          return new Promise((resolve, reject) => {
+            this.urns = modelURLList
+            Autodesk.Viewing.Initializer(this.options, async () => {
+              this.element = document.getElementById('viewer-local');
+              this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
+              // this.subscribeToAllEvents()
+              var startedCode = this.viewer.start();
+              if (startedCode > 0) {
+                console.error('Failed to create a Viewer: WebGL not supported.');
+                return;
+              }
+              let _Plist = []
+              // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
+              // onLoadSuccess, onLoadError);
+              for (var i = 0; i < modelURLList.length; i++) {
+                let p = await this.loadModel(modelURLList[i], i)
+                _Plist.push(p)
+  
+              }
+              Promise.all(_Plist).then(result => {
+                console.log("Promise.all", result);
+                // _viewPointList.forEach(itemList => {
+                //   this.viewPointAllList = [...this.viewPointAllList, ...itemList]
+                // })
+                resolve()
+                // console.log("this.viewPointAllList", this.viewPointAllList);
+              })
+            });
+  
+          })
+        },
+        loadModel(modelURL, index) {
+          return new Promise((resolve, reject) => {
+            const modelOpts = {
+              placementTransform: new THREE.Matrix4(),
+              globalOffset: {
+                x: 0,
+                y: 0,
+                z: 0
+              }
+            };
+            console.log('iiiiii', index)
+            this.viewer.loadModel(modelURL, modelOpts, resLoadSuccess => {
+              if (index === 0) {
+                this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+                this.viewer.setGroundShadow(false)
+                this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
+                //unloadModel(model)
+                if (!this.viewer.overlays.hasScene('custom-scene')) {
+                  this.viewer.overlays.addScene('custom-scene');
+                }
+                this.saveStatus = JSON.stringify(this.viewer.getState());
+                // this.addCustomToolBar()
+                // this.addViewpointToolBar()
+              } 
+              resolve(index)
+            }, this.onLoadError);
+  
+  
+          })
+        },
+        onLoadError(event) {
+          console.log('fail');
+        },
+        onSelectionChanged(event) {
+          // console.log('this.viewer', this.viewer)
+          console.log('event1', event)
+          let _dbIds = event.dbIdArray
+  
+          // Asyncronous method that gets object properties
+          // 异步获取模型的属性
+          this.viewer.getProperties(_dbIds[0],
+            function (elements) {
+              var dbid = elements.dbId;
+            })
+        },
+        getModelUrl() {
+          let _urlList = []
+          // console.log('this.project_id', this.project_id)
+          // console.log('this.itemInfoList', this.itemInfoList)
+          this.itemInfoList.forEach(itemInfo => {
+            // console.log('itemInfo', itemInfo)
+            // 服务端地址转换
+            // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
+            _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+            // 本地地址转换
+            // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
+          });
+          return _urlList
+        },
+        getItemInfoListByItemIDs(item_ids) {
+          // console.log('this.project_id', this.project_id)
+          return new Promise((resolve, reject) => {
+            const param = {
+              method: 'GetItemInfoListByItemIDs',
+              // project_id: this.project_id,
+              item_id: item_ids
+  
+            }
+            this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
+              console.log('_itemList_itemList', _itemList)
+              _itemList.forEach(build => {
+                this.itemList.forEach(item => {
+                  if (item.FILE_ID === build.FILE_ID) {
+                    this.itemInfoList.push(build)
+                  }
+                })
+  
+              });
+              console.log('this.itemInfoList', this.itemInfoList)
+              resolve()
+            })
+          })
+        },
+        getItemInfoListByProID(file_ids) {
+          // console.log('this.project_id', this.project_id)
+          this.itemInfoList = []
+          return new Promise((resolve, reject) => {
+            const param = {
+              method: 'GetItemInfoListByProID',
+              project_id: this.project_id
+              // item_id: item_ids
+  
+            }
+            this.$store.dispatch('GetItemInfoListByProID', param).then((_itemList) => {
+              console.log('_itemList_itemList', _itemList)
+              _itemList.forEach(build => {
+                file_ids.forEach(file_id => {
+                  if (file_id === build.FILE_ID) {
+                    this.itemInfoList.push(build)
+                  }
+                })
+  
+              });
+              console.log('this.itemInfoList111', this.itemInfoList)
+              resolve()
+            })
+          })
+        },
+        //显示视点
+        async ShowViewPoint() {
+          console.log('ShowViewPoint', this.ViewPointCurrentShow)
+          console.log('this.itemList', this.itemList)
+          /*
+          let files_id_list = JSON.parse(this.ViewPointCurrentShow.FILE_IDS)
+          console.log('files_id_list', files_id_list)
+          console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
+          if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
+            this.itemCurrentFileIdList.forEach(item => {
+              this.viewer.unloadModel(this.viewer.model)
+            })
+  
+  
+            this.itemCurrentFileIdList = files_id_list
+            // return
+            await this.getItemInfoListByProID(files_id_list)
+            // console.log('this.itemInfoList', this.itemInfoList)
+            let _urlList = this.getModelUrl()
+            // console.log('_urlList', _urlList)
+            if (_urlList.length !== 0) {
+              await this.init3DView(_urlList)
+  
+              console.log('init3DView - complete')
+            }
+          }*/
+  
+          // return
+          this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
+            this.isShowToolbarMarker = false
+            this.isShowToolbarMarkerStyle = false
+            this.isShowViewPointArea = true
+            console.log('ViewPointCurrentShow', this.ViewPointCurrentShow)
+            this.ViewPointType = this.ViewPointCurrentShow.TYPE
+            this.viewPointTitleName = this.ViewPointCurrentShow.NAME
+            this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
+            console.log('this.markupsExt', this.markupsExt)
+            // markupsExt.deleteMarkup()
+            this.markupsExt.clear()
+            this.markupsExt.leaveEditMode();
+            this.markupsExt.hide()
+            this.isShowToolbarRestore = false
+            this.isShowToolbarRestore2 = false
+            this.isShowViewPointThumbArea = false
+            this.isShowSaveMarkerArea = false
+  
+            let _marekup_svg = Base64.decode(this.ViewPointCurrentShow.SVG)
+            let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentShow.CAMERA_INFO))
+            // let picBase64 = picture_info.base64
+            this.viewPointImgUrl = this.ViewPointCurrentShow.pictureFullSrc
+            console.log('camera_info', camera_info)
+            this.viewer.restoreState(camera_info); //it fails to restore state
+            // markupsExt.viewer.impl.invalidate(true);
+            this.isShowToolbarRestore = true
+            this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+            setTimeout(() => {
+  
+  
+  
+  
+              markupsExt.leaveEditMode();
+              markupsExt.show();
+              markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointCurrentShow.ID);
+              // this.enterMarkerEditMode()
+              this.isShowOldViewPoint = true
+  
+  
+  
+            }, 1000);
+          })
+  
+  
+  
+  
+  
+        }
+  
+      }
+    }
+  
+  </script>
+  
