@@ -20,7 +20,7 @@
             </el-button>
             <el-button v-if="itemListSelected.length===0" size="small" disabled>合并显示选中的模型</el-button>
 
-            <el-button type="primary" size="small" @click="openUploadModelDialogHandle">上传模型</el-button>
+            <!-- <el-button type="primary" size="small" @click="openUploadModelDialogHandle">上传模型</el-button> -->
 
             <el-button-group style="margin-left: 100px;">
               <!-- <el-button size="small" @click="addBuildingHandle">创建建筑</el-button> -->
@@ -50,7 +50,7 @@
                   disabled></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column prop="name" label="建筑名" width="350">
+            <el-table-column prop="name" label="建筑名" width="450">
               <template slot-scope="scope">
                 <!-- <div v-if="scope.row.name === ''">
                     <el-input ref="newBuildName" v-model="newBuildName" placeholder="请输入建筑名" size="small"></el-input>
@@ -60,7 +60,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="oper" label="操作" width="150" align="left">
+            <!-- <el-table-column prop="oper" label="操作" width="150" align="left">
               <template slot-scope="scope">
                 <el-button type="primary" size="small" icon="el-icon-view"
                   v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
@@ -87,24 +87,24 @@
 
 
               </template>
+            </el-table-column> -->
+            <el-table-column prop="version" label="版本" width="100" align="center">
             </el-table-column>
-            <el-table-column prop="version" label="版本" width="60" align="center">
-            </el-table-column>
-            <el-table-column prop="status_display" label="状态" width="120" align="center">
+            <!-- <el-table-column prop="status_display" label="状态" width="120" align="center">
               <template slot-scope="scope">
                 <div v-bind:class="scope.row.status_css">{{scope.row.status_display}}</div>
               </template>
-            </el-table-column>
-            <el-table-column prop="upload_name" label="上传人" width="120" align="center">
+            </el-table-column> -->
+            <el-table-column prop="upload_name" label="上传人" width="150" align="center">
             </el-table-column>
             <!-- <el-table-column prop="address" label="大小" width="120">
               </el-table-column> -->
-            <el-table-column label="上传时间" width="220" align="center">
+            <el-table-column label="上传时间" width="250" align="center">
               <template slot-scope="scope">{{ scope.row.up_time }}</template>
             </el-table-column>
-            <el-table-column label="处理时间" width="220" align="center">
+            <!-- <el-table-column label="处理时间" width="220" align="center">
               <template slot-scope="scope">{{ scope.row.process_time }}</template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
         </el-row>
       </div>
