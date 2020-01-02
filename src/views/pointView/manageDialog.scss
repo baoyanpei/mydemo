@@ -1,0 +1,105 @@
+.view-point-manage-dialog {
+  .tip-message {
+    text-align: center;
+    line-height: 300px;
+  }
+
+
+  .el-dialog__body {
+    color: #606266 !important;
+    padding: 2px 0px;
+    // height: calc(100vh - 100px);
+  }
+
+  .el-dialog__wrapper {
+    padding-left: calc(100vw - 500px) !important;
+  }
+
+  .el-tabs {
+    width: 265px;
+    margin: 0px auto;
+
+    .el-tabs__header {
+      margin: 0 0 10px;
+    }
+
+    .el-tabs__item {
+      padding: 0px;
+      width: 87px;
+      text-align: center;
+
+
+    }
+
+    .el-tabs__nav-wrap::after {
+      background-color: #FFFFFF;
+    }
+
+    .el-tabs__item.is-active {
+      color: #2cbc9d;
+    }
+
+    .el-tabs__active-bar {
+      background-color: #2cbc9d;
+    }
+
+    .el-tabs__item:hover {
+      color: #2cbc9d;
+      cursor: pointer;
+    }
+  }
+
+  .view-point-list {
+    overflow: auto;
+    // height: 100%;
+    height: calc(100vh - 240px);
+    background-color: #f2f2f2;
+    padding: 20px 0px 0px 0px;
+
+    .bgShow {
+      background-color: #bbefe5 !important;
+    }
+
+    .view-point-item {
+      margin: 0px 10px 10px 10px;
+      padding: 5px 0px 0px 0px;
+      background-color: #FFFFFF;
+
+      .grid-content {
+        line-height: 18px;
+      }
+
+      .photo {
+        width: 60px;
+        height: 50px;
+        cursor: pointer;
+      }
+
+      .info-title {
+        font-weight: 600;
+      }
+
+      .info-create {
+        font-size: 12px;
+      }
+
+      .info-date {
+        font-size: 12px;
+      }
+    }
+
+    .view-point-delete {
+      height: 60px;
+      width: 100%;
+
+      text-align: center;
+      line-height: 60px;
+
+      .icon-delete {
+        color: red;
+        cursor: pointer;
+      }
+    }
+  }
+
+}

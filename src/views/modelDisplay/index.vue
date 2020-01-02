@@ -417,9 +417,10 @@
           buttonSnapshot.setToolTip('截屏')
   
           // SubToolbar
+          /*
           let subToolbar = new Autodesk.Viewing.UI.ControlGroup('my-custom-view-toolbar')
           subToolbar.addControl(buttonShare)
-  
+          */
   
           // subToolbar.addControl(buttonRestoreMarker)
   
@@ -427,7 +428,7 @@
   
   
           // Add subToolbar to main toolbar
-          this.viewer.toolbar.addControl(subToolbar)
+          // this.viewer.toolbar.addControl(subToolbar)
         },
         addViewpointToolBar() {
   

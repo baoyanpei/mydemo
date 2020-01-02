@@ -14,6 +14,7 @@ import loT from './modules/loT' // 物联网
 import datum from './modules/datum' // 物联网
 import workflow from './modules/workflow' // 工作流
 import bim from './modules/bim' // BIM
+import viewPoint from './modules/viewPoint' // 视点
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -33,7 +34,8 @@ const store = new Vuex.Store({
     loT,
     datum,
     workflow,
-    bim
+    bim,
+    viewPoint
   },
   getters
 })

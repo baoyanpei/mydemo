@@ -35,6 +35,10 @@ import 'echarts/theme/infographic'
 
 import VueClipboard from 'vue-clipboard2'
 
+// 拖拽弹窗
+import elDragDialog from './directive/el-dragDialog/index'
+
+Vue.use(elDragDialog)
 
 import {
   faUser,

@@ -40,6 +40,9 @@
 
     <!--摄像头画面dialog-->
     <VideoDialog></VideoDialog>
+
+    <!--视点管理dialog-->
+    <PointViewManageDialog></PointViewManageDialog>
   </div>
 </template>
 
@@ -82,6 +85,9 @@
   // 摄像头画面dialog
   import VideoDialog from './views/loT/videoDialog'
 
+  // 视点管理dialog
+  import PointViewManageDialog from './views/pointView/manageDialog'
+
   export default {
     name: 'App',
     components: {
@@ -102,7 +108,8 @@
       PersonListDialog,
       WorktimeFullCalendarDialog,
       PublishDialog,
-      VideoDialog
+      VideoDialog,
+      PointViewManageDialog
     },
     directives: {
       elDragDialog
