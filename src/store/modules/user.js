@@ -94,6 +94,17 @@ const user = {
         })
       })
     },
+    // 通过小程序的token登录
+    LoginByXcxToken({
+      commit
+    }, param) {
+      const access_token = param.access_token.trim()
+      return new Promise((resolve, reject) => {
+        // console.log('paramparam1234-token', token)
+        commit('SET_TOKEN', access_token)
+        resolve()
+      })
+    },
     // 获取用户信息
     GetUserInfo({
       commit,

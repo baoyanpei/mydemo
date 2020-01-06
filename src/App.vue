@@ -147,7 +147,7 @@
     watch: {
       '$route'(to, from) {
         console.log("totototo", to)
-        if (to.name !== "login" && to.name !== "wxbindtip" && this.personInfo === null) {
+        if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && this.personInfo === null) {
           this.getPerson()
         }
         if (from.name === 'lot2-index' || from.name === 'lot3-index' || from.name === 'lot4-index' || from.name === 'lot5-index') {

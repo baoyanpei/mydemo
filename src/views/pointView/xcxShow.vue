@@ -24,6 +24,9 @@
 <script>
   // let element = null; // document.getElementById('viewer-local');
   // let viewer = null; //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+  import {
+    setToken
+  } from '@/utils/auth'
   import Cookies from 'js-cookie'
   let Base64 = require('js-base64').Base64
   export default {
@@ -32,6 +35,7 @@
     components: {},
     data() {
       return {
+        access_token: '',
         tip_message: '',
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
         globalOffset: null,
@@ -100,29 +104,13 @@
       }
     },
     computed: {
-      // ViewPointCurrentShow() { // 视角列表选择的结果
-      //   return this.$store.state.viewPoint.ViewPointCurrentShow
-      // },
-      // personInfo() {
-      //   return this.$store.state.person.personInfo
-      // }
+
     },
     created() {
 
     },
     watch: {
-      // ViewPointCurrentShow: { // 视角列表选择的结果发生改变
-      //   handler: function (newVal, oldVal) {
-      //     console.info('value changed ', newVal)
-      //     this.ShowViewPoint()
-      //     // if (newVal === true) {
-      //     // this.initData()
-      //     // this.getPersonInfo()
-      //     // }
 
-      //   },
-      //   deep: true
-      // },
     },
     mounted() {
 
@@ -130,12 +118,15 @@
 
       const __PROJECT_ID = this.$route.query.projectid
       const __POINT_VIEW_ID = this.$route.query.pvid
-
+      this.access_token = this.$route.query.token
       if (__PROJECT_ID === undefined || __PROJECT_ID === '') {
         this.tip_message = '缺少参数 projectid'
         return
       } else if (__POINT_VIEW_ID === undefined || __POINT_VIEW_ID === '') {
         this.tip_message = '缺少参数 pvid'
+        return
+      } else if (this.access_token === undefined || this.access_token === '') {
+        this.tip_message = '缺少参数 token'
         return
       }
 
@@ -145,13 +136,28 @@
       // await this.getViewpointsById()
       // this.ShowViewPoint()
 
+      
       this.init()
 
     },
     beforeDestroy() {},
     destroyed() {},
     methods: {
+      loginByXcxToken() { // 通过小程序的token 登录
+        // console.log('this.project_id', this.project_id)
+        return new Promise((resolve, reject) => {
+          this.$store.dispatch('LoginByXcxToken', {
+            access_token: this.access_token
+          }).then(() => {
+
+            setToken(this.access_token)
+            resolve()
+            // this.init()
+          })
+        })
+      },
       async init() {
+        await this.loginByXcxToken()
         await this.getViewpointsById()
         // this.project_id = 10000
         // let MODEL_DISPLAY_DATA = Cookies.get('MODEL_DISPLAY_DATA')
@@ -195,7 +201,7 @@
           //   this.onSelectionChanged
           // );
 
-        } 
+        }
 
       },
       init3DView(modelURLList) {
@@ -303,16 +309,6 @@
             if (infoDataList.length > 0) {
               this.ViewPointInfo = infoDataList[0]
             }
-
-            // _itemList.forEach(build => {
-            //   this.itemList.forEach(item => {
-            //     if (item.FILE_ID === build.FILE_ID) {
-            //       this.itemInfoList.push(build)
-            //     }
-            //   })
-
-            // });
-            // console.log('this.itemInfoList', this.itemInfoList)
             resolve()
           })
         })

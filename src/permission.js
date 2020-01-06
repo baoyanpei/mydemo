@@ -21,7 +21,7 @@ function hasPermission(roles, permissionRoles) {
 }
 
 // 跳转白名单
-const whiteList = ['/login', '/wxbindtip', '/authredirect'] // no redirect whitelist //'/tongxunlu/index'
+const whiteList = ['login', 'wxbindtip', 'authredirect', 'xcx-pointview-show'] // no redirect whitelist //'/tongxunlu/index'
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
@@ -73,7 +73,8 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     /* has no token*/
-    if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
+    // if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
+    if (whiteList.indexOf(to.name) !== -1) { // 在免登录白名单，直接进入
       next()
     } else {
       console.log('from333312344', to, from)
