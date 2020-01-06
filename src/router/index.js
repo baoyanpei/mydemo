@@ -6,6 +6,7 @@ Vue.use(Router)
 /* Layout */
 import Layout from '@/views/layout/Layout'
 import Layout2 from '@/views/layout/Layout2'
+import Layout3 from '@/views/layout/Layout3'
 /* Router Modules */
 // import componentsRouter from './modules/components'
 // import chartsRouter from './modules/charts'
@@ -300,7 +301,25 @@ export const constantRouterMap = [{
         CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
       }
     }]
-  }
+  },
+  {
+    path: '/xcx',
+    name: 'xcx',
+    component: Layout3,
+    children: [{
+        path: 'pvshow',
+        component: () => import('@/views/pointView/xcxShow'),
+        name: 'xcx-pointview-show',
+        meta: {
+          title: 'BIM模型视点查看(小程序)',
+          icon: 'building',
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+        }
+      },
+    ]
+  },
 
 
 ]
