@@ -4,7 +4,7 @@
 
     <div :class="classObj" class="app-wrapper">
 
-      <div class="main-container">
+      <div class="main-container3">
         <!-- <tags-view/> -->
         <app-main />
       </div>

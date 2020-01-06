@@ -3,10 +3,13 @@
   // 主体区域
   .main-container {
     min-height: 100%;
+    min-width: 1010px;
     transition: margin-left .28s;
     margin-left: 0px;
     position: relative;
   }
+
+  .main-container3 {}
 
   // 侧边栏
   .sidebar-container {

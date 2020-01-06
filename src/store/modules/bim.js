@@ -5,8 +5,9 @@ import {
   addBimItem,
   updateBimItem,
   removeBimItem,
-//   uploadBimItem,
-  getProjectItems
+  //   uploadBimItem,
+  getProjectItems,
+  getItemInfoListByProID
 } from '@/api/bim_project'
 
 const bim = {
@@ -193,6 +194,18 @@ const bim = {
           // commit('SET_PROJECT_GATE_PERSON', _data)
           resolve(_data)
         }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    GetItemInfoListByProID({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        getItemInfoListByProID(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          console.log(error)
           reject(error)
         })
       })

@@ -223,3 +223,14 @@ export function getProjectItems(data) {
     baseURL: 'http://admin.yidebim.com'
   })
 }
+
+
+export function getItemInfoListByProID(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/bcp/web',
+    method: 'post',
+    data: data,
+    baseURL: 'http://admin.yidebim.com'
+  })
+}

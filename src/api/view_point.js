@@ -27,7 +27,8 @@ export function saveViewPoint(data) {
   return request({
     url: '/api/bcp/web',
     method: 'post',
-    data: data
+    data: data,
+    baseURL: 'http://admin.yidebim.com'
   })
 }
 
@@ -45,7 +46,8 @@ export function getViewpointsByProjectId(data) {
   return request({
     url: '/api/bcp/web',
     method: 'post',
-    data: data
+    data: data,
+    baseURL: 'http://admin.yidebim.com'
   })
 }
 
@@ -80,7 +82,8 @@ export function getFileListByItemId(data) {
   return request({
     url: '/api/bcp/web',
     method: 'post',
-    data: data
+    data: data,
+    baseURL: 'http://admin.yidebim.com'
   })
 }
 
@@ -97,7 +100,8 @@ export function getViewpointsById(data) {
   return request({
     url: '/api/bcp/web',
     method: 'post',
-    data: data
+    data: data,
+    baseURL: 'http://admin.yidebim.com'
   })
 }
 
