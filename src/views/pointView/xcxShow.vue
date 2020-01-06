@@ -48,7 +48,6 @@
         ViewPointType: 2, //2 普通视点
         modelData: null,
         itemList: [],
-        itemCurrentFileIdList: [], //当前显示模型的FILE
         itemInfoList: [],
         loadingSaveViewPoint: false, // 保存视点按钮加载
         config: {
@@ -159,48 +158,17 @@
       async init() {
         await this.loginByXcxToken()
         await this.getViewpointsById()
-        // this.project_id = 10000
-        // let MODEL_DISPLAY_DATA = Cookies.get('MODEL_DISPLAY_DATA')
-        // if (MODEL_DISPLAY_DATA === undefined) {
-        //   this.$router.push({
-        //     path: '/projectSelect'
-        //   })
-        //   return
-        // } else {
-        //   this.modelData = JSON.parse(MODEL_DISPLAY_DATA)
-        // }
-        // this.itemList = this.modelData.item_list
-        // console.log('this.itemList', this.itemList)
-        // let itemIDList = []
-        // this.itemList.forEach(item => {
-        //   itemIDList.push(item.ITEM_ID)
-        //   this.itemCurrentFileIdList.push(item.FILE_ID)
-        // })
-        // console.log('itemIDList', itemIDList, itemIDList.join(','))
-        // await this.getItemInfoListByItemIDs(itemIDList.join(','))
-
-
-
 
         let files_id_list = JSON.parse(this.ViewPointInfo.FILE_IDS)
         console.log('files_id_list', files_id_list)
         await this.getItemInfoListByProID(files_id_list)
 
-
-
-
-        // console.log('this.itemInfoList', this.itemInfoList)
         let _urlList = this.getModelUrl()
         // console.log('_urlList', _urlList)
         if (_urlList.length !== 0) {
           await this.init3DView(_urlList)
           this.ShowViewPoint()
           console.log('init3DView - complete')
-          // this.viewer.addEventListener(
-          //   Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-          //   this.onSelectionChanged
-          // );
-
         }
 
       },
@@ -269,18 +237,6 @@
       onLoadError(event) {
         console.log('fail');
       },
-      onSelectionChanged(event) {
-        // console.log('this.viewer', this.viewer)
-        console.log('event1', event)
-        let _dbIds = event.dbIdArray
-
-        // Asyncronous method that gets object properties
-        // 异步获取模型的属性
-        this.viewer.getProperties(_dbIds[0],
-          function (elements) {
-            var dbid = elements.dbId;
-          })
-      },
       getModelUrl() {
         let _urlList = []
         // console.log('this.project_id', this.project_id)
@@ -314,30 +270,30 @@
         })
       },
 
-      getItemInfoListByItemIDs(item_ids) {
-        // console.log('this.project_id', this.project_id)
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: 'GetItemInfoListByItemIDs',
-            // project_id: this.project_id,
-            item_id: item_ids
+      // getItemInfoListByItemIDs(item_ids) {
+      //   // console.log('this.project_id', this.project_id)
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: 'GetItemInfoListByItemIDs',
+      //       // project_id: this.project_id,
+      //       item_id: item_ids
 
-          }
-          this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
-            console.log('_itemList_itemList', _itemList)
-            _itemList.forEach(build => {
-              this.itemList.forEach(item => {
-                if (item.FILE_ID === build.FILE_ID) {
-                  this.itemInfoList.push(build)
-                }
-              })
+      //     }
+      //     this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
+      //       console.log('_itemList_itemList', _itemList)
+      //       _itemList.forEach(build => {
+      //         this.itemList.forEach(item => {
+      //           if (item.FILE_ID === build.FILE_ID) {
+      //             this.itemInfoList.push(build)
+      //           }
+      //         })
 
-            });
-            console.log('this.itemInfoList', this.itemInfoList)
-            resolve()
-          })
-        })
-      },
+      //       });
+      //       console.log('this.itemInfoList', this.itemInfoList)
+      //       resolve()
+      //     })
+      //   })
+      // },
       getItemInfoListByProID(file_ids) {
         // console.log('this.project_id', this.project_id)
         this.itemInfoList = []
@@ -367,29 +323,6 @@
       async ShowViewPoint() {
         console.log('ShowViewPoint', this.ViewPointCurrentShow)
         console.log('this.ViewPointInfo', this.ViewPointInfo)
-        // let files_id_list = JSON.parse(this.ViewPointInfo.FILE_IDS)
-        // console.log('files_id_list', files_id_list)
-        // console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
-        // if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
-        //   this.itemCurrentFileIdList.forEach(item => {
-        //     this.viewer.unloadModel(this.viewer.model)
-        //   })
-
-
-        //   this.itemCurrentFileIdList = files_id_list
-        //   // return
-        //   await this.getItemInfoListByProID(files_id_list)
-        //   // console.log('this.itemInfoList', this.itemInfoList)
-        //   let _urlList = this.getModelUrl()
-        //   // console.log('_urlList', _urlList)
-        //   if (_urlList.length !== 0) {
-        //     await this.init3DView(_urlList)
-
-        //     console.log('init3DView - complete')
-        //   }
-        // }
-
-        // return
         this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
           this.isShowToolbarMarker = false
           this.isShowToolbarMarkerStyle = false
@@ -418,27 +351,14 @@
           this.isShowToolbarRestore = true
           this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
           setTimeout(() => {
-
-
-
-
             markupsExt.leaveEditMode();
             markupsExt.show();
             markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointInfo.ID);
             // this.enterMarkerEditMode()
             this.isShowOldViewPoint = true
-
-
-
           }, 1000);
         })
-
-
-
-
-
       }
-
     }
   }
 
