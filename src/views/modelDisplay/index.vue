@@ -780,7 +780,10 @@
 
       },
       showSaveViewsPointHandle() {
-        this.isShowSaveMarkerArea = true
+        // this.isShowSaveMarkerArea = true
+        // 打开视角管理窗口
+        this.SavePositionViewPointHandle()
+
       },
       openPicture() {
         const img = new Image();
@@ -880,13 +883,13 @@
       SavePositionViewPointHandle() {
         // console.log('SavePositionViewPointHandle')
 
-        if (this.viewPointName === '') {
-          this.$message({
-            message: '请输入要保存的视点的标题！',
-            type: 'error'
-          })
-          return
-        }
+        // if (this.viewPointName === '') {
+        //   this.$message({
+        //     message: '请输入要保存的视点的标题！',
+        //     type: 'error'
+        //   })
+        //   return
+        // }
         let screenshot = new Image();
         screenshot.onload = () => {
           // this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupCore) => {
@@ -907,7 +910,7 @@
               // document.getElementById("demo").innerHTML = err.message;
               console.log('renderToCanvas', err)
             }
-            this.loadingSaveViewPoint = true
+            // this.loadingSaveViewPoint = true
             setTimeout(() => {
 
               // 视点数据
@@ -931,8 +934,8 @@
               //   fileIDList.push(item.FILE_ID)
               // })
               console.log('personInfo', this.personInfo)
-              const param = {
-                "method": "SaveViewPoint",
+              const __data = {
+                // "method": "SaveViewPoint",
                 "type": this.ViewPointType,
                 "project_id": this.project_id,
                 "name": this.viewPointName,
@@ -944,8 +947,17 @@
                 "creator": this.personInfo.person.id
               }
               // console.log('personInfo', this.personInfo)
-              console.log('param', param)
+              console.log('__data', __data)
+
+              const param = {
+                show: true,
+                // itemInfoList: this.itemInfoList
+                data: __data
+              }
+              // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+              this.$store.dispatch('ShowViewPointSaveDialog', param).then(() => {}).catch(() => {})
               // return
+              /*
               this.$store.dispatch('SaveViewPoint', param).then((result) => {
                 console.log('result', result)
                 this.isShowSaveMarkerArea = false
@@ -967,7 +979,7 @@
 
 
                 // resolve()
-              })
+              })*/
             }, 1000);
           })
 

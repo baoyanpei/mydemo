@@ -43,6 +43,10 @@
 
     <!--视点管理dialog-->
     <PointViewManageDialog></PointViewManageDialog>
+
+    <!--视点保存dialog-->
+    <PointViewSaveDialog></PointViewSaveDialog>
+    
   </div>
 </template>
 
@@ -88,6 +92,9 @@
   // 视点管理dialog
   import PointViewManageDialog from './views/pointView/manageDialog'
 
+  // 视点保存dialog
+  import PointViewSaveDialog from './views/pointView/saveDialog'
+
   export default {
     name: 'App',
     components: {
@@ -109,7 +116,8 @@
       WorktimeFullCalendarDialog,
       PublishDialog,
       VideoDialog,
-      PointViewManageDialog
+      PointViewManageDialog,
+      PointViewSaveDialog
     },
     directives: {
       elDragDialog
@@ -147,10 +155,12 @@
     watch: {
       '$route'(to, from) {
         console.log("totototo", to)
-        if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && this.personInfo === null) {
+        if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && this.personInfo ===
+          null) {
           this.getPerson()
         }
-        if (from.name === 'lot2-index' || from.name === 'lot3-index' || from.name === 'lot4-index' || from.name === 'lot5-index') {
+        if (from.name === 'lot2-index' || from.name === 'lot3-index' || from.name === 'lot4-index' || from.name ===
+          'lot5-index') {
           location.reload()
         }
       }
@@ -198,9 +208,11 @@
 </script>
 <style>
   /*表格*/
-  table td, th{
+  table td,
+  th {
     border: 0px solid #000 !important;
   }
+
   .hr1 {
     border-top: 1px solid #eeeeee;
     border-bottom: 0px;
