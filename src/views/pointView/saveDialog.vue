@@ -5,22 +5,62 @@
 <template>
 
   <div id="view-point-save-dialog" class="view-point-save-dialog">
-    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :visible.sync="ViewPointSaveDialog.show"
+    <el-dialog :modal="false" width="400px" top="10vh" :lock-scroll="true" :visible.sync="ViewPointSaveDialog.show"
       @opened="openedSaveDialogHandle" @close="closeSaveDialogHandle" :title="dialogTitle" v-el-drag-dialog>
-      123123
+      <div id="view-point-save-from" class="view-point-save-from">
+        <el-form ref="viewPointPositionSaveForm" :model="viewPointPositionSaveForm" label-width="80px" :inline="true">
+          <div v-if="ViewPointType === 1">
+            <el-form-item label="所属建筑">
+              <el-select v-model="SelectedBuild" placeholder="请选择" style="width: 260px;">
+                <el-option v-for="item in buildList" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="位置楼层">
+              <el-input-number v-model="floor" :min="floorMin" :max="floorMax" style="width: 160px;"></el-input-number>
+              &nbsp;&nbsp;层
+            </el-form-item>
+            <el-form-item label="位置说明">
+              <el-input v-model="PositionTitle" placeholder="请填写位置说明" style="width: 260px;"></el-input>
+            </el-form-item>
+          </div>
+          <div v-if="ViewPointType === 2">
+            <el-form-item label="视点名字">
+              <el-input v-model="ViewPointTitle" placeholder="请填写视点名字" style="width: 260px;"></el-input>
+            </el-form-item>
+          </div>
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="handleSaveDialogSubmit">确 定</el-button>
+        <el-button @click='handleSaveDialogCancel'>取 消</el-button>
 
+      </div>
     </el-dialog>
   </div>
 
 </template>
 
 <script>
+  import {
+    getToken
+  } from '@/utils/auth'
   export default {
     components: {},
     directives: {},
     data() {
       return {
         dialogTitle: '位置信息',
+        viewPointPositionSaveForm: {},
+        ViewPointType: 0, // 1 楼层 2 普通
+        buildList: [],
+        floorMin: -10,
+        floorMax: 100,
+        SelectedBuild: '',
+        floor: 0,
+
+        PositionTitle: '',
+        ViewPointTitle: ''
       }
     },
     computed: {
@@ -54,22 +94,106 @@
 
     },
     methods: {
-      openedSaveDialogHandle() {
-        this.tipMessage = "正在查询视点数据"
-        // let dialogHeaderEl = document.getElementById("view-point-manage-dialog").querySelector('.el-dialog')
-        // console.log('dialogHeaderEl', dialogHeaderEl)
-        // dialogHeaderEl.style.cssText = `;right:500px !important;`
-        console.log('ViewPointSaveDialog', this.ViewPointSaveDialog)
+      clearData() {
+        this.buildList = []
+        this.SelectedBuild = ''
+        this.floor = 0
+        this.ViewPointType = 0
+        this.PositionTitle = ''
+        this.ViewPointTitle = ''
 
-        // this.CurrentFileIDList = []
-        // this.ViewPointManageDialog.itemInfoList.forEach(item => {
-        //   this.CurrentFileIDList.push(item.FILE_ID)
-        // })
-        // this.getData()
+      },
+      async openedSaveDialogHandle() {
+        console.log('ViewPointSaveDialog', this.ViewPointSaveDialog)
+        let _data = this.ViewPointSaveDialog.data
+        this.ViewPointType = _data.type
+        await this.exchangeToken(getToken())
+        await this.getProjectItemsAll()
+
+      },
+      exchangeToken(token) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: "exchange_token",
+            from: 'oa',
+            token: token
+          }
+          this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+            console.log('ExchangeToken - resultData', resultData)
+            if (resultData.status === 'success') {
+              this.access_token = resultData.access_token
+              resolve()
+            } else {
+              reject(resultData.msg)
+            }
+          })
+        })
+
+      },
+      getProjectItemsAll() {
+        return new Promise((resolve, reject) => {
+          this.buildList = []
+          const param = {
+            method: 'project_items',
+            project_id: this.project_id,
+            access_token: this.access_token
+          }
+          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
+            console.log('getProjectItemsAll - _itemList', _itemList)
+
+            _itemList.forEach(build => {
+              if (build.name !== '' && build.process_status === 1) {
+                this.buildList.push({
+                  value: build.id,
+                  label: build.name
+                })
+              }
+            });
+            console.log('buildList', this.buildList)
+            resolve()
+          })
+
+        })
       },
       closeSaveDialogHandle() {
-        // this.clearData()
+        this.clearData()
+        const param = {
+          show: false,
+        }
+        this.$store.dispatch('ShowViewPointSaveDialog', param).then(() => {}).catch(() => {})
       },
+      handleSaveDialogCancel() {
+        this.closeSaveDialogHandle()
+      },
+      handleSaveDialogSubmit() {
+        if (this.ViewPointType === 1) {
+          if (this.SelectedBuild === '') {
+            this.$message({
+              message: '请选择所属建筑!',
+              type: 'error'
+            });
+            return
+          } else if (this.PositionTitle === '') {
+            this.$message({
+              message: '请填写位置说明!',
+              type: 'error'
+            });
+            return
+          }
+
+        } else if (this.ViewPointType === 2) {
+          if (this.ViewPointTitle === '') {
+            this.$message({
+              message: '请填写视点名字!',
+              type: 'error'
+            });
+            return
+          }
+        }
+
+        console.log('this.ViewPointSaveDialog.data', this.ViewPointSaveDialog.data)
+
+      }
     }
   }
 

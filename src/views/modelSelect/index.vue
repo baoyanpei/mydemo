@@ -310,73 +310,77 @@
           // console.log('_itemInfoMap', _itemInfoMap)
 
           _ProjectItemsAll.forEach(_Item => {
-            // console.log('_Item', _Item)
-            _Item['tid'] = `item-${_Item.id}`
-            // build['name'] = build.ITEM_NAME
-            _Item['menuType'] = 'item'
-            _Item['isSelected'] = false
-            // let _ItemInfo = _itemInfoMap.get(_Item.file_id)
-            // console.log('_ItemInfo', _Item.id, _ItemInfo)
+            if (_Item.process_status === 1) {
+              // console.log('_Item', _Item)
+              _Item['tid'] = `item-${_Item.id}`
+              // build['name'] = build.ITEM_NAME
+              _Item['menuType'] = 'item'
+              _Item['isSelected'] = false
+              // let _ItemInfo = _itemInfoMap.get(_Item.file_id)
+              // console.log('_ItemInfo', _Item.id, _ItemInfo)
 
-            let upload_name = _Item.username
+              let upload_name = _Item.username
 
-            if (_Item.upload_username !== null && _Item.upload_username !== '' && _Item.upload_username !==
-              'None') {
-              upload_name = _Item.upload_username
-            }
+              if (_Item.upload_username !== null && _Item.upload_username !== '' && _Item.upload_username !==
+                'None') {
+                upload_name = _Item.upload_username
+              }
 
-            let up_time = "-"
-            if (_Item.upload_time !== null && _Item.upload_time !== '' && _Item.upload_time !== 'None') {
-              up_time = moment(_Item.upload_time).format("YYYY年MM月DD日 HH:mm")
-            }
-            let process_time = "-"
-            if (_Item.process_time !== null && _Item.process_time !== '' && _Item.process_time !== 'None') {
-              process_time = moment(_Item.process_time).format("YYYY年MM月DD日 HH:mm")
-            }
-            let status_display = ""
-            let status_css = ""
-            // 处理状态：-1=未处理；0=处理中；1=处理成功；2=处理失败；
-            switch (_Item.process_status) {
-              case -1:
-                status_display = "未处理"
-                status_css = ''
-                break;
-              case 0:
-                status_display = "处理中"
-                status_css = 'status-display-warning'
-                break;
-              case 1:
-                status_display = "处理成功"
-                status_css = 'status-display-success'
-                break;
-              case 2:
-                status_display = "处理失败"
-                status_css = 'status-display-danger'
-                break;
-            }
+              let up_time = "-"
+              if (_Item.upload_time !== null && _Item.upload_time !== '' && _Item.upload_time !== 'None') {
+                up_time = moment(_Item.upload_time).format("YYYY年MM月DD日 HH:mm")
+              }
+              let process_time = "-"
+              if (_Item.process_time !== null && _Item.process_time !== '' && _Item.process_time !== 'None') {
+                process_time = moment(_Item.process_time).format("YYYY年MM月DD日 HH:mm")
+              }
+              let status_display = ""
+              let status_css = ""
+              // 处理状态：-1=未处理；0=处理中；1=处理成功；2=处理失败；
+              switch (_Item.process_status) {
+                case -1:
+                  status_display = "未处理"
+                  status_css = ''
+                  break;
+                case 0:
+                  status_display = "处理中"
+                  status_css = 'status-display-warning'
+                  break;
+                case 1:
+                  status_display = "处理成功"
+                  status_css = 'status-display-success'
+                  break;
+                case 2:
+                  status_display = "处理失败"
+                  status_css = 'status-display-danger'
+                  break;
+              }
 
-            let _isShowDeleteItem = false
-            if (_Item.process_status === null || (_Item.process_status !== 8 && _Item.process_status !== 0)) {
-              _isShowDeleteItem = true
-            }
-
-            let _isShowUploadItem = false
-            if (_Item.process_status === null || (_Item.process_status !== 8 && _Item.process_status !==
+              let _isShowDeleteItem = false
+              if (_Item.process_status === null || (_Item.process_status !== 8 && _Item.process_status !==
                 0)) {
-              _isShowUploadItem = true
+                _isShowDeleteItem = true
+              }
+
+              let _isShowUploadItem = false
+              if (_Item.process_status === null || (_Item.process_status !== 8 && _Item.process_status !==
+                  0)) {
+                _isShowUploadItem = true
+              }
+              _Item['upload_name'] = upload_name
+              _Item['status_display'] = status_display
+              _Item['status_css'] = status_css
+              _Item['isShowDeleteItem'] = _isShowDeleteItem
+              _Item['isShowUploadItem'] = _isShowUploadItem
+              _Item['up_time'] = up_time
+              _Item['process_time'] = process_time
+              _Item = {
+                ..._Item,
+                // ..._ItemInfo
+              }
+              this.tableData.push(_Item)
             }
-            _Item['upload_name'] = upload_name
-            _Item['status_display'] = status_display
-            _Item['status_css'] = status_css
-            _Item['isShowDeleteItem'] = _isShowDeleteItem
-            _Item['isShowUploadItem'] = _isShowUploadItem
-            _Item['up_time'] = up_time
-            _Item['process_time'] = process_time
-            _Item = {
-              ..._Item,
-              // ..._ItemInfo
-            }
-            this.tableData.push(_Item)
+
 
           })
           this.tableFilterData = this.tableData
