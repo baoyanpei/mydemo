@@ -1,4 +1,34 @@
 .view-point-manage-dialog {
+  .el-collapse-item__header {
+    display: -webkit-box;
+  }
+
+  .el-collapse-item__arrow {
+    float: left;
+    // line-height: 50px;
+    margin: 0px 10px 0px 5px;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  .floorArea {
+    margin-left: 10px;
+
+    .el-collapse {
+      border-top: 0px solid #EBEEF5;
+      border-bottom: 0px solid #EBEEF5;
+    }
+
+    .el-collapse-item__wrap {
+      will-change: height;
+      background-color: #FFF;
+      overflow: hidden;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      /* border-bottom: 1px solid #EBEEF5; */
+    }
+  }
+
   .tip-message {
     text-align: center;
     line-height: 300px;
@@ -54,7 +84,7 @@
     // height: 100%;
     height: calc(100vh - 240px);
     background-color: #f2f2f2;
-    padding: 20px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
 
     .bgShow {
       background-color: #bbefe5 !important;
