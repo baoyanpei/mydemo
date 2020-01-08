@@ -25,10 +25,10 @@ type字段：1-基于项目的公共位置视点；2-普通视点
 export function saveViewPoint(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
     method: 'post',
-    data: data,
-    baseURL: 'http://admin.yidebim.com'
+    data: data
+    // baseURL: 'http://admin.yidebim.com'
   })
 }
 

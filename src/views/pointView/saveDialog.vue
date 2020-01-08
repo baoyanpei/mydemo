@@ -166,6 +166,7 @@
         this.closeSaveDialogHandle()
       },
       handleSaveDialogSubmit() {
+        let _name = ""
         if (this.ViewPointType === 1) {
           if (this.SelectedBuild === '') {
             this.$message({
@@ -180,7 +181,7 @@
             });
             return
           }
-
+          _name = this.PositionTitle
         } else if (this.ViewPointType === 2) {
           if (this.ViewPointTitle === '') {
             this.$message({
@@ -189,9 +190,50 @@
             });
             return
           }
+          _name = this.ViewPointTitle
         }
 
+
+        const __data = this.ViewPointSaveDialog.data
         console.log('this.ViewPointSaveDialog.data', this.ViewPointSaveDialog.data)
+
+        
+        const param = {
+          "method": "SaveViewPoint",
+          "type": __data.type,
+          "project_id": this.project_id,
+          "item_id": this.SelectedBuild,
+          "floor_name": this.floor === 0 ? "" : this.floor,
+          "name": _name,
+          "desc": "",
+          "file_ids": __data.file_ids,
+          "camera_info": __data.camera_info,
+          "picture_info": __data.picture_info,
+          "svg_info": __data.svg_info,
+          "creator": __data.creator
+        }
+        console.log('this.ViewPointSaveDialog.param', param)
+        this.$store.dispatch('SaveViewPoint', param).then((result) => {
+          console.log('result', result)
+          // this.isShowSaveMarkerArea = false
+          // this.loadingSaveViewPoint = false
+          // this.viewPointTitleName = this.viewPointName
+          // this.viewPointName = ""
+          this.$message({
+            message: '视点保存成功！',
+            type: 'success'
+          })
+
+          setTimeout(() => {
+            this.$store.dispatch('SetViewPointDataChanged', {}).then((result) => {
+
+            })
+          }, 2500);
+
+
+
+          // resolve()
+        })
 
       }
     }
