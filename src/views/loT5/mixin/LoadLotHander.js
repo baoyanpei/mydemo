@@ -425,6 +425,10 @@ export default {
           this.LoadItemIDList = [1351]
           // this.projID = 10004
           break
+        case 10020:
+          this.LoadItemIDList = [100031]
+          // this.projID = 10004
+          break
       }
     },
     initDevlist() {
