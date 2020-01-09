@@ -33,7 +33,7 @@ method:query_person
 */
 export function queryProjectPerson(data) {
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
@@ -48,7 +48,7 @@ method:query_group
 export function queryProjectGroup(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
@@ -59,7 +59,7 @@ export function queryProjectGroup(data) {
 export function queryProjectCount(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/project_count',
+    url: '/api/info/project_count',
     method: 'post',
     data: data
   })
@@ -70,7 +70,7 @@ export function queryProjectCount(data) {
 export function queryProjectGatePerson(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/project_gateperson',
+    url: '/api/info/project_gateperson',
     method: 'post',
     data: data
   })
@@ -84,7 +84,7 @@ id,mobile,idcard_no
 export function queryProjectUser(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/user_test',
+    url: '/api/info/user_test',
     method: 'get',
     params: data
   })
@@ -105,7 +105,7 @@ export function queryProjectUser(data) {
 export function queryProjectPersonInout(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
@@ -115,7 +115,7 @@ export function queryProjectPersonInout(data) {
 export function queryProjectPersonGoOut(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
@@ -136,7 +136,7 @@ api: /api/info/gate
 export function queryLogsPersonComfirm(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/gate',
+    url: '/api/info/gate',
     method: 'post',
     data: data
   })
@@ -159,7 +159,7 @@ query_vehicle_logs
 */
 export function queryVehicleGate(data) {
   return request({
-    url: 'api/info/gate',
+    url: '/api/info/gate',
     method: 'post',
     data: data
   })
@@ -176,7 +176,7 @@ query_person_inday(self, params):
 export function queryProjectPersonInDay(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
@@ -203,7 +203,7 @@ url:
 export function checkPersonAccess(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/person',
+    url: '/api/info/person',
     method: 'post',
     data: {
       method: 'checkPersonAccess',
@@ -283,7 +283,7 @@ export function queryInOutDetail(param) {
 export function queryPersonWorktime(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
@@ -304,7 +304,7 @@ et='yyyy-mm-dd'
 export function queryTjOnlineAgeByTime(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/rpt/project',
+    url: '/api/rpt/project',
     method: 'post',
     data: data
   })
@@ -324,7 +324,7 @@ tj_online_area_by_time
 export function queryTjOnlineAreaByTime(data) {
   // console.log("queryProjectGroupAPI", data)
   return request({
-    url: 'api/rpt/project',
+    url: '/api/rpt/project',
     method: 'post',
     data: data
   })
@@ -342,7 +342,7 @@ query_project_worktime
 */
 export function queryProjectWorktime(data) {
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
@@ -366,7 +366,7 @@ datum_file_url：资料文件地址
 */
 export function queryPersonDatum(data) {
   return request({
-    url: 'api/datum/person',
+    url: '/api/datum/person',
     method: 'post',
     data: data
   })
@@ -389,14 +389,14 @@ method:card_opera
 */
 export function persongroupchange(data) {//个人信息页面，组别信息更改
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
 }
 export function setCardOpera(data) {
   return request({
-    url: 'api/info/user',
+    url: '/api/info/user',
     method: 'post',
     data: data
   })
@@ -426,7 +426,7 @@ remark ：离职备注原因
 */
 export function setQuitLeft(data) {
   return request({
-    url: 'api/info/user',
+    url: '/api/info/user',
     method: 'post',
     data: data
   })
@@ -444,7 +444,7 @@ project_id:
 */
 export function queryDutyWeek(data) {
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })
@@ -464,7 +464,7 @@ project_duty_day
 */
 export function queryDutyDay(data) {
   return request({
-    url: 'api/info/project_test',
+    url: '/api/info/project_test',
     method: 'post',
     data: data
   })
@@ -488,7 +488,7 @@ day0:周日
 */
 export function updateDutyWeek(data) {
   return request({
-    url: 'api/info/project',
+    url: '/api/info/project',
     method: 'post',
     data: data
   })

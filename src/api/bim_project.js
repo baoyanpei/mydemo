@@ -220,7 +220,7 @@ export function getProjectItems(data) {
     url: '/api/bcp/pm',
     method: 'post',
     data: data,
-    baseURL: 'http://admin.yidebim.com'
+    // baseURL: 'http://admin.yidebim.com'
   })
 }
 

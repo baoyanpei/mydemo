@@ -17,7 +17,7 @@ model_id,floor_id,building_id
 export function queryBuildingListByProID(data) {
   // console.log("api", data)
   return request({
-    url: 'api/bim/web',
+    url: '/api/bim/web',
     method: 'post',
     data: data
   })
@@ -27,7 +27,7 @@ export function queryBuildingListByProID(data) {
 export function queryFloorListByBudID(data) {
   // console.log("api", data)
   return request({
-    url: 'api/bim/web',
+    url: '/api/bim/web',
     method: 'post',
     data: data
   })
@@ -37,7 +37,7 @@ export function queryFloorListByBudID(data) {
 export function queryPropertyListByProID(data) {
   // console.log("api", data)
   return request({
-    url: 'api/bim/web',
+    url: '/api/bim/web',
     method: 'post',
     data: data
   })
@@ -48,7 +48,7 @@ export function queryPropertyListByProID(data) {
 export function queryModListByFloorID(data) {
   // console.log("api", data)
   return request({
-    url: 'api/bim/web',
+    url: '/api/bim/web',
     method: 'post',
     data: data
   })
@@ -58,7 +58,7 @@ export function queryModListByFloorID(data) {
 export function queryModelByID(data) {
   // console.log("api", data)
   return request({
-    url: 'api/bim/web',
+    url: '/api/bim/web',
     method: 'post',
     data: data
   })
@@ -69,7 +69,7 @@ export function getItemInfoListByItemIDs(data) {
   return request({
     url: '/api/bcp/web',
     method: 'post',
-    data: data,
-    baseURL: 'http://admin.yidebim.com'
+    data: data
+    // baseURL: 'http://admin.yidebim.com'
   })
 }

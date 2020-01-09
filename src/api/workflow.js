@@ -17,7 +17,7 @@ get_all_inst_list        '''
 export function getAllInstList(data) {
   // console.log("api", data)
   return request({
-    url: 'api/oa/workflow',
+    url: '/api/oa/workflow',
     method: 'post',
     data: data,
     baseURL: 'http://w.yidebim.com:3004'

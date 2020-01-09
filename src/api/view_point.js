@@ -47,7 +47,7 @@ export function getViewpointsByProjectId(data) {
     url: '/api/bcp/web',
     method: 'post',
     data: data,
-    baseURL: 'http://admin.yidebim.com'
+    // baseURL: 'http://admin.yidebim.com'
   })
 }
 
@@ -82,7 +82,7 @@ export function getFileListByItemId(data) {
     url: '/api/bcp/web',
     method: 'post',
     data: data,
-    baseURL: 'http://admin.yidebim.com'
+    // baseURL: 'http://admin.yidebim.com'
   })
 }
 
@@ -100,7 +100,7 @@ export function getViewpointsById(data) {
     url: '/api/bcp/web',
     method: 'post',
     data: data,
-    baseURL: 'http://admin.yidebim.com'
+    // baseURL: 'http://admin.yidebim.com'
   })
 }
 

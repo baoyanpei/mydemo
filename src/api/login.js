@@ -68,8 +68,8 @@ export function exchangeToken(data) {
   return request({
     url: '/api/bcp/user',
     method: 'post',
-    data,
-    baseURL: 'http://admin.yidebim.com'
+    data
+    // baseURL: 'http://admin.yidebim.com'
   })
 }
 

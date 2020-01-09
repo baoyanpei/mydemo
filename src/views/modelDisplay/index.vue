@@ -944,7 +944,8 @@
                 "camera_info": Base64.encode(saveStatus),
                 "picture_info": markupsBase64,
                 "svg_info": Base64.encode(markupsExtData),
-                "creator": this.personInfo.person.id
+                "creator": this.personInfo.person.id,
+                "itemInfoList": this.itemInfoList
               }
               // console.log('personInfo', this.personInfo)
               console.log('__data', __data)
@@ -1014,28 +1015,31 @@
       async ShowViewPoint() {
         console.log('ShowViewPoint', this.ViewPointCurrentShow)
         console.log('this.itemList', this.itemList)
-        /*
-          let files_id_list = JSON.parse(this.ViewPointCurrentShow.FILE_IDS)
-          console.log('files_id_list', files_id_list)
-          console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
-          if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
-            this.itemCurrentFileIdList.forEach(item => {
-              this.viewer.unloadModel(this.viewer.model)
-            })
-  
-  
-            this.itemCurrentFileIdList = files_id_list
-            // return
-            await this.getItemInfoListByProID(files_id_list)
-            // console.log('this.itemInfoList', this.itemInfoList)
-            let _urlList = this.getModelUrl()
-            // console.log('_urlList', _urlList)
-            if (_urlList.length !== 0) {
-              await this.init3DView(_urlList)
-  
-              console.log('init3DView - complete')
-            }
-          }*/
+
+        let files_id_list = JSON.parse(this.ViewPointCurrentShow.file_ids)
+        console.log('files_id_list', files_id_list)
+        console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
+        if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
+          this.itemCurrentFileIdList.forEach(item => {
+            this.viewer.unloadModel(this.viewer.model)
+          })
+
+
+          this.itemCurrentFileIdList = files_id_list
+          // return
+          await this.getItemInfoListByProID(files_id_list)
+          // console.log('this.itemInfoList', this.itemInfoList)
+
+          // await this.getItemInfoListByItemIDs(itemIDList.join(','))
+          // console.log('this.itemInfoList', this.itemInfoList)
+          let _urlList = this.getModelUrl()
+          // console.log('_urlList', _urlList)
+          if (_urlList.length !== 0) {
+            await this.init3DView(_urlList)
+
+            console.log('init3DView - complete')
+          }
+        }
 
         // return
         this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {

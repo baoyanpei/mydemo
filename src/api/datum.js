@@ -16,7 +16,7 @@ import request from '@/utils/request'
 export function queryDatumMeter(data) {
   // console.log("api", data)
   return request({
-    url: 'api/datum/meter',
+    url: '/api/datum/meter',
     method: 'post',
     data: data
   })
@@ -36,7 +36,7 @@ export function queryDatumMeter(data) {
 export function queryDatumMeterDays(data) {
   // console.log("api", data)
   return request({
-    url: 'api/datum/meter',
+    url: '/api/datum/meter',
     method: 'post',
     data: data
   })
@@ -58,7 +58,7 @@ method:query_hours
 export function queryDatumMeterHours(data) {
   // console.log("api", data)
   return request({
-    url: 'api/datum/meter',
+    url: '/api/datum/meter',
     method: 'post',
     data: data
   })
@@ -79,7 +79,7 @@ return {"status":"success","msg":'',"data":[]}
 export function queryLocationHis(data) {
   // console.log("api", data)
   return request({
-    url: 'api/datum/meter',
+    url: '/api/datum/meter',
     method: 'post',
     data: data
   })
@@ -90,7 +90,7 @@ export function queryLocationHis(data) {
 export function allpersondata(data) {
   // console.log("allpersondata",data)
   return request({
-    url:'api/oa/workflow',
+    url:'/api/oa/workflow',
     method:'post',
     data:data,
     baseURL: 'http://w.yidebim.com:3004'
@@ -99,7 +99,7 @@ export function allpersondata(data) {
 
 export function allinfodictionary(data) {
   return request({
-    url:'api/oa/helper',
+    url:'/api/oa/helper',
     method:'post',
     data:data,
     baseURL: 'http://w.yidebim.com:3004'
@@ -109,7 +109,7 @@ export function allinfodictionary(data) {
 
 export function postmomment(data) {//上传评论信息
   return request({
-    url:'api/oa/comment',
+    url:'/api/oa/comment',
     method:'post',
     data:data,
     baseURL: 'http://w.yidebim.com:3004'
@@ -120,7 +120,7 @@ export function postmomment(data) {//上传评论信息
 
 export function safeinspection(data) {//安全巡检页面
   return request({
-    url:'api/oa/workflow',
+    url:'/api/oa/workflow',
     method:'post',
     data:data,
     baseURL: 'http://w.yidebim.com:3004'

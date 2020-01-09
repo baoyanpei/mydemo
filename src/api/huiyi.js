@@ -29,7 +29,7 @@ method:add
 */
 export function huiyiSubmit(huiyiInfo) {
   return request({
-    url: 'api/info/plan',
+    url: '/api/info/plan',
     method: 'post',
     data: huiyiInfo
   })
@@ -40,7 +40,7 @@ export function huiyiSubmit(huiyiInfo) {
 export function planTypeQuery() {
   // console.log('planTypeQuery')
   return request({
-    url: 'api/info/plan',
+    url: '/api/info/plan',
     method: 'post',
     data: {
       method: 'plan_type'
@@ -58,7 +58,7 @@ start_timeend_time=
 export function planQuery(param) {
   // console.log('planTypeQuery')
   return request({
-    url: 'api/info/plan',
+    url: '/api/info/plan',
     method: 'post',
     data: param
   })

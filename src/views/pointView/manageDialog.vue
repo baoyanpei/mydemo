@@ -97,7 +97,7 @@
                               @click="deleteViewPointHander(item)"></i>
                           </div>
                         </el-col>
-                      </el-row> 
+                      </el-row>
                     </div>
                   </el-collapse-item>
                 </el-collapse>
@@ -132,7 +132,9 @@
 
 <script>
   let Base64 = require('js-base64').Base64
-
+  import {
+    getToken
+  } from '@/utils/auth'
   import moment from 'moment'
   import lodash from 'lodash'
 
@@ -153,6 +155,8 @@
       return {
         dialogTitle: '视点管理',
         activeTabName: '1',
+        ProjectItemsAll: new Map(),
+        access_token: null,
         viewPointDataList: [], // 显示到列表重的数据
         viewPointPosDataList: [], // 位置数据列表
         viewPointAllList: [], // 从接口获取的所有数据
@@ -208,8 +212,11 @@
         this.viewPointPosDataList = []
         this.viewPointAllList = [] // 从接口获取的所有数据
         this.activeTabName = '1'
+        this.ProjectItemsAll = new Map()
       },
       async getData() {
+        await this.exchangeToken(getToken())
+        await this.getProjectItemsAll() // 获取模型的item列表（最新版本）
         await this.GetViewpointsDataAll() // 获取所有的视点数据
         console.log(12313123)
         // await this.GetViewpointsData()
@@ -233,6 +240,47 @@
           this.CurrentFileIDList.push(item.FILE_ID)
         })
         this.getData()
+      },
+      exchangeToken(token) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: "exchange_token",
+            from: 'oa',
+            token: token
+          }
+          this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+            console.log('ExchangeToken - resultData', resultData)
+            if (resultData.status === 'success') {
+              this.access_token = resultData.access_token
+              resolve()
+            } else {
+              // console.log("123123123")
+              this.tip_message = resultData.msg
+              reject(resultData.msg)
+            }
+
+          })
+        })
+
+      },
+      getProjectItemsAll() {
+        return new Promise((resolve, reject) => {
+          this.ProjectItemsAll = new Map()
+          const param = {
+            method: 'project_items',
+            project_id: this.project_id,
+            access_token: this.access_token
+          }
+          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
+            // console.log('getProjectItemsAll - _itemList', _itemList)
+            _itemList.forEach(async build => {
+              this.ProjectItemsAll.set(build.id, build)
+            });
+
+            resolve()
+          })
+
+        })
       },
       GetViewpointsDataAll() {
         return new Promise((resolve, reject) => {
@@ -305,7 +353,7 @@
             console.log('item', item)
             if (parseInt(item.type) === 1) {
 
-              let picture_info = "" //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
+              let picture_info = item.picture_info //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
               item['pictureLiteSrc'] = picture_info
               item['pictureFullSrc'] = picture_info.replace('lite.', '')
               item['className'] = `imagesPreview-${item.ID}`
@@ -323,7 +371,7 @@
               if (_buildInfo === undefined) {
                 _mapBuild.set(_item_id, {
                   'build_id': _item_id,
-                  'build_name': _item_id,
+                  'build_name': this.ProjectItemsAll.get(_item_id).name,
                   'floorInfos': new Map()
                 })
                 _buildInfo = _mapBuild.get(_item_id)
@@ -424,13 +472,15 @@
         // this.ViewPointManageDialog.itemInfoList.forEach(item => {
         //   CurrentFileIDList.push(item.FILE_ID)
         // })
-        if (JSON.parse(rowData.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
-          console.log(`.imagesPreview-${rowData.id}`)
-          const viewer = this.$el.querySelector(`.imagesPreview-${rowData.id}`).$viewer
-          viewer.show()
-        } else {
-          this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
-        }
+
+        this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
+        // if (JSON.parse(rowData.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
+        //   console.log(`.imagesPreview-${rowData.id}`)
+        //   const viewer = this.$el.querySelector(`.imagesPreview-${rowData.id}`).$viewer
+        //   viewer.show()
+        // } else {
+        //   this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
+        // }
 
 
 

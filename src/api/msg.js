@@ -10,7 +10,7 @@ query
 */
 export function queryInfoMsg(data) {
   return request({
-    url: 'api/info/msg',
+    url: '/api/info/msg',
     method: 'post',
     data: data
   })
@@ -33,7 +33,7 @@ add
 */
 export function addInfoMsg(data) {
   return request({
-    url: 'api/info/msg',
+    url: '/api/info/msg',
     method: 'post',
     data: data
   })

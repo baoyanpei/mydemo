@@ -54,13 +54,14 @@
         viewPointPositionSaveForm: {},
         ViewPointType: 0, // 1 楼层 2 普通
         buildList: [],
+        itemInfoListMap: new Map(),
         floorMin: -10,
         floorMax: 100,
         SelectedBuild: '',
         floor: 0,
-
         PositionTitle: '',
-        ViewPointTitle: ''
+        ViewPointTitle: '',
+        editMode: 1 // 1 新增 2 编辑
       }
     },
     computed: {
@@ -101,14 +102,25 @@
         this.ViewPointType = 0
         this.PositionTitle = ''
         this.ViewPointTitle = ''
-
+        this.itemInfoListMap = new Map()
       },
       async openedSaveDialogHandle() {
         console.log('ViewPointSaveDialog', this.ViewPointSaveDialog)
         let _data = this.ViewPointSaveDialog.data
         this.ViewPointType = _data.type
+        this.itemInfoListMap = new Map()
+        const __itemInfoList = _data.itemInfoList
+        __itemInfoList.forEach(itemInfo => {
+          this.itemInfoListMap.set(itemInfo.ITEM_ID, itemInfo)
+        })
+        console.log('this.itemInfoListMap', this.itemInfoListMap)
         await this.exchangeToken(getToken())
         await this.getProjectItemsAll()
+        if (this.editMode === 1) { // 新增模式
+          if (this.buildList.length === 1) {
+            this.SelectedBuild = this.buildList[0].value
+          }
+        }
 
       },
       exchangeToken(token) {
@@ -142,12 +154,16 @@
             console.log('getProjectItemsAll - _itemList', _itemList)
 
             _itemList.forEach(build => {
-              if (build.name !== '' && build.process_status === 1) {
-                this.buildList.push({
-                  value: build.id,
-                  label: build.name
-                })
+              let _itemInfo = this.itemInfoListMap.get(build.id)
+              if (_itemInfo !== undefined) {
+                if (build.name !== '') {
+                  this.buildList.push({
+                    value: build.id,
+                    label: build.name
+                  })
+                }
               }
+
             });
             console.log('buildList', this.buildList)
             resolve()
@@ -197,7 +213,7 @@
         const __data = this.ViewPointSaveDialog.data
         console.log('this.ViewPointSaveDialog.data', this.ViewPointSaveDialog.data)
 
-        
+
         const param = {
           "method": "SaveViewPoint",
           "type": __data.type,
