@@ -52,14 +52,14 @@
         </div>
 
         <div v-if="activeTabName==='1'">
-          <el-collapse v-model="activeNames">
-            <el-collapse-item name="1" v-for="(build,index) in viewPointPosDataList" :key="build.build_id">
+          <el-collapse v-model="activeBuildNames">
+            <el-collapse-item :name="build.treeid" v-for="(build,index) in viewPointPosDataList" :key="build.build_id">
               <template slot="title">
                 <span class="buildTitle">{{build.build_name}}</span>
               </template>
               <div class="floorArea">
                 <el-collapse v-model="activeFloorNames">
-                  <el-collapse-item name="f1" v-for="(floor,index) in build.floorList" :key="floor.floor">
+                  <el-collapse-item :name="floor.treeid" v-for="(floor,index) in build.floorList" :key="floor.floor">
                     <template slot="title">
                       <span class="buildTitle">{{floor.floor}}层</span>
                     </template>
@@ -163,8 +163,8 @@
         tipMessage: '',
         CurrentFileIDList: '', //当前打开的模型的file_id列表
         viewOptions: "{'inline': true,'navbar': false,'movable':false}",
-        activeNames: ['1', '2'],
-        activeFloorNames: ['f1']
+        activeBuildNames: [],
+        activeFloorNames: []
       }
     },
     computed: {
@@ -403,6 +403,9 @@
 
           });
           // let _buildList = []
+          this.activeBuildNames = []
+          this.activeFloorNames = []
+          
           _mapBuild.forEach(item => {
             console.log('item111', item)
 
@@ -417,16 +420,20 @@
               console.log('floor', floor)
               floorList.push({
                 'floor': floor.floor,
+                'treeid':`floor${floor.floor}`,
                 'viewPointList': _viewPointList
               })
+              this.activeFloorNames.push(`floor${floor.floor}`)
             })
             // _buildList['floorInfos'] = floorList
 
             this.viewPointPosDataList.push({
               build_id: item.build_id,
               build_name: item.build_name,
-              floorList: floorList
+              floorList: floorList,
+              treeid:`build${item.build_id}`
             })
+            this.activeBuildNames.push(`build${item.build_id}`)
 
           })
 
