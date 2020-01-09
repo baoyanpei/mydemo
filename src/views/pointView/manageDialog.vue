@@ -353,11 +353,12 @@
             console.log('item', item)
             if (parseInt(item.type) === 1) {
 
-              let picture_info = item.picture_info //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
-              item['pictureLiteSrc'] = picture_info
-              item['pictureFullSrc'] = picture_info.replace('lite.', '')
-              item['className'] = `imagesPreview-${item.ID}`
-              console.log('picture_info', picture_info)
+              // let picture_info = "/api/bim/bcp/thumbnail.jpg?vpid=32&project_id=10000&w=200" //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
+              item['pictureLiteSrc'] =
+                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
+              item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
+              item['className'] = `imagesPreview-${item.id}`
+              // console.log('picture_info', picture_info)
 
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
@@ -442,11 +443,10 @@
             console.log('item', item)
             if (parseInt(item.type) === parseInt(this.activeTabName)) {
 
-              let picture_info = "" //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
-              item['pictureLiteSrc'] = picture_info
-              item['pictureFullSrc'] = picture_info.replace('lite.', '')
-              item['className'] = `imagesPreview-${item.ID}`
-              console.log('picture_info', picture_info)
+              item['pictureLiteSrc'] =
+                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
+              item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
+              item['className'] = `imagesPreview-${item.id}`
 
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
