@@ -32,7 +32,7 @@
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleSaveDialogSubmit">确 定</el-button>
+        <el-button type="primary" :loading="loadingSaveViewPoint" @click="handleSaveDialogSubmit">确 定</el-button>
         <el-button @click='handleSaveDialogCancel'>取 消</el-button>
 
       </div>
@@ -51,6 +51,7 @@
     data() {
       return {
         dialogTitle: '位置信息',
+        loadingSaveViewPoint: false, // 保存视点按钮加载
         viewPointPositionSaveForm: {},
         ViewPointType: 0, // 1 楼层 2 普通
         buildList: [],
@@ -103,6 +104,7 @@
         this.PositionTitle = ''
         this.ViewPointTitle = ''
         this.itemInfoListMap = new Map()
+        this.loadingSaveViewPoint = false
       },
       async openedSaveDialogHandle() {
         console.log('ViewPointSaveDialog', this.ViewPointSaveDialog)
@@ -213,7 +215,7 @@
         const __data = this.ViewPointSaveDialog.data
         console.log('this.ViewPointSaveDialog.data', this.ViewPointSaveDialog.data)
 
-
+        this.loadingSaveViewPoint = true
         const param = {
           "method": "SaveViewPoint",
           "type": __data.type,
@@ -235,14 +237,17 @@
           // this.loadingSaveViewPoint = false
           // this.viewPointTitleName = this.viewPointName
           // this.viewPointName = ""
-          this.$message({
-            message: '视点保存成功！',
-            type: 'success'
-          })
+
+
 
           setTimeout(() => {
             this.$store.dispatch('SetViewPointDataChanged', {}).then((result) => {
-
+              this.$message({
+                message: '视点保存成功！',
+                type: 'success'
+              })
+              this.loadingSaveViewPoint = false
+              this.closeSaveDialogHandle()
             })
           }, 2500);
 
