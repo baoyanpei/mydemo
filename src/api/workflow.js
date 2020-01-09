@@ -20,6 +20,6 @@ export function getAllInstList(data) {
     url: '/api/oa/workflow',
     method: 'post',
     data: data,
-    baseURL: 'http://w.yidebim.com:3004'
+    // baseURL: 'http://w.yidebim.com:3004'
   })
 }

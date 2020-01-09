@@ -93,7 +93,7 @@ export function allpersondata(data) {
     url:'/api/oa/workflow',
     method:'post',
     data:data,
-    baseURL: 'http://w.yidebim.com:3004'
+    // baseURL: 'http://w.yidebim.com:3004'
   })
 }
 
@@ -102,7 +102,7 @@ export function allinfodictionary(data) {
     url:'/api/oa/helper',
     method:'post',
     data:data,
-    baseURL: 'http://w.yidebim.com:3004'
+    // baseURL: 'http://w.yidebim.com:3004'
   })
 }
 
@@ -112,7 +112,7 @@ export function postmomment(data) {//上传评论信息
     url:'/api/oa/comment',
     method:'post',
     data:data,
-    baseURL: 'http://w.yidebim.com:3004'
+    // baseURL: 'http://w.yidebim.com:3004'
   })
 }
 
@@ -123,6 +123,6 @@ export function safeinspection(data) {//安全巡检页面
     url:'/api/oa/workflow',
     method:'post',
     data:data,
-    baseURL: 'http://w.yidebim.com:3004'
+    // baseURL: 'http://w.yidebim.com:3004'
   })
 }
