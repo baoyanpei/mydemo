@@ -1,12 +1,14 @@
 .view-point-manage-dialog {
   .el-collapse-item__header {
     display: -webkit-box;
+    height: 28px;
+    line-height: 28px;
   }
 
   .el-collapse-item__arrow {
     float: left;
     // line-height: 50px;
-    margin: 0px 10px 0px 5px;
+    margin: 0px 5px 0px 5px;
     height: 30px;
     line-height: 30px;
   }
@@ -125,7 +127,7 @@
       text-align: center;
       line-height: 60px;
 
-      .icon-delete {
+      .icon-red-pointer {
         color: red;
         cursor: pointer;
       }

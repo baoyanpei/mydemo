@@ -62,10 +62,9 @@ export function getViewpointsByProjectId(data) {
 export function getViewpointsByFileId(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
     method: 'post',
-    data: data,
-    baseURL: 'http://admin.yidebim.com'
+    data: data
   })
 }
 
@@ -117,8 +116,49 @@ export function getViewpointsById(data) {
 export function deleteViewpointById(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
+  })
+}
+
+/*
+4.1.4视点综合查询
+api:/api/bim/bcp
+method:GetViewPoints
+保存视点信息
+file_id为空 取出所有project_id相关的列表
+        参数
+        project_id:必选
+        file_id:(可选) file_id为空 取出所有project_id相关的列表
+        type:(可选) 根据类型选视点
+        item_id:(可选)根据建筑物id选视点
+返回：
+{
+    "data": [{
+        "camera_info": "",
+        "creator": 100587,
+        "creator_name": "陈玮",
+        "desc": "desc",
+        "file_ids": "[200223,1232412]",
+        "floor_name": "",
+        "id": 6,
+        "item_id": "",
+        "name": "测试视点2",
+        "picture_info": "",
+        "project_id": 10000,
+        "svg_info": ""
+    }],
+    "msg": "",
+    "status": "success"
+}
+
+*/
+export function getViewPoints(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/bim/bcp',
+    method: 'post',
+    data: data,
   })
 }

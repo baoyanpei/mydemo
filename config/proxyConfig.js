@@ -1,14 +1,23 @@
 module.exports = {
   proxyList: {
-    // '/api': {
-    //   // 测试环境
-    //   target: 'http://admin.yidebim.com', // 接口域名
-    //   changeOrigin: true, //是否跨域
-    //   pathRewrite: {
-    //     '/api': '/api'
-    //     //需要rewrite重写的,
-    //   }
-    // },
+    '/api/bcp/web': {
+      // 测试环境
+      target: 'http://admin.yidebim.com', // 接口域名
+      changeOrigin: true, //是否跨域
+      pathRewrite: {
+        '/api/bcp/web': '/api/bcp/web'
+        //需要rewrite重写的,
+      }
+    },
+    '/api': {
+      // 测试环境
+      target: 'http://w.yidebim.com:3002', // 接口域名
+      changeOrigin: true, //是否跨域
+      pathRewrite: {
+        '/api': '/api'
+        //需要rewrite重写的,
+      }
+    },
     '/BCP_FILE': {
       // 测试环境
       target: 'http://admin.yidebim.com', // 接口域名

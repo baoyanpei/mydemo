@@ -159,7 +159,7 @@
         await this.loginByXcxToken()
         await this.getViewpointsById()
 
-        let files_id_list = JSON.parse(this.ViewPointInfo.FILE_IDS)
+        let files_id_list = JSON.parse(this.ViewPointInfo.file_ids)
         console.log('files_id_list', files_id_list)
         await this.getItemInfoListByProID(files_id_list)
 
@@ -245,7 +245,7 @@
           // console.log('itemInfo', itemInfo)
           // 服务端地址转换
           // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
-          _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM_XCX))
           // 本地地址转换
           // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
         });
@@ -255,12 +255,12 @@
         // console.log('this.project_id', this.project_id)
         return new Promise((resolve, reject) => {
           const param = {
-            method: 'GetViewpointsById',
-            // project_id: this.project_id,
+            method: 'GetViewPoints',
+            project_id: this.project_id,
             id: this.point_view_id
 
           }
-          this.$store.dispatch('GetViewpointsById', param).then((infoDataList) => {
+          this.$store.dispatch('GetViewPoints', param).then((infoDataList) => {
             console.log('GetViewpointsById', infoDataList)
             if (infoDataList.length > 0) {
               this.ViewPointInfo = infoDataList[0]
@@ -328,8 +328,8 @@
           this.isShowToolbarMarkerStyle = false
           this.isShowViewPointArea = true
           console.log('ViewPointInfo', this.ViewPointInfo)
-          this.ViewPointType = this.ViewPointInfo.TYPE
-          this.viewPointTitleName = this.ViewPointInfo.NAME
+          this.ViewPointType = this.ViewPointInfo.type
+          this.viewPointTitleName = this.ViewPointInfo.name
           this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
           console.log('this.markupsExt', this.markupsExt)
           // markupsExt.deleteMarkup()
@@ -341,8 +341,8 @@
           this.isShowViewPointThumbArea = false
           this.isShowSaveMarkerArea = false
 
-          let _marekup_svg = Base64.decode(this.ViewPointInfo.SVG)
-          let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.CAMERA_INFO))
+          let _marekup_svg = Base64.decode(this.ViewPointInfo.svg_info)
+          let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))
           // let picBase64 = picture_info.base64
           this.viewPointImgUrl = this.ViewPointInfo.pictureFullSrc
           console.log('camera_info', camera_info)
@@ -353,7 +353,7 @@
           setTimeout(() => {
             markupsExt.leaveEditMode();
             markupsExt.show();
-            markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointInfo.ID);
+            markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointInfo.id);
             // this.enterMarkerEditMode()
             this.isShowOldViewPoint = true
           }, 1000);

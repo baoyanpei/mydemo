@@ -4,7 +4,8 @@ import {
   getViewpointsByFileId,
   getFileListByItemId,
   getViewpointsById,
-  deleteViewpointById
+  deleteViewpointById,
+  getViewPoints
 } from '@/api/view_point'
 
 const viewPoint = {
@@ -119,6 +120,17 @@ const viewPoint = {
     }, param) {
       return new Promise((resolve, reject) => {
         getViewpointsById(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    GetViewPoints({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        getViewPoints(param).then(response => {
           resolve(response.data)
         }).catch(error => {
           reject(error)

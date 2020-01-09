@@ -1043,8 +1043,8 @@
           this.isShowToolbarMarkerStyle = false
           this.isShowViewPointArea = true
           console.log('ViewPointCurrentShow', this.ViewPointCurrentShow)
-          this.ViewPointType = this.ViewPointCurrentShow.TYPE
-          this.viewPointTitleName = this.ViewPointCurrentShow.NAME
+          this.ViewPointType = this.ViewPointCurrentShow.type
+          this.viewPointTitleName = this.ViewPointCurrentShow.name
           this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
           console.log('this.markupsExt', this.markupsExt)
           // markupsExt.deleteMarkup()
@@ -1056,8 +1056,8 @@
           this.isShowViewPointThumbArea = false
           this.isShowSaveMarkerArea = false
 
-          let _marekup_svg = Base64.decode(this.ViewPointCurrentShow.SVG)
-          let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentShow.CAMERA_INFO))
+          let _marekup_svg = Base64.decode(this.ViewPointCurrentShow.svg_info)
+          let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentShow.camera_info))
           // let picBase64 = picture_info.base64
           this.viewPointImgUrl = this.ViewPointCurrentShow.pictureFullSrc
           console.log('camera_info', camera_info)
@@ -1072,7 +1072,7 @@
 
             markupsExt.leaveEditMode();
             markupsExt.show();
-            markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointCurrentShow.ID);
+            markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointCurrentShow.id);
             // this.enterMarkerEditMode()
             this.isShowOldViewPoint = true
 
