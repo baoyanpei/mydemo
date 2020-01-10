@@ -350,7 +350,7 @@
 
 
 
-            console.log('item', item)
+            // console.log('item', item)
             if (parseInt(item.type) === 1) {
 
               // let picture_info = "/api/bim/bcp/thumbnail.jpg?vpid=32&project_id=10000&w=200" //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
@@ -366,7 +366,7 @@
               }
 
               let _item_id = item.item_id
-              console.log('_mapBuild.get(item_id)', _mapBuild.get(_item_id))
+              // console.log('_mapBuild.get(item_id)', _mapBuild.get(_item_id))
 
               let _buildInfo = _mapBuild.get(_item_id)
               if (_buildInfo === undefined) {
@@ -376,7 +376,7 @@
                   'floorInfos': new Map()
                 })
                 _buildInfo = _mapBuild.get(_item_id)
-                console.log('buildInfo1', _buildInfo)
+                // console.log('buildInfo1', _buildInfo)
 
               }
 
@@ -385,7 +385,7 @@
               if (_floorInfo === undefined) {
                 _buildInfo.floorInfos.set(_floorName, {
                   'floor': _floorName,
-                  ViewPointMap: new Map()
+                  'ViewPointMap': new Map()
                 })
                 _floorInfo = _buildInfo.floorInfos.get(_floorName)
               }
@@ -417,13 +417,13 @@
               _viewPoints.forEach(viewPoint => {
                 _viewPointList.push(viewPoint)
               })
-              console.log('floor', floor)
+              // console.log('floor', floor)
               floorList.push({
                 'floor': floor.floor,
-                'treeid':`floor${floor.floor}`,
+                'treeid':`build${item.build_id}-floor${floor.floor}`,
                 'viewPointList': _viewPointList
               })
-              this.activeFloorNames.push(`floor${floor.floor}`)
+              this.activeFloorNames.push(`build${item.build_id}-floor${floor.floor}`)
             })
             // _buildList['floorInfos'] = floorList
 
@@ -438,7 +438,7 @@
           })
 
 
-          console.log('_mapBuild', _mapBuild)
+          // console.log('_mapBuild', _mapBuild)
           // console.log('_buildList', _buildList)
           console.log('this.viewPointPosDataList', this.viewPointPosDataList)
           this.tipMessage = ''
