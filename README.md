@@ -67,3 +67,15 @@ import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
 Vue.use(VueClipboard)
 ```
+
+#### 小程序中需要调用的视点展示页面
+
+```txt
+调用地址
+https://xcx.tddata.net/smz/#/xcx/pvshow?projectid=10000&pvid=39&token=123
+参数说明：
+projectid：项目id
+pvid：视点id（PointViewID）
+token：用户登录后的token
+```
+
