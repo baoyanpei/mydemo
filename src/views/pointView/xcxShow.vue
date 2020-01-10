@@ -158,6 +158,10 @@
       async init() {
         await this.loginByXcxToken()
         await this.getViewpointsById()
+        if (this.ViewPointInfo === null){
+          this.tip_message = `没有查询到相关视点数据，请核对参数<br/>projectid:${this.project_id}<br/>projectid:${this.point_view_id}<br/>token:${this.access_token}`
+          return
+        }
 
         let files_id_list = JSON.parse(this.ViewPointInfo.file_ids)
         console.log('files_id_list', files_id_list)
