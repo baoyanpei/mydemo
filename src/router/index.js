@@ -250,7 +250,7 @@ export const constantRouterMap = [{
     }]
   },
   {
-    path: '/lot5',// 此版本为模型从bim2轻量化平台获取
+    path: '/lot5', // 此版本为模型从bim2轻量化平台获取
     name: 'lot5',
     component: Layout,
     redirect: '/loT5/index',
@@ -313,6 +313,18 @@ export const constantRouterMap = [{
         name: 'xcx-pointview-show',
         meta: {
           title: 'BIM模型视点查看(小程序)',
+          icon: 'building',
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+        }
+      },
+      {
+        path: 'model',
+        component: () => import('@/views/modelDisplay/xcx'),
+        name: 'xcx-model-display',
+        meta: {
+          title: 'BIM模型查看(小程序)',
           icon: 'building',
           noCache: true,
           requireAuth: false, // 是否需要信息验证

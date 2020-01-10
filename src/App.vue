@@ -155,7 +155,7 @@
     watch: {
       '$route'(to, from) {
         console.log("totototo", to)
-        if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && this.personInfo ===
+        if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && to.name !== "xcx-model-display" && this.personInfo ===
           null) {
           this.getPerson()
         }

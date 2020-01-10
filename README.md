@@ -79,3 +79,13 @@ pvid：视点id（PointViewID）
 token：用户登录后的token
 ```
 
+#### 小程序中需要调用的模型展示页面
+
+```txt
+调用地址
+https://xcx.tddata.net/smz/#/xcx/model?projectid=10000&items=1337|1335|1336&token=123
+参数说明：
+projectid：项目id
+items：模型的itemid，多个用|分割，如1335|1336|1337
+token：用户登录后的token
+```
