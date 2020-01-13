@@ -15,6 +15,7 @@ import datum from './modules/datum' // 物联网
 import workflow from './modules/workflow' // 工作流
 import bim from './modules/bim' // BIM
 import viewPoint from './modules/viewPoint' // 视点
+import bindBim from './modules/bindBim' // 绑定BIM
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -35,7 +36,8 @@ const store = new Vuex.Store({
     datum,
     workflow,
     bim,
-    viewPoint
+    viewPoint,
+    bindBim
   },
   getters
 })

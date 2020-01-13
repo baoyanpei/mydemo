@@ -10,6 +10,7 @@
         <el-option v-for="item in project_option" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
+      <BindBimButton></BindBimButton>
       <div class="right-menu">
         <el-button type="primary" style="top:0px;position: relative;" @click="openScreenHandle">
           <icon name="desktop" scale="1.4" style="line-height: 20px;"></icon> <span>项目看板</span>
@@ -77,7 +78,7 @@
   import Screenfull from '@/components/Screenfull'
   import LangSelect from '@/components/LangSelect'
   import ThemePicker from '@/components/ThemePicker'
-
+  import BindBimButton from '@/views/layout/components/BindBimButton'
   export default {
     components: {
       Breadcrumb,
@@ -85,7 +86,8 @@
       ErrorLog,
       Screenfull,
       LangSelect,
-      ThemePicker
+      ThemePicker,
+      BindBimButton
     },
     data() {
       return {
