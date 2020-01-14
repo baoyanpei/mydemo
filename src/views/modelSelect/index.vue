@@ -50,7 +50,7 @@
                   disabled></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column prop="name" label="建筑名" width="450">
+            <el-table-column prop="name" label="建筑名" width="400">
               <template slot-scope="scope">
                 <!-- <div v-if="scope.row.name === ''">
                     <el-input ref="newBuildName" v-model="newBuildName" placeholder="请输入建筑名" size="small"></el-input>
@@ -60,13 +60,13 @@
                 </div>
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="oper" label="操作" width="150" align="left">
+            <el-table-column prop="oper" label="操作" width="150" align="center">
               <template slot-scope="scope">
-                <el-button type="primary" size="small" icon="el-icon-view"
+                <el-button type="primary" size="mini" 
                   v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
-                  @click="handleEdit(scope.row)" title="查看" class="small_cicle">
+                  @click="handleEdit(scope.row)" >查看模型
                 </el-button>
-                <el-button title="上传"
+                <!-- <el-button title="上传"
                   v-if="scope.row.name !== '' && scope.row.menuType ==='item' && scope.row.isShowUploadItem === true"
                   size="small" icon="el-icon-upload2" class="small_cicle btn-blue" @click="handleItemEdit(scope.row)">
                 </el-button>
@@ -82,12 +82,12 @@
                 <div v-if="scope.row.name === ''">
                   <el-button size="mini" type="success" @click="submitNewBuildingHandle">确定</el-button>
                   <el-button size="mini" @click="cancelNewBuildingHandle">取消</el-button>
-                </div>
+                </div> -->
 
 
 
               </template>
-            </el-table-column> -->
+            </el-table-column>
             <el-table-column prop="version" label="版本" width="100" align="center">
             </el-table-column>
             <!-- <el-table-column prop="status_display" label="状态" width="120" align="center">
