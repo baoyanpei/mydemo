@@ -40,7 +40,7 @@
       </el-menu-item>
       <el-menu-item index="/modelSelect/index">
         <font-awesome-icon icon="map-marked" />
-        <span slot="title">项目位置</span>
+        <span slot="title">BIM管理</span>
       </el-menu-item>
       <!--
       <el-menu-item index="/main1">
