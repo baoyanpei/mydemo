@@ -294,7 +294,7 @@
       },
       init3DView(modelURLList) {
         return new Promise((resolve, reject) => {
-          this.urns = modelURLList
+          // this.urns = modelURLList
           Autodesk.Viewing.Initializer(this.options, async () => {
             this.element = document.getElementById('viewer-local');
             this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
@@ -334,7 +334,7 @@
               z: 0
             }
           };
-          console.log('iiiiii', index)
+          console.log('iiiiii', index, modelURL)
           this.viewer.loadModel(modelURL, modelOpts, resLoadSuccess => {
             if (index === 0) {
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
@@ -547,10 +547,11 @@
         // console.log('this.project_id', this.project_id)
         // console.log('this.itemInfoList', this.itemInfoList)
         this.itemInfoList.forEach(itemInfo => {
-          // console.log('itemInfo', itemInfo)
+          console.log('itemInfo111', itemInfo)
           // 服务端地址转换
           // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
-          _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
           // 本地地址转换
           // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
         });
@@ -561,7 +562,7 @@
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetItemInfoListByItemIDs',
-            // project_id: this.project_id,
+            project_id: this.project_id,
             item_id: item_ids
 
           }
@@ -569,7 +570,7 @@
             console.log('_itemList_itemList', _itemList)
             _itemList.forEach(build => {
               this.itemList.forEach(item => {
-                if (item.FILE_ID === build.FILE_ID) {
+                if (item.FILE_ID === build.file_id) {
                   this.itemInfoList.push(build)
                 }
               })
@@ -585,16 +586,16 @@
         this.itemInfoList = []
         return new Promise((resolve, reject) => {
           const param = {
-            method: 'GetItemInfoListByProID',
+            method: 'project_items',
             project_id: this.project_id
             // item_id: item_ids
 
           }
-          this.$store.dispatch('GetItemInfoListByProID', param).then((_itemList) => {
+          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
             console.log('_itemList_itemList', _itemList)
             _itemList.forEach(build => {
               file_ids.forEach(file_id => {
-                if (file_id === build.FILE_ID) {
+                if (file_id === build.file_id) {
                   this.itemInfoList.push(build)
                 }
               })
@@ -1044,7 +1045,7 @@
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           // console.log('this.itemInfoList', this.itemInfoList)
           let _urlList = this.getModelUrl()
-          // console.log('_urlList', _urlList)
+          console.log('_urlList', _urlList)
           if (_urlList.length !== 0) {
             await this.init3DView(_urlList)
 
@@ -1074,9 +1075,12 @@
             // markupsExt.viewer.impl.invalidate(true);
             // this.isShowToolbarRestore = true
             this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-            this.markupsExt.clear()
-            this.markupsExt.leaveEditMode();
-            this.markupsExt.hide()
+            if (this.markupsExt !== undefined) {
+              this.markupsExt.clear()
+              this.markupsExt.leaveEditMode();
+              this.markupsExt.hide()
+            }
+
             break;
           case 2: // 2-普通视点
             this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {

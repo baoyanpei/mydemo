@@ -238,7 +238,8 @@
           // console.log('itemInfo', itemInfo)
           // 服务端地址转换
           // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
-          _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM_XCX))
+          // _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM_XCX))
+          _urlList.push(itemInfo.url.replace('/www/bim_proj/', ''))
           // 本地地址转换
           // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
         });
@@ -250,7 +251,7 @@
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetItemInfoListByItemIDs',
-            // project_id: this.project_id,
+            project_id: this.project_id,
             item_id: item_ids
 
           }

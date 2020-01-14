@@ -113,10 +113,10 @@
         this.itemInfoListMap = new Map()
         const __itemInfoList = _data.itemInfoList
         __itemInfoList.forEach(itemInfo => {
-          this.itemInfoListMap.set(itemInfo.ITEM_ID, itemInfo)
+          this.itemInfoListMap.set(itemInfo.id, itemInfo)
         })
         console.log('this.itemInfoListMap', this.itemInfoListMap)
-        await this.exchangeToken(getToken())
+        // await this.exchangeToken(getToken())
         await this.getProjectItemsAll()
         if (this.editMode === 1) { // 新增模式
           if (this.buildList.length === 1) {
@@ -125,32 +125,32 @@
         }
 
       },
-      exchangeToken(token) {
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: "exchange_token",
-            from: 'oa',
-            token: token
-          }
-          this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-            console.log('ExchangeToken - resultData', resultData)
-            if (resultData.status === 'success') {
-              this.access_token = resultData.access_token
-              resolve()
-            } else {
-              reject(resultData.msg)
-            }
-          })
-        })
+      // exchangeToken(token) {
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: "exchange_token",
+      //       from: 'oa',
+      //       token: token
+      //     }
+      //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+      //       console.log('ExchangeToken - resultData', resultData)
+      //       if (resultData.status === 'success') {
+      //         this.access_token = resultData.access_token
+      //         resolve()
+      //       } else {
+      //         reject(resultData.msg)
+      //       }
+      //     })
+      //   })
 
-      },
+      // },
       getProjectItemsAll() {
         return new Promise((resolve, reject) => {
           this.buildList = []
           const param = {
             method: 'project_items',
             project_id: this.project_id,
-            access_token: this.access_token
+            // access_token: this.access_token
           }
           this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
             console.log('getProjectItemsAll - _itemList', _itemList)

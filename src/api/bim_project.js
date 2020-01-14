@@ -44,7 +44,7 @@ method:"projects"
 export function getProjectList(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
   })
@@ -118,7 +118,7 @@ desc: 描述
 export function addBimItem(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
   })
@@ -142,7 +142,7 @@ desc: 模型描述
 export function updateBimItem(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
   })
@@ -164,7 +164,7 @@ id:模型id
 export function removeBimItem(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
   })
@@ -217,7 +217,7 @@ project_id 项目id
 export function getProjectItems(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data,
     // baseURL: 'http://admin.yidebim.com'
@@ -228,7 +228,7 @@ export function getProjectItems(data) {
 export function getItemInfoListByProID(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
     // baseURL: 'http://admin.yidebim.com1'

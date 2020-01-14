@@ -215,7 +215,7 @@
         this.ProjectItemsAll = new Map()
       },
       async getData() {
-        await this.exchangeToken(getToken())
+        // await this.exchangeToken(getToken())
         await this.getProjectItemsAll() // 获取模型的item列表（最新版本）
         await this.GetViewpointsDataAll() // 获取所有的视点数据
         console.log(12313123)
@@ -237,39 +237,39 @@
 
         this.CurrentFileIDList = []
         this.ViewPointManageDialog.itemInfoList.forEach(item => {
-          this.CurrentFileIDList.push(item.FILE_ID)
+          this.CurrentFileIDList.push(item.file_id)
         })
         this.getData()
       },
-      exchangeToken(token) {
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: "exchange_token",
-            from: 'oa',
-            token: token
-          }
-          this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-            console.log('ExchangeToken - resultData', resultData)
-            if (resultData.status === 'success') {
-              this.access_token = resultData.access_token
-              resolve()
-            } else {
-              // console.log("123123123")
-              this.tip_message = resultData.msg
-              reject(resultData.msg)
-            }
+      // exchangeToken(token) {
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: "exchange_token",
+      //       from: 'oa',
+      //       token: token
+      //     }
+      //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+      //       console.log('ExchangeToken - resultData', resultData)
+      //       if (resultData.status === 'success') {
+      //         this.access_token = resultData.access_token
+      //         resolve()
+      //       } else {
+      //         // console.log("123123123")
+      //         this.tip_message = resultData.msg
+      //         reject(resultData.msg)
+      //       }
 
-          })
-        })
+      //     })
+      //   })
 
-      },
+      // },
       getProjectItemsAll() {
         return new Promise((resolve, reject) => {
           this.ProjectItemsAll = new Map()
           const param = {
             method: 'project_items',
-            project_id: this.project_id,
-            access_token: this.access_token
+            project_id: this.project_id
+            // access_token: this.access_token
           }
           this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
             // console.log('getProjectItemsAll - _itemList', _itemList)
@@ -309,7 +309,7 @@
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetViewpointsByFileId',
-            file_id: item.FILE_ID,
+            file_id: item.file_id,
             project_id: this.project_id
           }
           this.$store.dispatch('GetViewpointsByFileId', param).then((_viewPointList) => {

@@ -150,7 +150,7 @@
         isIndeterminate: false,
         newBuildName: '',
         isNewBUildingShow: false,
-        access_token: null
+        // access_token: null
       }
     },
     computed: {
@@ -197,7 +197,7 @@
         })()
       }
       // 
-      await this.exchangeToken(getToken())
+      // await this.exchangeToken(getToken())
       this.getItemListByProID()
     },
     beforeDestroy() {
@@ -206,28 +206,28 @@
       console.log('beforeDestroy')
     },
     methods: {
-      exchangeToken(token) {
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: "exchange_token",
-            from: 'oa',
-            token: token
-          }
-          this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-            console.log('ExchangeToken - resultData', resultData)
-            if (resultData.status === 'success') {
-              this.access_token = resultData.access_token
-              resolve()
-            } else {
-              // console.log("123123123")
-              this.tip_message = resultData.msg
-              reject(resultData.msg)
-            }
+      // exchangeToken(token) {
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: "exchange_token",
+      //       from: 'oa',
+      //       token: token
+      //     }
+      //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+      //       console.log('ExchangeToken - resultData', resultData)
+      //       if (resultData.status === 'success') {
+      //         this.access_token = resultData.access_token
+      //         resolve()
+      //       } else {
+      //         // console.log("123123123")
+      //         this.tip_message = resultData.msg
+      //         reject(resultData.msg)
+      //       }
 
-          })
-        })
+      //     })
+      //   })
 
-      },
+      // },
       clearData() {
         // this.treeData = []
         this.tableFilterData = []
@@ -269,10 +269,10 @@
           const param = {
             method: 'project_items',
             project_id: this.project_id,
-            access_token: this.access_token
+            // access_token: this.access_token
           }
           this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
-            // console.log('getProjectItemsAll - _itemList', _itemList)
+            console.log('getProjectItemsAll - _itemList', _itemList)
             // _buildList.forEach(async build => {
             //   build['from'] = 1 // 来自玮哥接口
             //   this.buildMap.set(build.id, build)

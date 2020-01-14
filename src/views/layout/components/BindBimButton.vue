@@ -4,7 +4,7 @@
 </style>
 <template>
   <span class="bind_bim_button">
-    <el-button type="success" @click="clickBindBimHandle" icon="el-icon-link">绑定BIM项目</el-button>
+    <!-- <el-button type="success" @click="clickBindBimHandle" icon="el-icon-link">绑定BIM项目</el-button> -->
   </span>
 
 </template>
