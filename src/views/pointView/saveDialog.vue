@@ -11,7 +11,7 @@
         <el-form ref="viewPointPositionSaveForm" :model="viewPointPositionSaveForm" label-width="80px" :inline="true">
           <div v-if="ViewPointType === 1">
             <el-form-item label="所属建筑">
-              <el-select v-model="SelectedBuild" placeholder="请选择" style="width: 260px;">
+              <el-select v-model="SelectedBuild" placeholder="请选择" style="width: 260px;" disabled>
                 <el-option v-for="item in buildList" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>

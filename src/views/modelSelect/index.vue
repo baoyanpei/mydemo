@@ -50,7 +50,7 @@
                   disabled></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column prop="name" label="建筑名" width="400">
+            <el-table-column prop="name" label="建筑名" width="380">
               <template slot-scope="scope">
                 <!-- <div v-if="scope.row.name === ''">
                     <el-input ref="newBuildName" v-model="newBuildName" placeholder="请输入建筑名" size="small"></el-input>
@@ -88,8 +88,8 @@
 
               </template>
             </el-table-column>
-            <el-table-column prop="version" label="版本" width="100" align="center">
-            </el-table-column>
+            <!-- <el-table-column prop="version" label="版本" width="100" align="center">
+            </el-table-column> -->
             <!-- <el-table-column prop="status_display" label="状态" width="120" align="center">
               <template slot-scope="scope">
                 <div v-bind:class="scope.row.status_css">{{scope.row.status_display}}</div>
