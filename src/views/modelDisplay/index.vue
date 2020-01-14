@@ -446,14 +446,23 @@
 
         // 标注功能
         let buttonMarker2 = new Autodesk.Viewing.UI.Button('my-marker2-button')
-        buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
-
-        buttonMarker2.onClick = (e) => {
-          // viewer.setViewCube('front')
-          this.enterMarkerEditMode(1)
-        }
         buttonMarker2.addClass('my-marker2-button')
-        buttonMarker2.setToolTip('标定项目位置标准视点')
+
+        console.log("this.itemList.length", this.itemList.length)
+        if (this.itemList.length === 1) {
+          buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
+          buttonMarker2.onClick = (e) => {
+            // viewer.setViewCube('front')
+            this.enterMarkerEditMode(1)
+          }
+          buttonMarker2.setToolTip('标定项目位置标准视点')
+        } else {
+          buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup_grey.png)'
+          buttonMarker2.setToolTip('合并模型不能进行位置标注')
+        }
+
+
+
 
 
         // 视点管理功能
