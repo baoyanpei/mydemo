@@ -113,7 +113,8 @@
         this.itemInfoListMap = new Map()
         const __itemInfoList = _data.itemInfoList
         __itemInfoList.forEach(itemInfo => {
-          this.itemInfoListMap.set(itemInfo.id, itemInfo)
+          console.log('itemInfo', itemInfo)
+          this.itemInfoListMap.set(itemInfo.item_id, itemInfo)
         })
         console.log('this.itemInfoListMap', this.itemInfoListMap)
         // await this.exchangeToken(getToken())
