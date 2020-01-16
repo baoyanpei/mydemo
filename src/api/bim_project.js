@@ -234,3 +234,59 @@ export function getItemInfoListByProID(data) {
     // baseURL: 'http://admin.yidebim.com1'
   })
 }
+// 4.1.6查本项目关联码
+/*
+
+api:/api/bim/bcp
+method:get_outsys_info
+设置bimcp外部系统参数包括  access_code,和额外参数params
+    参数:
+        project_id:
+        params:(可选)
+
+返回：
+{
+    "msg": "",
+    "status": "success",
+        "data":{"access_code":xxxx,"params":{} }
+}
+
+*/
+
+export function getOutsysInfo(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/bim/bcp',
+    method: 'post',
+    data: data
+    // baseURL: 'http://admin.yidebim.com1'
+  })
+}
+
+// 4.1.5设置项目关联码
+/*
+api:/api/bim/bcp
+method:set_outsys_info
+设置bimcp外部系统参数包括  access_code,和额外参数params
+    参数:
+        project_id:
+        access_code:
+        params:(可选)
+
+返回：
+{
+    "msg": "",
+    "status": "success"
+}
+
+*/
+
+export function setOutsysInfo(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/bim/bcp',
+    method: 'post',
+    data: data
+    // baseURL: 'http://admin.yidebim.com1'
+  })
+}

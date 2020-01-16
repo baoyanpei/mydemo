@@ -10,7 +10,13 @@
           @check-change="checkChange" @node-click="handleNodeClick">
         </el-tree>
       </div> -->
-    <div class="list-area">
+    <div v-show="isBindBim === false" class="not-bind-bim">
+      当前项目没有与BIM项目绑定
+      <div class="btn-bind-bim">
+        <BindBimButton></BindBimButton>
+      </div>
+    </div>
+    <div v-show="isBindBim === true" class="list-area">
       <div class="list-main">
         <el-row :gutter="20" style="border-bottom:0px solid #eeeeee;">
           <el-col :span="18">
@@ -62,9 +68,9 @@
             </el-table-column>
             <el-table-column prop="oper" label="操作" width="150" align="center">
               <template slot-scope="scope">
-                <el-button type="primary" size="mini" 
+                <el-button type="primary" size="mini"
                   v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
-                  @click="handleEdit(scope.row)" >查看模型
+                  @click="handleEdit(scope.row)">查看模型
                 </el-button>
                 <!-- <el-button title="上传"
                   v-if="scope.row.name !== '' && scope.row.menuType ==='item' && scope.row.isShowUploadItem === true"
@@ -117,6 +123,7 @@
   import Cookies from 'js-cookie'
   import moment from 'moment'
   import lodash from 'lodash'
+  import BindBimButton from '@/views/layout/components/BindBimButton'
   import {
     getToken
   } from '@/utils/auth'
@@ -130,9 +137,12 @@
   }]
   export default {
     name: 'ModelSelect',
-    components: {},
+    components: {
+      BindBimButton
+    },
     data() {
       return {
+        isBindBim: false,
         buildMap: new Map(),
         buildList: [],
         // treeData: [],
@@ -162,12 +172,15 @@
           this.$store.state.project.project_id = newValue
         }
       },
+      BindBimDataChanged() {
+        return this.$store.state.bindBim.BindBimDataChanged
+      }
       // personInfo() {
       //   return this.$store.state.person.personInfo
       // },
-      ModelSelectListChangeSeed() {
-        return this.$store.state.model3d.ModelSelectListChangeSeed
-      }
+      // ModelSelectListChangeSeed() {
+      //   return this.$store.state.model3d.ModelSelectListChangeSeed
+      // }
     },
     watch: {
       project_id(curVal, oldVal) {
@@ -178,9 +191,13 @@
           this.reloadAllData()
         }
       },
-      ModelSelectListChangeSeed(curVal, oldVal) {
+      BindBimDataChanged(curVal, oldVal) {
+        console.log("BindBimDataChanged - index")
         this.reloadAllData()
       }
+      // ModelSelectListChangeSeed(curVal, oldVal) {
+      //   this.reloadAllData()
+      // }
     },
     created() {
 
@@ -198,6 +215,8 @@
       }
       // 
       // await this.exchangeToken(getToken())
+      await this.GetOutsysInfo()
+      console.log('this.isBindBim', this.isBindBim)
       this.getItemListByProID()
     },
     beforeDestroy() {
@@ -206,35 +225,34 @@
       console.log('beforeDestroy')
     },
     methods: {
-      // exchangeToken(token) {
-      //   return new Promise((resolve, reject) => {
-      //     const param = {
-      //       method: "exchange_token",
-      //       from: 'oa',
-      //       token: token
-      //     }
-      //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-      //       console.log('ExchangeToken - resultData', resultData)
-      //       if (resultData.status === 'success') {
-      //         this.access_token = resultData.access_token
-      //         resolve()
-      //       } else {
-      //         // console.log("123123123")
-      //         this.tip_message = resultData.msg
-      //         reject(resultData.msg)
-      //       }
-
-      //     })
-      //   })
-
-      // },
+      GetOutsysInfo() {
+        return new Promise((resolve, reject) => {
+          this.bim_name_desc = ""
+          // this.isBindBim = true
+          const param = {
+            method: 'get_outsys_info',
+            project_id: this.project_id
+          }
+          this.$store.dispatch('GetOutsysInfo', param).then((res) => {
+            console.log('GetOutsysInfo - res', res, res.access_code === undefined)
+            if (res.access_code === undefined || res.access_code === '') {
+              this.isBindBim = false
+            } else {
+              this.isBindBim = true
+              // this.bim_name_desc = `BIM项目：${res.name}`
+            }
+            resolve()
+          })
+        })
+      },
       clearData() {
         // this.treeData = []
         this.tableFilterData = []
         this.tableData = []
       },
-      reloadAllData() {
+      async reloadAllData() {
         // this.getBuildingListByProID()
+        await this.GetOutsysInfo()
         this.getItemListByProID()
         this.checkAll = false
         this.isIndeterminate = false
@@ -296,6 +314,10 @@
       //   })
       // },
       getItemListByProID() {
+        console.log('getItemListByProID - isBindBim', this.isBindBim)
+        if (this.isBindBim !== true) {
+          return
+        }
         // console.log('this.project_id', this.project_id)
         return new Promise(async (resolve, reject) => {
           this.tableData = []
@@ -358,7 +380,7 @@
 
               let _isShowDeleteItem = false
               if (_Item.process_status === null || (_Item.process_status !== 8 && _Item.process_status !==
-                0)) {
+                  0)) {
                 _isShowDeleteItem = true
               }
 
@@ -409,56 +431,56 @@
         }).catch(() => {})
 
       },
-      handleBuildingDelete(row) {
-        console.log('row', row)
-        this.$confirm(`是否要删除建筑<label style="color:#0000FF;">${row.name}</label>, 是否继续?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          dangerouslyUseHTMLString: true
-        }).then(() => {
-          const param = {
-            method: 'bim_building_remove',
-            project_id: this.project_id,
-            id: row.id
-          }
-          console.log('param', param)
-          this.$store.dispatch('RemoveBimBuilding', param).then((resultData) => {
-            console.log('RemoveBimBuilding - resultData', resultData)
-            this.reloadAllData()
-          }).catch((e) => {
-            console.log("e", e)
-          })
+      // handleBuildingDelete(row) {
+      //   console.log('row', row)
+      //   this.$confirm(`是否要删除建筑<label style="color:#0000FF;">${row.name}</label>, 是否继续?`, '提示', {
+      //     confirmButtonText: '确定',
+      //     cancelButtonText: '取消',
+      //     type: 'warning',
+      //     dangerouslyUseHTMLString: true
+      //   }).then(() => {
+      //     const param = {
+      //       method: 'bim_building_remove',
+      //       project_id: this.project_id,
+      //       id: row.id
+      //     }
+      //     console.log('param', param)
+      //     this.$store.dispatch('RemoveBimBuilding', param).then((resultData) => {
+      //       console.log('RemoveBimBuilding - resultData', resultData)
+      //       this.reloadAllData()
+      //     }).catch((e) => {
+      //       console.log("e", e)
+      //     })
 
-        }).catch(() => {
+      //   }).catch(() => {
 
-        });
-      },
-      handleItemDelete(row) {
-        console.log('row,', row)
-        this.$confirm(`是否要删除模型<label style="color:#0000FF;">${row.name}</label>, 是否继续?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          dangerouslyUseHTMLString: true
-        }).then(() => {
-          const param = {
-            method: 'project_item_del',
-            project_id: this.project_id,
-            id: row.id
-          }
-          console.log('param', param)
-          this.$store.dispatch('RemoveBimItem', param).then((resultData) => {
-            console.log('RemoveBimItem - resultData', resultData)
-            this.reloadAllData()
-          }).catch((e) => {
-            console.log("e", e)
-          })
+      //   });
+      // },
+      // handleItemDelete(row) {
+      //   console.log('row,', row)
+      //   this.$confirm(`是否要删除模型<label style="color:#0000FF;">${row.name}</label>, 是否继续?`, '提示', {
+      //     confirmButtonText: '确定',
+      //     cancelButtonText: '取消',
+      //     type: 'warning',
+      //     dangerouslyUseHTMLString: true
+      //   }).then(() => {
+      //     const param = {
+      //       method: 'project_item_del',
+      //       project_id: this.project_id,
+      //       id: row.id
+      //     }
+      //     console.log('param', param)
+      //     this.$store.dispatch('RemoveBimItem', param).then((resultData) => {
+      //       console.log('RemoveBimItem - resultData', resultData)
+      //       this.reloadAllData()
+      //     }).catch((e) => {
+      //       console.log("e", e)
+      //     })
 
-        }).catch(() => {
+      //   }).catch(() => {
 
-        });
-      },
+      //   });
+      // },
       showModels() {
 
         if (this.itemListSelected.length !== 0) {
@@ -534,110 +556,100 @@
         })
         this.getItemListSelected()
       },
-      unCheckAll() {
-        this.isNewBUildingShow = false
-        this.isSelected = false
-        this.checkAll = false;
-        this.tableData.forEach(async build => {
-          let itemList = build.children
-          build.isSelectedTotal = 0
-          itemList.forEach(async item => {
-            item.isSelected = false
-          })
-        })
-        this.getItemListSelected()
-      },
-      checkChange(data) {
-        this.unCheckAll()
-        // console.log('data', data)
-        let _checkKeys = this.$refs.tree.getCheckedKeys();
-        // console.log('_checkKeys', _checkKeys)
-        this.tableFilterData = []
-        this.tableData.forEach(build => {
-          let _match = lodash.includes(_checkKeys, build.id) //ST 主体
-          if (_match === true) {
-            this.tableFilterData.push(build)
-          }
-        })
-      },
-      handleNodeClick(data) {
-        this.unCheckAll()
-        // console.log(data);
-        this.$refs.tree.setCheckedKeys([data.id]);
-        this.tableFilterData = []
-        this.tableData.forEach(build => {
-          if (build.id === data.id) {
-            this.tableFilterData.push(build)
-          }
-        })
-      },
-      openUploadModelDialogHandle() {
-        const param = {
-          show: true,
-          // modelData: this.modelData,
-          project_id: this.project_id
-          // buildlist: this.buildList
-        }
-        // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-        this.$store.dispatch('SetUploadModelDialog', param).then(() => {}).catch(() => {})
-      },
-      submitNewBuildingHandle() {
-        if (this.newBuildName.trim() === '') {
-          Message.error('请输入建筑名')
-          return
-        }
-        const param = {
-          method: 'bim_building_add',
-          project_id: this.project_id,
-          building_name: this.newBuildName,
-          building_desc: ''
-        }
-        this.$store.dispatch('AddBimBuilding', param).then((resultData) => {
-          console.log('AddBimBuilding - resultData', resultData)
-          this.reloadAllData()
-        }).catch((e) => {
-          console.log("e", e)
-        })
-      },
-      cancelNewBuildingHandle() {
-        this.isNewBUildingShow = false
-        let _arr = this.tableFilterData
-        this.newBuildName = ""
-        let _i = _arr.length;
-        while (_i--) {
-          if (_arr[_i].name === '') {
-            _arr.splice(_i, 1);
-          }
-        }
-      },
-      handleItemEdit(row) {
+      // unCheckAll() {
+      //   this.isNewBUildingShow = false
+      //   this.isSelected = false
+      //   this.checkAll = false;
+      //   this.tableData.forEach(async build => {
+      //     let itemList = build.children
+      //     build.isSelectedTotal = 0
+      //     itemList.forEach(async item => {
+      //       item.isSelected = false
+      //     })
+      //   })
+      //   this.getItemListSelected()
+      // },
+      // checkChange(data) {
+      //   this.unCheckAll()
+      //   // console.log('data', data)
+      //   let _checkKeys = this.$refs.tree.getCheckedKeys();
+      //   // console.log('_checkKeys', _checkKeys)
+      //   this.tableFilterData = []
+      //   this.tableData.forEach(build => {
+      //     let _match = lodash.includes(_checkKeys, build.id) //ST 主体
+      //     if (_match === true) {
+      //       this.tableFilterData.push(build)
+      //     }
+      //   })
+      // },
+      // handleNodeClick(data) {
+      //   this.unCheckAll()
+      //   // console.log(data);
+      //   this.$refs.tree.setCheckedKeys([data.id]);
+      //   this.tableFilterData = []
+      //   this.tableData.forEach(build => {
+      //     if (build.id === data.id) {
+      //       this.tableFilterData.push(build)
+      //     }
+      //   })
+      // },
+      // openUploadModelDialogHandle() {
+      //   const param = {
+      //     show: true,
+      //     // modelData: this.modelData,
+      //     project_id: this.project_id
+      //     // buildlist: this.buildList
+      //   }
+      //   // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+      //   this.$store.dispatch('SetUploadModelDialog', param).then(() => {}).catch(() => {})
+      // },
+      // submitNewBuildingHandle() {
+      //   if (this.newBuildName.trim() === '') {
+      //     Message.error('请输入建筑名')
+      //     return
+      //   }
+      //   const param = {
+      //     method: 'bim_building_add',
+      //     project_id: this.project_id,
+      //     building_name: this.newBuildName,
+      //     building_desc: ''
+      //   }
+      //   this.$store.dispatch('AddBimBuilding', param).then((resultData) => {
+      //     console.log('AddBimBuilding - resultData', resultData)
+      //     this.reloadAllData()
+      //   }).catch((e) => {
+      //     console.log("e", e)
+      //   })
+      // },
+      // cancelNewBuildingHandle() {
+      //   this.isNewBUildingShow = false
+      //   let _arr = this.tableFilterData
+      //   this.newBuildName = ""
+      //   let _i = _arr.length;
+      //   while (_i--) {
+      //     if (_arr[_i].name === '') {
+      //       _arr.splice(_i, 1);
+      //     }
+      //   }
+      // },
+      // handleItemEdit(row) {
 
-        // const param = {
-        //   show: true,
-
-        // }
-        // // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-        // this.$store.dispatch('SetUploadProgressDialog', param).then(() => {}).catch(() => {})
-
-        // return
-
-        console.log('row', row)
-        const param = {
-          show: true,
-          // modelData: this.modelData,
-          project_id: this.project_id,
-          item_id: row.id,
-          // buildlist: this.buildList,
-          formData: {
-            // building_id: row.BUILDING_ID,
-            // building_item_type: row.TYPE_ID,
-            item_name: row.name,
-            item_desc: row.desc
-          }
-        }
-        // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-        this.$store.dispatch('SetUploadModelDialog', param).then(() => {}).catch(() => {})
-      }
+      //   console.log('row', row)
+      //   const param = {
+      //     show: true,
+      //     // modelData: this.modelData,
+      //     project_id: this.project_id,
+      //     item_id: row.id,
+      //     // buildlist: this.buildList,
+      //     formData: {
+      //       // building_id: row.BUILDING_ID,
+      //       // building_item_type: row.TYPE_ID,
+      //       item_name: row.name,
+      //       item_desc: row.desc
+      //     }
+      //   }
+      //   this.$store.dispatch('SetUploadModelDialog', param).then(() => {}).catch(() => {})
+      // }
 
     }
   }

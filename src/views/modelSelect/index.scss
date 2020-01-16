@@ -2,7 +2,15 @@
   // height: calc(100vh - 48px);
   position: relative;
   min-width: 1000px;
-
+  .not-bind-bim{
+    font-size: 30px;
+    // line-height: 200px;
+    margin: 150px 0px 0px 0px; 
+    text-align: center;
+    .btn-bind-bim{
+      margin: 30px 0px 0px 0px;
+    }
+  }
   .el-tree-node__label {
     font-size: 14px;
   }

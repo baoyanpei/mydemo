@@ -94,6 +94,8 @@ service.interceptors.response.use(
               return res
             } else if (_data.method === 'wx_qrcode') { // url的访问权限判断
               return res
+            } else if (_data.method === 'set_outsys_info') { // url的访问权限判断
+              return res
             } else {
               Message({
                 message: res.msg + "（1接口status!=success）",
