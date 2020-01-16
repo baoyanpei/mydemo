@@ -10,13 +10,13 @@
           @check-change="checkChange" @node-click="handleNodeClick">
         </el-tree>
       </div> -->
-    <div v-show="isBindBim === false" class="not-bind-bim">
+    <div v-show="isShow === true && isBindBim === false" class="not-bind-bim">
       当前项目没有与BIM项目绑定
       <div class="btn-bind-bim">
         <BindBimButton></BindBimButton>
       </div>
     </div>
-    <div v-show="isBindBim === true" class="list-area">
+    <div v-show="isShow === true && isBindBim === true" class="list-area">
       <div class="list-main">
         <el-row :gutter="20" style="border-bottom:0px solid #eeeeee;">
           <el-col :span="18">
@@ -142,6 +142,7 @@
     },
     data() {
       return {
+        isShow: false,
         isBindBim: false,
         buildMap: new Map(),
         buildList: [],
@@ -241,6 +242,7 @@
               this.isBindBim = true
               // this.bim_name_desc = `BIM项目：${res.name}`
             }
+            this.isShow = true
             resolve()
           })
         })
