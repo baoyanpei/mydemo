@@ -4,41 +4,22 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
-<style>
-  .box{
-    height: 100%;
-    border:1px solid #000;
-  }
-  .aaa{
-    width: 360px;
-    height: 100px;
-    margin-top: 10px;
-    margin-right: 15px;
-    background-color: #999999;
-    float: left;
-  }
-</style>
 <body>
-  <div class="box">
-    <div class="aaa"></div>
-     <div class="aaa"></div>
-     <div class="aaa"></div>
-     <div class="aaa"></div>
-    <div class="aaa"></div>
-    <div class="aaa"></div>
-  </div>
+<!--<input type="number" onblur="upload()" class="input1" placeholder="请输入数字">-->
+<table border="1" for="item in arr">
+  <tr>
+    <th>ID</th>
+    <th>操作</th>
+  </tr>
+  <tr>
+    <td>{{item.id}}</td>
+    <td><input type="button" value="按钮" onclick="btnid(item.id)"></td>
+  </tr>
+</table>
 </body>
 </html>
 <script>
-  let p = new Promise((resolve,reject) => {
-    setTimeout(function(){
-        console.log('1111111111');
-    }, 2000);
-    resolve('success')
-});
-p.then(result => {
-    setTimeout(function(){
-        console.log('22222222');
-    }, 5000);
-});
+  function btnid(index) {
+    console.log(index)
+  }
 </script>

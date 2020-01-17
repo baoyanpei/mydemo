@@ -46,7 +46,7 @@
 
     <!--视点保存dialog-->
     <PointViewSaveDialog></PointViewSaveDialog>
-    
+
   </div>
 </template>
 
@@ -351,4 +351,8 @@
     cursor: pointer;
   }
 
+  /deep/ .el-upload-list__item{
+  display: flex!important;
+  justify-content: space-between!important;
+}
 </style>
