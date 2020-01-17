@@ -11,7 +11,7 @@
         <el-form ref="viewPointPositionSaveForm" :model="viewPointPositionSaveForm" label-width="80px" :inline="true">
           <div v-if="ViewPointType === 1">
             <el-form-item label="所属建筑">
-              <el-select v-model="SelectedBuild" placeholder="请选择" style="width: 260px;">
+              <el-select v-model="SelectedBuild" placeholder="请选择" style="width: 260px;" disabled>
                 <el-option v-for="item in buildList" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -32,7 +32,7 @@
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleSaveDialogSubmit">确 定</el-button>
+        <el-button type="primary" :loading="loadingSaveViewPoint" @click="handleSaveDialogSubmit">确 定</el-button>
         <el-button @click='handleSaveDialogCancel'>取 消</el-button>
 
       </div>
@@ -51,6 +51,7 @@
     data() {
       return {
         dialogTitle: '位置信息',
+        loadingSaveViewPoint: false, // 保存视点按钮加载
         viewPointPositionSaveForm: {},
         ViewPointType: 0, // 1 楼层 2 普通
         buildList: [],
@@ -103,6 +104,7 @@
         this.PositionTitle = ''
         this.ViewPointTitle = ''
         this.itemInfoListMap = new Map()
+        this.loadingSaveViewPoint = false
       },
       async openedSaveDialogHandle() {
         console.log('ViewPointSaveDialog', this.ViewPointSaveDialog)
@@ -111,10 +113,11 @@
         this.itemInfoListMap = new Map()
         const __itemInfoList = _data.itemInfoList
         __itemInfoList.forEach(itemInfo => {
-          this.itemInfoListMap.set(itemInfo.ITEM_ID, itemInfo)
+          console.log('itemInfo', itemInfo)
+          this.itemInfoListMap.set(itemInfo.item_id, itemInfo)
         })
         console.log('this.itemInfoListMap', this.itemInfoListMap)
-        await this.exchangeToken(getToken())
+        // await this.exchangeToken(getToken())
         await this.getProjectItemsAll()
         if (this.editMode === 1) { // 新增模式
           if (this.buildList.length === 1) {
@@ -123,32 +126,32 @@
         }
 
       },
-      exchangeToken(token) {
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: "exchange_token",
-            from: 'oa',
-            token: token
-          }
-          this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-            console.log('ExchangeToken - resultData', resultData)
-            if (resultData.status === 'success') {
-              this.access_token = resultData.access_token
-              resolve()
-            } else {
-              reject(resultData.msg)
-            }
-          })
-        })
+      // exchangeToken(token) {
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: "exchange_token",
+      //       from: 'oa',
+      //       token: token
+      //     }
+      //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+      //       console.log('ExchangeToken - resultData', resultData)
+      //       if (resultData.status === 'success') {
+      //         this.access_token = resultData.access_token
+      //         resolve()
+      //       } else {
+      //         reject(resultData.msg)
+      //       }
+      //     })
+      //   })
 
-      },
+      // },
       getProjectItemsAll() {
         return new Promise((resolve, reject) => {
           this.buildList = []
           const param = {
             method: 'project_items',
             project_id: this.project_id,
-            access_token: this.access_token
+            // access_token: this.access_token
           }
           this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
             console.log('getProjectItemsAll - _itemList', _itemList)
@@ -213,7 +216,7 @@
         const __data = this.ViewPointSaveDialog.data
         console.log('this.ViewPointSaveDialog.data', this.ViewPointSaveDialog.data)
 
-
+        this.loadingSaveViewPoint = true
         const param = {
           "method": "SaveViewPoint",
           "type": __data.type,
@@ -235,14 +238,17 @@
           // this.loadingSaveViewPoint = false
           // this.viewPointTitleName = this.viewPointName
           // this.viewPointName = ""
-          this.$message({
-            message: '视点保存成功！',
-            type: 'success'
-          })
+
+
 
           setTimeout(() => {
             this.$store.dispatch('SetViewPointDataChanged', {}).then((result) => {
-
+              this.$message({
+                message: '视点保存成功！',
+                type: 'success'
+              })
+              this.loadingSaveViewPoint = false
+              this.closeSaveDialogHandle()
             })
           }, 2500);
 

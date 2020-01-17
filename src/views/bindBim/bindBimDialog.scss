@@ -1,0 +1,39 @@
+.bind-bim-dialog {
+  .el-dialog {
+    border-radius: 12px;
+  }
+
+  .el-dialog__header {
+    padding: 15px 20px 5px;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+
+    .el-dialog__title {
+      color: #666666;
+      font-size: 24px;
+      font-weight: 600;
+      ;
+    }
+
+
+
+  }
+
+  .el-dialog__body {
+    padding: 15px 20px;
+    // height: 200px;
+  }
+
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #999999;
+    font-size: 28px;
+  }
+
+  .bimCodeInput {
+    .el-input__inner {
+      font-size: 16px;
+      font-family:Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+    }
+
+  }
+}

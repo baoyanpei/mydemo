@@ -18,7 +18,7 @@
       </div>
       <!-- <img v-bind:src="viewPointImgUrl" class="viewPointImg" /> -->
     </div>
-    <div v-if="isShowViewPointThumbArea" class="viewPointThumbArea" v-drag draggable="true">
+    <div v-show="isShowViewPointThumbArea" class="viewPointThumbArea" v-drag draggable="true">
       <div class="title">原始视角</div>
       <img v-bind:src="viewPointImgUrl" class="viewPointImg" />
     </div>
@@ -40,32 +40,39 @@
       </el-button>
     </div>
 
-    <div v-if="isShowSaveMarkerArea" class="view-point-form">
+    <!-- <div v-if="isShowSaveMarkerArea" class="view-point-form">
       <el-input v-model="viewPointName" placeholder="请输入视点的标题" style="width: 200px;margin-right:10px;"></el-input>
       <el-button type="warning" :loading="loadingSaveViewPoint" @click="SavePositionViewPointHandle">保存位置视点</el-button>
-    </div>
+    </div> -->
 
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
       <el-button class="marker-button" title="保存当前视点">
         <font-awesome-icon :icon="['far','save']" @click="showSaveViewsPointHandle" />
       </el-button>
       <hr />
-      <el-button class="marker-button" title="旋转模型">
-        <font-awesome-icon icon="sync-alt" @click="exitMarkerHandle" />
-      </el-button>
-      <hr />
-      <el-button class="marker-button" title="矩形">
-        <font-awesome-icon :icon="['far','square']" @click="clickMarkerModeHandle('Rectangle')" />
-      </el-button>
-      <el-button class="marker-button" title="圆形">
-        <font-awesome-icon :icon="['far','circle']" @click="clickMarkerModeHandle('Circle')" />
-      </el-button>
-      <el-button class="marker-button" title="箭头">
-        <font-awesome-icon icon="long-arrow-alt-up" @click="clickMarkerModeHandle('Arrow')" />
-      </el-button>
-      <el-button class="marker-button" title="铅笔">
-        <font-awesome-icon icon="signature" @click="clickMarkerModeHandle('Freehand')" />
-      </el-button>
+      <div v-if="ViewPointType === 2">
+        <el-button class="marker-button" title="旋转模型">
+          <font-awesome-icon icon="sync-alt" @click="exitMarkerHandle" />
+        </el-button>
+        <hr />
+        <el-button class="marker-button" title="矩形">
+          <font-awesome-icon :icon="['far','square']" @click="clickMarkerModeHandle('Rectangle')" />
+        </el-button>
+        <el-button class="marker-button" title="圆形">
+          <font-awesome-icon :icon="['far','circle']" @click="clickMarkerModeHandle('Circle')" />
+        </el-button>
+        <el-button class="marker-button" title="箭头">
+          <font-awesome-icon icon="long-arrow-alt-up" @click="clickMarkerModeHandle('Arrow')" />
+        </el-button>
+        <el-button class="marker-button" title="铅笔">
+          <font-awesome-icon icon="signature" @click="clickMarkerModeHandle('Freehand')" />
+        </el-button>
+        <el-button class="marker-button" title="文字">
+          <font-awesome-icon icon="font" @click="clickMarkerModeHandle('Text')" />
+        </el-button>
+        <hr />
+      </div>
+
       <!-- <el-button class="marker-button" title="云边框">
           <font-awesome-icon icon="cloud" @click="clickMarkerModeHandle('Cloud')" style="font-size: 20px;" />
         </el-button> -->
@@ -79,9 +86,7 @@
       <!-- <el-button class="marker-button" title="波浪折线">
           <font-awesome-icon icon="highlighter" @click="clickMarkerModeHandle('Polycloud')" />
         </el-button> -->
-      <el-button class="marker-button" title="文字">
-        <font-awesome-icon icon="font" @click="clickMarkerModeHandle('Text')" />
-      </el-button>
+
       <!-- <hr /> -->
       <!-- <el-button class="marker-button" title="截图">
           <font-awesome-icon icon="camera-retro" @click="snaphot('open')" />
@@ -93,7 +98,7 @@
         <el-button class="marker-button" title="保存标注">
           <font-awesome-icon icon="save" @click="saveMarkups()" />
         </el-button> -->
-      <hr />
+
       <el-button class="marker-button" title="视点管理">
         <font-awesome-icon icon="layer-group" @click="openViewPointManageHandle" />
       </el-button>
@@ -193,7 +198,7 @@
         isShowToolbarRestore2: false,
         isShowViewPointArea: false,
         isShowViewPointThumbArea: false, // 缩略图
-        isShowSaveMarkerArea: false, // 保存视点区域
+        // isShowSaveMarkerArea: false, // 保存视点区域
         markupsPersist: null,
         viewerStatePersist: null,
         nsu: null,
@@ -289,7 +294,7 @@
       },
       init3DView(modelURLList) {
         return new Promise((resolve, reject) => {
-          this.urns = modelURLList
+          // this.urns = modelURLList
           Autodesk.Viewing.Initializer(this.options, async () => {
             this.element = document.getElementById('viewer-local');
             this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
@@ -329,7 +334,7 @@
               z: 0
             }
           };
-          console.log('iiiiii', index)
+          console.log('iiiiii', index, modelURL)
           this.viewer.loadModel(modelURL, modelOpts, resLoadSuccess => {
             if (index === 0) {
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
@@ -446,14 +451,23 @@
 
         // 标注功能
         let buttonMarker2 = new Autodesk.Viewing.UI.Button('my-marker2-button')
-        buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
-
-        buttonMarker2.onClick = (e) => {
-          // viewer.setViewCube('front')
-          this.enterMarkerEditMode(1)
-        }
         buttonMarker2.addClass('my-marker2-button')
-        buttonMarker2.setToolTip('标定项目位置标准视点')
+
+        console.log("this.itemList.length", this.itemList.length)
+        if (this.itemList.length === 1) {
+          buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
+          buttonMarker2.onClick = (e) => {
+            // viewer.setViewCube('front')
+            this.enterMarkerEditMode(1)
+          }
+          buttonMarker2.setToolTip('标定项目位置标准视点')
+        } else {
+          buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup_grey.png)'
+          buttonMarker2.setToolTip('合并模型不能进行位置标注')
+        }
+
+
+
 
 
         // 视点管理功能
@@ -462,7 +476,6 @@
 
         buttonViewPoint.onClick = (e) => {
           // viewer.setViewCube('front')
-          // this.enterMarkerEditMode()
           this.openViewPointManageHandle()
         }
         buttonViewPoint.addClass('my-marker-manager-button')
@@ -534,10 +547,11 @@
         // console.log('this.project_id', this.project_id)
         // console.log('this.itemInfoList', this.itemInfoList)
         this.itemInfoList.forEach(itemInfo => {
-          // console.log('itemInfo', itemInfo)
+          console.log('itemInfo111', itemInfo)
           // 服务端地址转换
           // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
-          _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
           // 本地地址转换
           // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
         });
@@ -548,7 +562,7 @@
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetItemInfoListByItemIDs',
-            // project_id: this.project_id,
+            project_id: this.project_id,
             item_id: item_ids
 
           }
@@ -556,7 +570,7 @@
             console.log('_itemList_itemList', _itemList)
             _itemList.forEach(build => {
               this.itemList.forEach(item => {
-                if (item.FILE_ID === build.FILE_ID) {
+                if (item.FILE_ID === build.file_id) {
                   this.itemInfoList.push(build)
                 }
               })
@@ -572,16 +586,16 @@
         this.itemInfoList = []
         return new Promise((resolve, reject) => {
           const param = {
-            method: 'GetItemInfoListByProID',
+            method: 'project_items',
             project_id: this.project_id
             // item_id: item_ids
 
           }
-          this.$store.dispatch('GetItemInfoListByProID', param).then((_itemList) => {
+          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
             console.log('_itemList_itemList', _itemList)
             _itemList.forEach(build => {
               file_ids.forEach(file_id => {
-                if (file_id === build.FILE_ID) {
+                if (file_id === build.file_id) {
                   this.itemInfoList.push(build)
                 }
               })
@@ -640,7 +654,7 @@
         // this.markupsExt.leaveEditMode();
         // this.markupsExt.hide()
         this.enterMarkerEditMode(this.ViewPointType)
-        this.isShowSaveMarkerArea = false
+        // this.isShowSaveMarkerArea = false
         this.isShowToolbarRestore2 = false
       },
       enterMarkerEditMode(type) { // type字段：1-基于项目的公共位置视点；2-普通视点
@@ -648,46 +662,34 @@
         this.ViewPointType = type
         // var markup;
         // https://forge.autodesk.com/blog/using-autodeskviewingmarkupscore-extension
-        /*
-        EditModeArrow
-        EditModeCircle
-        EditModeCloud
-        EditModeFreehand
-        EditModeHighlight
-        EditModePen
-        EditModePolycloud
-        EditModePolyline
-        EditModeRectangle
-        EditModeText
-        */
-        this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
 
-          this.isShowToolbarMarker = true
-          // this.isShowSaveMarkerArea = true
-          this.isShowViewPointArea = true
-          this.isShowToolbarRestore2 = false
-          // console.log('this.viewerStatePersist', this.viewerStatePersist)
-          this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
-          this.markupsExt.enterEditMode();
-          this.nsu = Autodesk.Extensions.Markup.Core.Utils
-          // console.log('Autodesk', Autodesk, this.markupsExt, this.nsu)
-          this.styleObject = this.nsu.createStyleSheet(this.styleAttributes, this.markupsExt.viewer);
-          this.setMarkerMode('Rectangle')
-          this.setMarkerStyle('#FF0000')
-          // this.StrokeWidthLabel = `线条宽度：${this.markerStyle.strokeWidth}px`
-          // this.FontSizeLabel = `文字大小：${this.markerStyle.fontSize}号`
+        switch (type) {
+          case 1: // 1-基于项目的公共位置视点
+            this.isShowToolbarMarker = true
+            // this.isShowSaveMarkerArea = true
+            this.isShowViewPointArea = true
+            this.isShowToolbarRestore2 = false
+            break;
+          case 2: // 2-普通视点
+            this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
 
-          // if (this.viewerStatePersist !== null) {
-          //   // 回复先前制作涂丫时的 Viewer 画面的状态
-          //   this.markupsExt.viewer.restoreState(this.viewerStatePersist);
-          //   this.markupsExt.show()
-          //   // 在 MyLayer 图层上重现涂丫
-          //   this.markupsExt.loadMarkups(this.markupsPersist, 'MyLayer');
-          // } else {
-          //   this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
-          //   this.markupsExt.enterEditMode();
-          // }
-        });
+              this.isShowToolbarMarker = true
+              // this.isShowSaveMarkerArea = true
+              this.isShowViewPointArea = true
+              this.isShowToolbarRestore2 = false
+              // console.log('this.viewerStatePersist', this.viewerStatePersist)
+              this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
+              this.markupsExt.enterEditMode();
+              this.nsu = Autodesk.Extensions.Markup.Core.Utils
+              // console.log('Autodesk', Autodesk, this.markupsExt, this.nsu)
+              this.styleObject = this.nsu.createStyleSheet(this.styleAttributes, this.markupsExt.viewer);
+              this.setMarkerMode('Rectangle')
+              this.setMarkerStyle('#FF0000')
+
+            });
+            break;
+        }
+
       },
       backToModelModeHandle() {
         this.markupsExt.leaveEditMode();
@@ -706,15 +708,19 @@
         // current view state (zoom, direction, sections)
         // this.viewerStatePersist = this.markupsExt.viewer.getState()
         this.viewPointName = ''
-        this.markupsExt.leaveEditMode();
-        this.markupsExt.hide()
+        // console.log('this.markupsExt', this.markupsExt)
+        if (this.markupsExt !== undefined) {
+          this.markupsExt.leaveEditMode();
+          this.markupsExt.hide()
+        }
+
         // this.viewer.restoreState(JSON.parse(this.saveStatus));
         this.isShowToolbarRestore = false
         this.isShowViewPointArea = false
         this.isShowToolbarMarker = false
         this.isShowToolbarMarkerStyle = false
         this.isShowViewPointThumbArea = false
-        this.isShowSaveMarkerArea = false
+        // this.isShowSaveMarkerArea = false
         this.isShowToolbarRestore2 = false
 
         this.isShowOldViewPoint = false
@@ -726,7 +732,7 @@
         this.markupsExt.leaveEditMode();
         this.markupsExt.hide()
         this.isShowToolbarMarker = false
-        this.isShowSaveMarkerArea = false
+        // this.isShowSaveMarkerArea = false
         this.isShowToolbarMarkerStyle = false
         this.isShowToolbarRestore2 = true
       },
@@ -917,8 +923,14 @@
               let saveStatus = JSON.stringify(this.viewer.getState());
               // 标记的svg数据
               console.log('this.markupsExt', this.markupsExt)
-              let markupsExtData = this.markupsExt.generateData();
+              let markupsExtData = ""
 
+              let _pointType = this.ViewPointCurrentShow.type
+              switch (_pointType) {
+                case 2: // 2-普通视点
+                  markupsExtData = this.markupsExt.generateData();
+                  break;
+              }
               // 标记的图片base64数据
               let markupsBase64 = document.getElementById('snapshot').toDataURL("image/png")
 
@@ -1033,60 +1045,81 @@
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           // console.log('this.itemInfoList', this.itemInfoList)
           let _urlList = this.getModelUrl()
-          // console.log('_urlList', _urlList)
+          console.log('_urlList', _urlList)
           if (_urlList.length !== 0) {
             await this.init3DView(_urlList)
 
             console.log('init3DView - complete')
           }
         }
+        let _pointType = this.ViewPointCurrentShow.type
+        switch (_pointType) {
+          case 1: // 1-基于项目的公共位置视点
+            this.isShowToolbarMarker = true
+            this.isShowToolbarMarkerStyle = false
+            this.isShowViewPointArea = true
+            console.log('ViewPointCurrentShow', this.ViewPointCurrentShow)
+            this.ViewPointType = this.ViewPointCurrentShow.type
+            this.viewPointTitleName = this.ViewPointCurrentShow.name
 
-        // return
-        this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
-          this.isShowToolbarMarker = false
-          this.isShowToolbarMarkerStyle = false
-          this.isShowViewPointArea = true
-          console.log('ViewPointCurrentShow', this.ViewPointCurrentShow)
-          this.ViewPointType = this.ViewPointCurrentShow.type
-          this.viewPointTitleName = this.ViewPointCurrentShow.name
-          this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
-          console.log('this.markupsExt', this.markupsExt)
-          // markupsExt.deleteMarkup()
-          this.markupsExt.clear()
-          this.markupsExt.leaveEditMode();
-          this.markupsExt.hide()
-          this.isShowToolbarRestore = false
-          this.isShowToolbarRestore2 = false
-          this.isShowViewPointThumbArea = false
-          this.isShowSaveMarkerArea = false
+            this.isShowToolbarRestore = false
+            this.isShowToolbarRestore2 = false
+            this.isShowViewPointThumbArea = false
+            // this.isShowSaveMarkerArea = false
 
-          let _marekup_svg = Base64.decode(this.ViewPointCurrentShow.svg_info)
-          let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentShow.camera_info))
-          // let picBase64 = picture_info.base64
-          this.viewPointImgUrl = this.ViewPointCurrentShow.pictureFullSrc
-          console.log('camera_info', camera_info)
-          this.viewer.restoreState(camera_info); //it fails to restore state
-          // markupsExt.viewer.impl.invalidate(true);
-          this.isShowToolbarRestore = true
-          this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-          setTimeout(() => {
+            let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentShow.camera_info))
+            // let picBase64 = picture_info.base64
+            this.viewPointImgUrl = this.ViewPointCurrentShow.pictureFullSrc
+            console.log('camera_info', camera_info)
+            this.viewer.restoreState(camera_info); //it fails to restore state
+            // markupsExt.viewer.impl.invalidate(true);
+            // this.isShowToolbarRestore = true
+            this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+            if (this.markupsExt !== undefined) {
+              this.markupsExt.clear()
+              this.markupsExt.leaveEditMode();
+              this.markupsExt.hide()
+            }
 
+            break;
+          case 2: // 2-普通视点
+            this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
+              this.isShowToolbarMarker = false
+              this.isShowToolbarMarkerStyle = false
+              this.isShowViewPointArea = true
+              console.log('ViewPointCurrentShow', this.ViewPointCurrentShow)
+              this.ViewPointType = this.ViewPointCurrentShow.type
+              this.viewPointTitleName = this.ViewPointCurrentShow.name
+              this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
+              console.log('this.markupsExt', this.markupsExt)
+              // markupsExt.deleteMarkup()
+              this.markupsExt.clear()
+              this.markupsExt.leaveEditMode();
+              this.markupsExt.hide()
+              this.isShowToolbarRestore = false
+              this.isShowToolbarRestore2 = false
+              this.isShowViewPointThumbArea = false
+              // this.isShowSaveMarkerArea = false
 
-
-
-            markupsExt.leaveEditMode();
-            markupsExt.show();
-            markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointCurrentShow.id);
-            // this.enterMarkerEditMode()
-            this.isShowOldViewPoint = true
-
-
-
-          }, 1000);
-        })
-
-
-
+              let _marekup_svg = Base64.decode(this.ViewPointCurrentShow.svg_info)
+              let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentShow.camera_info))
+              // let picBase64 = picture_info.base64
+              this.viewPointImgUrl = this.ViewPointCurrentShow.pictureFullSrc
+              console.log('camera_info', camera_info)
+              this.viewer.restoreState(camera_info); //it fails to restore state
+              // markupsExt.viewer.impl.invalidate(true);
+              this.isShowToolbarRestore = true
+              this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+              setTimeout(() => {
+                markupsExt.leaveEditMode();
+                markupsExt.show();
+                markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointCurrentShow.id);
+                // this.enterMarkerEditMode()
+                this.isShowOldViewPoint = true
+              }, 1000);
+            })
+            break;
+        }
 
 
       }

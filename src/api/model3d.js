@@ -67,7 +67,7 @@ export function queryModelByID(data) {
 export function getItemInfoListByItemIDs(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
     // baseURL: 'http://admin.yidebim.com'

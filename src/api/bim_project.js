@@ -44,7 +44,7 @@ method:"projects"
 export function getProjectList(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
   })
@@ -118,7 +118,7 @@ desc: 描述
 export function addBimItem(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
   })
@@ -142,7 +142,7 @@ desc: 模型描述
 export function updateBimItem(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
   })
@@ -164,7 +164,7 @@ id:模型id
 export function removeBimItem(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
   })
@@ -217,7 +217,7 @@ project_id 项目id
 export function getProjectItems(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/pm',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data,
     // baseURL: 'http://admin.yidebim.com'
@@ -228,7 +228,63 @@ export function getProjectItems(data) {
 export function getItemInfoListByProID(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
+    method: 'post',
+    data: data
+    // baseURL: 'http://admin.yidebim.com1'
+  })
+}
+// 4.1.6查本项目关联码
+/*
+
+api:/api/bim/bcp
+method:get_outsys_info
+设置bimcp外部系统参数包括  access_code,和额外参数params
+    参数:
+        project_id:
+        params:(可选)
+
+返回：
+{
+    "msg": "",
+    "status": "success",
+        "data":{"access_code":xxxx,"params":{} }
+}
+
+*/
+
+export function getOutsysInfo(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/bim/bcp',
+    method: 'post',
+    data: data
+    // baseURL: 'http://admin.yidebim.com1'
+  })
+}
+
+// 4.1.5设置项目关联码
+/*
+api:/api/bim/bcp
+method:set_outsys_info
+设置bimcp外部系统参数包括  access_code,和额外参数params
+    参数:
+        project_id:
+        access_code:
+        params:(可选)
+
+返回：
+{
+    "msg": "",
+    "status": "success"
+}
+
+*/
+
+export function setOutsysInfo(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/bim/bcp',
     method: 'post',
     data: data
     // baseURL: 'http://admin.yidebim.com1'

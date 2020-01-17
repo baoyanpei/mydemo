@@ -4,14 +4,15 @@
     border: 0px solid #d8dce5;
     color: #ffffff;
   }
+
   .popper__arrow {
     display: none;
   }
-  
+
   .el-input--medium .el-input__inner {
     height: 28px;
   }
-  
+
   .el-popper[x-placement^=bottom] .popper__arrow {
     top: -6px;
     left: 100px !important;
@@ -19,18 +20,18 @@
     border-top-width: 0;
     border-bottom-color: #e6ebf5;
   }
-  
+
   .navbar .el-button--medium {
     padding: 5px 10px;
   }
-  
+
   .navbar .el-button--primary {
     color: #fff;
     background-color: #464c5b;
     border: 1px solid #464c5b;
     border-radius: 0px;
   }
-  
+
   .navbar .el-button--primary:hover {
     color: #fff;
     background-color: #29BB9C;
@@ -38,15 +39,15 @@
     border: 1px solid #29BB9C;
     border-radius: 0px;
   }
-  
+
   .bim-toolbar1 {
     line-height: 47px;
-  
+
     .el-button {
       background-color: transparent;
       color: #ffffff;
     }
-  
+
     .el-button--medium {
       padding: 2px 2px;
       font-size: 14px;
@@ -70,7 +71,7 @@
       color: #FFFFFF;
     }
 
-   
+
 
     .nav-xmmc {
       margin-left: 80px;
@@ -86,6 +87,15 @@
       .el-button--mini {
         padding: 5px 15px;
       }
+    }
+
+    .bim-name-area {
+      width: 100px;
+      color: #ffffff;
+      font-weight: 600;
+      margin-left: 10px;
+      font-size: 14px;
+      // float: left;
     }
 
     .hamburger-container {

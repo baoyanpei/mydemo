@@ -35,8 +35,12 @@
         <span slot="title">物联设备</span>
       </el-menu-item>
       <el-menu-item index="/safety-inspection">
-        <font-awesome-icon icon="network-wired" />
+        <font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;"/>
         <span slot="title">巡检管理</span>
+      </el-menu-item>
+      <el-menu-item index="/modelSelect/index">
+        <font-awesome-icon icon="map-marked" />
+        <span slot="title">BIM管理</span>
       </el-menu-item>
       <!--
       <el-menu-item index="/main1">

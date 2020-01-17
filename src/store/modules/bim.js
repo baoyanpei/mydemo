@@ -7,7 +7,9 @@ import {
   removeBimItem,
   //   uploadBimItem,
   getProjectItems,
-  getItemInfoListByProID
+  getItemInfoListByProID,
+  getOutsysInfo,
+  setOutsysInfo
 } from '@/api/bim_project'
 
 const bim = {
@@ -206,6 +208,31 @@ const bim = {
           resolve(response.data)
         }).catch(error => {
           console.log(error)
+          reject(error)
+        })
+      })
+    },
+    GetOutsysInfo({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        getOutsysInfo(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          console.log(error)
+          reject(error)
+        })
+      })
+    },
+    SetOutsysInfo({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        setOutsysInfo(param).then(response => {
+          const _data = response
+          // commit('SET_PROJECT_GATE_PERSON', _data)
+          resolve(_data)
+        }).catch(error => {
           reject(error)
         })
       })

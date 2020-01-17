@@ -44,7 +44,7 @@ export function saveViewPoint(data) {
 export function getViewpointsByProjectId(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data,
     // baseURL: 'http://admin.yidebim.com'
@@ -79,7 +79,7 @@ export function getViewpointsByFileId(data) {
 export function getFileListByItemId(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data,
     // baseURL: 'http://admin.yidebim.com'
@@ -97,7 +97,7 @@ export function getFileListByItemId(data) {
 export function getViewpointsById(data) {
   // console.log("api", data)
   return request({
-    url: '/api/bcp/web',
+    url: '/api/bim/bcp',
     method: 'post',
     data: data,
     // baseURL: 'http://admin.yidebim.com'

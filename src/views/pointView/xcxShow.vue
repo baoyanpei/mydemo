@@ -135,7 +135,7 @@
       // await this.getViewpointsById()
       // this.ShowViewPoint()
 
-      
+
       this.init()
 
     },
@@ -158,6 +158,11 @@
       async init() {
         await this.loginByXcxToken()
         await this.getViewpointsById()
+        if (this.ViewPointInfo === null) {
+          this.tip_message =
+            `没有查询到相关视点数据，请核对参数<br/>projectid:${this.project_id}<br/>projectid:${this.point_view_id}<br/>token:${this.access_token}`
+          return
+        }
 
         let files_id_list = JSON.parse(this.ViewPointInfo.file_ids)
         console.log('files_id_list', files_id_list)
@@ -245,7 +250,8 @@
           // console.log('itemInfo', itemInfo)
           // 服务端地址转换
           // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
-          _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM_XCX))
+          // _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM_XCX))
+          _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
           // 本地地址转换
           // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
         });
@@ -299,16 +305,16 @@
         this.itemInfoList = []
         return new Promise((resolve, reject) => {
           const param = {
-            method: 'GetItemInfoListByProID',
+            method: 'project_items',
             project_id: this.project_id
             // item_id: item_ids
 
           }
-          this.$store.dispatch('GetItemInfoListByProID', param).then((_itemList) => {
+          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
             console.log('_itemList_itemList', _itemList)
             _itemList.forEach(build => {
               file_ids.forEach(file_id => {
-                if (file_id === build.FILE_ID) {
+                if (file_id === build.file_id) {
                   this.itemInfoList.push(build)
                 }
               })
@@ -350,13 +356,16 @@
           // markupsExt.viewer.impl.invalidate(true);
           this.isShowToolbarRestore = true
           this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-          setTimeout(() => {
-            markupsExt.leaveEditMode();
-            markupsExt.show();
-            markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointInfo.id);
-            // this.enterMarkerEditMode()
-            this.isShowOldViewPoint = true
-          }, 1000);
+          if (this.ViewPointType !== 1) {
+            setTimeout(() => {
+              markupsExt.leaveEditMode();
+              markupsExt.show();
+              markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointInfo.id);
+              // this.enterMarkerEditMode()
+              this.isShowOldViewPoint = true
+            }, 1000);
+          }
+
         })
       }
     }

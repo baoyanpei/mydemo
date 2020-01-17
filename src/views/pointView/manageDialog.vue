@@ -52,14 +52,14 @@
         </div>
 
         <div v-if="activeTabName==='1'">
-          <el-collapse v-model="activeNames">
-            <el-collapse-item name="1" v-for="(build,index) in viewPointPosDataList" :key="build.build_id">
+          <el-collapse v-model="activeBuildNames">
+            <el-collapse-item :name="build.treeid" v-for="(build,index) in viewPointPosDataList" :key="build.build_id">
               <template slot="title">
                 <span class="buildTitle">{{build.build_name}}</span>
               </template>
               <div class="floorArea">
                 <el-collapse v-model="activeFloorNames">
-                  <el-collapse-item name="f1" v-for="(floor,index) in build.floorList" :key="floor.floor">
+                  <el-collapse-item :name="floor.treeid" v-for="(floor,index) in build.floorList" :key="floor.floor">
                     <template slot="title">
                       <span class="buildTitle">{{floor.floor}}层</span>
                     </template>
@@ -163,8 +163,8 @@
         tipMessage: '',
         CurrentFileIDList: '', //当前打开的模型的file_id列表
         viewOptions: "{'inline': true,'navbar': false,'movable':false}",
-        activeNames: ['1', '2'],
-        activeFloorNames: ['f1']
+        activeBuildNames: [],
+        activeFloorNames: []
       }
     },
     computed: {
@@ -215,7 +215,7 @@
         this.ProjectItemsAll = new Map()
       },
       async getData() {
-        await this.exchangeToken(getToken())
+        // await this.exchangeToken(getToken())
         await this.getProjectItemsAll() // 获取模型的item列表（最新版本）
         await this.GetViewpointsDataAll() // 获取所有的视点数据
         console.log(12313123)
@@ -237,39 +237,39 @@
 
         this.CurrentFileIDList = []
         this.ViewPointManageDialog.itemInfoList.forEach(item => {
-          this.CurrentFileIDList.push(item.FILE_ID)
+          this.CurrentFileIDList.push(item.file_id)
         })
         this.getData()
       },
-      exchangeToken(token) {
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: "exchange_token",
-            from: 'oa',
-            token: token
-          }
-          this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-            console.log('ExchangeToken - resultData', resultData)
-            if (resultData.status === 'success') {
-              this.access_token = resultData.access_token
-              resolve()
-            } else {
-              // console.log("123123123")
-              this.tip_message = resultData.msg
-              reject(resultData.msg)
-            }
+      // exchangeToken(token) {
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: "exchange_token",
+      //       from: 'oa',
+      //       token: token
+      //     }
+      //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
+      //       console.log('ExchangeToken - resultData', resultData)
+      //       if (resultData.status === 'success') {
+      //         this.access_token = resultData.access_token
+      //         resolve()
+      //       } else {
+      //         // console.log("123123123")
+      //         this.tip_message = resultData.msg
+      //         reject(resultData.msg)
+      //       }
 
-          })
-        })
+      //     })
+      //   })
 
-      },
+      // },
       getProjectItemsAll() {
         return new Promise((resolve, reject) => {
           this.ProjectItemsAll = new Map()
           const param = {
             method: 'project_items',
-            project_id: this.project_id,
-            access_token: this.access_token
+            project_id: this.project_id
+            // access_token: this.access_token
           }
           this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
             // console.log('getProjectItemsAll - _itemList', _itemList)
@@ -309,7 +309,7 @@
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetViewpointsByFileId',
-            file_id: item.FILE_ID,
+            file_id: item.file_id,
             project_id: this.project_id
           }
           this.$store.dispatch('GetViewpointsByFileId', param).then((_viewPointList) => {
@@ -350,14 +350,15 @@
 
 
 
-            console.log('item', item)
+            // console.log('item', item)
             if (parseInt(item.type) === 1) {
 
-              let picture_info = item.picture_info //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
-              item['pictureLiteSrc'] = picture_info
-              item['pictureFullSrc'] = picture_info.replace('lite.', '')
-              item['className'] = `imagesPreview-${item.ID}`
-              console.log('picture_info', picture_info)
+              // let picture_info = "/api/bim/bcp/thumbnail.jpg?vpid=32&project_id=10000&w=200" //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
+              item['pictureLiteSrc'] =
+                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
+              item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
+              item['className'] = `imagesPreview-${item.id}`
+              // console.log('picture_info', picture_info)
 
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
@@ -365,7 +366,7 @@
               }
 
               let _item_id = item.item_id
-              console.log('_mapBuild.get(item_id)', _mapBuild.get(_item_id))
+              // console.log('_mapBuild.get(item_id)', _mapBuild.get(_item_id))
 
               let _buildInfo = _mapBuild.get(_item_id)
               if (_buildInfo === undefined) {
@@ -375,7 +376,7 @@
                   'floorInfos': new Map()
                 })
                 _buildInfo = _mapBuild.get(_item_id)
-                console.log('buildInfo1', _buildInfo)
+                // console.log('buildInfo1', _buildInfo)
 
               }
 
@@ -384,7 +385,7 @@
               if (_floorInfo === undefined) {
                 _buildInfo.floorInfos.set(_floorName, {
                   'floor': _floorName,
-                  ViewPointMap: new Map()
+                  'ViewPointMap': new Map()
                 })
                 _floorInfo = _buildInfo.floorInfos.get(_floorName)
               }
@@ -402,6 +403,9 @@
 
           });
           // let _buildList = []
+          this.activeBuildNames = []
+          this.activeFloorNames = []
+          
           _mapBuild.forEach(item => {
             console.log('item111', item)
 
@@ -413,24 +417,28 @@
               _viewPoints.forEach(viewPoint => {
                 _viewPointList.push(viewPoint)
               })
-              console.log('floor', floor)
+              // console.log('floor', floor)
               floorList.push({
                 'floor': floor.floor,
+                'treeid':`build${item.build_id}-floor${floor.floor}`,
                 'viewPointList': _viewPointList
               })
+              this.activeFloorNames.push(`build${item.build_id}-floor${floor.floor}`)
             })
             // _buildList['floorInfos'] = floorList
 
             this.viewPointPosDataList.push({
               build_id: item.build_id,
               build_name: item.build_name,
-              floorList: floorList
+              floorList: floorList,
+              treeid:`build${item.build_id}`
             })
+            this.activeBuildNames.push(`build${item.build_id}`)
 
           })
 
 
-          console.log('_mapBuild', _mapBuild)
+          // console.log('_mapBuild', _mapBuild)
           // console.log('_buildList', _buildList)
           console.log('this.viewPointPosDataList', this.viewPointPosDataList)
           this.tipMessage = ''
@@ -442,11 +450,10 @@
             console.log('item', item)
             if (parseInt(item.type) === parseInt(this.activeTabName)) {
 
-              let picture_info = "" //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
-              item['pictureLiteSrc'] = picture_info
-              item['pictureFullSrc'] = picture_info.replace('lite.', '')
-              item['className'] = `imagesPreview-${item.ID}`
-              console.log('picture_info', picture_info)
+              item['pictureLiteSrc'] =
+                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
+              item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
+              item['className'] = `imagesPreview-${item.id}`
 
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)

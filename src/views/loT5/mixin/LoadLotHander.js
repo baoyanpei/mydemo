@@ -146,7 +146,7 @@ export default {
       return new Promise((resolve, reject) => {
         const param = {
           method: 'GetItemInfoListByItemIDs',
-          // project_id: this.projID,
+          project_id: this.projID,
           item_id: this.LoadItemIDList.join(',')
 
         }
@@ -155,12 +155,13 @@ export default {
           let _itemMap = new Map()
 
           _itemList.forEach(item => {
-            _itemMap.set(item.ITEM_ID, item)
+            _itemMap.set(item.item_id, item)
             // this.ModelUrlList.push(item.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
           })
           this.LoadItemIDList.forEach(itemID => {
             let _itemInfo = _itemMap.get(itemID)
-            this.ModelUrlList.push(_itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+            // this.ModelUrlList.push(_itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+            this.ModelUrlList.push(_itemInfo.url.replace('/www/bim_proj/', ''))
           })
           console.log('this.itemInfoList', this.itemInfoList)
           resolve()
@@ -423,6 +424,10 @@ export default {
           break
         case 10018:
           this.LoadItemIDList = [1351]
+          // this.projID = 10004
+          break
+        case 10020:
+          this.LoadItemIDList = [100031]
           // this.projID = 10004
           break
       }

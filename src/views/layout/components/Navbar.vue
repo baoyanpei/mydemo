@@ -10,6 +10,10 @@
         <el-option v-for="item in project_option" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
+      <BindBimButton v-if="isBindBIM===false"></BindBimButton>
+      <span v-if="isBindBIM===true" class="bim-name-area">
+        {{bim_name_desc}}
+      </span>
       <div class="right-menu">
         <el-button type="primary" style="top:0px;position: relative;" @click="openScreenHandle">
           <icon name="desktop" scale="1.4" style="line-height: 20px;"></icon> <span>项目看板</span>
@@ -77,7 +81,7 @@
   import Screenfull from '@/components/Screenfull'
   import LangSelect from '@/components/LangSelect'
   import ThemePicker from '@/components/ThemePicker'
-
+  import BindBimButton from '@/views/layout/components/BindBimButton'
   export default {
     components: {
       Breadcrumb,
@@ -85,11 +89,13 @@
       ErrorLog,
       Screenfull,
       LangSelect,
-      ThemePicker
+      ThemePicker,
+      BindBimButton
     },
     data() {
       return {
-
+        isBindBIM: true,
+        bim_name_desc: ''
       }
     },
     computed: {
@@ -119,11 +125,26 @@
         set: function (newValue) {
           this.$store.state.project.org_name = newValue
         }
+      },
+      BindBimDataChanged() {
+        return this.$store.state.bindBim.BindBimDataChanged
       }
 
     },
+    watch: {
+      project_id(curVal, oldVal) {
+        if (curVal !== null) {
+          console.log("Nabar-project_id", curVal)
+          this.GetOutsysInfo(curVal)
+        }
+      },
+      BindBimDataChanged(curVal, oldVal) {
+        console.log("BindBimDataChanged")
+        this.GetOutsysInfo(this.project_id)
+      }
+    },
     mounted() {
-      // console.log("personInfo123", this.personInfo)
+      console.log("project_idproject_idproject_idproject_idproject_id", this.project_id)
     },
     methods: {
       toggleSideBar() {
@@ -151,15 +172,35 @@
         })
       },
       ProjectChangeHandle(projectID) {
-        console.log("aaa", projectID)
+        // console.log("aaa", projectID)
         this.project_list.forEach(optionData => {
-          console.log("optionData", optionData)
+          // console.log("optionData", optionData)
           if (optionData.project_id === projectID) {
             Cookies.set('PROJECT_ID', projectID)
             this.org_name = optionData.org_name
+            // this.GetOutsysInfo(projectID)
           }
         })
-      }
+      },
+      GetOutsysInfo(project_id) {
+        return new Promise((resolve, reject) => {
+          this.bim_name_desc = ""
+          this.isBindBIM = true
+          const param = {
+            method: 'get_outsys_info',
+            project_id: project_id
+          }
+          this.$store.dispatch('GetOutsysInfo', param).then((res) => {
+            console.log('GetOutsysInfo - res', res, res.access_code === undefined)
+            if (res.access_code === undefined || res.access_code === ''){
+              this.isBindBIM = false
+            }else{
+              this.isBindBIM = true
+              this.bim_name_desc = `BIM项目：${res.name}`
+            }
+          })
+        })
+      },
     }
   }
 

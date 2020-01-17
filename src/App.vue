@@ -47,6 +47,12 @@
     <!--视点保存dialog-->
     <PointViewSaveDialog></PointViewSaveDialog>
 
+<<<<<<< HEAD
+=======
+    <!--绑定BIM-->
+    <bindBimDialog></bindBimDialog>
+
+>>>>>>> 2146f35bc8023d489ec8579586b9539f1dc33546
   </div>
 </template>
 
@@ -95,6 +101,10 @@
   // 视点保存dialog
   import PointViewSaveDialog from './views/pointView/saveDialog'
 
+
+  // 绑定BIM
+  import bindBimDialog from './views/bindBim/bindBimDialog'
+
   export default {
     name: 'App',
     components: {
@@ -117,7 +127,8 @@
       PublishDialog,
       VideoDialog,
       PointViewManageDialog,
-      PointViewSaveDialog
+      PointViewSaveDialog,
+      bindBimDialog
     },
     directives: {
       elDragDialog
@@ -155,12 +166,14 @@
     watch: {
       '$route'(to, from) {
         console.log("totototo", to)
-        if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && this.personInfo ===
+        if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && to.name !==
+          "xcx-model-display" && this.personInfo ===
           null) {
           this.getPerson()
         }
+        console.log("fromfromfrom", from)
         if (from.name === 'lot2-index' || from.name === 'lot3-index' || from.name === 'lot4-index' || from.name ===
-          'lot5-index') {
+          'lot5-index' || from.name === 'modelDisplay-index') {
           location.reload()
         }
       }
