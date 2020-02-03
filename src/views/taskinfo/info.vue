@@ -304,10 +304,6 @@
         console.log("接受回来的数据",this.taskInfoDialog)
         console.log("11111111111111111",this.taskInfoDialog.data.subjectionId)
         return new Promise((resolve, reject) => {
-          console.log("任务详情this.project_id",this.project_id)
-          console.log("任务详情this.taskInfoDialog.data.workId",this.taskInfoDialog.data.workId)
-          console.log("任务详情this.taskInfoDialog.data.trackId",this.taskInfoDialog.data.trackId)
-          console.log("任务详情this.taskInfoDialog.data.subjectionId",this.taskInfoDialog.data.subjectionId)
           const _param = {
           method: 'get_flow_work',
           project_id: this.project_id,
@@ -330,6 +326,9 @@
             if(this.taskInfoDialog.data.state==='已完成'||this.formdata[0].buttonName==="质检"){
               this.todoinfoshow=false
             }
+          }
+          if(this.taskInfoDialog.subjectionId!=undefined){
+            this.todoinfoshow=false
           }
            // 输入框的显示与不显示判断结束
           console.log("this.btnsubid",data.subjectionId)
