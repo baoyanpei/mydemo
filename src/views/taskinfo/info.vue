@@ -13,12 +13,14 @@
             <!--图片1-->
               <div class="topimgbox">
                 <div v-for="item in this.imgbanner">
-                  <img :src=item.onlineurl alt="" @click="imgURL(item.onlineurl)">
+                  <img :src=item.onlineurl alt="" @click="imgURL(item.onlineurl)" style="margin-right: 15px">
                 </div>
               </div>
             <br>
             <!--标题-->
-              <span class="titleword">{{taskInfoDialog.data.title}}</span>
+              <span class="titleword">{{taskInfoDialog.data.title}}</span><br>
+            <!--发起人和发起时间-->
+              <span class="faqiname">{{taskInfoDialog.data.originator}}      {{taskInfoDialog.data.created}}</span>
             <!--状态-->
               <div class="statebox222">
                 <div class="status_box" v-for="item in this.progressbox">
@@ -29,7 +31,6 @@
               </div>
               <!--名字合集-->
               <div class="personbox">
-                <div class="person_left"><i class="el-icon-view"></i></div>
                 <div class="person_right">
                   <div class="person_smallbox" @click="handleNameClick(item)" v-for="item in this.projectPersonList">{{item.name}}</div>
                 </div>
@@ -50,8 +51,9 @@
             <!--整改模块-->
             <div class="rectification" v-for="item in this.taskinfobox">
                <!--整改信息-->
+              <div class="zhenggai">
                 <div class="rectification_infobox">
-                  <span style="line-height: 40px;display: block;float: left;font-size: 20px;margin-left: 15px">第{{item[0].count}}条整改数据</span>
+                  <span style="line-height: 40px;display: block;float: left;font-size: 20px">第{{item[0].count}}条整改数据</span>
                   <span style="display: block;float: right;line-height: 40px;margin-right: 15px">{{item[0].date}}</span>
                 </div>
                 <!--处理人名字-->
@@ -62,31 +64,31 @@
                 <!--整改信息图片-->
                 <div class="rectification_imgbox" v-show="item[1].tpshow_1">
                   <div class="imgbox_img1" v-for="i in item[1].value">
-                    <img :src=i.imgurl111 @click="imgURL(i.imgurl111)" alt="" style="height: 100%;width: 100%;margin-right: 15px;margin-top: 10px">
+                    <img :src=i.imgurl111 @click="imgURL(i.imgurl111)" alt="" style="height: 100%;width: 100%;margin-right: 15px;margin-top: 10px;">
                   </div>
                 </div>
                 <!--整改信息文字-->
                 <span class="rectification_word">{{item[2].value}}</span>
-              <!--整改信息显示评论-->
-              <div class="zhenggai_pinglun_box" style="width: 100%;background-color:paleturquoise;padding: 7px;margin-top: 5px" v-for="obj in item.index1">
-                  <div class="zhenggai_pinglun_box_top" style="width: 100%;height: 30px;font-size: 16px;">
-                    <span style="display: block;float: left">{{obj.person_name}}</span>
-                    <span style="display: block;float: right">{{obj.created_time}}</span>
-                  </div>
-                  <span>{{obj.comment}}</span>
-              </div>
+                <!--整改信息显示评论-->
+                <div class="zhenggai_pinglun_box" style="width: 100%;background-color:#F7F7F7;padding: 7px;margin-top: 5px" v-for="obj in item.index1">
+                    <div class="zhenggai_pinglun_box_top" style="width: 100%;height: 30px;font-size: 16px;">
+                      <span style="display: block;float: left">{{obj.person_name}}</span>
+                      <span style="display: block;float: right">{{obj.created_time}}</span>
+                    </div>
+                    <span>{{obj.comment}}</span>
+                </div>
                 <!--整改信息评论-->
                 <div class="commentsbox">
                   <el-input type="textarea" :rows="1" placeholder="请输入内容" v-model="textarea1" class="comments_input" v-show="commentshow1"></el-input>
                   <input type="button" class="comments_btn" :value=commentvalue1 @click="commentfnc1(item[0].count)">
                 </div>
-
+              </div>
 
 
                 <!--质检信息-->
               <div class="qualityBox" v-if="item.qualityshow">
                   <div class="rectification_infobox">
-                    <span style="line-height: 40px;display: block;float: left;font-size: 20px;margin-left: 15px">第{{item[3].count}}条质检信息</span>
+                    <span style="line-height: 40px;display: block;float: left;font-size: 20px">第{{item[3].count}}条质检信息</span>
                     <span style="display: block;float: right;line-height: 40px;margin-right: 15px">{{item[3].time}}</span>
                   </div>
                   <!--质检图片-->
@@ -99,7 +101,7 @@
                   <!--质检信息文字-->
                   <span class="rectification_word">{{item[5].value}}</span>
                   <!--质检信息显示评论-->
-                  <div class="zhenggai_pinglun_box" style="width: 100%;background-color:paleturquoise;padding: 7px;margin-top: 5px" v-for="npm in item.index2">
+                  <div class="zhenggai_pinglun_box" style="width: 100%;background-color:#F7F7F7;padding: 7px;margin-top: 5px" v-for="npm in item.index2">
                       <div class="zhenggai_pinglun_box_top" style="width: 100%;height: 30px;font-size: 16px;">
                         <span style="display: block;float: left">{{npm.person_name}}</span>
                         <span style="display: block;float: right">{{npm.created_time}}</span>
@@ -299,8 +301,13 @@
         })
       },
        taskspecificinfo(){//任务详细信息
+        console.log("接受回来的数据",this.taskInfoDialog)
         console.log("11111111111111111",this.taskInfoDialog.data.subjectionId)
         return new Promise((resolve, reject) => {
+          console.log("任务详情this.project_id",this.project_id)
+          console.log("任务详情this.taskInfoDialog.data.workId",this.taskInfoDialog.data.workId)
+          console.log("任务详情this.taskInfoDialog.data.trackId",this.taskInfoDialog.data.trackId)
+          console.log("任务详情this.taskInfoDialog.data.subjectionId",this.taskInfoDialog.data.subjectionId)
           const _param = {
           method: 'get_flow_work',
           project_id: this.project_id,
@@ -316,14 +323,14 @@
           this.btnworkid=data.workId
           this.formdata=data.flowButtons
           // 输入框的显示与不显示判断
-          // if(this.person_info.person.name!==""){
-          //   if(this.taskInfoDialog.data.header===this.person_info.person.name){
-          //     this.todoinfoshow=true
-          //   }
-          //   if(this.taskInfoDialog.data.state==='已完成'||this.formdata[0].buttonName==="质检"){
-          //     this.todoinfoshow=false
-          //   }
-          // }
+          if(this.person_info.person.name!==""){
+            if(this.taskInfoDialog.data.header===this.person_info.person.name){
+              this.todoinfoshow=true
+            }
+            if(this.taskInfoDialog.data.state==='已完成'||this.formdata[0].buttonName==="质检"){
+              this.todoinfoshow=false
+            }
+          }
            // 输入框的显示与不显示判断结束
           console.log("this.btnsubid",data.subjectionId)
           console.log("this.fordate",this.formdata)
@@ -719,7 +726,8 @@
           console.log("2222222222222222222222222",this.btnsubid)
           this.todotextarea=""//输入框文本为空
           this.fileList=[]//上传按钮清空
-          this.taskspecificinfo()//重新获取数据并且填充页面
+          this.$router.go(0)
+          // this.taskspecificinfo()//重新获取数据并且填充页面
           loading.close();
         })
       }
