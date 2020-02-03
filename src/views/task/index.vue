@@ -7,50 +7,57 @@
     <el-tabs type="border-card" v-model="activeName" @tab-click="mytask">
       <el-tab-pane :label="bannertitle" name="first">
         <div class="taskbox1">
-          <el-input v-model="chaxuninput" placeholder="请输入姓名，标题搜索" style="width: 50%;display: block;margin-left:10px;margin-bottom: 0px" clearable></el-input>
-          <br>
+          <el-input v-model="chaxuninput" placeholder="请输入姓名，标题搜索" clearable style="width: 420px">
+            <el-button slot="append" @click="queryFun" style="background-color:#409EFF;width: 100px;color: #fff;">查询</el-button>
+          </el-input>
+          <span style="font-size: 14px;margin-left: 40px">精简筛选条件&nbsp;&nbsp;<i class="el-icon-arrow-down"></i></span>
+          <br><br>
           <span>类别:</span>
           <template>
-          <el-select v-model="value" placeholder="所有" style="width: 80px" class="btn1">
+          <el-select v-model="value" placeholder="所有" style="width: 120px" class="btn1">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.label"></el-option>
           </el-select>
           </template>
 
           <span>类型:</span>
           <template>
-          <el-select v-model="value2" placeholder="所有" style="width: 110px" class="btn1">
+          <el-select v-model="value2" placeholder="所有" style="width: 120px" class="btn1">
             <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.label2"></el-option>
           </el-select>
           </template>
 
           <span>状态:</span>
           <template>
-          <el-select v-model="value3" placeholder="所有" style="width: 100px" class="btn1">
+          <el-select v-model="value3" placeholder="所有" style="width: 120px" class="btn1">
             <el-option v-for="item in options3" :key="item.value3" :label="item.label" :value="item.label"></el-option>
           </el-select>
           </template>
-          <el-button type="primary" @click="queryFun">查询</el-button>
-
-          <div class="details" v-for="item in boxinfo1" @click="infoshow(item)"> <!--任务信息模块-->
-            <img :src=item.imgurl alt="">
-            <span class="titleword" @click="infoshow(item)">{{item.title}}</span>
-            <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
-            <!--<div class="statebox">{{item.state}}</div>-->
-            <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
-            <br>
-            <div class="peoplebox">
-              <span class="originator_span">发起人: <span style="color: #383838" @click="handleNameClick(item.person_id1)">{{item.originator}}</span></span>
-              <!--header   负责人-->
-               <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838" @click="handleNameClick(item.person_id2)">{{item.header}}</span></span>
-              <!--qualiter   质检人-->
-               <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838" @click="handleNameClick(item.person_id3)">{{item.qualiter}}</span></span>
+          <div class="details" v-for="(item,index) in boxinfo1" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
+            <div class="details_top">
+              <img src="/static/icon/BrowserPreview_tmp%20(2).png" alt="" style="width: 25px;height: 25px;margin-left: 10px;margin-top: 5px;float: left;">
+              <span class="details_top_span">{{item.stateall}}</span><span class="details_top_span">—</span><span class="details_top_span">{{item.questions_type}}</span>
+              <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
             </div>
-            <span class="created_time">发布时间:<span style="color: #383838">{{item.created}}</span></span>
-            <!--<h4>计划完成时间:{{item.endtime}}</h4>-->
-            <br>
-            <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检','ziliao':item.stateall==='资料'}">{{item.stateall}}</div>
-            <!--<div class="logobox">{{item.stateall}}</div>-->
-            <div class="logobox" v-show=item.xian3>{{item.questions_type}}</div>
+            <div class="imgbox">
+              <img :src=item.imgurl alt="">
+              <div class="imgbox_yuan" v-show="item.imgboxyuanshow">{{item.obj.info.comment_count}}</div>
+            </div>
+            <div class="imgbox_right">
+              <span class="titleword" @click="infoshow(item)">{{item.title}}</span>
+              <div class="peoplebox">
+                <span class="originator_span">发起人: <span style="color: #383838" @click="handleNameClick(item.person_id1)">{{item.originator}}</span></span>
+                <!--header   负责人-->
+                 <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838" @click="handleNameClick(item.person_id2)">{{item.header}}</span></span>
+                <!--qualiter   质检人-->
+                 <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838" @click="handleNameClick(item.person_id3)">{{item.qualiter}}</span></span>
+              </div>
+              <span class="created_time">发布时间:<span style="color: #383838">{{item.created}}</span></span>
+              <div class="imgbox_right_bottom">
+                <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检','ziliao':item.stateall==='资料'}">{{item.stateall}}</div>
+                <div class="logobox" v-show=item.xian3>{{item.questions_type}}</div>
+                <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
+              </div>
+            </div>
           </div>
           <!--@current-change当前页数///////@size-change每页多少条数据-->
           <el-pagination background
@@ -67,24 +74,32 @@
 
       <el-tab-pane :label="secondtitle" name="second">
         <div class="taskbox1">
-          <div class="details" v-for="(item,index) in boxinfo" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
-            <img :src=item.imgurl alt="">
-            <span class="titleword">{{item.title}}</span>
-            <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
-            <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
-            <br>
-            <div class="peoplebox">
-              <span class="originator_span" @click="handleNameClick(item.sendUserName)">发起人: <span style="color: #383838">{{item.originator}}</span></span>
-              <!--header   负责人-->
-               <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838">{{item.header}}</span></span>
-              <!--qualiter   质检人-->
-               <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838">{{item.qualiter}}</span></span>
+          <div class="details" v-for="(item,index) in boxinfo1" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
+            <div class="details_top">
+              <img src="/static/icon/BrowserPreview_tmp%20(2).png" alt="" style="width: 25px;height: 25px;margin-left: 10px;margin-top: 5px;float: left;">
+              <span class="details_top_span">{{item.stateall}}</span><span class="details_top_span">—</span><span class="details_top_span">{{item.questions_type}}</span>
+              <div class="statebox" :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">{{item.state}}</div>
             </div>
-            <span class="created_time">发布时间:<span style="color: #383838">{{item.sendTime}}</span></span>
-            <!--<h4>计划完成时间:{{item.endtime}}</h4>-->
-            <br>
-            <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检','ziliao':item.stateall==='资料'}">{{item.stateall}}</div>
-            <div class="logobox">{{item.questions_type}}</div>
+            <div class="imgbox">
+              <img :src=item.imgurl alt="">
+              <div class="imgbox_yuan" v-show="item.imgboxyuanshow">{{item.obj.info.comment_count}}</div>
+            </div>
+            <div class="imgbox_right">
+              <span class="titleword" @click="infoshow(item)">{{item.title}}</span>
+              <div class="peoplebox">
+                <span class="originator_span">发起人: <span style="color: #383838" @click="handleNameClick(item.person_id1)">{{item.originator}}</span></span>
+                <!--header   负责人-->
+                 <span class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian>负责人:<span style="color: #383838" @click="handleNameClick(item.person_id2)">{{item.header}}</span></span>
+                <!--qualiter   质检人-->
+                 <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838" @click="handleNameClick(item.person_id3)">{{item.qualiter}}</span></span>
+              </div>
+              <span class="created_time">发布时间:<span style="color: #383838">{{item.created}}</span></span>
+              <div class="imgbox_right_bottom">
+                <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检','ziliao':item.stateall==='资料'}">{{item.stateall}}</div>
+                <div class="logobox" v-show=item.xian3>{{item.questions_type}}</div>
+                <div class="star_block"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
+              </div>
+            </div>
           </div>
         </div>
       </el-tab-pane>
@@ -100,6 +115,7 @@
       return {
         bannertitle:'任务大厅(0)',
         secondtitle:"我的任务(0)",
+        fullscreenLoading: false,//页面加载
         activeName:'first',
         chaxuninput:'',
         personlist:'',
@@ -206,18 +222,6 @@
         //调用接口
         this.getlistinfo()
       },
-      secondpage2(){
-        // console.log('页面渲染页面数据',this.boxinfo1)
-        //整理筛选出需要传递的参数
-        this.postdata=[]
-        this.mybox.forEach(item=>{
-          this.postdata.push(item.workId)
-           item.imgurl='https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id='+item.workId+'&w=220'
-        })
-        console.log("shujujihe",this.postdata)
-        //调用接口
-        // this.getlistinfo()
-      },
     handleSizeChange (e) {
       this.pagesize = e
     },
@@ -251,9 +255,6 @@
         this.boxinfo=data.data
         //事件监听flowid,判断任务类型
         this.boxinfo.forEach(item=>{
-          // if(item.questions_type===''){
-          //   console.log('第二列表',item)
-          // }
           if(item.flowId==="Meeting01"){
             item.stateall='会议'
           }
@@ -288,6 +289,12 @@
         })
       },
       getlistinfo(){
+        const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const _param = {
         method: 'get_nodes_users_list',
         project_id: this.project_id,
@@ -328,7 +335,12 @@
           if(item.flowId!=null){
             item["flowId2"]=item.flowId.slice(0,item.flowId.length-2)//截取字符，判断任务类型，和接口文档匹配
           }
-          // console.log("-----node5username",item.obj.Node2[0])
+            if(item.obj.info.comment_count==0){
+              item["imgboxyuanshow"]=false
+            }
+            if(item.obj.info.comment_count!=0){
+              item["imgboxyuanshow"]=true
+            }
           if(item.obj.Node2!=undefined){
             item["firstname"]=item.obj.Start[0].userName
             item["header"]=item.obj.Node2[0].userName//负责人
@@ -357,6 +369,7 @@
               // item.state = item.getinfo
               item.state = "已完成"
             }
+            loading.close();
           }
                                 //配置结束
           // console.log(item)
@@ -510,49 +523,88 @@
     margin-right: 10px;
   }
   .details{
-    width: 520px;
-    height: 140px;
+    width: 580px;
+    height: 180px;
     border: 1px solid #e7e7e7;
-    border-radius: 5px;
-    margin:15px auto;
+    margin:25px auto;
     position: relative;
   }
-  .details img{
-    width: 122px;
-    height: 102px;
-    margin-top: 19px;
-    margin-left: 10px;
+  .details_top{
+    width: 100%;
+    height: 35px;
+    border-bottom: 1px solid #e7e7e7;
+    margin-bottom: 25px;
+  }
+  .details_top_span{
     display: block;
     float: left;
-    border: 1px solid #000;
+    line-height: 35px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .imgbox{
+    position: relative;
+    width: 122px;
+    height: 102px;
+    display: inline-block;
+    float: left;
+    margin-left: 10px;
+    background-color: #3A71A8;
+  }
+  .imgbox img{
+    width: 100%;
+    height: 100%;
+    display: block;
+    float: left;
+  }
+  .imgbox_right{
+    width: 440px;
+    height: 102px;
+    float: left;
+    padding-left: 12px;
+    position: relative;
+  }
+  .imgbox_yuan{
+    position: absolute;
+    right: -8px;
+    top:-8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 14px;
+    text-align: center;
+    line-height: 20px;
+    color: #EBEEF5;
+    background-color: red;
   }
   .star_block{
     position: absolute;
-    top: 35px;
+    top: 5px;
     right: 0;
   }
   .titleword{
     display: block;
-    margin-top: 18px;
     font-size: 15px;
     font-weight: 500;
-    width: 290px;
-    margin-left: 10px;
     float: left;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+  .peoplebox{
+    width: 430px;
+    height: 30px;
+    float: left;
+  }
   .statebox{
     width: 60px;
     height: 20px;
-    border-radius: 10px;
     background-color: #BABABA;
     color: #fff;
     float: right;
-    margin-right: 10px;
-    margin-top: 10px;
+    margin-right: -5px;
+    margin-top: 7px;
     font-size: 13px;
     text-align: center;
     line-height: 20px;
@@ -577,9 +629,8 @@
   }
   .created_time{
     display: block;
-    margin-top: 7px;
     margin-left: 10px;
-    margin-bottom: 7px;
+    margin-top: -2px;
     width: 350px;
     font-size: 13px;
     font-weight: 500;
@@ -597,10 +648,17 @@
     color: #aaaab2;
     margin-bottom: 5px;
   }
+  .imgbox_right_bottom{
+    width: 97%;
+    height: 30px;
+    position: absolute;
+    bottom: 0;
+  }
   .logobox{
     float: left;
     width: 60px;
     margin-left: 5px;
+    margin-top: 10px;
     height: 20px;
     border: 1px solid #1abc9c;
     font-size: 12px;

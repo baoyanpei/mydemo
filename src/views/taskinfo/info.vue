@@ -78,8 +78,11 @@
                 <!--整改信息评论-->
                 <div class="commentsbox">
                   <el-input type="textarea" :rows="1" placeholder="请输入内容" v-model="textarea1" class="comments_input" v-show="commentshow1"></el-input>
-                  <input type="button" class="comments_btn" :value=commentvalue1 @click="commentfnc1()">
+                  <input type="button" class="comments_btn" :value=commentvalue1 @click="commentfnc1(item[0].count)">
                 </div>
+
+
+
                 <!--质检信息-->
               <div class="qualityBox" v-if="item.qualityshow">
                   <div class="rectification_infobox">
@@ -106,19 +109,31 @@
                   <!--质检信息评论-->
                   <div class="commentsbox">
                     <el-input type="textarea" :rows="1" placeholder="请输入内容" v-model="textarea2" class="comments_input" v-show="commentshow2"></el-input>
-                    <input type="button" class="comments_btn" :value=commentvalue2 @click="commentfnc2()">
+                    <input type="button" class="comments_btn" :value=commentvalue2 @click="commentfnc2(item[3].count)">
                   </div>
               </div>
             </div>
             <!--待处理信息模块-->
             <div class="todoinfo" v-show="todoinfoshow">
-              <el-input type="textarea" :rows="3" class="input1" placeholder="请输入内容" v-model="todotextarea" style="width: 80%"></el-input>
-              <div class="todobtn1"><i class="el-icon-plus"></i></div>
-              <div class="todobtn1"><i class="el-icon-link"></i></div>
-             <el-button type="primary" class="submitbtn">提交质检</el-button>
+              <el-input type="textarea" resize="none" :rows="3" placeholder="请输入内容" v-model="todotextarea" style="width: 100%;display: block;margin-bottom: 10px;"></el-input>
+              <el-upload
+                class="upload-demo"
+                action="https://xcx.tddata.net/upload"
+                :on-success="successupload"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="fileList"
+                list-type="picture">
+                <el-button size="small" type="primary">点击上传</el-button>
+                <div slot="tip" class="el-upload__tip" style="opacity: 0;font-size: 1px">只能上传jpg/png文件，且不超过500kb</div>
+              </el-upload>
             </div>
             <el-row :gutter="10" v-show="claimbtn">
-              <el-col v-for="item in this.formdata" :span=item.spannum :key="item.actionData.workId"><div class="grid-content bg-purple" @click="tijiaofnc(item)">{{item.buttonName}}</div></el-col>
+              <el-col v-for="item in this.formdata" :span=item.spannum :key="item.actionData.workId">
+                <div class="grid-content bg-purple"
+                     :class="{'buttonred':(item.buttonName==='不合格')}"
+                     v-loading.fullscreen.lock="fullscreenLoading" @click="tijiaofnc(item)">
+                  {{item.buttonName}}</div></el-col>
             </el-row>
           </div>
         </el-dialog>
@@ -152,19 +167,31 @@
         commentvalue2:'评论',//质检信息评论按钮文字
         todotextarea:'',
         claimbtn:false,
-        todoinfoshow:false,
+        todoinfoshow:true,
         loginname:'',
         TaskdetailsBox:[],//整改信息数据盒子
         taskinfobox:[],//整改信息整理填充进
         commentsbox1:[],
         commentsbox2:[],
         formdata:[],//form表单返回数据
+        pushdata:[],//------测试盒子
+        photobox:[],//-------图片盒子
+        comment_nodenum:'',//评论信息节点
+        postpingluntextarea:'',//评论信息
+        photosrc:[],
+        nowtimedate:"",
+        nowtimetime:"",
         numarr:[],
         btnform:[],
         btnsubid:'',
         btnworkid:'',
         btnformnode:[],
-        pinglunarr:[]
+        pinglunarr:[],
+        fullscreenLoading: false,
+        dialogImageUrl: '',
+        fileList: [],
+        dialogVisible: false,
+
       }
     },
     computed:{
@@ -212,7 +239,7 @@
         this.getpersonlist()
         this.getpersonprogress()
         let p = new Promise((resolve,reject) => {
-            this.selectcomment()//显示数组
+            this.selectcomment()//显示评论
             resolve('success')
           });
           p.then(result => {
@@ -272,115 +299,133 @@
         })
       },
        taskspecificinfo(){//任务详细信息
-        const _param = {
-        method: 'get_flow_work',
-        project_id: this.project_id,
-        work_id:this.taskInfoDialog.data.workId,
-        track_id:this.taskInfoDialog.data.trackId,
-        subjectionId:this.taskInfoDialog.data.subjectionId
-      }
-      this.$store.dispatch('GetAllInstList', _param).then((data) => {
-        console.log("form表单数据",data)
-        this.btnform=data.form
-        this.btnformnode=data.flowNode
-        this.btnsubid=data.subjectionId
-        this.btnworkid=data.workId
-        this.formdata=data.flowButtons
-        console.log("this.fordate",this.formdata)
-        if(this.formdata!==""){
-          let num=this.formdata.length
-          this.formdata.forEach(item=>{
-            item["spannum"]=24/num
-            console.log("formdata",item)
-          })
-          this.claimbtn=true
-        }else {
-          this.claimbtn=false
+        console.log("11111111111111111",this.taskInfoDialog.data.subjectionId)
+        return new Promise((resolve, reject) => {
+          const _param = {
+          method: 'get_flow_work',
+          project_id: this.project_id,
+          work_id:this.taskInfoDialog.data.workId,
+          track_id:this.taskInfoDialog.data.trackId,
+          subjectionId:this.taskInfoDialog.data.subjectionId
         }
-        this.imgbanner=data.form.basic[0].value
-        if(this.imgbanner.length!=0){
-          this.imgbanner.forEach(item=>{
-            item["onlineurl"]="https://buskey.cn/api/oa/workflow/thumbnail.jpg?f="+item.src+"&w=220"
-          })
-        }
-        if(this.imgbanner.length==0){
-
-        }
-        this.TaskdetailsBox=data.form.modify_check
-        for(var i=0;i<this.TaskdetailsBox.length;i++){
-          let _index = this.TaskdetailsBox[i].count - 1
-          if (this.taskinfobox[_index] === undefined){
-            this.taskinfobox[_index] = []
+        this.$store.dispatch('GetAllInstList', _param).then((data) => {
+          console.log("form表单数据",data)
+          this.btnform=data.form
+          this.btnformnode=data.flowNode
+          this.btnsubid=data.subjectionId
+          this.btnworkid=data.workId
+          this.formdata=data.flowButtons
+          // 输入框的显示与不显示判断
+          // if(this.person_info.person.name!==""){
+          //   if(this.taskInfoDialog.data.header===this.person_info.person.name){
+          //     this.todoinfoshow=true
+          //   }
+          //   if(this.taskInfoDialog.data.state==='已完成'||this.formdata[0].buttonName==="质检"){
+          //     this.todoinfoshow=false
+          //   }
+          // }
+           // 输入框的显示与不显示判断结束
+          console.log("this.btnsubid",data.subjectionId)
+          console.log("this.fordate",this.formdata)
+          if(this.formdata!==""){
+            let num=this.formdata.length
+            this.formdata.forEach(item=>{
+              item["spannum"]=24/num
+              console.log("formdata",item)
+            })
+            this.claimbtn=true
+          }else {
+            this.claimbtn=false
           }
-          this.taskinfobox[_index].push(this.TaskdetailsBox[i])
-        }
-        this.taskinfobox.forEach(item=>{
-          console.log("寻找图片地址",item)
-          if(item.length==6){
-            item["qualityshow"]=true
-            for (var i in item){
-              if(i==1){
-                item[i]["tpshow_1"]=true
-                if(item[i].value.length==0){
-                  item[i]["tpshow_1"]=false
+          this.imgbanner=data.form.basic[0].value
+          if(this.imgbanner.length!=0){
+            this.imgbanner.forEach(item=>{
+              item["onlineurl"]="https://buskey.cn/api/oa/workflow/thumbnail.jpg?f="+item.src+"&w=220"
+            })
+          }
+          if(this.imgbanner.length==0){
+
+          }
+          this.TaskdetailsBox=data.form.modify_check
+          this.taskinfobox=[]
+          console.log("this.TaskdetailsBox",this.TaskdetailsBox)
+          for(var i=0;i<this.TaskdetailsBox.length;i++){
+            let _index = this.TaskdetailsBox[i].count - 1
+            if (this.taskinfobox[_index] === undefined){
+              this.taskinfobox[_index] = []
+            }
+            this.taskinfobox[_index].push(this.TaskdetailsBox[i])
+          }
+          console.log("整改质检信息填充",this.taskinfobox)
+          this.taskinfobox.forEach(item=>{
+            if(item.length==6){
+              item["qualityshow"]=true
+              for (var i in item){
+                if(i==1){
+                  item[i]["tpshow_1"]=true
+                  if(item[i].value.length==0){
+                    item[i]["tpshow_1"]=false
+                  }
+                  item[i].value.forEach(obj=>{
+                    obj["imgurl111"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?f='+obj.src+'&w=220'
+                  })
                 }
-                item[i].value.forEach(obj=>{
-                  obj["imgurl111"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?f='+obj.src+'&w=220'
-                })
+                if(i==4){
+                  item[i]["tpshow"]=true
+                  if(item[i].value.length==0){//如果没有图片就隐藏图片盒子
+                    item[i]["tpshow"]=false
+                  }else {
+                    item[i].value.forEach(npm=>{
+                      npm["imgurl111"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?f='+npm.src+'&w=220'
+                    })
+                  }
+                }
               }
-              if(i==4){
-                item[i]["tpshow"]=true
-                if(item[i].value.length==0){//如果没有图片就隐藏图片盒子
-                  item[i]["tpshow"]=false
-                }else {
-                  item[i].value.forEach(npm=>{
-                    npm["imgurl111"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?f='+npm.src+'&w=220'
+            }else {
+              item["qualityshow"]=false
+              for(var y in item){
+                if(y==1){
+                  item[y]["tpshow_1"]=true
+                  item[y].value.forEach(obj=>{
+                    obj["imgurl111"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?f='+obj.src+'&w=220'
                   })
                 }
               }
-            }
-          }else {
-            item["qualityshow"]=false
-            for(var y in item){
-              if(y==1){
-                item[y].value.forEach(obj=>{
-                  obj["imgurl111"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?f='+obj.src+'&w=220'
-                })
+              if(i==1){
+                  item[i].value.forEach(obj=>{
+                    obj["imgurl111"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?f='+obj.src+'&w=220'
+                  })
               }
             }
-            if(i==1){
-                item[i].value.forEach(obj=>{
-                  obj["imgurl111"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?f='+obj.src+'&w=220'
-                })
+            item["zjpl"]=this.pinglunarr[this.taskinfobox.indexOf(item)]
+            item["name"]=data.person_name
+            item["firstname"]=this.taskInfoDialog.data.header.slice(0,1)
+          })
+          this.taskinfobox.forEach(obj=>{
+            let _index="modify-"+(this.taskinfobox.indexOf(obj)+1)
+            let __index2="check-"+(this.taskinfobox.indexOf(obj)+1)
+            obj[_index]=[]
+            obj[__index2]=[]
+            if(obj.zjpl!==undefined){
+              for(let i=0;i<obj.zjpl.length;i++){
+                if(obj.zjpl[i].comment_node==_index){
+                  obj[_index].push(obj.zjpl[i])
+                }
+                if(obj.zjpl[i].comment_node==__index2){
+                  obj[__index2].push(obj.zjpl[i])
+                }
+              }
             }
-          }
-          item["zjpl"]=this.pinglunarr[this.taskinfobox.indexOf(item)]
-          item["name"]=data.person_name
-          item["firstname"]=this.taskInfoDialog.data.header.slice(0,1)
+            obj["index1"]=obj[_index]
+            obj["index2"]=obj[__index2]
+            // console.log("objjjjjjjjjjj",obj)
+          })
         })
-        console.log("-------->",this.taskinfobox)
-        this.taskinfobox.forEach(obj=>{
-          let _index="modify-"+(this.taskinfobox.indexOf(obj)+1)
-          let __index2="check-"+(this.taskinfobox.indexOf(obj)+1)
-          obj[_index]=[]
-          obj[__index2]=[]
-          if(obj.zjpl!==undefined){
-            for(let i=0;i<obj.zjpl.length;i++){
-              if(obj.zjpl[i].comment_node==_index){
-                obj[_index].push(obj.zjpl[i])
-              }
-              if(obj.zjpl[i].comment_node==__index2){
-                obj[__index2].push(obj.zjpl[i])
-              }
-            }
-          }
-          obj["index1"]=obj[_index]
-          obj["index2"]=obj[__index2]
-          // console.log("objjjjjjjjjjj",obj)
-        })
-      })
+           console.log("taskinfobox",this.taskinfobox)
+          resolve()
+       })
       },
-      selectcomment(){//显示评论
+      async selectcomment(){//显示评论
         const _param = {
         method: 'query',
         project_id: this.project_id,
@@ -390,11 +435,11 @@
         console.log("评论数据要分类",data.data)
         this.commentsbox1=data.data
         this.commentsbox2=[]
+        this.pinglunarr=[]
         for(let i=0;i<this.commentsbox1.length;i++){
           // console.log(this.commentsbox1[i].comment_node)
           //截取返回评论节点最后一位数
           let strnum=this.commentsbox1[i].comment_node.substring(this.commentsbox1[i].comment_node.length-1,this.commentsbox1[i].comment_node.length)
-          // console.log("-----strnum",strnum,typeof strnum)
           if(strnum!=="c" && strnum!=""){
             let strnum_num=parseInt(strnum)
             let _index=strnum_num-1
@@ -402,46 +447,82 @@
               this.pinglunarr[_index] = []
             }
             this.pinglunarr[_index].push(this.commentsbox1[i])
-            // this.numarr.push(strnum_num)
-            // console.log("strnum22",this.numarr)
+            console.log("this.commentsbox1[i]",i,this.commentsbox1[i],)
           }
+        // basic评论
           if(this.commentsbox1[i].comment_node==="basic"){
             this.commentsbox2.push(this.commentsbox1[i])
           }
         }
         console.log("---------<><><><><><",this.pinglunarr)
         console.log("显示评论列表",this.commentsbox2)
-        if(this.person_info.person.name!==""){
-          // console.log("____________",this.taskInfoDialog.data.header===this.person_info.person.name)
-          if(this.taskInfoDialog.data.header===this.person_info.person.name){
-            this.todoinfoshow=true
-          }else {
-            this.todoinfoshow=false
-          }
-        }
       })
+        await this.taskspecificinfo()
       },
       postcomment(){//上传评论
-        const _param = {
-        method: 'comment',
-        project_id: this.project_id,
-        work_id:this.taskInfoDialog.data.workId,
-        flow_id:this.taskInfoDialog.data.flowId,
-        comment:this.textarea,
-        comment_node:"basic"
-      }
-      this.$store.dispatch('Postmomment', _param).then((data) => {
-        console.log("评论发送成功",data)
-        this.selectcomment()
-      })
+        if(this.postpingluntextarea!=""){
+         const _param = {
+          method: 'comment',
+          project_id: this.project_id,
+          work_id:this.taskInfoDialog.data.workId,
+          flow_id:this.taskInfoDialog.data.flowId,
+          comment:this.postpingluntextarea,
+          comment_node:this.comment_nodenum
+        }
+        this.$store.dispatch('Postmomment', _param).then((data) => {
+          console.log("评论发送成功",data)
+          this.selectcomment()
+        })
+        }else {
+          console.log("评论内容不得为空")
+        }
       },
       commentfnc(){
+        this.comment_nodenum="basic"
+        this.postpingluntextarea=this.textarea
         if(this.commentvalue==="评论"){
           this.commentvalue="发表"
           this.commentshow=true
+          this.textarea=""
         } else {
           this.commentvalue="评论"
           this.commentshow=false
+          let p = new Promise((resolve,reject) => {
+            this.postcomment()
+            console.log("评论上传成功")
+            resolve('success')
+          });
+          p.then(result => {
+            this.selectcomment()
+            console.log("评论展示成功")
+          });
+        }
+      },
+      commentfnc1(index){//整改信息评论按钮
+        this.postpingluntextarea=this.textarea1
+        console.log("整改信息评论按钮",index)
+        this.comment_nodenum="modify-"+index
+        if(this.commentvalue1==="评论"){
+          this.commentvalue1="发表"
+          this.commentshow1=true
+        } else {
+          this.commentvalue1="评论"
+          this.commentshow1=false
+          this.postcomment()
+          this.textarea1=""
+        }
+      },
+      commentfnc2(index){//质检信息评论按钮
+        console.log("质检信息评论按钮")
+        this.postpingluntextarea=this.textarea2
+        this.comment_nodenum="check-"+index
+        if(this.commentvalue2==="评论"){
+          this.commentvalue2="发表"
+          this.commentshow2=true
+          this.textarea2=""
+        } else {
+          this.commentvalue2="评论"
+          this.commentshow2=false
           let p = new Promise((resolve,reject) => {
             this.postcomment()
             resolve('success')
@@ -449,14 +530,7 @@
           p.then(result => {
             this.selectcomment()
           });
-          console.log(this.textarea)
         }
-      },
-      commentfnc1(){//整改信息评论按钮
-        console.log("整改信息评论按钮")
-      },
-      commentfnc2(){//质检信息评论按钮
-        console.log("质检信息评论按钮")
       },
       handleNameClick(row) {//人物名字
         console.log("人物名字",row)
@@ -471,7 +545,166 @@
       imgURL(index){
         window.open(index)
       },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
+      uploadBimItem(index){
+        console.log("文件地址",index.file)
+
+      },
+      successupload(response){//图片样式更改
+        console.log("图片信息返回",response.filename)
+        this.photosrc.push(response.filename)
+        if(this.photosrc.length>0&&this.photosrc.length<=3){//todoinfo
+
+        }
+        console.log(this.photosrc)
+      },
+      handleRemove(file, fileList) {
+        console.log("文件地址2",file, fileList);
+      },
+      handlePreview(file) {
+        console.log("文件地址3",file);
+      },
+      gettime(){//获取按钮点击时的当前时间          date: "2020-01-13 星期一"
+        var myDate = new Date();
+        var year = myDate.getFullYear(); //年
+        var month = myDate.getMonth() + 1; //月
+        var day = myDate.getDate(); //日
+        var days = myDate.getDay();
+        switch(days) {
+            case 1:
+                  days = '星期一';
+                  break;
+            case 2:
+                  days = '星期二';
+                  break;
+            case 3:
+                  days = '星期三';
+                  break;
+            case 4:
+                  days = '星期四';
+                  break;
+            case 5:
+                  days = '星期五';
+                  break;
+            case 6:
+                  days = '星期六';
+                  break;
+            case 0:
+                  days = '星期日';
+                  break;
+      }
+        this.nowtimedate=year+"-"+month+"-"+day+"  "+days
+        this.nowtimetime=year+"-"+month+"-"+day+"  "+myDate.getHours()+":"+myDate.getMinutes()+":"+myDate.getSeconds()
+        console.log(this.nowtimetime)
+      },
+      zhijianfnc(index){
+        var zjnum=(this.btnform.modify_check.length)/6+1
+          console.log("这是提交质检按钮",zjnum,index)
+          for(let i in this.photosrc){
+            this.photobox.push({
+              lx: "image",
+              src: this.photosrc[i]
+            })
+          }
+          this.pushdata.push({
+            count: zjnum,
+            date: this.nowtimedate,
+            lable: index.buttonName,
+            lx: "modify",
+            time:this.nowtimetime,
+            type: "title",
+            value: "执行信息"
+          },{
+            count: zjnum,
+            id: "questions_photo_modify",
+            lable: "执行图片",
+            lx: "modify",
+            type: "multi_attach",
+            upfiles: "",
+            value: this.photobox
+          },{
+            count: zjnum,
+            id: "questions_remark_modify",
+            lable: "执行描述",
+            lx: "modify",
+            type: "multi_text",
+            value:this.todotextarea ,
+            voicelst: ""
+          })
+          console.log("this.pushdata",this.pushdata)
+          for(let i in this.pushdata){
+            this.btnform.modify_check.push(this.pushdata[i])
+          }
+          console.log("this.btnform",this.btnform)
+      },
+      hegefnc(index){
+        console.log("这是不合格按钮和合格按钮",index.buttonName)
+          var zjnum=(this.btnform.modify_check.length+3)/6
+          console.log("这是不合格按钮",zjnum)
+          for(let i in this.photosrc){
+            this.photobox.push({
+              lx: "image",
+              src: this.photosrc[i]
+            })
+          }
+          this.pushdata.push({
+            btid: "reject",
+            id: "quality_check",
+            count: zjnum,
+            date: this.nowtimedate,
+            lable: index.buttonName,
+            lx: "check",
+            time:this.nowtimetime,
+            type: "title",
+            value: "质检信息"
+          },{
+            count: zjnum,
+            btid: "reject",
+            id: "questions_photo_reject",
+            lable: "不合格图片",
+            lx: "check",
+            type: "multi_attach",
+            value: this.photobox
+          },{
+            count: zjnum,
+            id: "questions_remark_reject",
+            lable: "不合格原因",
+            lx: "check",
+            type: "multi_text",
+            value:this.todotextarea ,
+            voicelst: ""
+          })
+        console.log("pushdate",this.pushdata)
+          for(let i in this.pushdata){
+            this.btnform.modify_check.push(this.pushdata[i])
+          }
+          console.log("this.btnform",this.btnform)
+      },
       tijiaofnc(index){//提交按钮函数
+        console.log("index",index,this.formdata)
+        this.pushdata=[]
+        this.gettime()
+        if(index.buttonName=="提交质量检测"){
+          this.zhijianfnc(index)
+        }
+        if(index.buttonName=="不合格"||index.buttonName=="合格"){
+          this.hegefnc(index)
+        }
+         const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        // console.log("project_id",this.project_id)
+        // console.log("buttonAction",index)
+        // console.log("form",this.btnform)
+        // console.log("subjectionId",this.btnsubid)
+        // console.log("workId",this.btnworkid)
+        // console.log("flowNode",this.btnformnode)
         const _param = {
           method: 'submit_work',
           project_id: this.project_id,
@@ -483,6 +716,11 @@
         }
         this.$store.dispatch('GetAllInstList', _param).then((data) => {
           console.log("按钮提交数据成功",data)
+          console.log("2222222222222222222222222",this.btnsubid)
+          this.todotextarea=""//输入框文本为空
+          this.fileList=[]//上传按钮清空
+          this.taskspecificinfo()//重新获取数据并且填充页面
+          loading.close();
         })
       }
     }

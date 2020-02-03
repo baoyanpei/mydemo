@@ -175,24 +175,25 @@
     max-height: 700px;
     overflow-y: scroll;
   }
-
+//el-upload-list el-upload-list--picture
   /*待处理信息*/
   .todoinfo {
     width: 100%;
-    height: 130px;
     border: 1px solid #e5e5e5;
     margin-top: 10px;
   }
-
-  .input1 {
-    width: 80%;
-    display: block;
-    float: left;
+  .el-upload-list{
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
   }
-
+/deep/ .el-upload-list__item{
+  width: 33%;
+}
   .todobtn1 {
+    margin-top: 10px;
     width: 10%;
-    height: 75px;
+    height: 75px!important;
     margin-left: 0;
     background-color: #F2F6FC;
     border: 1px solid #e5e5e5;
@@ -316,7 +317,9 @@
   .bg-purple-light {
     background: yellowgreen;
   }
-
+  .buttonred{
+    background-color: red;
+  }
   .grid-content {
     border-radius: 4px;
     text-align: center;
