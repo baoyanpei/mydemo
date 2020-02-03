@@ -70,7 +70,7 @@ export default {
     theme: '换肤'
   },
   login: {
-    title: '易正智慧建筑实名制',
+    title: '易正智慧建筑信息管控平台',
     logIn: '登录',
     username: '手机号码',
     password: '短信验证码',
