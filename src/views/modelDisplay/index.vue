@@ -94,10 +94,7 @@
         <el-button class="marker-button" title="下载截图">
           <font-awesome-icon icon="download" @click="snaphot('download')" />
         </el-button> -->
-      <!-- <hr />
-        <el-button class="marker-button" title="保存标注">
-          <font-awesome-icon icon="save" @click="saveMarkups()" />
-        </el-button> -->
+
 
       <el-button class="marker-button" title="视点管理">
         <font-awesome-icon icon="layer-group" @click="openViewPointManageHandle" />
@@ -417,18 +414,20 @@
       },
       addViewpointToolBar() {
 
-        // 标注功能
+        // 标注功能 - 普通标注视点
         let buttonMarker = new Autodesk.Viewing.UI.Button('my-marker-button')
         buttonMarker.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
 
         buttonMarker.onClick = (e) => {
           // viewer.setViewCube('front')
+          this.isSaveViewValid = false
+          this.viewer.toolbar.setVisible(false)
           this.enterMarkerEditMode(2)
         }
         buttonMarker.addClass('my-marker-button')
         buttonMarker.setToolTip('普通标注视点')
 
-        // 标注功能
+        // 标注功能 - 标定项目位置标准视点
         let buttonMarker2 = new Autodesk.Viewing.UI.Button('my-marker2-button')
         buttonMarker2.addClass('my-marker2-button')
 
@@ -437,6 +436,8 @@
           buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
           buttonMarker2.onClick = (e) => {
             // viewer.setViewCube('front')
+            this.viewer.toolbar.setVisible(false)
+            this.isSaveViewValid = false
             this.enterMarkerEditMode(1)
           }
           buttonMarker2.setToolTip('标定项目位置标准视点')
@@ -647,6 +648,7 @@
         switch (type) {
           case 1: // 1-基于项目的公共位置视点
             this.isShowToolbarMarker = true
+            
             // this.isShowSaveMarkerArea = true
             this.isShowViewPointArea = true
             this.isShowToolbarRestore2 = false
@@ -655,6 +657,7 @@
             this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
 
               this.isShowToolbarMarker = true
+              
               // this.isShowSaveMarkerArea = true
               this.isShowViewPointArea = true
               this.isShowToolbarRestore2 = false
@@ -688,6 +691,7 @@
         // this.markupsPersist = this.markupsExt.generateData()
         // current view state (zoom, direction, sections)
         // this.viewerStatePersist = this.markupsExt.viewer.getState()
+        this.viewer.toolbar.setVisible(true)
         this.viewPointName = ''
         // console.log('this.markupsExt', this.markupsExt)
         if (this.markupsExt !== undefined) {
@@ -766,18 +770,18 @@
         // this.FontSizeLabel = `文字大小：${this.markerStyle.fontSize}号`
 
       },
-      showSaveViewsPointHandle(type) {
+      showSaveViewsPointHandle(editType) {
         // type 0 保存，1 新增
         // this.isShowSaveMarkerArea = true
         // 打开视角管理窗口
-        if (this.selectedDbId.length === 0) {
+        if (this.ViewPointType === 1 && this.selectedDbId.length === 0) {
           this.$message({
             message: '请先选择一个构件',
             type: 'error'
           })
           return
         }
-        this.SavePositionViewPointHandle()
+        this.SavePositionViewPointHandle(editType)
 
       },
       openPicture() {
@@ -875,7 +879,7 @@
           }
         }
       },
-      SavePositionViewPointHandle() {
+      SavePositionViewPointHandle(editType) {
         // console.log('SavePositionViewPointHandle')
 
         // if (this.viewPointName === '') {
@@ -937,6 +941,7 @@
               console.log('personInfo', this.personInfo)
               const __data = {
                 // "method": "SaveViewPoint",
+                "editType": editType,
                 "type": this.ViewPointType,
                 "project_id": this.project_id,
                 "name": this.viewPointName,
@@ -1016,7 +1021,8 @@
       async ShowViewPoint() {
         console.log('ShowViewPoint', this.ViewPointCurrentShow)
         console.log('this.itemList', this.itemList)
-
+        this.isSaveViewValid = true
+        this.viewer.toolbar.setVisible(false)
         let files_id_list = JSON.parse(this.ViewPointCurrentShow.file_ids)
         console.log('files_id_list', files_id_list)
         console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
@@ -1045,6 +1051,7 @@
         switch (_pointType) {
           case 1: // 1-基于项目的公共位置视点
             this.isShowToolbarMarker = true
+            
             this.isShowToolbarMarkerStyle = false
             this.isShowViewPointArea = true
             console.log('ViewPointCurrentShow', this.ViewPointCurrentShow)
@@ -1103,7 +1110,6 @@
                 markupsExt.leaveEditMode();
                 markupsExt.show();
                 markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointCurrentShow.id);
-                // this.enterMarkerEditMode()
                 this.isShowOldViewPoint = true
               }, 1000);
             })

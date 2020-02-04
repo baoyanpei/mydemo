@@ -50,7 +50,7 @@
     directives: {},
     data() {
       return {
-        dialogTitle: '位置信息',
+        dialogTitle: '编辑位置信息',
         loadingSaveViewPoint: false, // 保存视点按钮加载
         viewPointPositionSaveForm: {},
         ViewPointType: 0, // 1 楼层 2 普通
@@ -109,6 +109,14 @@
       async openedSaveDialogHandle() {
         console.log('ViewPointSaveDialog', this.ViewPointSaveDialog)
         let _data = this.ViewPointSaveDialog.data
+        switch (_data.editType) {
+          case 0:
+            this.dialogTitle = '修改位置信息'
+            break;
+          case 1:
+            this.dialogTitle = '新增位置信息'
+            break;
+        }
         this.ViewPointType = _data.type
         this.itemInfoListMap = new Map()
         const __itemInfoList = _data.itemInfoList
