@@ -27,7 +27,8 @@
             <el-col :span="12" style="padding-left:5px;">
               <el-row :gutter="24">
                 <div class="grid-content info-title">
-                  <el-link @click='getViewPointsDataHandle(item)'>{{item.name}}</el-link>
+                  <!-- <el-link @click='getViewPointsDataHandle(item)'>{{item.name}}</el-link> -->
+                  <span class="info-title-link" @click='getViewPointsDataHandle(item)'>{{item.name}}</span>
                 </div>
               </el-row>
               <el-row :gutter="24">
@@ -77,7 +78,7 @@
                         <el-col :span="12" style="padding-left:5px;">
                           <el-row :gutter="24">
                             <div class="grid-content info-title">
-                              <el-link @click='getViewPointsDataHandle(item)'>{{item.name}}</el-link>
+                              <span class="info-title-link" @click='getViewPointsDataHandle(item)'>{{item.name}}</span>
                             </div>
                           </el-row>
                           <el-row :gutter="24">
@@ -105,19 +106,6 @@
 
 
             </el-collapse-item>
-            <!-- <el-collapse-item title="反馈 Feedback" name="2">
-              <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-              <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
-            </el-collapse-item>
-            <el-collapse-item title="效率 Efficiency" name="3">
-              <div>简化流程：设计简洁直观的操作流程；</div>
-              <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-              <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
-            </el-collapse-item>
-            <el-collapse-item title="可控 Controllability" name="4">
-              <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
-              <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
-            </el-collapse-item> -->
           </el-collapse>
 
         </div>
@@ -164,7 +152,8 @@
         CurrentFileIDList: '', //当前打开的模型的file_id列表
         viewOptions: "{'inline': true,'navbar': false,'movable':false}",
         activeBuildNames: [],
-        activeFloorNames: []
+        activeFloorNames: [],
+        currentChoosedItem: null
       }
     },
     computed: {
@@ -213,6 +202,7 @@
         this.viewPointAllList = [] // 从接口获取的所有数据
         this.activeTabName = '1'
         this.ProjectItemsAll = new Map()
+        this.currentChoosedItem = null
       },
       async getData() {
         // await this.exchangeToken(getToken())
@@ -241,28 +231,6 @@
         })
         this.getData()
       },
-      // exchangeToken(token) {
-      //   return new Promise((resolve, reject) => {
-      //     const param = {
-      //       method: "exchange_token",
-      //       from: 'oa',
-      //       token: token
-      //     }
-      //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-      //       console.log('ExchangeToken - resultData', resultData)
-      //       if (resultData.status === 'success') {
-      //         this.access_token = resultData.access_token
-      //         resolve()
-      //       } else {
-      //         // console.log("123123123")
-      //         this.tip_message = resultData.msg
-      //         reject(resultData.msg)
-      //       }
-
-      //     })
-      //   })
-
-      // },
       getProjectItemsAll() {
         return new Promise((resolve, reject) => {
           this.ProjectItemsAll = new Map()
@@ -349,7 +317,7 @@
           this.viewPointAllList.forEach(item => {
 
 
-
+            item['bgShowNormal'] = ''
             // console.log('item', item)
             if (parseInt(item.type) === 1) {
 
@@ -363,8 +331,13 @@
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
                 item['bgShow'] = 'bgShow'
+                item['bgShowNormal'] = 'bgShow'
               }
-
+              if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
+                item['bgShow'] = 'bgShowSelected'
+              } else {
+                item['bgShow'] = item['bgShowNormal']
+              }
               let _item_id = item.item_id
               // console.log('_mapBuild.get(item_id)', _mapBuild.get(_item_id))
 
@@ -405,7 +378,7 @@
           // let _buildList = []
           this.activeBuildNames = []
           this.activeFloorNames = []
-          
+
           _mapBuild.forEach(item => {
             console.log('item111', item)
 
@@ -420,7 +393,7 @@
               // console.log('floor', floor)
               floorList.push({
                 'floor': floor.floor,
-                'treeid':`build${item.build_id}-floor${floor.floor}`,
+                'treeid': `build${item.build_id}-floor${floor.floor}`,
                 'viewPointList': _viewPointList
               })
               this.activeFloorNames.push(`build${item.build_id}-floor${floor.floor}`)
@@ -431,7 +404,7 @@
               build_id: item.build_id,
               build_name: item.build_name,
               floorList: floorList,
-              treeid:`build${item.build_id}`
+              treeid: `build${item.build_id}`
             })
             this.activeBuildNames.push(`build${item.build_id}`)
 
@@ -458,8 +431,13 @@
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
                 item['bgShow'] = 'bgShow'
+                item['bgShowNormal'] = 'bgShow'
               }
-
+              if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
+                item['bgShow'] = 'bgShowSelected'
+              } else {
+                item['bgShow'] = item['bgShowNormal']
+              }
               this.viewPointDataList.push(item)
             }
 
@@ -475,19 +453,10 @@
       },
       getViewPointsDataHandle(rowData) {
         console.log('getViewPointsDataHandle', rowData)
-        // let CurrentFileIDList = []
-        // this.ViewPointManageDialog.itemInfoList.forEach(item => {
-        //   CurrentFileIDList.push(item.FILE_ID)
-        // })
-
+        this.currentChoosedItem = rowData
+        this.FilterData()
         this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
-        // if (JSON.parse(rowData.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
-        //   console.log(`.imagesPreview-${rowData.id}`)
-        //   const viewer = this.$el.querySelector(`.imagesPreview-${rowData.id}`).$viewer
-        //   viewer.show()
-        // } else {
-        //   this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
-        // }
+
 
 
 

@@ -4,9 +4,11 @@
     height: 28px;
     line-height: 28px;
   }
-  .el-collapse-item__content{
+
+  .el-collapse-item__content {
     padding-bottom: 0px;
   }
+
   .el-collapse-item__arrow {
     float: left;
     // line-height: 50px;
@@ -32,7 +34,7 @@
       /* border-bottom: 1px solid #EBEEF5; */
     }
 
-    .el-collapse-item__content{
+    .el-collapse-item__content {
       padding-bottom: 0px;
     }
   }
@@ -98,10 +100,18 @@
       background-color: #bbefe5 !important;
     }
 
+    .bgShowSelected {
+      background-color: #19b491 !important;
+      color: #ffffff;
+
+
+    }
+
     .view-point-item {
       margin: 0px 10px 10px 10px;
       padding: 5px 0px 0px 0px;
       background-color: #FFFFFF;
+      border-radius: 4px;
 
       .grid-content {
         line-height: 18px;
@@ -115,6 +125,14 @@
 
       .info-title {
         font-weight: 600;
+        font-size: 14px;
+        .info-title-link {
+          cursor: pointer;
+        }
+        .info-title-link:hover{
+          // font-style: italic;
+          text-decoration:underline
+        }
       }
 
       .info-create {
