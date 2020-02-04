@@ -5,8 +5,9 @@
 <template>
 
   <div id="view-point-save-dialog" class="view-point-save-dialog">
-    <el-dialog :modal="true" :close-on-click-modal="false" width="400px" top="10vh" :lock-scroll="true" :visible.sync="ViewPointSaveDialog.show"
-      @opened="openedSaveDialogHandle" @close="closeSaveDialogHandle" :title="dialogTitle" v-el-drag-dialog>
+    <el-dialog :modal="true" :close-on-click-modal="false" width="400px" top="10vh" :lock-scroll="true"
+      :visible.sync="ViewPointSaveDialog.show" @opened="openedSaveDialogHandle" @close="closeSaveDialogHandle"
+      :title="dialogTitle" v-el-drag-dialog>
       <div id="view-point-save-from" class="view-point-save-from">
         <el-form ref="viewPointPositionSaveForm" :model="viewPointPositionSaveForm" label-width="80px" :inline="true">
           <div v-if="ViewPointType === 1">
@@ -62,7 +63,8 @@
         floor: 0,
         PositionTitle: '',
         ViewPointTitle: '',
-        editMode: 1 // 1 新增 2 编辑
+        editType: 1, // 1 新增 0 修改
+        ViewPointCurrentData: null
       }
     },
     computed: {
@@ -105,11 +107,14 @@
         this.ViewPointTitle = ''
         this.itemInfoListMap = new Map()
         this.loadingSaveViewPoint = false
+        this.editType = 1
+        this.ViewPointCurrentData = null
       },
       async openedSaveDialogHandle() {
         console.log('ViewPointSaveDialog', this.ViewPointSaveDialog)
         let _data = this.ViewPointSaveDialog.data
-        switch (_data.editType) {
+        this.editType = _data.editType
+        switch (this.editType) {
           case 0:
             this.dialogTitle = '修改位置信息'
             break;
@@ -119,16 +124,16 @@
         }
         this.ViewPointType = _data.type
 
-        let _ViewPointCurrentData = _data.ViewPointCurrentData
+        this.ViewPointCurrentData = _data.ViewPointCurrentData
 
-        if (_ViewPointCurrentData!== null && _data.editType === 0){
-          this.PositionTitle = _ViewPointCurrentData.name
-          this.ViewPointTitle = _ViewPointCurrentData.name
+        if (this.ViewPointCurrentData !== null && _data.editType === 0) {
+          this.PositionTitle = this.ViewPointCurrentData.name
+          this.ViewPointTitle = this.ViewPointCurrentData.name
 
-          this.floor = _ViewPointCurrentData.floor_name
+          this.floor = this.ViewPointCurrentData.floor_name
         }
         this.itemInfoListMap = new Map()
-        
+
         const __itemInfoList = _data.itemInfoList
         __itemInfoList.forEach(itemInfo => {
           console.log('itemInfo', itemInfo)
@@ -137,11 +142,11 @@
         console.log('this.itemInfoListMap', this.itemInfoListMap)
         // await this.exchangeToken(getToken())
         await this.getProjectItemsAll()
-        if (this.editMode === 1) { // 新增模式
-          if (this.buildList.length === 1) {
-            this.SelectedBuild = this.buildList[0].value
-          }
+        // if (this.editType === 1) { // 新增模式
+        if (this.buildList.length === 1) {
+          this.SelectedBuild = this.buildList[0].value
         }
+        // }
 
       },
       getProjectItemsAll() {
@@ -229,6 +234,9 @@
           "picture_info": __data.picture_info,
           "svg_info": __data.svg_info,
           "creator": __data.creator
+        }
+        if (this.editType === 0) {
+          param['id'] = this.ViewPointCurrentData.id
         }
         console.log('this.ViewPointSaveDialog.param', param)
         this.$store.dispatch('SaveViewPoint', param).then((result) => {

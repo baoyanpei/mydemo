@@ -5,21 +5,26 @@
 import request from '@/utils/request'
 
 /*
-1、视点保存接口：SaveViewPoint
-调用样例：
-{
-    "method":"SaveViewPoint",
-    "type":"1",
-    "project_id":"10000",
-    "name":"aqwe",
-    "desc":"asdfasdfasfasdfasdfDASD",
-    "file_ids":"235,678",
-    "camera_info":"sgsdfgsdrgergdgsdf",
-    "picture_info":"vsdfgsdasefrgtsdgdsfgsdrg",
-    "creator":"123333"
-}
+4.1.1保存视点信息
+api:/api/bim/bcp
+method:SaveViewPoint
+保存视点信息
+        参数
+        id:（可选）视图id，有就保存，没有就直接新增
+        type: 1
+        item_id:
+        project_id:  
+        floor_name:楼层名称
+        name:  视点名称
+        desc:  描述
+        file_ids:  
+        camera_info:  
+        picture_info: 
+        svg_info:  
+        creator:
+返回：
+{"id":5,"msg":"","status":"success"}
 
-其中，project_id，name，file_ids，camera_info，picture_info，creator不可空。
 type字段：1-基于项目的公共位置视点；2-普通视点
 */
 export function saveViewPoint(data) {
