@@ -36,6 +36,18 @@ npm run build:prod
 
 http://www.fontawesome.com.cn/faicons/
 
+```txt
+选择图标
+http://fontawesome.dashgame.com/
+
+Vue.js - Font Awesome字体图标的使用详解（vue-fontawesome库）
+原文出自：www.hangge.com  转载请保留原文链接：https://www.hangge.com/blog/cache/detail_2104.html
+https://www.hangge.com/blog/cache/detail_2104.html
+
+https://www.hangge.com/blog/cache/detail_1007.html
+```
+
+
 [FullCalendar中文文档：Event日程事件](https://www.helloweba.net/javascript/454.html)
 
 #### vue项目中导出excel表格功能

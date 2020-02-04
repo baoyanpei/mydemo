@@ -40,14 +40,14 @@
       </el-button>
     </div>
 
-    <!-- <div v-if="isShowSaveMarkerArea" class="view-point-form">
-      <el-input v-model="viewPointName" placeholder="请输入视点的标题" style="width: 200px;margin-right:10px;"></el-input>
-      <el-button type="warning" :loading="loadingSaveViewPoint" @click="SavePositionViewPointHandle">保存位置视点</el-button>
-    </div> -->
-
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
+      <el-button class="marker-button" title="新增当前视点">
+        <font-awesome-icon :icon="['far','plus-square']" @click="showSaveViewsPointHandle(1)" />
+      </el-button>
       <el-button class="marker-button" title="保存当前视点">
-        <font-awesome-icon :icon="['far','save']" @click="showSaveViewsPointHandle" />
+        <font-awesome-icon v-if="isSaveViewValid === true" :icon="['far','save']"
+          @click="showSaveViewsPointHandle(0)" />
+        <font-awesome-icon v-if="isSaveViewValid === false" style="color:grey;" :icon="['far','save']" />
       </el-button>
       <hr />
       <div v-if="ViewPointType === 2">
@@ -218,7 +218,9 @@
         viewPointName: '', // 视点的标题
         viewPointTitleName: '', //标题栏显示的视点名字
         viewPointImgUrl: '',
-        isShowOldViewPoint: false //是否显示的是老的视点
+        isShowOldViewPoint: false, //是否显示的是老的视点
+        isSaveViewValid: false, // 保存视点的按钮是否有效
+        selectedDbId: [] // 选择的构件id
       }
     },
     computed: {
@@ -354,29 +356,6 @@
 
         })
       },
-      // onLoadSuccess() {
-      //   let getModels = this.viewer.impl.modelQueue().getModels()
-      //   this.globalOffset = getModels[0].getData().globalOffset; //Get it from first model 
-      //   console.log('globalOffset', this.globalOffset)
-      //   for (let i = 1; i < this.urns.length; i++) {
-
-      //     let options = {
-      //       globalOffset: this.globalOffset
-      //     }
-      //     this.viewer.loadModel(this.urns[i], options);
-      //   }
-
-      //   // this.viewer.fitToView()
-      //   this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-
-      //   if (!this.viewer.overlays.hasScene('custom-scene')) {
-      //     this.viewer.overlays.addScene('custom-scene');
-      //   }
-      //   this.saveStatus = JSON.stringify(this.viewer.getState());
-      //   this.addCustomToolBar()
-      //   this.addViewpointToolBar()
-
-      // },
       addCustomToolBar() {
         // 分享按钮
         let buttonShare = new Autodesk.Viewing.UI.Button('my-share-button')
@@ -534,12 +513,14 @@
         // console.log('this.viewer', this.viewer)
         console.log('event1', event)
         let _dbIds = event.dbIdArray
-
+        console.log('dbIdArray', _dbIds)
+        this.selectedDbId = _dbIds
         // Asyncronous method that gets object properties
         // 异步获取模型的属性
         this.viewer.getProperties(_dbIds[0],
           function (elements) {
             var dbid = elements.dbId;
+            console.log('elements', elements)
           })
       },
       getModelUrl() {
@@ -785,9 +766,17 @@
         // this.FontSizeLabel = `文字大小：${this.markerStyle.fontSize}号`
 
       },
-      showSaveViewsPointHandle() {
+      showSaveViewsPointHandle(type) {
+        // type 0 保存，1 新增
         // this.isShowSaveMarkerArea = true
         // 打开视角管理窗口
+        if (this.selectedDbId.length === 0) {
+          this.$message({
+            message: '请先选择一个构件',
+            type: 'error'
+          })
+          return
+        }
         this.SavePositionViewPointHandle()
 
       },
