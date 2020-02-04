@@ -5,7 +5,7 @@
 <template>
 
   <div id="view-point-save-dialog" class="view-point-save-dialog">
-    <el-dialog :modal="false" width="400px" top="10vh" :lock-scroll="true" :visible.sync="ViewPointSaveDialog.show"
+    <el-dialog :modal="true" :close-on-click-modal="false" width="400px" top="10vh" :lock-scroll="true" :visible.sync="ViewPointSaveDialog.show"
       @opened="openedSaveDialogHandle" @close="closeSaveDialogHandle" :title="dialogTitle" v-el-drag-dialog>
       <div id="view-point-save-from" class="view-point-save-from">
         <el-form ref="viewPointPositionSaveForm" :model="viewPointPositionSaveForm" label-width="80px" :inline="true">
@@ -118,7 +118,17 @@
             break;
         }
         this.ViewPointType = _data.type
+
+        let _ViewPointCurrentData = _data.ViewPointCurrentData
+
+        if (_ViewPointCurrentData!== null && _data.editType === 0){
+          this.PositionTitle = _ViewPointCurrentData.name
+          this.ViewPointTitle = _ViewPointCurrentData.name
+
+          this.floor = _ViewPointCurrentData.floor_name
+        }
         this.itemInfoListMap = new Map()
+        
         const __itemInfoList = _data.itemInfoList
         __itemInfoList.forEach(itemInfo => {
           console.log('itemInfo', itemInfo)
@@ -134,25 +144,6 @@
         }
 
       },
-      // exchangeToken(token) {
-      //   return new Promise((resolve, reject) => {
-      //     const param = {
-      //       method: "exchange_token",
-      //       from: 'oa',
-      //       token: token
-      //     }
-      //     this.$store.dispatch('ExchangeToken', param).then((resultData) => {
-      //       console.log('ExchangeToken - resultData', resultData)
-      //       if (resultData.status === 'success') {
-      //         this.access_token = resultData.access_token
-      //         resolve()
-      //       } else {
-      //         reject(resultData.msg)
-      //       }
-      //     })
-      //   })
-
-      // },
       getProjectItemsAll() {
         return new Promise((resolve, reject) => {
           this.buildList = []

@@ -47,12 +47,9 @@
     <!--视点保存dialog-->
     <PointViewSaveDialog></PointViewSaveDialog>
 
-<<<<<<< HEAD
-=======
     <!--绑定BIM-->
     <bindBimDialog></bindBimDialog>
 
->>>>>>> 2146f35bc8023d489ec8579586b9539f1dc33546
   </div>
 </template>
 

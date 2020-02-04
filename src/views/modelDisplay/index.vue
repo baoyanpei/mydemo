@@ -212,12 +212,13 @@
         saveMarkupStatus: null,
         saveMarkupData: null,
         startedRotate: false,
-        viewPointName: '', // 视点的标题
+        // viewPointName: '', // 视点的标题
         viewPointTitleName: '', //标题栏显示的视点名字
         viewPointImgUrl: '',
         isShowOldViewPoint: false, //是否显示的是老的视点
         isSaveViewValid: false, // 保存视点的按钮是否有效
-        selectedDbId: [] // 选择的构件id
+        selectedDbId: [], // 选择的构件id
+        ViewPointCurrentData: null // 当前获取的视点数据
       }
     },
     computed: {
@@ -236,6 +237,7 @@
       ViewPointCurrentShow: { // 视角列表选择的结果发生改变
         handler: function (newVal, oldVal) {
           console.info('value changed ', newVal)
+          this.ViewPointCurrentData = newVal
           this.ShowViewPoint()
           // if (newVal === true) {
           // this.initData()
@@ -648,7 +650,7 @@
         switch (type) {
           case 1: // 1-基于项目的公共位置视点
             this.isShowToolbarMarker = true
-            
+
             // this.isShowSaveMarkerArea = true
             this.isShowViewPointArea = true
             this.isShowToolbarRestore2 = false
@@ -657,7 +659,7 @@
             this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
 
               this.isShowToolbarMarker = true
-              
+
               // this.isShowSaveMarkerArea = true
               this.isShowViewPointArea = true
               this.isShowToolbarRestore2 = false
@@ -692,7 +694,8 @@
         // current view state (zoom, direction, sections)
         // this.viewerStatePersist = this.markupsExt.viewer.getState()
         this.viewer.toolbar.setVisible(true)
-        this.viewPointName = ''
+        this.ViewPointCurrentData = null
+        // this.viewPointName = ''
         // console.log('this.markupsExt', this.markupsExt)
         if (this.markupsExt !== undefined) {
           this.markupsExt.leaveEditMode();
@@ -880,15 +883,7 @@
         }
       },
       SavePositionViewPointHandle(editType) {
-        // console.log('SavePositionViewPointHandle')
 
-        // if (this.viewPointName === '') {
-        //   this.$message({
-        //     message: '请输入要保存的视点的标题！',
-        //     type: 'error'
-        //   })
-        //   return
-        // }
         let screenshot = new Image();
         screenshot.onload = () => {
           // this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupCore) => {
@@ -918,7 +913,7 @@
               console.log('this.markupsExt', this.markupsExt)
               let markupsExtData = ""
 
-              let _pointType = this.ViewPointCurrentShow.type
+              let _pointType = this.ViewPointType
               switch (_pointType) {
                 case 2: // 2-普通视点
                   markupsExtData = this.markupsExt.generateData();
@@ -944,14 +939,15 @@
                 "editType": editType,
                 "type": this.ViewPointType,
                 "project_id": this.project_id,
-                "name": this.viewPointName,
+                "name": "",
                 "desc": "",
                 "file_ids": this.itemCurrentFileIdList.join(','),
                 "camera_info": Base64.encode(saveStatus),
                 "picture_info": markupsBase64,
                 "svg_info": Base64.encode(markupsExtData),
                 "creator": this.personInfo.person.id,
-                "itemInfoList": this.itemInfoList
+                "itemInfoList": this.itemInfoList,
+                "ViewPointCurrentData": this.ViewPointCurrentData
               }
               // console.log('personInfo', this.personInfo)
               console.log('__data', __data)
@@ -963,30 +959,7 @@
               }
               // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
               this.$store.dispatch('ShowViewPointSaveDialog', param).then(() => {}).catch(() => {})
-              // return
-              /*
-              this.$store.dispatch('SaveViewPoint', param).then((result) => {
-                console.log('result', result)
-                this.isShowSaveMarkerArea = false
-                this.loadingSaveViewPoint = false
-                this.viewPointTitleName = this.viewPointName
-                this.viewPointName = ""
-                this.$message({
-                  message: '视点保存成功！',
-                  type: 'success'
-                })
 
-                setTimeout(() => {
-
-                  this.$store.dispatch('SetViewPointDataChanged', {}).then((result) => {
-
-                  })
-                }, 2500);
-
-
-
-                // resolve()
-              })*/
             }, 1000);
           })
 
@@ -1019,11 +992,11 @@
       },
       //显示视点
       async ShowViewPoint() {
-        console.log('ShowViewPoint', this.ViewPointCurrentShow)
+        console.log('ShowViewPoint', this.ViewPointCurrentData)
         console.log('this.itemList', this.itemList)
         this.isSaveViewValid = true
         this.viewer.toolbar.setVisible(false)
-        let files_id_list = JSON.parse(this.ViewPointCurrentShow.file_ids)
+        let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
         console.log('files_id_list', files_id_list)
         console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
         if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
@@ -1047,25 +1020,25 @@
             console.log('init3DView - complete')
           }
         }
-        let _pointType = this.ViewPointCurrentShow.type
+        let _pointType = this.ViewPointCurrentData.type
         switch (_pointType) {
           case 1: // 1-基于项目的公共位置视点
             this.isShowToolbarMarker = true
-            
+
             this.isShowToolbarMarkerStyle = false
             this.isShowViewPointArea = true
-            console.log('ViewPointCurrentShow', this.ViewPointCurrentShow)
-            this.ViewPointType = this.ViewPointCurrentShow.type
-            this.viewPointTitleName = this.ViewPointCurrentShow.name
-
+            console.log('ViewPointCurrentData', this.ViewPointCurrentData)
+            this.ViewPointType = this.ViewPointCurrentData.type
+            this.viewPointTitleName = this.ViewPointCurrentData.name
+            // this.viewPointName = this.ViewPointCurrentData.name
             this.isShowToolbarRestore = false
             this.isShowToolbarRestore2 = false
             this.isShowViewPointThumbArea = false
             // this.isShowSaveMarkerArea = false
 
-            let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentShow.camera_info))
+            let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentData.camera_info))
             // let picBase64 = picture_info.base64
-            this.viewPointImgUrl = this.ViewPointCurrentShow.pictureFullSrc
+            this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc
             console.log('camera_info', camera_info)
             this.viewer.restoreState(camera_info); //it fails to restore state
             // markupsExt.viewer.impl.invalidate(true);
@@ -1083,9 +1056,10 @@
               this.isShowToolbarMarker = false
               this.isShowToolbarMarkerStyle = false
               this.isShowViewPointArea = true
-              console.log('ViewPointCurrentShow', this.ViewPointCurrentShow)
-              this.ViewPointType = this.ViewPointCurrentShow.type
-              this.viewPointTitleName = this.ViewPointCurrentShow.name
+              console.log('ViewPointCurrentData', this.ViewPointCurrentData)
+              this.ViewPointType = this.ViewPointCurrentData.type
+              this.viewPointTitleName = this.ViewPointCurrentData.name
+              // this.viewPointName = this.ViewPointCurrentData.name
               this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
               console.log('this.markupsExt', this.markupsExt)
               // markupsExt.deleteMarkup()
@@ -1097,10 +1071,10 @@
               this.isShowViewPointThumbArea = false
               // this.isShowSaveMarkerArea = false
 
-              let _marekup_svg = Base64.decode(this.ViewPointCurrentShow.svg_info)
-              let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentShow.camera_info))
+              let _marekup_svg = Base64.decode(this.ViewPointCurrentData.svg_info)
+              let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentData.camera_info))
               // let picBase64 = picture_info.base64
-              this.viewPointImgUrl = this.ViewPointCurrentShow.pictureFullSrc
+              this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc
               console.log('camera_info', camera_info)
               this.viewer.restoreState(camera_info); //it fails to restore state
               // markupsExt.viewer.impl.invalidate(true);
@@ -1109,7 +1083,7 @@
               setTimeout(() => {
                 markupsExt.leaveEditMode();
                 markupsExt.show();
-                markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointCurrentShow.id);
+                markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointCurrentData.id);
                 this.isShowOldViewPoint = true
               }, 1000);
             })
