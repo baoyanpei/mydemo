@@ -1,8 +1,8 @@
 <template>
   <div>
-    <sidebar class="sidebar-container" />
+    <sidebar v-show="IsViewPointEditMode===false" class="sidebar-container" />
 
-    <div :class="classObj" class="app-wrapper">
+    <div  :class="classObj" class="app-wrapper">
       <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
 
       <div class="main-container">
@@ -47,7 +47,17 @@
           withoutAnimation: this.sidebar.withoutAnimation,
           mobile: this.device === 'mobile'
         }
+      },
+      IsViewPointEditMode() {
+        return this.$store.state.viewPoint.IsViewPointEditMode
       }
+    },
+    watch: {
+      IsViewPointEditMode(curVal, oldVal) {
+        console.log("IsViewPointEditMode", curVal)
+
+      }
+
     },
     methods: {
       handleClickOutside() {
@@ -92,6 +102,7 @@
 
   .app-main {
     /* background-color: #3cba9c; */
+    padding-left: 0px;
   }
 
 </style>

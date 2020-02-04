@@ -218,7 +218,8 @@
         isShowOldViewPoint: false, //是否显示的是老的视点
         isSaveViewValid: false, // 保存视点的按钮是否有效
         selectedDbId: [], // 选择的构件id
-        ViewPointCurrentData: null // 当前获取的视点数据
+        ViewPointCurrentData: null, // 当前获取的视点数据
+        ControlGroupViewPoint: null // 视点工具条的index
       }
     },
     computed: {
@@ -423,7 +424,8 @@
         buttonMarker.onClick = (e) => {
           // viewer.setViewCube('front')
           this.isSaveViewValid = false
-          this.viewer.toolbar.setVisible(false)
+          // this.viewer.toolbar.setVisible(false)
+          this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
           this.enterMarkerEditMode(2)
         }
         buttonMarker.addClass('my-marker-button')
@@ -438,7 +440,8 @@
           buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
           buttonMarker2.onClick = (e) => {
             // viewer.setViewCube('front')
-            this.viewer.toolbar.setVisible(false)
+            // this.viewer.toolbar.setVisible(false)
+            this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
             this.isSaveViewValid = false
             this.enterMarkerEditMode(1)
           }
@@ -463,51 +466,15 @@
         buttonViewPoint.addClass('my-marker-manager-button')
         buttonViewPoint.setToolTip('视点管理')
 
-        // // 保存视点按钮
-        // let buttonViewPointSave = new Autodesk.Viewing.UI.Button('my-view-point-save-button')
-        // buttonViewPointSave.icon.style.backgroundImage = 'url(./static/icon/ico_save.png)'
-
-
-        // buttonViewPointSave.onClick = (e) => {
-        //   this.saveViewPoint()
-        // }
-        // buttonViewPointSave.addClass('my-view-point-save-button')
-        // buttonViewPointSave.setToolTip('保存视点')
-
-        // // 载入视点按钮
-        // let buttonViewPointRestore = new Autodesk.Viewing.UI.Button('my-view-point-restore-button')
-        // buttonViewPointRestore.icon.style.backgroundImage = 'url(./static/icon/ico_restore2.png)'
-
-
-        // buttonViewPointRestore.onClick = (e) => {
-        //   this.restoreViewPoint()
-        // }
-        // buttonViewPointRestore.addClass('my-view-point-restore-button')
-        // buttonViewPointRestore.setToolTip('恢复视点')
-
-        // // 旋转模型
-        // let buttonRotate = new Autodesk.Viewing.UI.Button('my-rotate-button')
-        // buttonRotate.icon.style.backgroundImage = 'url(./static/icon/ico_rotate.png)'
-
-
-        // buttonRotate.onClick = (e) => {
-        //   this.rotateModel()
-        // }
-        // buttonRotate.addClass('my-rotate-button')
-        // buttonRotate.setToolTip('旋转模型')
-
         // SubToolbar
-        let subToolbar = new Autodesk.Viewing.UI.ControlGroup('my-view-point-toolbar')
-        subToolbar.addControl(buttonMarker)
-        subToolbar.addControl(buttonMarker2)
-
-        subToolbar.addControl(buttonViewPoint)
-        // subToolbar.addControl(buttonViewPointSave)
-        // subToolbar.addControl(buttonViewPointRestore)
-        // subToolbar.addControl(buttonRotate)
+        this.ControlGroupViewPoint = new Autodesk.Viewing.UI.ControlGroup('my-view-point-toolbar')
+        this.ControlGroupViewPoint.addControl(buttonMarker)
+        this.ControlGroupViewPoint.addControl(buttonMarker2)
+        this.ControlGroupViewPoint.addControl(buttonViewPoint)
 
         // Add subToolbar to main toolbar
-        this.viewer.toolbar.addControl(subToolbar)
+        this.viewer.toolbar.addControl(this.ControlGroupViewPoint)
+
       },
       onLoadError(event) {
         console.log('fail');
@@ -646,6 +613,9 @@
         this.ViewPointType = type
         // var markup;
         // https://forge.autodesk.com/blog/using-autodeskviewingmarkupscore-extension
+        this.$store.dispatch('SetViewPointEditMode', {
+          isEditMode: true
+        }).then(() => {})
 
         switch (type) {
           case 1: // 1-基于项目的公共位置视点
@@ -687,13 +657,17 @@
 
         // this.isShowSaveMarkerArea = true
         this.isShowToolbarRestore2 = true
-        // this.isShowViewPointArea = false
+
       },
       exitRestoreHandle() {
         // this.markupsPersist = this.markupsExt.generateData()
         // current view state (zoom, direction, sections)
         // this.viewerStatePersist = this.markupsExt.viewer.getState()
-        this.viewer.toolbar.setVisible(true)
+        // this.viewer.toolbar.setVisible(true)
+        this.viewer.toolbar.addControl(this.ControlGroupViewPoint)
+        this.$store.dispatch('SetViewPointEditMode', {
+          isEditMode: false
+        }).then(() => {})
         this.ViewPointCurrentData = null
         // this.viewPointName = ''
         // console.log('this.markupsExt', this.markupsExt)
@@ -995,7 +969,11 @@
         console.log('ShowViewPoint', this.ViewPointCurrentData)
         console.log('this.itemList', this.itemList)
         this.isSaveViewValid = true
-        this.viewer.toolbar.setVisible(false)
+        // this.viewer.toolbar.setVisible(false)
+        this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
+        this.$store.dispatch('SetViewPointEditMode', {
+          isEditMode: true
+        }).then(() => {})
         let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
         console.log('files_id_list', files_id_list)
         console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
