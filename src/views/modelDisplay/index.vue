@@ -500,6 +500,7 @@
           _viewPointAllList.forEach(item => {
 
             let _camera_info = JSON.parse(Base64.decode(item.camera_info))
+            let _name = item.name
             // console.log(_camera_info)
             let _objectSetList = _camera_info.objectSet
             _objectSetList.forEach(itemIds => {
@@ -507,6 +508,11 @@
               let idList = itemIds.id
               if (idList.length > 0) {
                 objectSetIDs.push(idList)
+                idList.forEach(itemId => {
+                  let min = this.getFragXYZ(itemId)
+                  this.drawPushpinLot(min, itemId.toString(), _name, 'dasd')
+                })
+
               }
             })
           })
@@ -519,9 +525,10 @@
 
             })
           })
-
+          // console.log()
+          // this.viewer.impl.isolate(-1);
           this.viewer.isolate(-1);
-          this.viewer.select(idArray)
+          // this.viewer.select(idArray)
         }
         buttonMarker.addClass('show-view-point-button')
         buttonMarker.setToolTip('查看所有标注点')
@@ -614,39 +621,47 @@
           (elements) => {
             var dbid = elements.dbId;
             console.log('elements', elements)
-            // View里如何获取模型的坐标信息
-            var bounds = new THREE.Box3();
-            var box = new THREE.Box3();
-            console.log('this.viewer', this.viewer)
-            var instanceTree = this.viewer.impl.model.getData().instanceTree;
-            var fragList = this.viewer.impl.model.getFragmentList();
-
-            instanceTree.enumNodeFragments(dbid, function (fragId) {
-              console.log('fragId:' + fragId);
-
-              //某几何单元的全局坐标系包围盒
-              fragList.getWorldBounds(fragId, box)
-              //合并计算最终整个构件包围盒
-              bounds.union(box);
-
-              //某几何单元的全局坐标系变换矩阵
-              //从中读取平移或旋转数值
-              //由于构件的几何单元应该都是同步变换，所以这些矩阵初始值应该是一样的
-              var fm = new THREE.Matrix4();
-              fragList.getWorldMatrix(fragId, fm);
-              console.log('frag matrix:' + JSON.stringify(fm));
-            }, true)
-
-            var tree = this.viewer.impl.model.getData().instanceTree;
-            var tmpBox = new Float32Array(6);
-            tree.getNodeBox(dbid, tmpBox);
-            var min = new THREE.Vector3(tmpBox[0], tmpBox[1], tmpBox[2]);
-            var max = new THREE.Vector3(tmpBox[3], tmpBox[4], tmpBox[5]);
-            console.log('min,max', min, max)
-            this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+            // let min = this.getFragXYZ(dbid)
+            // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
 
 
           })
+      },
+      getFragXYZ(dbid) {
+        // View里如何获取模型的坐标信息
+        var bounds = new THREE.Box3();
+        var box = new THREE.Box3();
+        console.log('this.viewer', this.viewer)
+        var instanceTree = this.viewer.impl.model.getData().instanceTree;
+        var fragList = this.viewer.impl.model.getFragmentList();
+
+        instanceTree.enumNodeFragments(dbid, function (fragId) {
+          console.log('fragId:' + fragId);
+
+          //某几何单元的全局坐标系包围盒
+          fragList.getWorldBounds(fragId, box)
+          //合并计算最终整个构件包围盒
+          bounds.union(box);
+
+          //某几何单元的全局坐标系变换矩阵
+          //从中读取平移或旋转数值
+          //由于构件的几何单元应该都是同步变换，所以这些矩阵初始值应该是一样的
+          var fm = new THREE.Matrix4();
+          fragList.getWorldMatrix(fragId, fm);
+          console.log('frag matrix:' + JSON.stringify(fm));
+        }, true)
+
+        var tree = this.viewer.impl.model.getData().instanceTree;
+        var tmpBox = new Float32Array(6);
+        tree.getNodeBox(dbid, tmpBox);
+        var min = new THREE.Vector3(tmpBox[0], tmpBox[1], tmpBox[2]);
+        var max = new THREE.Vector3(tmpBox[3], tmpBox[4], tmpBox[5]);
+
+        var average = new THREE.Vector3((tmpBox[3] + tmpBox[0]) / 2, (tmpBox[4] + tmpBox[1]) / 2, (tmpBox[5] + tmpBox[
+          2]) / 2);
+        // var max = new THREE.Vector3(tmpBox[3], tmpBox[4], tmpBox[5]);
+        console.log('min,max', min, max, average)
+        return average
       },
       drawPushpinLot(pushpinModelPt, id, name, data) {
         // console.log('idididid', id)
