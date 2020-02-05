@@ -53,9 +53,9 @@
   .toolbar-restore {
     position: absolute;
     top: 40px;
-    left: 40px;
+    left: 0px;
     background-color: #2f2f2f;
-    height: calc(100vh - 48px - 40px);
+    height: calc(100vh - 48px - 0px);
     width: 50px;
     // border-radius: 5px;
     z-index: 999;
@@ -91,9 +91,9 @@
   .toolbar-restore2 {
     position: absolute;
     top: 40px;
-    left: 40px;
+    left: 0px;
     background-color: #2f2f2f;
-    height: calc(100vh - 48px - 40px);
+    height: calc(100vh - 48px - 0px);
     width: 50px;
     // border-radius: 5px;
     z-index: 999;
@@ -389,7 +389,21 @@
 
 
   }
-
+  .viewPointTypeArea{
+    position: absolute;
+    background-color: #FFFFFF;
+    z-index: 100;
+    left: 60px;
+    top: 50px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    color:#19babf;
+    line-height: 24px;
+    .iconBell{
+      font-size: 20px;
+    }
+  }
   .viewPointThumbArea {
     /*视点展示区域*/
     position: absolute;

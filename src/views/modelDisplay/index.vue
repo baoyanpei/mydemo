@@ -14,9 +14,15 @@
           <span v-if="ViewPointType===2">普通视点</span>
           <span v-if="ViewPointType===1">标定项目位置标准视点</span>
           <span v-show="viewPointTitleName!==''">> {{viewPointTitleName}}</span> </div>
-        <el-button type="danger" class="btn-close-view-point" @click="exitRestoreHandle" size="small">关闭</el-button>
+        <el-button type="danger" class="btn-close-view-point" @click="exitRestoreHandle" size="small" style="width:130px;"><font-awesome-icon icon="times-circle" style="font-size: 12px;"/>&nbsp;&nbsp;&nbsp;&nbsp;关&nbsp;&nbsp;&nbsp;闭</el-button>
       </div>
       <!-- <img v-bind:src="viewPointImgUrl" class="viewPointImg" /> -->
+    </div>
+
+    <div v-if="isShowViewPointArea"  class="viewPointTypeArea">
+      <font-awesome-icon :icon="['far','bell']" class="iconBell" />
+      <span v-if="ViewPointType===2"> 普通视点标注模式</span>
+      <span v-if="ViewPointType===1"> 标定项目位置标准视点</span>
     </div>
     <div v-show="isShowViewPointThumbArea" class="viewPointThumbArea" v-drag draggable="true">
       <div class="title">原始视角</div>
