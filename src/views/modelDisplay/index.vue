@@ -14,12 +14,15 @@
           <span v-if="ViewPointType===2">普通视点</span>
           <span v-if="ViewPointType===1">标定项目位置标准视点</span>
           <span v-show="viewPointTitleName!==''">> {{viewPointTitleName}}</span> </div>
-        <el-button type="danger" class="btn-close-view-point" @click="exitRestoreHandle" size="small" style="width:130px;"><font-awesome-icon icon="times-circle" style="font-size: 12px;"/>&nbsp;&nbsp;&nbsp;&nbsp;关&nbsp;&nbsp;&nbsp;闭</el-button>
+        <el-button type="danger" class="btn-close-view-point" @click="exitRestoreHandle" size="small"
+          style="width:130px;">
+          <font-awesome-icon icon="times-circle" style="font-size: 12px;" />&nbsp;&nbsp;&nbsp;&nbsp;关&nbsp;&nbsp;&nbsp;闭
+        </el-button>
       </div>
       <!-- <img v-bind:src="viewPointImgUrl" class="viewPointImg" /> -->
     </div>
 
-    <div v-if="isShowViewPointArea"  class="viewPointTypeArea">
+    <div v-if="isShowViewPointArea" class="viewPointTypeArea">
       <font-awesome-icon :icon="['far','bell']" class="iconBell" />
       <span v-if="ViewPointType===2"> 普通视点标注模式</span>
       <span v-if="ViewPointType===1"> 标定项目位置标准视点</span>
@@ -120,6 +123,7 @@
   // let viewer = null; //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
   import markupTools from './components/markupTools'
   import Cookies from 'js-cookie'
+  import lodash from 'lodash'
   let Base64 = require('js-base64').Base64
   export default {
     directives: {
@@ -225,7 +229,8 @@
         isSaveViewValid: false, // 保存视点的按钮是否有效
         selectedDbId: [], // 选择的构件id
         ViewPointCurrentData: null, // 当前获取的视点数据
-        ControlGroupViewPoint: null // 视点工具条的index
+        ControlGroupViewPoint: null, // 视点工具条的index
+        ControlGroupShowAllViewPoint: null // 视点工具条的index
       }
     },
     computed: {
@@ -355,6 +360,7 @@
               this.saveStatus = JSON.stringify(this.viewer.getState());
               this.addCustomToolBar()
               this.addViewpointToolBar()
+              this.showAllViewpointToolBar()
             }
             resolve(index)
           }, this.onLoadError);
@@ -481,6 +487,90 @@
         // Add subToolbar to main toolbar
         this.viewer.toolbar.addControl(this.ControlGroupViewPoint)
 
+      },
+      showAllViewpointToolBar() {
+        // 标注功能 - 普通标注视点
+        let buttonMarker = new Autodesk.Viewing.UI.Button('show-view-point-button')
+        buttonMarker.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
+
+        buttonMarker.onClick = async (e) => {
+          let _viewPointAllList = await this.GetViewpointsDataAll()
+          console.log('_viewPointAllList', _viewPointAllList)
+          let objectSetIDs = []
+          _viewPointAllList.forEach(item => {
+
+            let _camera_info = JSON.parse(Base64.decode(item.camera_info))
+            // console.log(_camera_info)
+            let _objectSetList = _camera_info.objectSet
+            _objectSetList.forEach(itemIds => {
+              // console.log('itemIds', itemIds)
+              let idList = itemIds.id
+              if (idList.length > 0) {
+                objectSetIDs.push(idList)
+              }
+            })
+          })
+          // console.log('objectSetIDs', objectSetIDs)
+          let idArray = []
+          objectSetIDs.forEach(itemIds => {
+            itemIds.forEach(itemId => {
+              // console.log('itemId', itemId)
+              idArray.push(itemId)
+              
+            })
+          })
+          
+          this.viewer.isolate(-1);
+          this.viewer.select(idArray)
+        }
+        buttonMarker.addClass('show-view-point-button')
+        buttonMarker.setToolTip('查看所有标注点')
+
+        this.ControlGroupShowAllViewPoint = new Autodesk.Viewing.UI.ControlGroup('show-view-point-toolbar')
+        this.ControlGroupShowAllViewPoint.addControl(buttonMarker)
+
+        this.viewer.toolbar.addControl(this.ControlGroupShowAllViewPoint)
+      },
+
+      GetViewpointsDataAll() {
+        return new Promise((resolve, reject) => {
+          let _itemInfoList = this.itemInfoList
+          let reqList = []
+          let viewPointAllList = []
+          for (const item of _itemInfoList) {
+            console.log('item', item)
+            let p = this.GetViewpointsByFileId(item)
+            reqList.push(p)
+          }
+          Promise.all(reqList).then(_viewPointList => {
+            console.log("Promise.all", _viewPointList);
+            _viewPointList.forEach(itemList => {
+              viewPointAllList = [...viewPointAllList, ...itemList]
+            })
+            // 去处视点列表中'FILE_IDS'和'ID'重复的数据 
+            viewPointAllList = lodash.unionBy(viewPointAllList, 'file_ids', 'id')
+            resolve(viewPointAllList)
+            // console.log("viewPointAllList", viewPointAllList);
+          })
+        })
+
+      },
+      GetViewpointsByFileId(item) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'GetViewpointsByFileId',
+            file_id: item.file_id,
+            project_id: this.project_id
+          }
+          this.$store.dispatch('GetViewpointsByFileId', param).then((_viewPointList) => {
+            console.log('GetViewpointsByFileId - _viewPointList', _viewPointList)
+            // this.tipMessage = ""
+            // this.viewPointAllList = _viewPointList
+
+            resolve(_viewPointList)
+          })
+
+        })
       },
       onLoadError(event) {
         console.log('fail');
