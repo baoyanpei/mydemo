@@ -299,7 +299,7 @@
             Autodesk.Viewing.SELECTION_CHANGED_EVENT,
             this.onSelectionChanged
           );
-
+          this.initEvent()
         } else {
 
         }
@@ -516,10 +516,10 @@
             itemIds.forEach(itemId => {
               // console.log('itemId', itemId)
               idArray.push(itemId)
-              
+
             })
           })
-          
+
           this.viewer.isolate(-1);
           this.viewer.select(idArray)
         }
@@ -531,7 +531,34 @@
 
         this.viewer.toolbar.addControl(this.ControlGroupShowAllViewPoint)
       },
+      initEvent() {
+        this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
 
+          // find out all pushpin markups
+          var $eles = $("div[id^='mymk']")
+          var DOMeles = $eles.get()
+
+          for (var index in DOMeles) {
+
+            // get each DOM element
+            let DOMEle = DOMeles[index]
+            let divEle = $('#' + DOMEle.id)
+            // get out the 3D coordination
+            let val = divEle.data('3DData')
+            let pushpinModelPt = JSON.parse(val)
+            // get the updated screen point
+            let screenpoint = this.viewer.worldToClient(new THREE.Vector3(
+              pushpinModelPt.x,
+              pushpinModelPt.y,
+              pushpinModelPt.z))
+            // update the SVG position.
+            divEle.css({
+              'left': screenpoint.x - pushpinModelPt.radius * 2,
+              'top': screenpoint.y - pushpinModelPt.radius
+            })
+          }
+        })
+      },
       GetViewpointsDataAll() {
         return new Promise((resolve, reject) => {
           let _itemInfoList = this.itemInfoList
@@ -584,10 +611,85 @@
         // Asyncronous method that gets object properties
         // 异步获取模型的属性
         this.viewer.getProperties(_dbIds[0],
-          function (elements) {
+          (elements) => {
             var dbid = elements.dbId;
             console.log('elements', elements)
+            // View里如何获取模型的坐标信息
+            var bounds = new THREE.Box3();
+            var box = new THREE.Box3();
+            console.log('this.viewer', this.viewer)
+            var instanceTree = this.viewer.impl.model.getData().instanceTree;
+            var fragList = this.viewer.impl.model.getFragmentList();
+
+            instanceTree.enumNodeFragments(dbid, function (fragId) {
+              console.log('fragId:' + fragId);
+
+              //某几何单元的全局坐标系包围盒
+              fragList.getWorldBounds(fragId, box)
+              //合并计算最终整个构件包围盒
+              bounds.union(box);
+
+              //某几何单元的全局坐标系变换矩阵
+              //从中读取平移或旋转数值
+              //由于构件的几何单元应该都是同步变换，所以这些矩阵初始值应该是一样的
+              var fm = new THREE.Matrix4();
+              fragList.getWorldMatrix(fragId, fm);
+              console.log('frag matrix:' + JSON.stringify(fm));
+            }, true)
+
+            var tree = this.viewer.impl.model.getData().instanceTree;
+            var tmpBox = new Float32Array(6);
+            tree.getNodeBox(dbid, tmpBox);
+            var min = new THREE.Vector3(tmpBox[0], tmpBox[1], tmpBox[2]);
+            var max = new THREE.Vector3(tmpBox[3], tmpBox[4], tmpBox[5]);
+            console.log('min,max', min, max)
+            this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+
+
           })
+      },
+      drawPushpinLot(pushpinModelPt, id, name, data) {
+        // console.log('idididid', id)
+        // convert 3D position to 2D screen coordination
+        var screenpoint = this.viewer.worldToClient(
+          new THREE.Vector3(pushpinModelPt.x,
+            pushpinModelPt.y,
+            pushpinModelPt.z, ));
+        $('#mymk' + randomId).remove()
+        // build the div container
+        var randomId = id; //makeid();
+        var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>';
+        var parent = this.viewer.container
+        $(parent).append(htmlMarker)
+        $('#mymk' + randomId).css({
+          // 'pointer-events': 'none',
+          'width': '80px',
+          // 'height': '16px',
+          'position': 'absolute',
+          'overflow': 'visible',
+        });
+        $('#mymk' + randomId).click(() => {
+
+        })
+        // build the svg element and draw a circle
+        // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
+
+        // var snap = Snap($('#mysvg' + randomId)[0]);
+        var rad = 27
+        // set the position of the SVG
+        // adjust to make the circle center is the position of the click point
+        var $container = $('#mymk' + randomId)
+        $container.css({
+          'left': screenpoint.x - rad * 2,
+          'top': screenpoint.y - rad
+        })
+
+        // store 3D point data to the DOM
+        var div = $('#mymk' + randomId)
+        // add radius info with the 3D data
+        pushpinModelPt.radius = rad
+        var storeData = JSON.stringify(pushpinModelPt)
+        div.data('3DData', storeData)
       },
       getModelUrl() {
         let _urlList = []

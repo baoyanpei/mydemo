@@ -1,6 +1,15 @@
 .model-display-index {
   height: calc(100vh - 48px);
-
+  .mymlLabel {
+    background-color: #FFFFFF;
+    color: #000000;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 10px;
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px
+  }
   // min-width: 1000px;
   // #canvas {
   //   position: absolute;
