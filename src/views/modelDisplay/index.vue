@@ -230,7 +230,8 @@
         selectedDbId: [], // 选择的构件id
         ViewPointCurrentData: null, // 当前获取的视点数据
         ControlGroupViewPoint: null, // 视点工具条的index
-        ControlGroupShowAllViewPoint: null // 视点工具条的index
+        ControlGroupShowAllViewPoint: null, // 视点工具条的index
+        loadedModels: []
       }
     },
     computed: {
@@ -287,25 +288,42 @@
           itemIDList.push(item.ITEM_ID)
           this.itemCurrentFileIdList.push(item.FILE_ID)
         })
-        console.log('itemIDList', itemIDList, itemIDList.join(','))
+        // console.log('itemIDList', itemIDList, itemIDList.join(','))
         await this.getItemInfoListByItemIDs(itemIDList.join(','))
         // console.log('this.itemInfoList', this.itemInfoList)
-        let _urlList = this.getModelUrl()
-        // console.log('_urlList', _urlList)
+
+        // let _urlList = this.getModelUrl()
+        // if (_urlList.length !== 0) {
+        //   await this.init3DView(_urlList)
+        //   console.log('init3DView - complete')
+        //   this.viewer.addEventListener(
+        //     // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+
+        //     Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+        //     this.onSelectionChanged
+        //   );
+        //   this.initEvent()
+        // }
+
+        let _result = this.getModelUrl()
+        console.log('_result', _result)
+        let _urlList = _result['urlList']
+        let _itemInfoList = _result['itemInfoList']
         if (_urlList.length !== 0) {
-          await this.init3DView(_urlList)
+          await this.init3DView(_urlList, _itemInfoList)
+
           console.log('init3DView - complete')
           this.viewer.addEventListener(
-            Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+            // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+
+            Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
             this.onSelectionChanged
           );
           this.initEvent()
-        } else {
-
         }
 
       },
-      init3DView(modelURLList) {
+      init3DView(modelURLList, itemInfoList) {
         return new Promise((resolve, reject) => {
           // this.urns = modelURLList
           Autodesk.Viewing.Initializer(this.options, async () => {
@@ -321,7 +339,7 @@
             // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
             // onLoadSuccess, onLoadError);
             for (var i = 0; i < modelURLList.length; i++) {
-              let p = await this.loadModel(modelURLList[i], i)
+              let p = await this.loadModel(modelURLList[i], itemInfoList[i], i)
               _Plist.push(p)
 
             }
@@ -337,7 +355,7 @@
 
         })
       },
-      loadModel(modelURL, index) {
+      loadModel(modelURL, itemInfo, index) {
         return new Promise((resolve, reject) => {
           const modelOpts = {
             placementTransform: new THREE.Matrix4(),
@@ -347,8 +365,17 @@
               z: 0
             }
           };
-          console.log('iiiiii', index, modelURL)
-          this.viewer.loadModel(modelURL, modelOpts, resLoadSuccess => {
+          // console.log('iiiiii', index, modelURL)
+          this.viewer.loadModel(modelURL, modelOpts, (model) => {
+            // console.log('itemInfoitemInfoitemInfo', itemInfo)
+            model['item_id'] = itemInfo.item_id
+            this.loadedModels.push(model)
+            // console.log('this.viewer', this.viewer)
+            console.log('model', model)
+            // this.viewer.addEventListener(
+            //   Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+            //   this.onSelectionChanged
+            // );
             if (index === 0) {
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
               this.viewer.setGroundShadow(false)
@@ -494,23 +521,44 @@
         buttonMarker.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
 
         buttonMarker.onClick = async (e) => {
+          let red = new THREE.Vector4(1, 0, 0, 1);
           let _viewPointAllList = await this.GetViewpointsDataAll()
           console.log('_viewPointAllList', _viewPointAllList)
           let objectSetIDs = []
           _viewPointAllList.forEach(item => {
 
             let _camera_info = JSON.parse(Base64.decode(item.camera_info))
+            let _item_id = item.item_id
             let _name = item.name
-            // console.log(_camera_info)
+
             let _objectSetList = _camera_info.objectSet
-            _objectSetList.forEach(itemIds => {
-              // console.log('itemIds', itemIds)
-              let idList = itemIds.id
+            // console.log('this.loadedModels', this.loadedModels)
+            _objectSetList.forEach(objectIds => {
+
+              let idList = objectIds.id
               if (idList.length > 0) {
+                console.log(_camera_info)
+                // console.log('objectIds', objectIds)
                 objectSetIDs.push(idList)
-                idList.forEach(itemId => {
-                  let min = this.getFragXYZ(itemId)
-                  this.drawPushpinLot(min, itemId.toString(), _name, 'dasd')
+                this.loadedModels.forEach(model => {
+                  if (model.item_id === _item_id) {
+                    idList.forEach(_id => {
+                      console.log('modelmodel1123', model)
+                      // model.select(_id)
+                      this.viewer.impl.visibilityManager.isolate([_id], model);
+                      // this.viewer.impl.visibilityManager.show(_id, model);
+                      this.viewer.setThemingColor(_id, red, model);
+                      
+                      let average = this.getFragXYZ(model, _id)
+                      let markId = `mark_${item.id}_${_id}`
+                      // console.log('markId', markId)
+                      this.drawPushpinLot(average, markId, _name, 'dasd')
+                    })
+                    // this.viewer.select(_id)
+                    // this.viewer.impl.visibilityManager.select(_id, this.loadedModels[1]);
+                  }
+
+
                 })
 
               }
@@ -518,16 +566,32 @@
           })
           // console.log('objectSetIDs', objectSetIDs)
           let idArray = []
-          objectSetIDs.forEach(itemIds => {
-            itemIds.forEach(itemId => {
-              // console.log('itemId', itemId)
-              idArray.push(itemId)
+          objectSetIDs.forEach(objectIds => {
+            objectIds.forEach(objectId => {
+              // console.log('objectId', objectId)
+              idArray.push(objectId)
 
             })
           })
+          var DBids = this.viewer.impl.selector.getAggregateSelection();
+          console.log('DBids', DBids)
           // console.log()
           // this.viewer.impl.isolate(-1);
-          this.viewer.isolate(-1);
+          // this.viewer.isolate(-1);
+          // console.log(this.viewer.model)
+          // console.log()
+          // this.viewer.impl.visibilityManager.isolate(idArray, this.loadedModels[0]);
+          // 所有model都虚化显示
+          /*
+          let red = new THREE.Vector4(1, 0, 0, 1);
+          this.loadedModels.forEach(model => {
+            this.viewer.impl.visibilityManager.isolate(idArray, model);
+            // idArray.forEach(id => {
+            //   this.viewer.impl.visibilityManager.show(id, model);
+            //   this.viewer.setThemingColor(id, red, model);
+            // })
+          })
+          */
           // this.viewer.select(idArray)
         }
         buttonMarker.addClass('show-view-point-button')
@@ -612,6 +676,42 @@
       onSelectionChanged(event) {
         // console.log('this.viewer', this.viewer)
         console.log('event1', event)
+        let _selections = event.selections
+        console.log('_selections', _selections)
+        // this.selectedDbId = _dbIds
+        this.selectedDbId = []
+        _selections.forEach(selection => {
+          let _dbIdArray = selection.dbIdArray
+          _dbIdArray.forEach(dbId => {
+            console.log('dbId', dbId)
+            selection.model.getProperties(dbId,
+              (elements) => {
+                var dbid = elements.dbId;
+                this.selectedDbId.push(dbid)
+                console.log('elements', elements)
+                // let min = this.getFragXYZ(dbid)
+                // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+
+
+              })
+          })
+
+        })
+        // Asyncronous method that gets object properties
+        // 异步获取模型的属性
+        // this.viewer.getProperties(_dbIds[0],
+        //   (elements) => {
+        //     var dbid = elements.dbId;
+        //     console.log('elements', elements)
+        //     // let min = this.getFragXYZ(dbid)
+        //     // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+
+
+        //   })
+      },
+      onSelectionChanged1(event) {
+        // console.log('this.viewer', this.viewer)
+        console.log('event1', event)
         let _dbIds = event.dbIdArray
         console.log('dbIdArray', _dbIds)
         this.selectedDbId = _dbIds
@@ -627,16 +727,18 @@
 
           })
       },
-      getFragXYZ(dbid) {
+      getFragXYZ(model, dbid) {
         // View里如何获取模型的坐标信息
         var bounds = new THREE.Box3();
         var box = new THREE.Box3();
-        console.log('this.viewer', this.viewer)
-        var instanceTree = this.viewer.impl.model.getData().instanceTree;
-        var fragList = this.viewer.impl.model.getFragmentList();
+        // console.log('this.viewer', this.viewer)
+        var instanceTree = model.getData().instanceTree;
+        var fragList = model.getFragmentList();
+        // var instanceTree = this.viewer.impl.model.getData().instanceTree;
+        // var fragList = this.viewer.impl.model.getFragmentList();
 
-        instanceTree.enumNodeFragments(dbid, function (fragId) {
-          console.log('fragId:' + fragId);
+        instanceTree.enumNodeFragments(dbid, (fragId) => {
+          // console.log('fragId:' + fragId);
 
           //某几何单元的全局坐标系包围盒
           fragList.getWorldBounds(fragId, box)
@@ -648,10 +750,11 @@
           //由于构件的几何单元应该都是同步变换，所以这些矩阵初始值应该是一样的
           var fm = new THREE.Matrix4();
           fragList.getWorldMatrix(fragId, fm);
-          console.log('frag matrix:' + JSON.stringify(fm));
+          // console.log('frag matrix:' + JSON.stringify(fm));
         }, true)
 
-        var tree = this.viewer.impl.model.getData().instanceTree;
+        // var tree = this.viewer.impl.model.getData().instanceTree;
+        var tree = model.getData().instanceTree;
         var tmpBox = new Float32Array(6);
         tree.getNodeBox(dbid, tmpBox);
         var min = new THREE.Vector3(tmpBox[0], tmpBox[1], tmpBox[2]);
@@ -660,7 +763,7 @@
         var average = new THREE.Vector3((tmpBox[3] + tmpBox[0]) / 2, (tmpBox[4] + tmpBox[1]) / 2, (tmpBox[5] + tmpBox[
           2]) / 2);
         // var max = new THREE.Vector3(tmpBox[3], tmpBox[4], tmpBox[5]);
-        console.log('min,max', min, max, average)
+        // console.log('min,max', min, max, average)
         return average
       },
       drawPushpinLot(pushpinModelPt, id, name, data) {
@@ -707,7 +810,9 @@
         div.data('3DData', storeData)
       },
       getModelUrl() {
+        let result = null
         let _urlList = []
+        let _itemInfoList = []
         // console.log('this.project_id', this.project_id)
         // console.log('this.itemInfoList', this.itemInfoList)
         this.itemInfoList.forEach(itemInfo => {
@@ -716,10 +821,15 @@
           // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
           // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
           _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
+          _itemInfoList.push(itemInfo)
           // 本地地址转换
           // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
         });
-        return _urlList
+        result = {
+          'urlList': _urlList,
+          'itemInfoList': _itemInfoList
+        }
+        return result
       },
       getItemInfoListByItemIDs(item_ids) {
         // console.log('this.project_id', this.project_id)
@@ -1203,10 +1313,12 @@
 
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           // console.log('this.itemInfoList', this.itemInfoList)
-          let _urlList = this.getModelUrl()
-          console.log('_urlList', _urlList)
+          let _result = this.getModelUrl()
+          console.log('_result', _result)
+          let _urlList = _result['urlList']
+          let _itemInfoList = _result['itemInfoList']
           if (_urlList.length !== 0) {
-            await this.init3DView(_urlList)
+            await this.init3DView(_urlList, _itemInfoList)
 
             console.log('init3DView - complete')
           }
