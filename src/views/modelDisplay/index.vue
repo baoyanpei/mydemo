@@ -465,6 +465,7 @@
           this.isSaveViewValid = false
           // this.viewer.toolbar.setVisible(false)
           this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
+          this.viewer.toolbar.removeControl(this.ControlGroupShowAllViewPoint)
           this.enterMarkerEditMode(2)
         }
         buttonMarker.addClass('my-marker-button')
@@ -481,6 +482,7 @@
             // viewer.setViewCube('front')
             // this.viewer.toolbar.setVisible(false)
             this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
+            this.viewer.toolbar.removeControl(this.ControlGroupShowAllViewPoint)
             this.isSaveViewValid = false
             this.enterMarkerEditMode(1)
           }
@@ -516,6 +518,8 @@
 
       },
       showAllViewpointToolBar() {
+        // this.viewer.setGhosting(0.2)
+        // this.viewer.setDisplayEdges(false)
         // 标注功能 - 普通标注视点
         let buttonMarker = new Autodesk.Viewing.UI.Button('show-view-point-button')
         buttonMarker.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
@@ -537,18 +541,18 @@
 
               let idList = objectIds.id
               if (idList.length > 0) {
-                console.log(_camera_info)
+                // console.log(_camera_info)
                 // console.log('objectIds', objectIds)
                 objectSetIDs.push(idList)
                 this.loadedModels.forEach(model => {
                   if (model.item_id === _item_id) {
                     idList.forEach(_id => {
-                      console.log('modelmodel1123', model)
+                      // console.log('modelmodel1123', model)
                       // model.select(_id)
                       this.viewer.impl.visibilityManager.isolate([_id], model);
                       // this.viewer.impl.visibilityManager.show(_id, model);
                       this.viewer.setThemingColor(_id, red, model);
-                      
+
                       let average = this.getFragXYZ(model, _id)
                       let markId = `mark_${item.id}_${_id}`
                       // console.log('markId', markId)
@@ -565,16 +569,15 @@
             })
           })
           // console.log('objectSetIDs', objectSetIDs)
-          let idArray = []
-          objectSetIDs.forEach(objectIds => {
-            objectIds.forEach(objectId => {
-              // console.log('objectId', objectId)
-              idArray.push(objectId)
+          // let idArray = []
+          // objectSetIDs.forEach(objectIds => {
+          //   objectIds.forEach(objectId => {
+          //     // console.log('objectId', objectId)
+          //     idArray.push(objectId)
 
-            })
-          })
-          var DBids = this.viewer.impl.selector.getAggregateSelection();
-          console.log('DBids', DBids)
+          //   })
+          // })
+
           // console.log()
           // this.viewer.impl.isolate(-1);
           // this.viewer.isolate(-1);
@@ -597,8 +600,22 @@
         buttonMarker.addClass('show-view-point-button')
         buttonMarker.setToolTip('查看所有标注点')
 
+        // 视点管理功能
+        let buttonAllViewPoint = new Autodesk.Viewing.UI.Button('my-marker-manager-button')
+        buttonAllViewPoint.icon.style.backgroundImage = 'url(./static/icon/ico_layer3.png)'
+
+        buttonAllViewPoint.onClick = (e) => {
+          // viewer.setViewCube('front')
+          this.loadedModels.map(model => this.viewer.clearThemingColors(model));
+          this.viewer.impl.visibilityManager.aggregateIsolate([]);
+          $(".mymlLabel").remove()
+        }
+        buttonAllViewPoint.addClass('my-marker-manager-button')
+        buttonAllViewPoint.setToolTip('关闭所有标注点')
+
         this.ControlGroupShowAllViewPoint = new Autodesk.Viewing.UI.ControlGroup('show-view-point-toolbar')
         this.ControlGroupShowAllViewPoint.addControl(buttonMarker)
+        this.ControlGroupShowAllViewPoint.addControl(buttonAllViewPoint)
 
         this.viewer.toolbar.addControl(this.ControlGroupShowAllViewPoint)
       },
@@ -988,6 +1005,7 @@
         // this.viewerStatePersist = this.markupsExt.viewer.getState()
         // this.viewer.toolbar.setVisible(true)
         this.viewer.toolbar.addControl(this.ControlGroupViewPoint)
+        this.viewer.toolbar.addControl(this.ControlGroupShowAllViewPoint)
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: false
         }).then(() => {})
@@ -1294,6 +1312,7 @@
         this.isSaveViewValid = true
         // this.viewer.toolbar.setVisible(false)
         this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
+        this.viewer.toolbar.removeControl(this.ControlGroupShowAllViewPoint)
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: true
         }).then(() => {})
