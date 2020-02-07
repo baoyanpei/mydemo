@@ -522,7 +522,7 @@
         // this.viewer.setDisplayEdges(false)
         // 标注功能 - 普通标注视点
         let buttonMarker = new Autodesk.Viewing.UI.Button('show-view-point-button')
-        buttonMarker.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
+        buttonMarker.icon.style.backgroundImage = 'url(./static/icon/ico_show_all_view_points.png)'
 
         buttonMarker.onClick = async (e) => {
           let red = new THREE.Vector4(1, 0, 0, 1);
@@ -602,13 +602,10 @@
 
         // 视点管理功能
         let buttonAllViewPoint = new Autodesk.Viewing.UI.Button('my-marker-manager-button')
-        buttonAllViewPoint.icon.style.backgroundImage = 'url(./static/icon/ico_layer3.png)'
+        buttonAllViewPoint.icon.style.backgroundImage = 'url(./static/icon/ico_show_all_view_points_x1.png)'
 
         buttonAllViewPoint.onClick = (e) => {
-          // viewer.setViewCube('front')
-          this.loadedModels.map(model => this.viewer.clearThemingColors(model));
-          this.viewer.impl.visibilityManager.aggregateIsolate([]);
-          $(".mymlLabel").remove()
+          this.resetIsolateMode()
         }
         buttonAllViewPoint.addClass('my-marker-manager-button')
         buttonAllViewPoint.setToolTip('关闭所有标注点')
@@ -618,6 +615,12 @@
         this.ControlGroupShowAllViewPoint.addControl(buttonAllViewPoint)
 
         this.viewer.toolbar.addControl(this.ControlGroupShowAllViewPoint)
+      },
+      resetIsolateMode() {
+        // viewer.setViewCube('front')
+        this.loadedModels.map(model => this.viewer.clearThemingColors(model));
+        this.viewer.impl.visibilityManager.aggregateIsolate([]);
+        $(".mymlLabel").remove()
       },
       initEvent() {
         this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
@@ -964,6 +967,7 @@
             // this.isShowSaveMarkerArea = true
             this.isShowViewPointArea = true
             this.isShowToolbarRestore2 = false
+            this.resetIsolateMode()
             break;
           case 2: // 2-普通视点
             this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
@@ -972,6 +976,7 @@
 
               // this.isShowSaveMarkerArea = true
               this.isShowViewPointArea = true
+              this.resetIsolateMode()
               this.isShowToolbarRestore2 = false
               // console.log('this.viewerStatePersist', this.viewerStatePersist)
               this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
@@ -1349,6 +1354,7 @@
 
             this.isShowToolbarMarkerStyle = false
             this.isShowViewPointArea = true
+            this.resetIsolateMode()
             console.log('ViewPointCurrentData', this.ViewPointCurrentData)
             this.ViewPointType = this.ViewPointCurrentData.type
             this.viewPointTitleName = this.ViewPointCurrentData.name
@@ -1378,6 +1384,7 @@
               this.isShowToolbarMarker = false
               this.isShowToolbarMarkerStyle = false
               this.isShowViewPointArea = true
+              this.resetIsolateMode()
               console.log('ViewPointCurrentData', this.ViewPointCurrentData)
               this.ViewPointType = this.ViewPointCurrentData.type
               this.viewPointTitleName = this.ViewPointCurrentData.name
