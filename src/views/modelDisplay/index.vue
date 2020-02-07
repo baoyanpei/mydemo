@@ -528,55 +528,43 @@
           let red = new THREE.Vector4(1, 0, 0, 1);
           let _viewPointAllList = await this.GetViewpointsDataAll()
           console.log('_viewPointAllList', _viewPointAllList)
-          let objectSetIDs = []
-          _viewPointAllList.forEach(item => {
+          console.log('this.loadedModels', this.loadedModels)
+          this.loadedModels.forEach(model => {
+            let objectSetIDList = []
+            _viewPointAllList.forEach(item => {
 
-            let _camera_info = JSON.parse(Base64.decode(item.camera_info))
-            let _item_id = item.item_id
-            let _name = item.name
+              let _camera_info = JSON.parse(Base64.decode(item.camera_info))
+              let _item_id = item.item_id
+              let _name = item.name
 
-            let _objectSetList = _camera_info.objectSet
-            // console.log('this.loadedModels', this.loadedModels)
-            _objectSetList.forEach(objectIds => {
+              let _objectSetList = _camera_info.objectSet
+              // console.log('this.loadedModels', this.loadedModels)
+              _objectSetList.forEach(objectIds => {
 
-              let idList = objectIds.id
-              if (idList.length > 0) {
-                // console.log(_camera_info)
-                // console.log('objectIds', objectIds)
-                objectSetIDs.push(idList)
-                this.loadedModels.forEach(model => {
+                let idList = objectIds.id
+                if (idList.length > 0) {
+                  // console.log(_camera_info)
+                  // console.log('objectIds', objectIds)
+
+
+
                   if (model.item_id === _item_id) {
                     idList.forEach(_id => {
-                      // console.log('modelmodel1123', model)
-                      // model.select(_id)
-                      this.viewer.impl.visibilityManager.isolate([_id], model);
-                      // this.viewer.impl.visibilityManager.show(_id, model);
-                      this.viewer.setThemingColor(_id, red, model);
+                      objectSetIDList.push(_id)
 
+                      this.viewer.setThemingColor(_id, red, model);
                       let average = this.getFragXYZ(model, _id)
                       let markId = `mark_${item.id}_${_id}`
-                      // console.log('markId', markId)
                       this.drawPushpinLot(average, markId, _name, 'dasd')
                     })
-                    // this.viewer.select(_id)
-                    // this.viewer.impl.visibilityManager.select(_id, this.loadedModels[1]);
                   }
-
-
-                })
-
-              }
+                }
+              })
             })
-          })
-          // console.log('objectSetIDs', objectSetIDs)
-          // let idArray = []
-          // objectSetIDs.forEach(objectIds => {
-          //   objectIds.forEach(objectId => {
-          //     // console.log('objectId', objectId)
-          //     idArray.push(objectId)
+            this.viewer.impl.visibilityManager.isolate(objectSetIDList, model);
 
-          //   })
-          // })
+          })
+
 
           // console.log()
           // this.viewer.impl.isolate(-1);
@@ -1338,12 +1326,22 @@
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           // console.log('this.itemInfoList', this.itemInfoList)
           let _result = this.getModelUrl()
-          console.log('_result', _result)
+          
           let _urlList = _result['urlList']
           let _itemInfoList = _result['itemInfoList']
           if (_urlList.length !== 0) {
+            this.loadedModels = []
+            console.log('_result _itemInfoList', _itemInfoList)
+            _itemInfoList.forEach(itemInfo => {
+              itemInfo['item_id'] = itemInfo.id
+            })
             await this.init3DView(_urlList, _itemInfoList)
+            this.viewer.addEventListener(
+              // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
 
+              Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+              this.onSelectionChanged
+            );
             console.log('init3DView - complete')
           }
         }
