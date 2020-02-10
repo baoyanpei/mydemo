@@ -330,6 +330,12 @@
             this.element = document.getElementById('viewer-local');
             this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
             // this.subscribeToAllEvents()
+            this.viewer.addEventListener(
+              // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+
+              Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+              this.onLoadedEvent
+            );
             var startedCode = this.viewer.start();
             if (startedCode > 0) {
               console.error('Failed to create a Viewer: WebGL not supported.');
@@ -354,6 +360,9 @@
           });
 
         })
+      },
+      onLoadedEvent() {
+        console.log('ononLoadedEvent', event)
       },
       loadModel(modelURL, itemInfo, index) {
         return new Promise((resolve, reject) => {
@@ -1326,7 +1335,7 @@
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           // console.log('this.itemInfoList', this.itemInfoList)
           let _result = this.getModelUrl()
-          
+
           let _urlList = _result['urlList']
           let _itemInfoList = _result['itemInfoList']
           if (_urlList.length !== 0) {
