@@ -550,6 +550,7 @@
 
 
           // window.requestAnimationFrame(this.draw1, 1505);
+          this.clearAllViewPointMarkrt()
           this.ShowViewPointMarkerAll()
           // console.log()
           // this.viewer.impl.isolate(-1);
@@ -576,6 +577,8 @@
         let buttonTaskMarker = new Autodesk.Viewing.UI.Button('show-view-point-task-button')
         buttonTaskMarker.icon.style.backgroundImage = 'url(./static/icon/ico_viewpoint_task.png)'
         buttonTaskMarker.onClick = (e) => {
+          this.clearAllViewPointMarkrt()
+          this.ShowViewPointTaskMarker()
         }
         buttonTaskMarker.addClass('show-view-point-task-button')
         buttonTaskMarker.setToolTip('查看有任务的视点')
@@ -585,8 +588,7 @@
         buttonCloseAllViewPoint.icon.style.backgroundImage = 'url(./static/icon/ico_show_all_view_points_x1.png)'
 
         buttonCloseAllViewPoint.onClick = (e) => {
-          this.resetIsolateMode()
-          this.viewer.overlays.removeScene('custom-scene-2');
+          this.clearAllViewPointMarkrt()
         }
         buttonCloseAllViewPoint.addClass('my-marker-manager-button')
         buttonCloseAllViewPoint.setToolTip('关闭所有标注点')
@@ -596,7 +598,7 @@
         this.ControlGroupShowAllViewPoint.addControl(buttonTaskMarker)
         this.ControlGroupShowAllViewPoint.addControl(buttonCloseAllViewPoint)
 
-        
+
 
         this.viewer.toolbar.addControl(this.ControlGroupShowAllViewPoint)
       },
@@ -1452,6 +1454,11 @@
 
 
       },
+      // 清除所有的标记点
+      clearAllViewPointMarkrt() {
+        this.resetIsolateMode()
+        this.viewer.overlays.removeScene('custom-scene-2');
+      },
       // 显示所有添加的视点
       async ShowViewPointMarkerAll() {
         let red = new THREE.Vector4(1, 0, 0, 1);
@@ -1489,6 +1496,27 @@
           // this.viewer.impl.visibilityManager.isolate(objectSetIDList, model);
           this.viewer.impl.visibilityManager.isolate(-1, model);
           // this.viewer.isolate(-1);
+
+        })
+      },
+      // 显示有任务的视点
+      async ShowViewPointTaskMarker() {
+        console.log('ShowViewPointTaskMarker')
+        console.log('itemInfoList', this.itemInfoList)
+        let _viewPointAllList = await this.GetViewpointsDataAll()
+        let _allTaskData = await this.getTaskData()
+        console.log('_allTaskData', _allTaskData)
+      },
+      getTaskData() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'query_task_all',
+            project_id: this.project_id
+          }
+          this.$store.dispatch('QueryTaskAll', param).then((taskDataList) => {
+            // console.log('QueryTaskAll - taskDataList', taskDataList)
+            resolve(taskDataList)
+          })
 
         })
       }
