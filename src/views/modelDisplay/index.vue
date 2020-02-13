@@ -578,7 +578,8 @@
                       // this.viewer.setThemingColor(_id, red, model);
                       let average = this.getFragXYZ(model, _id)
                       let markId = `mark_${item.id}_${_id}`
-                      this.drawPushpinLot(average, markId, _name, 'dasd')
+                      this.drawViewPointLabel(average, markId, _name, 'dasd')
+                      this.drawViewPointMarker(average, markId, _name, 'dasd')
                     })
                   }
                 }
@@ -724,7 +725,7 @@
                 this.selectedDbId.push(dbid)
                 console.log('elements', elements)
                 // let min = this.getFragXYZ(dbid)
-                // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+                // this.drawViewPointLabel(min, 'aaa', 'asd', 'dasd')
 
 
               })
@@ -738,7 +739,7 @@
         //     var dbid = elements.dbId;
         //     console.log('elements', elements)
         //     // let min = this.getFragXYZ(dbid)
-        //     // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+        //     // this.drawViewPointLabel(min, 'aaa', 'asd', 'dasd')
 
 
         //   })
@@ -756,7 +757,7 @@
             var dbid = elements.dbId;
             console.log('elements', elements)
             // let min = this.getFragXYZ(dbid)
-            // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+            // this.drawViewPointLabel(min, 'aaa', 'asd', 'dasd')
 
 
           })
@@ -800,16 +801,7 @@
         // console.log('min,max', min, max, average)
         return average
       },
-      drawPushpinLot(pushpinModelPt, id, name, data) {
-        // console.log('idididid', id)
-        // convert 3D position to 2D screen coordination
-        var screenpoint = this.viewer.worldToClient(
-          new THREE.Vector3(pushpinModelPt.x,
-            pushpinModelPt.y,
-            pushpinModelPt.z, ));
-        $('#mymk' + randomId).remove()
-
-
+      drawViewPointMarker(pushpinModelPt, id, name, data) {
         var geom = new THREE.SphereGeometry(0.5);
         var material = new THREE.MeshBasicMaterial({
           color: 0xff0000
@@ -820,6 +812,18 @@
           this.viewer.overlays.addScene('custom-scene-2');
         }
         this.viewer.overlays.addMesh(sphereMesh, 'custom-scene-2');
+      },
+      drawViewPointLabel(pushpinModelPt, id, name, data) {
+        // console.log('idididid', id)
+        // convert 3D position to 2D screen coordination
+        var screenpoint = this.viewer.worldToClient(
+          new THREE.Vector3(pushpinModelPt.x,
+            pushpinModelPt.y,
+            pushpinModelPt.z, ));
+        $('#mymk' + randomId).remove()
+
+
+
 
         // build the div container
         var randomId = id; //makeid();
