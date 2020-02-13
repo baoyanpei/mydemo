@@ -324,7 +324,8 @@
               // let picture_info = "/api/bim/bcp/thumbnail.jpg?vpid=32&project_id=10000&w=200" //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
               item['pictureLiteSrc'] =
                 `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
-              item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
+              // item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
+              item['pictureFullSrc'] = ''
               item['className'] = `imagesPreview-${item.id}`
               // console.log('picture_info', picture_info)
 

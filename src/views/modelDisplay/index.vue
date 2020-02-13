@@ -231,7 +231,9 @@
         ViewPointCurrentData: null, // 当前获取的视点数据
         ControlGroupViewPoint: null, // 视点工具条的index
         ControlGroupShowAllViewPoint: null, // 视点工具条的index
-        loadedModels: []
+        loadedModels: [],
+        phereMesh1: null,
+        aaacolor: 0x000000
       }
     },
     computed: {
@@ -390,8 +392,8 @@
               this.viewer.setGroundShadow(false)
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
               //unloadModel(model)
-              if (!this.viewer.overlays.hasScene('custom-scene')) {
-                this.viewer.overlays.addScene('custom-scene');
+              if (!this.viewer.overlays.hasScene('custom-scene-1')) {
+                this.viewer.overlays.addScene('custom-scene-1');
               }
               this.saveStatus = JSON.stringify(this.viewer.getState());
               this.addCustomToolBar()
@@ -475,6 +477,7 @@
           // this.viewer.toolbar.setVisible(false)
           this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
           this.viewer.toolbar.removeControl(this.ControlGroupShowAllViewPoint)
+          this.viewer.overlays.removeScene('custom-scene-2');
           this.enterMarkerEditMode(2)
         }
         buttonMarker.addClass('my-marker-button')
@@ -492,6 +495,7 @@
             // this.viewer.toolbar.setVisible(false)
             this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
             this.viewer.toolbar.removeControl(this.ControlGroupShowAllViewPoint)
+            this.viewer.overlays.removeScene('custom-scene-2');
             this.isSaveViewValid = false
             this.enterMarkerEditMode(1)
           }
@@ -534,6 +538,21 @@
         buttonMarker.icon.style.backgroundImage = 'url(./static/icon/ico_show_all_view_points.png)'
 
         buttonMarker.onClick = async (e) => {
+          // var geom = new THREE.SphereGeometry(10, 10, 10);
+          // var material = new THREE.MeshBasicMaterial({
+          //   color: 0x0000FF
+          // });
+          // this.phereMesh1 = new THREE.Mesh(geom, material);
+          // this.phereMesh1.position.set(0, 0, 0);
+          // if (!this.viewer.overlays.hasScene('custom-scene-1')) {
+          //   this.viewer.overlays.addScene('custom-scene-1');
+          // }
+          // this.viewer.overlays.addMesh(this.phereMesh1, 'custom-scene-1');
+
+
+          // window.requestAnimationFrame(this.draw1, 1505);
+
+
           let red = new THREE.Vector4(1, 0, 0, 1);
           let _viewPointAllList = await this.GetViewpointsDataAll()
           console.log('_viewPointAllList', _viewPointAllList)
@@ -552,16 +571,11 @@
 
                 let idList = objectIds.id
                 if (idList.length > 0) {
-                  // console.log(_camera_info)
-                  // console.log('objectIds', objectIds)
-
-
-
                   if (model.item_id === _item_id) {
                     idList.forEach(_id => {
                       objectSetIDList.push(_id)
 
-                      this.viewer.setThemingColor(_id, red, model);
+                      // this.viewer.setThemingColor(_id, red, model);
                       let average = this.getFragXYZ(model, _id)
                       let markId = `mark_${item.id}_${_id}`
                       this.drawPushpinLot(average, markId, _name, 'dasd')
@@ -570,7 +584,9 @@
                 }
               })
             })
-            this.viewer.impl.visibilityManager.isolate(objectSetIDList, model);
+            // this.viewer.impl.visibilityManager.isolate(objectSetIDList, model);
+            this.viewer.impl.visibilityManager.isolate(-1, model);
+            // this.viewer.isolate(-1);
 
           })
 
@@ -603,6 +619,7 @@
 
         buttonAllViewPoint.onClick = (e) => {
           this.resetIsolateMode()
+          this.viewer.overlays.removeScene('custom-scene-2');
         }
         buttonAllViewPoint.addClass('my-marker-manager-button')
         buttonAllViewPoint.setToolTip('关闭所有标注点')
@@ -791,6 +808,19 @@
             pushpinModelPt.y,
             pushpinModelPt.z, ));
         $('#mymk' + randomId).remove()
+
+
+        var geom = new THREE.SphereGeometry(0.5);
+        var material = new THREE.MeshBasicMaterial({
+          color: 0xff0000
+        });
+        var sphereMesh = new THREE.Mesh(geom, material);
+        sphereMesh.position.set(pushpinModelPt.x, pushpinModelPt.y, pushpinModelPt.z);
+        if (!this.viewer.overlays.hasScene('custom-scene-2')) {
+          this.viewer.overlays.addScene('custom-scene-2');
+        }
+        this.viewer.overlays.addMesh(sphereMesh, 'custom-scene-2');
+
         // build the div container
         var randomId = id; //makeid();
         var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>';
@@ -1307,14 +1337,34 @@
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowViewPointManagerDialog', param).then(() => {}).catch(() => {})
       },
+      // draw1() {
+
+      //   this.aaacolor = this.aaacolor + 1
+      //   console.log('111', this.aaacolor.toString(16))
+      //   this.phereMesh1.material.color.set(0x00FF00);
+      //   window.requestAnimationFrame(this.draw2);
+
+      // },
+      // draw2() {
+
+      //   this.aaacolor = this.aaacolor + 1
+      //   console.log('111', this.aaacolor.toString(16))
+      //   this.phereMesh1.material.color.set(0xFF0000);
+      //   window.requestAnimationFrame(this.draw1);
+
+      // },
+
       //显示视点
       async ShowViewPoint() {
         console.log('ShowViewPoint', this.ViewPointCurrentData)
         console.log('this.itemList', this.itemList)
+
+
         this.isSaveViewValid = true
         // this.viewer.toolbar.setVisible(false)
         this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
         this.viewer.toolbar.removeControl(this.ControlGroupShowAllViewPoint)
+        this.viewer.overlays.removeScene('custom-scene-2');
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: true
         }).then(() => {})
@@ -1352,6 +1402,7 @@
               this.onSelectionChanged
             );
             console.log('init3DView - complete')
+
           }
         }
         let _pointType = this.ViewPointCurrentData.type
