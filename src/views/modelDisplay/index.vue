@@ -1501,17 +1501,66 @@
       },
       // 显示有任务的视点
       async ShowViewPointTaskMarker() {
-        console.log('ShowViewPointTaskMarker')
-        console.log('itemInfoList', this.itemInfoList)
+        // console.log('ShowViewPointTaskMarker')
+        // console.log('itemInfoList', this.itemInfoList)
         let _viewPointAllList = await this.GetViewpointsDataAll()
-        let _allTaskData = await this.getTaskData()
-        console.log('_allTaskData', _allTaskData)
+        // console.log('_viewPointAllList', _viewPointAllList)
+        this.loadedModels.forEach(async model => {
+          // let objectSetIDList = []
+          let pvids = []
+          let _viewPointMap = new Map()
+          _viewPointAllList.forEach(viewPoint => {
+            // console.log('viewPoint', viewPoint)
+            let _item_id = viewPoint.item_id
+
+            if (model.item_id === _item_id && viewPoint.type === 1) {
+              pvids.push(viewPoint.id.toString())
+              _viewPointMap.set(viewPoint.id.toString(), viewPoint)
+            }
+
+          })
+          // console.log('pvids', pvids)
+          // console.log('_viewPointMap', _viewPointMap)
+          let _allTaskDataByPvID = await this.getTaskDataByPvID(pvids)
+          _allTaskDataByPvID.forEach(taskData => {
+            // console.log('taskData', taskData)
+            let _pvData = _viewPointMap.get(taskData.pvid.toString())
+            if (_pvData !== undefined) {
+              let _name = taskData.title
+              let _camera_info = JSON.parse(Base64.decode(_pvData.camera_info))
+              let _objectSetList = _camera_info.objectSet
+              _objectSetList.forEach(objectIds => {
+                let idList = objectIds.id
+                if (idList.length > 0) {
+                  idList.forEach(_id => {
+                    // objectSetIDList.push(_id)
+                    // this.viewer.setThemingColor(_id, red, model);
+                    let average = this.getFragXYZ(model, _id)
+                    let markId = `mark_${_pvData.id}_${_id}`
+                    this.drawViewPointLabel(average, markId, _name, 'dasd')
+                    this.drawViewPointMarker(average, markId, _name, 'dasd')
+                  })
+
+                }
+              })
+            }
+            // console.log('_pvData', _pvData)
+          })
+          // console.log('_allTaskDataByPvID', _allTaskDataByPvID)
+          // this.viewer.impl.visibilityManager.isolate(objectSetIDList, model);
+          this.viewer.impl.visibilityManager.isolate(-1, model);
+          // this.viewer.isolate(-1);
+
+        })
+        // let _allTaskData = await this.getTaskData()
+        // console.log('_allTaskData', _allTaskData)
       },
-      getTaskData() {
+      getTaskDataByPvID(pvids) {
         return new Promise((resolve, reject) => {
           const param = {
             method: 'query_task_all',
-            project_id: this.project_id
+            project_id: this.project_id,
+            pvids: pvids
           }
           this.$store.dispatch('QueryTaskAll', param).then((taskDataList) => {
             // console.log('QueryTaskAll - taskDataList', taskDataList)
