@@ -6,7 +6,7 @@
 
       <!-- <breadcrumb class="breadcrumb-container" /> -->
       <span class="nav-xmmc">项目名称：</span>
-      <el-select v-model="project_id" placeholder="请选择" style="width: 260px;" @change="ProjectChangeHandle">
+      <el-select v-model="project_id" placeholder="请选择" style="width: 210px;" @change="ProjectChangeHandle">
         <el-option v-for="item in project_option" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
