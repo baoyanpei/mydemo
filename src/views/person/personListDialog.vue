@@ -1,80 +1,94 @@
 <style lang="scss">
   @import "./personListDialog";
+
   @font-face {
-  font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?fwubr6');
-  src:  url('fonts/icomoon.eot?fwubr6#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?fwubr6') format('truetype'),
-    url('fonts/icomoon.woff?fwubr6') format('woff'),
-    url('fonts/icomoon.svg?fwubr6#icomoon') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
-}
+    font-family: 'icomoon';
+    src: url('fonts/icomoon.eot?fwubr6');
+    src: url('fonts/icomoon.eot?fwubr6#iefix') format('embedded-opentype'),
+      url('fonts/icomoon.ttf?fwubr6') format('truetype'),
+      url('fonts/icomoon.woff?fwubr6') format('woff'),
+      url('fonts/icomoon.svg?fwubr6#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+  }
 
-[class^="icon-"], [class*=" icon-"] {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'icomoon' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
+  [class^="icon-"],
+  [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
 
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-.icon-credentials_icon:before {
-  content: "\e900";
-}
-.icon-jishu:before {
-  content: "\e901";
-}
-.icon-hetong:before {
-  content: "\e902";
-}
-.icon-qiapian .path1:before {
-  content: "\e903";
-  color: rgb(68, 68, 68);
-}
-.icon-qiapian .path2:before {
-  content: "\e904";
-  margin-left: -1em;
-  color: rgb(68, 68, 68);
-}
-.icon-qiapian .path3:before {
-  content: "\e905";
-  margin-left: -1em;
-  color: rgb(0, 216, 160);
-}
-.icon-shiti:before {
-  content: "\e906";
-}
-.icon-geren:before {
-  content: "\e907";
-}
-.icon-anquandunpai:before {
-  content: "\e908";
-}
-.icon-anquan:before {
-  content: "\e909";
-}
-.iconred{
-  color: red;
-}
+  .icon-credentials_icon:before {
+    content: "\e900";
+  }
+
+  .icon-jishu:before {
+    content: "\e901";
+  }
+
+  .icon-hetong:before {
+    content: "\e902";
+  }
+
+  .icon-qiapian .path1:before {
+    content: "\e903";
+    color: rgb(68, 68, 68);
+  }
+
+  .icon-qiapian .path2:before {
+    content: "\e904";
+    margin-left: -1em;
+    color: rgb(68, 68, 68);
+  }
+
+  .icon-qiapian .path3:before {
+    content: "\e905";
+    margin-left: -1em;
+    color: rgb(0, 216, 160);
+  }
+
+  .icon-shiti:before {
+    content: "\e906";
+  }
+
+  .icon-geren:before {
+    content: "\e907";
+  }
+
+  .icon-anquandunpai:before {
+    content: "\e908";
+  }
+
+  .icon-anquan:before {
+    content: "\e909";
+  }
+
+  .iconred {
+    color: red;
+  }
+
 </style>
 <template>
-  <el-dialog :modal="false" width="820px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
-    @open="openPersonListDialogHandle" @close="closediv" :visible.sync="personListDialog.show" title="人员信息" v-dialogDrag>
+  <el-dialog :modal="false" width="1000px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
+    @open="openPersonListDialogHandle" @close="closediv" :visible.sync="personListDialog.show" title="人员信息"
+    v-dialogDrag>
     <div id="person-list-from" class="person-list-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
         <div>
           <el-form-item prop="GroupList" label="部门">
-            <el-cascader placeholder="请选择部门" @change="groupChangeHandle"
-              v-model="personInoutForm.GroupList" :options="optionGroups" filterable change-on-select size="mini">
+            <el-cascader placeholder="请选择部门" @change="groupChangeHandle" v-model="personInoutForm.GroupList"
+              :options="optionGroups" filterable change-on-select size="mini">
             </el-cascader>
             <el-tooltip placement="right">
               <div slot="content">外部单位包括：<br />建设单位代表、监理单位代表、VIP等
@@ -87,8 +101,8 @@
           </el-form-item>
 
           <el-form-item prop="person_id" label="人员姓名">
-            <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle"
-              clearable placeholder="请填写人员名字（可选）" filterable size="mini">
+            <el-select v-model="personInoutForm.person_id" name="person_id" @change="persionChangeHandle" clearable
+              placeholder="请填写人员名字（可选）" filterable size="mini">
               <el-option v-for="item in optionsProjectPersion" :key="item.person_id" :label="`${item.name}`"
                 :value="item.person_id">
               </el-option>
@@ -97,18 +111,19 @@
         </div>
         <div>
           <!--<el-form-item prop="lackid" label="缺失资料">-->
-            <!--<el-select v-model="lackdata.value" name="value" placeholder="请选择缺少资料（可多选）"  filterable @change="handleSubmit(false)" clearable size="mini">-->
-              <!--<el-option v-for="item in lackdata" :key="item.value" :label="item.label"-->
-                <!--:value="item.value">-->
-              <!--</el-option>-->
-            <!--</el-select>-->
+          <!--<el-select v-model="lackdata.value" name="value" placeholder="请选择缺少资料（可多选）"  filterable @change="handleSubmit(false)" clearable size="mini">-->
+          <!--<el-option v-for="item in lackdata" :key="item.value" :label="item.label"-->
+          <!--:value="item.value">-->
+          <!--</el-option>-->
+          <!--</el-select>-->
           <!--</el-form-item>-->
 
           <el-form-item prop="lackid" label="个人资料">
             <!--personInoutList-->
             <!--<el-cascader :options="lackdata" ref="cascaderAddr" :props="props" v-model="lackdatavalue" @change="titlechange()" collapse-tags></el-cascader>-->
-            <el-cascader :options="lackdata" ref="cascaderAddr" :props="props" v-model="lackdatavalue" @change="handleSubmit(false)" collapse-tags></el-cascader>
-           </el-form-item>
+            <el-cascader :options="lackdata" ref="cascaderAddr" :props="props" v-model="lackdatavalue"
+              @change="handleSubmit(false)" collapse-tags></el-cascader>
+          </el-form-item>
 
           <el-form-item>
             <el-button type="success" :loading="loading" icon="el-icon-search"
@@ -126,51 +141,74 @@
       <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="400px"
         :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
         size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
-        <el-table-column type="index" width="40">
+        <el-table-column label="基本信息">
+          <el-table-column type="index" width="40">
+          </el-table-column>
+          <el-table-column property="name" sortable align="center" label="姓名" width="80" header-align="center">
+            <template slot-scope="scope">
+              <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column property="" align="center" sortable label="资料" width="140" header-align="center">
+            <template slot-scope="scope">
+              <!--八种缺少的资料 datum_uploaded-->
+              <el-button type="text" size="small">
+                <!--<span>{{scope.row.datum_uploaded}}</span>-->
+                <!--{{Math.pow(2,8)&parseInt(scope.row.datum_uploaded,2)>0}}-->
+                <i title="入职照片" class="icon-geren"
+                  :class="{'redicon':(Math.pow(2,8)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                <i title="身份证扫描件" class="icon-credentials_icon"
+                  :class="{'redicon':(Math.pow(2,7)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                <i title="安全责任书" class="icon-anquandunpai"
+                  :class="{'redicon':(Math.pow(2,6)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                <i title="劳动合同" class="icon-hetong"
+                  :class="{'redicon':(Math.pow(2,5)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                <i title="安全交底" class="icon-anquan"
+                  :class="{'redicon':(Math.pow(2,4)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                <i title="技术交底" class="icon-jishu"
+                  :class="{'redicon':(Math.pow(2,3)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                <i title="三级安全教育记录卡" class="icon-shiti"
+                  :class="{'redicon':(Math.pow(2,2)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                <i title="考试试题及结果" class="el-icon-tickets"
+                  :class="{'redicon':(Math.pow(2,1)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column property="mobile" align="center" label="电话" width="90" header-align="center">
+          </el-table-column>
+          <el-table-column property="group_name_level[0]" align="center" sortable label="部门" width="80"
+            header-align="center">
+          </el-table-column>
+          <el-table-column property="group_name_level[1]" align="center" sortable label="班组" width="90"
+            header-align="center">
+          </el-table-column>
+          <el-table-column property="project_pos_name" align="center" sortable label="工种" width="70"
+            header-align="center">
+          </el-table-column>
+          <el-table-column property="education" align="center" sortable label="学历" width="70" header-align="center">
+          </el-table-column>
         </el-table-column>
-        <el-table-column property="name" sortable align="center" label="姓名" width="80" header-align="center">
-          <template slot-scope="scope">
-            <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column property="" align="center" sortable label="资料" width="140" header-align="center">
-          <template slot-scope="scope"><!--八种缺少的资料 datum_uploaded-->
-                <el-button type="text" size="small">
-                  <!--<span>{{scope.row.datum_uploaded}}</span>-->
-                 <!--{{Math.pow(2,8)&parseInt(scope.row.datum_uploaded,2)>0}}-->
-                  <i title="入职照片" class="icon-geren" :class="{'redicon':(Math.pow(2,8)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
-                  <i title="身份证扫描件" class="icon-credentials_icon" :class="{'redicon':(Math.pow(2,7)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
-                  <i title="安全责任书" class="icon-anquandunpai" :class="{'redicon':(Math.pow(2,6)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
-                  <i title="劳动合同" class="icon-hetong" :class="{'redicon':(Math.pow(2,5)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
-                  <i title="安全交底" class="icon-anquan" :class="{'redicon':(Math.pow(2,4)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
-                  <i title="技术交底" class="icon-jishu" :class="{'redicon':(Math.pow(2,3)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
-                  <i title="三级安全教育记录卡" class="icon-shiti" :class="{'redicon':(Math.pow(2,2)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
-                  <i title="考试试题及结果" class="el-icon-tickets" :class="{'redicon':(Math.pow(2,1)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
-                </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column property="mobile" align="center" label="电话" width="100" header-align="center">
-        </el-table-column>
-        <el-table-column property="group_name_level[0]" align="center" sortable label="部门" width="90"
-          header-align="center">
-        </el-table-column>
-        <el-table-column property="group_name_level[1]" align="center" sortable label="班组" width="100"
-          header-align="center">
-        </el-table-column>
-        <el-table-column property="project_pos_name" align="center" sortable label="工种" width="80"
-          header-align="center">
-        </el-table-column>
-        <el-table-column property="education" align="center" sortable label="学历" width="70" header-align="center">
+        <el-table-column label="健康信息">
+          <el-table-column property="" align="center" label="疫区旅居史" width="70" header-align="center">
+          </el-table-column>
+          <el-table-column property="" align="center" label="接触疫区人员" width="80" header-align="center">
+            <template slot-scope="scope">
+              <el-button size="mini" type="primary" class="btn-health" @click="openPersonHealthDialogHandle(scope.row)">登记健康情况
+              </el-button>
+            </template>
+          </el-table-column>
+          <el-table-column property="" align="center" label="干咳等症状" width="70" header-align="center">
+          </el-table-column>
         </el-table-column>
         <!--<el-table-column property="created_time" sortable align="left" label="入职时间" width="120" header-align="center">-->
-          <!--<template slot-scope="scope">-->
-            <!--{{trantime(scope.row.created_time)}}-->
-          <!--</template>-->
+        <!--<template slot-scope="scope">-->
+        <!--{{trantime(scope.row.created_time)}}-->
+        <!--</template>-->
         <!--</el-table-column>-->
         <!--<el-table-column property="status" sortable align="center" label="人员状态" width="100" header-align="center">-->
-          <!--<template slot-scope="scope">-->
-            <!--<span v-html="statusName(scope.row,true)"></span>-->
-          <!--</template>-->
+        <!--<template slot-scope="scope">-->
+        <!--<span v-html="statusName(scope.row,true)"></span>-->
+        <!--</template>-->
         <!--</el-table-column>-->
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
@@ -232,21 +270,50 @@
         loading: false,
         optionGroups: [], //部门选择的数据
         optionsProjectPersion: [],
-        lackdatavalue:[],
-        personinto2:[],
-        props: { multiple: true },
-        lackdata: [
-          { value: '9', label: '全选' },
-          { value: '8', label: '入职照片' }, { value: '7', label: '身份证扫描件' }, { value: '1', label: '安全责任书' },
-          { value: '2', label: '劳动合同' }, { value: '3', label: '安全交底' },{ value: '4', label: '技术交底' },{ value: '5', label: '三级安全教育记录卡' },
-          { value: '6', label: '考试试题及结果' }],
+        lackdatavalue: [],
+        personinto2: [],
+        props: {
+          multiple: true
+        },
+        lackdata: [{
+            value: '9',
+            label: '全选'
+          },
+          {
+            value: '8',
+            label: '入职照片'
+          }, {
+            value: '7',
+            label: '身份证扫描件'
+          }, {
+            value: '1',
+            label: '安全责任书'
+          },
+          {
+            value: '2',
+            label: '劳动合同'
+          }, {
+            value: '3',
+            label: '安全交底'
+          }, {
+            value: '4',
+            label: '技术交底'
+          }, {
+            value: '5',
+            label: '三级安全教育记录卡'
+          },
+          {
+            value: '6',
+            label: '考试试题及结果'
+          }
+        ],
         value: '',
         personInoutList: [],
         personInoutForm: {
           GroupList: ['all'], // 计划名称
           person_id: '', // 人员
           person_name: '',
-          datum_uploaded:''
+          datum_uploaded: ''
         },
         isMatchPerson: false, // 是否匹配人员名称
         personInoutTableEmptyText: '请点击查询按钮进行查询',
@@ -286,8 +353,8 @@
       },
     },
     methods: {
-      titlechange(){
-        this.personInoutList=[]
+      titlechange() {
+        this.personInoutList = []
         this.handleSubmit(false)
       },
       trantime: (time) => {
@@ -350,7 +417,7 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
-          console.log("所有人员全部信息",this.projectPersonList)
+          console.log("所有人员全部信息", this.projectPersonList)
           this.optionsProjectPersion = this.projectPersonList
           this.loadingInstance.close();
         }).catch(() => {
@@ -370,7 +437,7 @@
         })
       },
       getProjectPersonInout(isExport) {
-        this.personInoutList=[]
+        this.personInoutList = []
         this.loading = true
         const param = {
           method: 'query_person_list',
@@ -378,7 +445,7 @@
         }
         this.$store.dispatch('QueryProjectPersons', param).then((personList) => {
           // this.lackdatavalue=[]
-          this.personInoutList=[]
+          this.personInoutList = []
           personList.forEach(item => {
             let groupMatch = []
             if (this.personInoutForm.GroupList[0] === 'all') {
@@ -397,7 +464,7 @@
             }
           })
           // console.log('lackdata.lackid',this.lackdata.value)//进行对资料的筛选
-            this.personchange()
+          this.personchange()
 
           this.totalPerson = this.personInoutList.length;
           this.loading = false
@@ -451,14 +518,14 @@
 
       },
       //关闭窗口
-      closediv(){
+      closediv() {
         console.log("关闭窗口成功")
-        this.personinto2=[]
-        this.lackdatavalue=[]
-        this.personInoutList=[]
+        this.personinto2 = []
+        this.lackdatavalue = []
+        this.personInoutList = []
       },
       appendGroupData() {
-        console.log("this.projectGroupList.group",this.projectGroupList.group)
+        console.log("this.projectGroupList.group", this.projectGroupList.group)
         const rootGroup = this.projectGroupList.group
         this.optionGroups = []
         // console.log("teim", item)
@@ -470,7 +537,7 @@
           //1为管理部门 0为施工部门3为建设单位4为监理单位5为外部单位 grouptype类型说明,并且做了筛选这部操作
           // console.log("item.group.groups_type", item.group)
           rootGroup.forEach(item1 => {
-            if (item1.groups_type === 0 || item1.groups_type === 1|| item1.groups_type === 10) {
+            if (item1.groups_type === 0 || item1.groups_type === 1 || item1.groups_type === 10) {
               // console.log('item1', item1)
               let children = []
               if (item1.group !== undefined && item1.group.length > 0) {
@@ -526,10 +593,10 @@
         // }
         import('@/vendor/Export2Excel').then(excel => {
           const tHeader = ['序号', '姓名', '电话', '部门', '班组', '工种',
-            '学历', '入职时间', '人员状态','资料'
+            '学历', '入职时间', '人员状态', '资料'
           ]
           const filterVal = ['xuhao', 'name', 'mobile', 'group0', 'group1', 'project_pos_name', 'education',
-            'created_time', 'statusName','datum_uploaded'
+            'created_time', 'statusName', 'datum_uploaded'
           ]
           let list = []
           let xuhao = 0
@@ -585,6 +652,17 @@
 
         })
       },
+      openPersonHealthDialogHandle(row) {
+        const param = {
+          show: true,
+          title: '登记健康情况 - ' + row.name,
+          // opShow: true,
+          ...row
+        }
+        this.$store.dispatch('SetHealthDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
       formatJson(filterVal, jsonData) {
         return jsonData.map(v => filterVal.map(j => {
           if (j === 'timestamp') {
@@ -607,44 +685,43 @@
         }
         // console.log('this.personInoutForm.person_name', this.personInoutForm.person_name)
       },
-      personchange(){//资料框数据
-        if(this.lackdatavalue.length !==0){
-          if(this.lackdatavalue==='9'){
-            this.lackdatavalue=[]
-            this.lackdatavalue.push('8','7','6','5','4','3','2','1')
-            for(let i=0;i<this.lackdatavalue.length;i++){
-              this.personInoutList = this.personinto2.filter((item)=>{
-              return (Math.pow(2,parseInt(this.lackdatavalue[i]))&parseInt(item.datum_uploaded,2))>0
-            });
+      personchange() { //资料框数据
+        if (this.lackdatavalue.length !== 0) {
+          if (this.lackdatavalue === '9') {
+            this.lackdatavalue = []
+            this.lackdatavalue.push('8', '7', '6', '5', '4', '3', '2', '1')
+            for (let i = 0; i < this.lackdatavalue.length; i++) {
+              this.personInoutList = this.personinto2.filter((item) => {
+                return (Math.pow(2, parseInt(this.lackdatavalue[i])) & parseInt(item.datum_uploaded, 2)) > 0
+              });
             }
-          }else{
-            console.log("-->",this.lackdatavalue)
+          } else {
+            console.log("-->", this.lackdatavalue)
 
-             for(let i=0;i<this.lackdatavalue.length;i++){
-               console.log("-->personinto2",this.personinto2)
-              this.personInoutList = this.personinto2.filter((item)=>{
-              return (Math.pow(2,parseInt(this.lackdatavalue[i]))&parseInt(item.datum_uploaded,2))>0
+            for (let i = 0; i < this.lackdatavalue.length; i++) {
+              console.log("-->personinto2", this.personinto2)
+              this.personInoutList = this.personinto2.filter((item) => {
+                return (Math.pow(2, parseInt(this.lackdatavalue[i])) & parseInt(item.datum_uploaded, 2)) > 0
 
-            });
+              });
               // console.log(this.personInoutList)
             }
           }
         }
-        this.personinto2=[]
-    },
-      persionChangeLackdata(){//查找资料
-        if(this.lackdata.value !== ''){
-          console.log(this.lackdata.value)//输出对应的id
-          console.log('this.personInoutList1',this.personInoutList)
-          this.personInoutList = this.personInoutList.filter((item)=>{
+        this.personinto2 = []
+      },
+      persionChangeLackdata() { //查找资料
+        if (this.lackdata.value !== '') {
+          console.log(this.lackdata.value) //输出对应的id
+          console.log('this.personInoutList1', this.personInoutList)
+          this.personInoutList = this.personInoutList.filter((item) => {
             // console.log(this.lackdata.value)
             // console.log(Math.pow(2,this.lackdata.value))
             // console.log(parseInt(item.datum_uploaded,2))
-            return (Math.pow(2,this.lackdata.value)&parseInt(item.datum_uploaded,2))===0   //查找出来00000000中筛选出数据
+            return (Math.pow(2, this.lackdata.value) & parseInt(item.datum_uploaded, 2)) === 0 //查找出来00000000中筛选出数据
           });
-          console.log('this.personInoutList2',this.personInoutList)
-        } else {
-        }
+          console.log('this.personInoutList2', this.personInoutList)
+        } else {}
       },
       groupChangeHandle() {}
     },

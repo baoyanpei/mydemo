@@ -50,6 +50,9 @@
     <!--绑定BIM-->
     <bindBimDialog></bindBimDialog>
 
+    <!--人员健康对话框-->
+    <PersonHealthDialog></PersonHealthDialog>
+
   </div>
 </template>
 
@@ -67,6 +70,9 @@
   import TaskInfoDialog from './views/taskinfo/info'
   // 人员信息信息dialog
   import PersonInfoDialog from './views/person/personInfoDialog'
+
+  // 人员健康dialog
+  import PersonHealthDialog from './views/person/personHealthDialog'
 
   // 人员进出详细dialog
   import PersonInOutDetailDialog from './views/person/personInOutDetailDialog'
@@ -117,6 +123,7 @@
       PersonGoOutDialog,
       LogsPersonComfirmDialog,
       PersonInfoDialog,
+      PersonHealthDialog,
       PersonInOutDetailDialog,
       PersonQuitLeftDialog,
       PersonListDialog,
