@@ -1,3 +1,6 @@
-.person-health-dialog{
-    
+.person-health-dialog {
+  .el-radio__input.is-checked+.el-radio__label {
+    color: #000000;
+    font-weight: 600;
+  }
 }
