@@ -4,16 +4,17 @@
 </style>
 <template>
   <div class="person-health-dialog">
-    <el-dialog :modal="false" top="13vh" width="570px" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="true" top="13vh" width="570px" :lock-scroll="true" :close-on-click-modal="false"
       @open="openPersonFaceHealthDialogHandle" :visible.sync="personHealthDialog.show"
       :title="personHealthDialog.title">
       <div id="person-health-from" class="person-health-from">
         <el-form ref="personHealthForm" :model="personHealthForm" label-width="180px" :inline="false">
           <el-form-item label="节假日流动情况">
-            <el-button type="success" :loading="loading" icon="el-icon-search" @click.native.prevent="" size="mini">添加
+            <el-button type="success" :loading="loading" icon="el-icon-search"
+              @click.native.prevent="openWorldCitysDialogHandle()" size="mini">添加
             </el-button>
           </el-form-item>
-          <el-form-item prop="BackDate" label="反兰日期" :rules="ruleBackDate">
+          <el-form-item prop="BackDate" label="返兰日期" :rules="ruleBackDate">
             <el-date-picker type="date" v-model="personHealthForm.BackDate" name="BackDate" :editable="false"
               :clearable="false" placeholder="选择日期" size="mini">
             </el-date-picker>
@@ -202,6 +203,14 @@
             // this.getData(isExport)
             console.log('12312313')
           }
+        })
+      },
+      openWorldCitysDialogHandle() {
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('SetWorldCitysDialog', param).then(() => {}).catch(() => {
+
         })
       }
     },

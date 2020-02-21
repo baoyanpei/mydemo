@@ -53,6 +53,9 @@
     <!--人员健康对话框-->
     <PersonHealthDialog></PersonHealthDialog>
 
+    <!--世界城市dialog-->
+    <worldCitysDialog></worldCitysDialog>
+    
   </div>
 </template>
 
@@ -108,6 +111,9 @@
   // 绑定BIM
   import bindBimDialog from './views/bindBim/bindBimDialog'
 
+  // 世界城市dialog
+  import worldCitysDialog from './views/components/worldCitysDialog'
+
   export default {
     name: 'App',
     components: {
@@ -132,7 +138,8 @@
       VideoDialog,
       PointViewManageDialog,
       PointViewSaveDialog,
-      bindBimDialog
+      bindBimDialog,
+      worldCitysDialog
     },
     directives: {
       elDragDialog
@@ -368,8 +375,9 @@
     cursor: pointer;
   }
 
-  /deep/ .el-upload-list__item{
-  display: flex!important;
-  justify-content: space-between!important;
-}
+  /deep/ .el-upload-list__item {
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
 </style>
