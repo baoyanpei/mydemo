@@ -10,9 +10,23 @@
       <div id="person-health-from" class="person-health-from">
         <el-form ref="personHealthForm" :model="personHealthForm" label-width="180px" :inline="false">
           <el-form-item label="节假日流动情况">
+
             <el-button type="success" :loading="loading" icon="el-icon-search"
               @click.native.prevent="openWorldCitysDialogHandle()" size="mini">添加
             </el-button>
+            <el-table ref="travelInfoListTable" :data="travelInfoList" size="mini" :show-header="false"
+              header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+              <el-table-column property="name" sortable align="center" label="姓名" width="180" header-align="center">
+                <template slot-scope="scope">
+                  {{scope.row.name}}
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="操作">
+                <template slot-scope="scope">
+                  <el-button size="mini" type="warning" @click="handleDeleteClick(scope.row)">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-form-item>
           <el-form-item prop="BackDate" label="返兰日期" :rules="ruleBackDate">
             <el-date-picker type="date" v-model="personHealthForm.BackDate" name="BackDate" :editable="false"
@@ -120,6 +134,7 @@
       return {
         loading: false,
         radioUseTraffic: '飞机',
+        travelInfoList: [],
         personHealthForm: {
           BackDate: '', // 时间范围
           travelInHb: -1,
@@ -160,6 +175,14 @@
           this.$store.state.health.personHealthDialog = newValue
         }
       },
+      healthWorldCitysData: {
+        get: function () {
+          return this.$store.state.tools.healthWorldCitysData
+        },
+        set: function (newValue) {
+          this.$store.state.tools.healthWorldCitysData = newValue
+        }
+      }
       // personInfoChanged() {
       //   return this.$store.state.project.personInfoChanged
       // }
@@ -182,6 +205,17 @@
             // this.initData()
           }
 
+        },
+        deep: true
+      },
+      healthWorldCitysData: {
+        handler: function (newVal, oldVal) {
+          console.info('value newValnewVal ', newVal)
+          this.travelInfoList.push({
+            name: newVal.name,
+            id: newVal.id
+          })
+          console.log('travelInfoList', this.travelInfoList)
         },
         deep: true
       },
@@ -212,6 +246,17 @@
         this.$store.dispatch('SetWorldCitysDialog', param).then(() => {}).catch(() => {
 
         })
+      },
+      handleDeleteClick(data) {
+        console.log('handleDeleteClick', data)
+        for (var i = this.travelInfoList.length - 1; i >= 0; i--) {
+          let _travelInfo = this.travelInfoList[i]
+          if (_travelInfo.id === data.id) {
+            this.travelInfoList.splice(i, 1);
+          }
+        }
+
+
       }
     },
     mounted() {

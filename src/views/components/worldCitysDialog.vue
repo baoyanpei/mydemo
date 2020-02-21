@@ -5,15 +5,16 @@
 <template>
   <div class="world-city-dialog">
     <el-dialog :modal="true" width="260px" :lock-scroll="true" :close-on-click-modal="false"
-      :visible.sync="worldCitysDialog.show" :title="title">
+      :visible.sync="worldCitysDialog.show" @close="closeWorldCitysDialog" :title="title">
       <div style="text-align: center;width: 100%;">
-        <el-radio-group v-model="type" size="mini">
+        <el-radio-group v-model="type" size="mini" @change="typeChangeHandle">
           <el-radio-button label="1">国内</el-radio-button>
           <el-radio-button label="2">海外</el-radio-button>
         </el-radio-group>
         <div v-if="type==1" style="margin-top: 10px;">
 
-          <el-select v-model="chinaProvince" filterable placeholder="请选择省份" size="mini" @change="chinaProvinceChangeHandle">
+          <el-select v-model="chinaProvince" filterable placeholder="请选择省份" size="mini"
+            @change="chinaProvinceChangeHandle">
             <el-option v-for="province in chinaProvinceList" :key="province.code" :label="province.name"
               :value="province.name">
             </el-option>
@@ -85,7 +86,7 @@
         chinaProvince: "",
         chinaCity: "",
         externalCountry: "",
-        externalCity: '',
+        externalCity: "",
         chinaProvinceMap: new Map(),
         countriesMap: new Map()
 
@@ -134,14 +135,38 @@
       // },
     },
     methods: {
+      clearData() {
+
+        this.chinaProvince = ""
+        this.chinaCity = ""
+        this.externalCountry = ""
+        this.externalCity = ""
+      },
       openPersonFaceHealthDialogHandle() {
-        // console.log("----22222---")
+        this.type = "1";
+      },
+      closeWorldCitysDialog() {
+
+        this.clearData()
       },
       handleCloseDialog() {
 
       },
       handleSubmit() {
+        this.$store.dispatch('SetHealthWorldCitysData', {
+          data: this.chinaProvince,
+        }).then(() => {}).catch(() => {
+          this.clearData()
+        })
+        
+        this.$store.dispatch('SetWorldCitysDialog', {
+          show: false,
+        }).then(() => {}).catch(() => {
 
+        })
+      },
+      typeChangeHandle() {
+        this.clearData()
       },
       chinaProvinceChangeHandle(province) {
         console.log('province', province)
@@ -170,7 +195,7 @@
       })
 
       const _countries = countriesConfig.countries.RECORDS
-      console.log("_countries", _countries)
+      // console.log("_countries", _countries)
       const _countriesMap = new Map()
       _countries.forEach(country => {
         country['citys'] = []
@@ -182,20 +207,20 @@
       // console.log("_statesMap", _statesMap)
 
       const _cities = citiesConfig.cities.RECORDS
-      console.log("_cities", _cities)
+      // console.log("_cities", _cities)
       _cities.forEach(city => {
         let _state = _statesMap.get(city.state_id)
 
         if (_state !== undefined) {
           let _country = _countriesMap.get(_state.country_id)
-          console.log("_country", _country)
+          // console.log("_country", _country)
           if (_country !== undefined) {
             _country.citys.push(city)
           }
         }
       })
       this.countriesMap = _countriesMap
-      console.log("_countriesMap", _countriesMap)
+      // console.log("_countriesMap", _countriesMap)
     }
   }
 
