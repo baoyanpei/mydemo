@@ -32,7 +32,8 @@
               :value="country.id">
             </el-option>
           </el-select>
-          <el-select v-model="externalCity" filterable placeholder="请选择城市" size="mini" style="margin-top: 10px;">
+          <el-select v-model="externalCity" filterable placeholder="请选择城市" @change="externalCityChangeHandle"
+            size="mini" style="margin-top: 10px;">
             <el-option v-for="city in externalCityList" :key="city.id" :label="city.cname" :value="city.cname">
             </el-option>
           </el-select>
@@ -153,12 +154,59 @@
 
       },
       handleSubmit() {
+
+        let _travel_info = "";
+
+        if (this.type === "1") {
+          if (this.chinaProvince === "") {
+            this.$message({
+              message: '请选择您去过的省份',
+              type: 'error'
+            })
+            return
+          } else if (this.chinaCity === "") {
+            this.$message({
+              message: '请选择您去过的省份的城市',
+              type: 'error'
+            })
+            return
+          }
+          _travel_info = `国内-${this.chinaProvince}-${this.chinaCity}`
+        } else if (this.type === "2") {
+
+          if (this.externalCountry === "") {
+            this.$message({
+              message: '请选择您去过的国家,有城市请也选择城市!',
+              type: 'error'
+            })
+            return
+          }
+          let _countryName = this.countriesMap.get(this.externalCountry).cname
+          console.log('_countryName', _countryName)
+          if (this.externalCity !== "") {
+            _travel_info = `海外-${_countryName}-${this.externalCity}`
+          } else {
+            _travel_info = `海外-${_countryName}`
+          }
+
+        }
+
+        if (_travel_info === "") {
+          this.$message({
+            message: '数据不正确,请检查!',
+            type: 'error'
+          })
+          return;
+        }
+
+
         this.$store.dispatch('SetHealthWorldCitysData', {
-          data: this.chinaProvince,
+          data: _travel_info,
         }).then(() => {}).catch(() => {
           this.clearData()
         })
-        
+
+        // 关闭窗口
         this.$store.dispatch('SetWorldCitysDialog', {
           show: false,
         }).then(() => {}).catch(() => {
@@ -174,10 +222,13 @@
         this.chinaCityList = this.chinaProvinceMap.get(province)
       },
       externalCountryChangeHandle(country_id) {
-        console.log('country_id', country_id)
+        // console.log('country_id', country_id)
         this.externalCity = ""
         this.externalCityList = this.countriesMap.get(country_id).citys
-        console.log('this.externalCityList', this.externalCityList)
+        // console.log('this.externalCityList', this.externalCityList)
+      },
+      externalCityChangeHandle(city) {
+        this.externalCity = city
       }
     },
     mounted() {

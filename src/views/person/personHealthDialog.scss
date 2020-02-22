@@ -22,4 +22,9 @@
       margin-bottom: 5px;
     }
   }
+
+  .el-table--mini td,
+  .el-table--mini th {
+    padding: 2px 0;
+  }
 }

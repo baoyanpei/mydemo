@@ -14,7 +14,7 @@
               @click.native.prevent="openWorldCitysDialogHandle()" size="mini">添加
             </el-button>
             <el-table ref="travelInfoListTable" :data="personHealthForm.travelInfoList" size="mini" :show-header="false"
-              header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+              header-align="center" :default-sort="{prop: 'name', order: 'ascending'}" empty-text="请添加节假日流动情况">
               <el-table-column property="name" sortable align="center" label="姓名" width="180" header-align="center">
                 <template slot-scope="scope">
                   {{scope.row.name}}
@@ -259,12 +259,12 @@
       },
       healthWorldCitysData: {
         handler: function (newVal, oldVal) {
-          console.info('value newValnewVal ', newVal)
+          // console.info('value newValnewVal ', newVal)
           this.personHealthForm.travelInfoList.push({
             name: newVal.name,
             id: newVal.id
           })
-          console.log('travelInfoList', this.personHealthForm.travelInfoList)
+          // console.log('travelInfoList', this.personHealthForm.travelInfoList)
         },
         deep: true
       },
@@ -275,10 +275,11 @@
     },
     methods: {
       openPersonHealthDialogHandle() {
-        // console.log("----22222---")
+        // console.log("----personHealthDialog---", this.personHealthDialog)
       },
       closePersonHealthDialogHandle() {
         this.clearAllData()
+        this.$refs.personHealthForm.resetFields();
       },
       handleCloseDialog() {
         const param = {
@@ -309,10 +310,11 @@
         this.personHealthForm.useTraffic = ''
       },
       changeRadioUseTrafficHandle() {
-        console.log('changeRadioUseTrafficHandle')
+        // console.log('changeRadioUseTrafficHandle')
         this.clearUseTrafficData()
       },
       handleSubmit() {
+        // console.log('aaa',moment(this.personHealthForm.BackDate).format("YYYY-MM-DD"))
         this.personHealthForm.useTraffic = ''
         switch (this.radioUseTraffic) {
           case "飞机":
@@ -346,8 +348,14 @@
             }
             break;
         }
-        console.log('this.personHealthForm.useTraffic', this.personHealthForm.useTraffic)
-
+        // console.log('this.personHealthForm.useTraffic', this.personHealthForm.useTraffic)
+        // console.log('this.personHealthForm.travelInfoList', this.personHealthForm.travelInfoList)
+        let _travelInfoList = []
+        this.personHealthForm.travelInfoList.forEach(travelInfo => {
+          _travelInfoList.push(travelInfo.name)
+        })
+        let travel_info = _travelInfoList.join(",")
+        // console.log('travel_info', travel_info)
         /*
         feijiHBH: '',
         feijiZW: '',
@@ -361,6 +369,18 @@
               <el-radio-button label="班车"></el-radio-button>
               <el-radio-button label="自驾"></el-radio-button>
               <el-radio-button label="其他"></el-radio-button>
+
+        project_id:必选
+        person_id:必须
+        travel_info:节日期间流动情况
+        travel_in_hb:有无疫情重点区域旅居史0无1有
+        contact_hb:有无接触疫情重占区域人员0无1有
+        back_date:返回日期
+        use_traffic:所使用交通工具 
+        symptom:14天内有无发热、干咳症状 0无，1有
+        remark:备注,
+        id:可选（有为更新，无为新增）
+
         */
 
         this.$refs.personHealthForm.validate(valid => {
@@ -368,6 +388,13 @@
             // this.getData(isExport)
 
             let param = {
+              project_id: this.project_id,
+              person_id: this.personHealthDialog.person_id,
+              travel_info:travel_info,
+              travel_in_hb:this.personHealthForm.travelInHb,
+              contact_hb:this.personHealthForm.contactHb,
+              symptom:this.personHealthForm.symptom,
+              back_date:moment(this.personHealthForm.BackDate).format("YYYY-MM-DD"),
               use_traffic: this.personHealthForm.useTraffic
             }
             console.log('param', param)
