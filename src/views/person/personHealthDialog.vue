@@ -4,17 +4,16 @@
 </style>
 <template>
   <div class="person-health-dialog">
-    <el-dialog :modal="true" top="13vh" width="570px" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="true" top="2vh" width="570px" :lock-scroll="true" :close-on-click-modal="false"
       @open="openPersonFaceHealthDialogHandle" :visible.sync="personHealthDialog.show"
       :title="personHealthDialog.title">
       <div id="person-health-from" class="person-health-from">
         <el-form ref="personHealthForm" :model="personHealthForm" label-width="180px" :inline="false">
-          <el-form-item label="节假日流动情况">
-
+          <el-form-item prop="travelInfoList" label="节假日流动情况" :rules="ruleTravelInfo">
             <el-button type="success" :loading="loading" icon="el-icon-search"
               @click.native.prevent="openWorldCitysDialogHandle()" size="mini">添加
             </el-button>
-            <el-table ref="travelInfoListTable" :data="travelInfoList" size="mini" :show-header="false"
+            <el-table ref="travelInfoListTable" :data="personHealthForm.travelInfoList" size="mini" :show-header="false"
               header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
               <el-table-column property="name" sortable align="center" label="姓名" width="180" header-align="center">
                 <template slot-scope="scope">
@@ -30,11 +29,11 @@
           </el-form-item>
           <el-form-item prop="BackDate" label="返兰日期" :rules="ruleBackDate">
             <el-date-picker type="date" v-model="personHealthForm.BackDate" name="BackDate" :editable="false"
-              :clearable="false" placeholder="选择日期" size="mini">
+              :clearable="false" placeholder="选择日期" size="mini" style="width: 140px;">
             </el-date-picker>
           </el-form-item>
-          <el-form-item prop="useTraffic" label="外地返兰乘坐交通工具">
-            <el-radio-group v-model="radioUseTraffic" size="mini">
+          <el-form-item prop="useTraffic" label="外地返兰乘坐交通工具" :rules="ruleUseTraffic">
+            <el-radio-group v-model="radioUseTraffic" size="mini" @change="changeRadioUseTrafficHandle">
               <el-radio-button label="飞机"></el-radio-button>
               <el-radio-button label="火车"></el-radio-button>
               <el-radio-button label="班车"></el-radio-button>
@@ -42,21 +41,37 @@
               <el-radio-button label="其他"></el-radio-button>
             </el-radio-group>
 
-            <el-form ref="UseTrafficForm" label-width="80px" style="width: 200px;;">
+            <el-form ref="UseTrafficForm" label-width="80px" style="width: 200px;margin-top: 10px;"
+              class="UseTrafficForm">
               <div v-if="radioUseTraffic==='飞机'">
                 <el-form-item label="航班号：">
-                  <el-input placeholder="请输入航班号" size="mini"></el-input>
+                  <el-input placeholder="请输入航班号" v-model="personHealthForm.feijiHBH" size="mini"></el-input>
                 </el-form-item>
-                <el-form-item label="位置：">
-                  <el-input placeholder="请输入位置" size="mini"></el-input>
+                <el-form-item label="座位：">
+                  <el-input placeholder="请输入座位" v-model="personHealthForm.feijiZW" size="mini"></el-input>
                 </el-form-item>
               </div>
               <div v-if="radioUseTraffic==='火车'">
                 <el-form-item label="班次：">
-                  <el-input placeholder="请输入火车班次" size="mini"></el-input>
+                  <el-input placeholder="请输入班次" v-model="personHealthForm.huocheBC" size="mini"></el-input>
                 </el-form-item>
                 <el-form-item label="座位：">
-                  <el-input placeholder="请输入位置" size="mini"></el-input>
+                  <el-input placeholder="请输入座位" v-model="personHealthForm.huocheZW" size="mini"></el-input>
+                </el-form-item>
+              </div>
+              <div v-if="radioUseTraffic==='班车'">
+                <el-form-item label="车牌号：">
+                  <el-input placeholder="请输入车牌号" v-model="personHealthForm.bancheCPH" size="mini"></el-input>
+                </el-form-item>
+              </div>
+              <div v-if="radioUseTraffic==='自驾'">
+                <el-form-item label="车牌号：">
+                  <el-input placeholder="请输入车牌号" v-model="personHealthForm.zijiaCPH" size="mini"></el-input>
+                </el-form-item>
+              </div>
+              <div v-if="radioUseTraffic==='其他'">
+                <el-form-item label="备注：">
+                  <el-input placeholder="请输入备注" v-model="personHealthForm.jiaotongBZ" size="mini"></el-input>
                 </el-form-item>
               </div>
             </el-form>
@@ -105,7 +120,7 @@
     data() {
       const validateInoutDaterange = (rule, value, callback) => {
         if (value.length === 0) {
-          callback(new Error('必须选择反兰日期'))
+          callback(new Error('必须选择返兰日期'))
         } else {
           callback()
         }
@@ -131,15 +146,40 @@
           callback()
         }
       }
+      const validateTravelInfo = (rule, value, callback) => {
+        if (value.length === 0) {
+          callback(new Error('必须添加节假日流动情况'))
+        } else {
+          callback()
+        }
+      }
+      const validateUseTraffic = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('必须填写外地返兰乘坐的交通工具'))
+        } else {
+          callback()
+        }
+      }
+
+
       return {
         loading: false,
         radioUseTraffic: '飞机',
-        travelInfoList: [],
+        // travelInfoList: [],
         personHealthForm: {
           BackDate: '', // 时间范围
           travelInHb: -1,
           contactHb: -1,
-          symptom: -1
+          symptom: -1,
+          travelInfoList: [],
+          useTraffic: '',
+          feijiHBH: '',
+          feijiZW: '',
+          huocheBC: '',
+          huocheZW: '',
+          bancheCPH: '',
+          zijiaCPH: '',
+          jiaotongBZ: ''
         },
         ruleBackDate: [{ //计划时间验证
           required: true,
@@ -161,6 +201,16 @@
           trigger: 'blur',
           validator: validateSymptom
         }],
+        ruleTravelInfo: [{ //
+          required: true,
+          trigger: 'blur',
+          validator: validateTravelInfo
+        }],
+        ruleUseTraffic: [{ //
+          required: true,
+          trigger: 'blur',
+          validator: validateUseTraffic
+        }]
       }
     },
     computed: {
@@ -211,11 +261,11 @@
       healthWorldCitysData: {
         handler: function (newVal, oldVal) {
           console.info('value newValnewVal ', newVal)
-          this.travelInfoList.push({
+          this.personHealthForm.travelInfoList.push({
             name: newVal.name,
             id: newVal.id
           })
-          console.log('travelInfoList', this.travelInfoList)
+          console.log('travelInfoList', this.personHealthForm.travelInfoList)
         },
         deep: true
       },
@@ -231,11 +281,79 @@
       handleCloseDialog() {
 
       },
+      clearUseTrafficData() { // 清除交通工具的记录
+        this.personHealthForm.feijiHBH = ''
+        this.personHealthForm.feijiZW = ''
+        this.personHealthForm.huocheBC = ''
+        this.personHealthForm.huocheZW = ''
+        this.personHealthForm.bancheCPH = ''
+        this.personHealthForm.zijiaCPH = ''
+        this.personHealthForm.jiaotongBZ = ''
+        this.personHealthForm.useTraffic = ''
+      },
+      changeRadioUseTrafficHandle() {
+        console.log('changeRadioUseTrafficHandle')
+        this.clearUseTrafficData()
+      },
       handleSubmit() {
+        this.personHealthForm.useTraffic = ''
+        switch (this.radioUseTraffic) {
+          case "飞机":
+            if (this.personHealthForm.feijiHBH !== '' && this.personHealthForm.feijiZW !== '') {
+              this.personHealthForm.useTraffic =
+                `${this.radioUseTraffic},航班号:${this.personHealthForm.feijiHBH},位置:${this.personHealthForm.feijiZW}`
+            }
+            break;
+          case "火车":
+            if (this.personHealthForm.huocheBC !== '' && this.personHealthForm.huocheZW !== '') {
+              this.personHealthForm.useTraffic =
+                `${this.radioUseTraffic},班次:${this.personHealthForm.huocheBC},座位:${this.personHealthForm.huocheZW}`
+            }
+            break;
+          case "班车":
+            if (this.personHealthForm.bancheCPH !== '') {
+              this.personHealthForm.useTraffic =
+                `${this.radioUseTraffic},车牌号:${this.personHealthForm.bancheCPH}`
+            }
+            break;
+          case "自驾":
+            if (this.personHealthForm.zijiaCPH !== '') {
+              this.personHealthForm.useTraffic =
+                `${this.radioUseTraffic},车牌号:${this.personHealthForm.zijiaCPH}`
+            }
+            break;
+          case "其他":
+            if (this.personHealthForm.jiaotongBZ !== '') {
+              this.personHealthForm.useTraffic =
+                `${this.radioUseTraffic},备注:${this.personHealthForm.jiaotongBZ}`
+            }
+            break;
+        }
+        console.log('this.personHealthForm.useTraffic', this.personHealthForm.useTraffic)
+
+        /*
+        feijiHBH: '',
+        feijiZW: '',
+        huocheBC: '',
+        huocheZW: '',
+        bancheCPH: '',
+        zijiaCPH: '',
+        jiaotongBZ: ''
+        <el-radio-button label="飞机"></el-radio-button>
+              <el-radio-button label="火车"></el-radio-button>
+              <el-radio-button label="班车"></el-radio-button>
+              <el-radio-button label="自驾"></el-radio-button>
+              <el-radio-button label="其他"></el-radio-button>
+        */
+
         this.$refs.personHealthForm.validate(valid => {
           if (valid) {
             // this.getData(isExport)
-            console.log('12312313')
+
+            let param = {
+              use_traffic: this.personHealthForm.useTraffic
+            }
+            console.log('param', param)
           }
         })
       },
@@ -249,10 +367,10 @@
       },
       handleDeleteClick(data) {
         console.log('handleDeleteClick', data)
-        for (var i = this.travelInfoList.length - 1; i >= 0; i--) {
-          let _travelInfo = this.travelInfoList[i]
+        for (var i = this.personHealthForm.travelInfoList.length - 1; i >= 0; i--) {
+          let _travelInfo = this.personHealthForm.travelInfoList[i]
           if (_travelInfo.id === data.id) {
-            this.travelInfoList.splice(i, 1);
+            this.personHealthForm.travelInfoList.splice(i, 1);
           }
         }
 
