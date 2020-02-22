@@ -5,8 +5,8 @@
 <template>
   <div class="person-health-dialog">
     <el-dialog :modal="true" top="2vh" width="570px" :lock-scroll="true" :close-on-click-modal="false"
-      @open="openPersonFaceHealthDialogHandle" :visible.sync="personHealthDialog.show"
-      :title="personHealthDialog.title">
+      @open="openPersonHealthDialogHandle" @close="closePersonHealthDialogHandle"
+      :visible.sync="personHealthDialog.show" :title="personHealthDialog.title">
       <div id="person-health-from" class="person-health-from">
         <el-form ref="personHealthForm" :model="personHealthForm" label-width="180px" :inline="false">
           <el-form-item prop="travelInfoList" label="节假日流动情况" :rules="ruleTravelInfo">
@@ -165,7 +165,6 @@
       return {
         loading: false,
         radioUseTraffic: '飞机',
-        // travelInfoList: [],
         personHealthForm: {
           BackDate: '', // 时间范围
           travelInHb: -1,
@@ -275,11 +274,29 @@
       // },
     },
     methods: {
-      openPersonFaceHealthDialogHandle() {
+      openPersonHealthDialogHandle() {
         // console.log("----22222---")
       },
+      closePersonHealthDialogHandle() {
+        this.clearAllData()
+      },
       handleCloseDialog() {
+        const param = {
+          show: false,
+          title: '',
+        }
+        this.$store.dispatch('SetHealthDialog', param).then(() => {}).catch(() => {
 
+        })
+      },
+      clearAllData() {
+        this.radioUseTraffic = '飞机'
+        this.personHealthForm.BackDate = '' // 时间范围
+        this.personHealthForm.travelInHb = -1
+        this.personHealthForm.contactHb = -1
+        this.personHealthForm.symptom = -1
+        this.personHealthForm.travelInfoList = []
+        this.clearUseTrafficData()
       },
       clearUseTrafficData() { // 清除交通工具的记录
         this.personHealthForm.feijiHBH = ''
@@ -367,14 +384,13 @@
       },
       handleDeleteClick(data) {
         console.log('handleDeleteClick', data)
-        for (var i = this.personHealthForm.travelInfoList.length - 1; i >= 0; i--) {
-          let _travelInfo = this.personHealthForm.travelInfoList[i]
+        let _travelInfoList = this.personHealthForm.travelInfoList
+        for (var i = _travelInfoList.length - 1; i >= 0; i--) {
+          let _travelInfo = _travelInfoList[i]
           if (_travelInfo.id === data.id) {
-            this.personHealthForm.travelInfoList.splice(i, 1);
+            _travelInfoList.splice(i, 1);
           }
         }
-
-
       }
     },
     mounted() {
