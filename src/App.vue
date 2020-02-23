@@ -270,8 +270,8 @@
   }
 
   .el-dialog__wrapper {
-    /*穿透该层*/
-    pointer-events: none;
+    /*穿透该层  不能添加,否则Dialog 超过窗口以后,滚动条无法拖动*/
+    /* pointer-events: none; */
   }
 
   .el-dialog {

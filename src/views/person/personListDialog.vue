@@ -80,7 +80,7 @@
 
 </style>
 <template>
-  <el-dialog :modal="false" width="1000px" top="1vh" :lock-scroll="true" :close-on-click-modal="false"
+  <el-dialog :modal="true" width="1000px" top="1vh" :lock-scroll="true" :append-to-body="true" :close-on-click-modal="false"
     @open="openPersonListDialogHandle" @close="closediv" :visible.sync="personListDialog.show" title="人员信息"
     v-dialogDrag>
     <div id="person-list-from" class="person-list-from">

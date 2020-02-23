@@ -4,7 +4,7 @@
 </style>
 <template>
   <div class="person-info-dialog">
-    <el-dialog :modal="false" top="0.5vh" width="770px" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="true" top="0.5vh" width="770px" :lock-scroll="true" :close-on-click-modal="false"
       @open="openPersonFacePercentDetailDialogHandle" :visible.sync="personInfoDialog.show"
       :title="personInfoDialog.name">
       <div id="person-face-person-detail-form" class="person-face-person-detail-form">
