@@ -165,6 +165,7 @@
       return {
         loading: false,
         radioUseTraffic: '飞机',
+        person_id: -1,
         personHealthForm: {
           BackDate: '', // 时间范围
           travelInHb: -1,
@@ -275,7 +276,9 @@
     },
     methods: {
       openPersonHealthDialogHandle() {
-        // console.log("----personHealthDialog---", this.personHealthDialog)
+        console.log("----personHealthDialog---", this.personHealthDialog)
+        this.person_id = this.personHealthDialog.person_id
+        this.getPersonHealth()
       },
       closePersonHealthDialogHandle() {
         this.clearAllData()
@@ -308,6 +311,20 @@
         this.personHealthForm.zijiaCPH = ''
         this.personHealthForm.jiaotongBZ = ''
         this.personHealthForm.useTraffic = ''
+      },
+      getPersonHealth() {
+        const param = {
+          method: 'person_health_list',
+          project_id: this.project_id,
+          person_id:this.person_id
+        }
+        this.$store.dispatch('GetPersonHealthList', param).then((personHealthList) => {
+          console.log("健康记录查询", personHealthList)
+          // this.optionsProjectPersion = this.projectPersonList
+          // this.loadingInstance.close();
+        }).catch(() => {
+
+        })
       },
       changeRadioUseTrafficHandle() {
         // console.log('changeRadioUseTrafficHandle')
@@ -390,11 +407,11 @@
             let param = {
               project_id: this.project_id,
               person_id: this.personHealthDialog.person_id,
-              travel_info:travel_info,
-              travel_in_hb:this.personHealthForm.travelInHb,
-              contact_hb:this.personHealthForm.contactHb,
-              symptom:this.personHealthForm.symptom,
-              back_date:moment(this.personHealthForm.BackDate).format("YYYY-MM-DD"),
+              travel_info: travel_info,
+              travel_in_hb: this.personHealthForm.travelInHb,
+              contact_hb: this.personHealthForm.contactHb,
+              symptom: this.personHealthForm.symptom,
+              back_date: moment(this.personHealthForm.BackDate).format("YYYY-MM-DD"),
               use_traffic: this.personHealthForm.useTraffic
             }
             console.log('param', param)

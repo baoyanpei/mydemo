@@ -1,3 +1,9 @@
+import {
+  personHealth,
+  personHealthList,
+  personHealthDay,
+  personHealthDayList
+} from '@/api/health'
 const health = {
   state: {
     personHealthDialog: { // 健康编辑窗口
@@ -28,6 +34,18 @@ const health = {
       return new Promise((resolve, reject) => {
         commit('SET_PERSON_HEALTH_DIALOG', param)
         resolve()
+      })
+    },
+    // 健康记录查询
+    GetPersonHealthList({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        personHealthList(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
       })
     },
   }
