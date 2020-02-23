@@ -210,7 +210,8 @@
           required: true,
           trigger: 'blur',
           validator: validateUseTraffic
-        }]
+        }],
+        personHealthInfo: null
       }
     },
     computed: {
@@ -301,6 +302,7 @@
         this.personHealthForm.symptom = -1
         this.personHealthForm.travelInfoList = []
         this.clearUseTrafficData()
+        this.personHealthInfo = null
       },
       clearUseTrafficData() { // 清除交通工具的记录
         this.personHealthForm.feijiHBH = ''
@@ -316,56 +318,121 @@
         const param = {
           method: 'person_health_list',
           project_id: this.project_id,
-          person_id:this.person_id
+          person_id: this.person_id
         }
         this.$store.dispatch('GetPersonHealthList', param).then((personHealth) => {
-          console.log("健康记录查询", personHealth)
-          //
-          // this.optionsProjectPersion = this.projectPersonList
-          // this.loadingInstance.close();
+          // console.log("健康记录查询", personHealth)
+          if (personHealth.length !== 0) {
+            this.personHealthInfo = personHealth[0]
+            console.log('this.personHealthInfo', this.personHealthInfo)
+
+            this.personHealthForm.travelInHb = this.personHealthInfo.travel_in_hb.toString()
+            this.personHealthForm.contactHb = this.personHealthInfo.contact_hb.toString()
+            this.personHealthForm.symptom = this.personHealthInfo.symptom.toString()
+            this.personHealthForm.BackDate = this.personHealthInfo.back_date.toString()
+            let travelInfoArray = this.personHealthInfo.travel_info.split(',')
+            // console.log('travelInfoArray', travelInfoArray)
+            travelInfoArray.forEach(travelInfo => {
+              const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+              this.personHealthForm.travelInfoList.push({
+                name: travelInfo,
+                id: genRandom(1, 1000)
+              })
+            })
+
+            const useTrafficListArray = this.personHealthInfo.use_traffic.split(',')
+            console.log('useTrafficListArray', useTrafficListArray)
+            if (useTrafficListArray.length > 0) {
+              useTrafficListArray.forEach(useTrafficList => {
+
+                const useTrafficArray = useTrafficList.split('－')
+                console.log('useTrafficArray', useTrafficArray)
+                let _trafficType = useTrafficArray[0]
+                this.radioUseTraffic = _trafficType
+                if (useTrafficArray[1] !== undefined) {
+                  switch (_trafficType) {
+                    case "飞机":
+                      const _feijiHBHArray = useTrafficArray[1].split(':')
+                      // console.log('_feijiHBHArray', _feijiHBHArray)
+                      if (_feijiHBHArray[0] === '航班号') {
+                        this.personHealthForm.feijiHBH = _feijiHBHArray[1]
+                      }
+                      const _feijiWZHArray = useTrafficArray[2].split(':')
+                      // console.log('_feijiHBHArray', _feijiHBHArray)
+                      if (_feijiWZHArray[0] === '位置') {
+                        this.personHealthForm.feijiZW = _feijiWZHArray[1]
+                      }
+                      break
+                    case "火车":
+                      const _houcheHBHArray = useTrafficArray[1].split(':')
+                      // console.log('_feijiHBHArray', _feijiHBHArray)
+                      if (_houcheHBHArray[0] === '车次') {
+                        this.personHealthForm.huocheBC = _houcheHBHArray[1]
+                      }
+                      const _feijiZWHArray = useTrafficArray[2].split(':')
+                      // console.log('_feijiHBHArray', _feijiHBHArray)
+                      if (_feijiZWHArray[0] === '座位') {
+                        this.personHealthForm.huocheZW = _feijiZWHArray[1]
+                      }
+                      break
+                    case "班车":
+                      const _bancheCPHHArray = useTrafficArray[1].split(':')
+                      // console.log('_feijiHBHArray', _feijiHBHArray)
+                      if (_bancheCPHHArray[0] === '车牌号') {
+                        this.personHealthForm.bancheCPH = _bancheCPHHArray[1]
+                      }
+
+                      break
+                    case "自驾":
+
+                      const _cphArray = useTrafficArray[1].split(':')
+                      if (_cphArray[0] === '车牌号') {
+                        this.personHealthForm.zijiaCPH = _cphArray[1]
+                      }
+                      // console.log('useTrafficArrayuseTrafficArray',useTrafficArray[2]) 
+                      break
+                    case "其他":
+                      const _jiaotongBZArray = useTrafficArray[1].split(':')
+                      if (_jiaotongBZArray[0] === '备注') {
+                        this.personHealthForm.jiaotongBZ = _jiaotongBZArray[1]
+                      }
+                      break
+                  }
+                }
+              })
+
+
+            }
+
+          }
         }).catch(() => {
 
         })
       },
       changeRadioUseTrafficHandle() {
         // console.log('changeRadioUseTrafficHandle')
-        this.clearUseTrafficData()
+        // this.clearUseTrafficData()
       },
       handleSubmit() {
         // console.log('aaa',moment(this.personHealthForm.BackDate).format("YYYY-MM-DD"))
         this.personHealthForm.useTraffic = ''
-        switch (this.radioUseTraffic) {
-          case "飞机":
-            if (this.personHealthForm.feijiHBH !== '' && this.personHealthForm.feijiZW !== '') {
-              this.personHealthForm.useTraffic =
-                `${this.radioUseTraffic},航班号:${this.personHealthForm.feijiHBH},位置:${this.personHealthForm.feijiZW}`
-            }
-            break;
-          case "火车":
-            if (this.personHealthForm.huocheBC !== '' && this.personHealthForm.huocheZW !== '') {
-              this.personHealthForm.useTraffic =
-                `${this.radioUseTraffic},班次:${this.personHealthForm.huocheBC},座位:${this.personHealthForm.huocheZW}`
-            }
-            break;
-          case "班车":
-            if (this.personHealthForm.bancheCPH !== '') {
-              this.personHealthForm.useTraffic =
-                `${this.radioUseTraffic},车牌号:${this.personHealthForm.bancheCPH}`
-            }
-            break;
-          case "自驾":
-            if (this.personHealthForm.zijiaCPH !== '') {
-              this.personHealthForm.useTraffic =
-                `${this.radioUseTraffic},车牌号:${this.personHealthForm.zijiaCPH}`
-            }
-            break;
-          case "其他":
-            if (this.personHealthForm.jiaotongBZ !== '') {
-              this.personHealthForm.useTraffic =
-                `${this.radioUseTraffic},备注:${this.personHealthForm.jiaotongBZ}`
-            }
-            break;
+        let useTrafficList = []
+        if (this.personHealthForm.feijiHBH !== '' || this.personHealthForm.feijiZW !== '') {
+          useTrafficList.push(`飞机－航班号:${this.personHealthForm.feijiHBH}－位置:${this.personHealthForm.feijiZW}`)
         }
+        if (this.personHealthForm.huocheBC !== '' || this.personHealthForm.huocheZW !== '') {
+          useTrafficList.push(`火车－车次:${this.personHealthForm.huocheBC}－座位:${this.personHealthForm.huocheZW}`)
+        }
+        if (this.personHealthForm.bancheCPH !== '') {
+          useTrafficList.push(`班车－车牌号:${this.personHealthForm.bancheCPH}`)
+        }
+        if (this.personHealthForm.zijiaCPH !== '') {
+          useTrafficList.push(`自驾－车牌号:${this.personHealthForm.zijiaCPH}`)
+        }
+        if (this.personHealthForm.jiaotongBZ !== '') {
+          useTrafficList.push(`其他－备注:${this.personHealthForm.jiaotongBZ}`)
+        }
+        this.personHealthForm.useTraffic = useTrafficList.join(',')
         // console.log('this.personHealthForm.useTraffic', this.personHealthForm.useTraffic)
         // console.log('this.personHealthForm.travelInfoList', this.personHealthForm.travelInfoList)
         let _travelInfoList = []
@@ -406,6 +473,7 @@
             // this.getData(isExport)
 
             let param = {
+              method: 'person_health',
               project_id: this.project_id,
               person_id: this.personHealthDialog.person_id,
               travel_info: travel_info,
@@ -415,7 +483,14 @@
               back_date: moment(this.personHealthForm.BackDate).format("YYYY-MM-DD"),
               use_traffic: this.personHealthForm.useTraffic
             }
+            if (this.personHealthInfo !== null) {
+              param['id'] = this.personHealthInfo.id
+            }
             console.log('param', param)
+            this.$store.dispatch('SetPersonHealth', param).then((personList) => {
+              this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
+              this.handleCloseDialog()
+            })
           }
         })
       },

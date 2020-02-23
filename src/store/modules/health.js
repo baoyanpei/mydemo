@@ -48,6 +48,18 @@ const health = {
         })
       })
     },
+    // 
+    SetPersonHealth({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        personHealth(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
   }
 }
 
