@@ -13,8 +13,9 @@
             <el-button type="success" :loading="loading" icon="el-icon-search"
               @click.native.prevent="openWorldCitysDialogHandle()" size="mini">添加
             </el-button>
-            <el-table ref="travelInfoListTable" :data="personHealthForm.travelInfoList" size="mini" :show-header="false"
-              header-align="center" :default-sort="{prop: 'name', order: 'ascending'}" empty-text="请添加节假日流动情况">
+            <el-table ref="travelInfoListTable" :data="personHealthForm.travelInfoList" height="100px" size="mini"
+              :show-header="false" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}"
+              empty-text="请添加节假日流动情况">
               <el-table-column property="name" sortable align="center" label="姓名" width="180" header-align="center">
                 <template slot-scope="scope">
                   {{scope.row.name}}
@@ -94,7 +95,7 @@
         <div style="text-align: right;">
           <el-button :loading="loading" @click.native.prevent="handleCloseDialog" size="mini">取消
           </el-button>
-          <el-button type="success" :loading="loading" @click.native.prevent="handleSubmit()" size="mini">确定修改
+          <el-button type="success" :loading="loading" @click.native.prevent="handleSubmit()" size="mini">确定
           </el-button>
         </div>
 
@@ -303,6 +304,7 @@
         this.personHealthForm.travelInfoList = []
         this.clearUseTrafficData()
         this.personHealthInfo = null
+        this.loading = false
       },
       clearUseTrafficData() { // 清除交通工具的记录
         this.personHealthForm.feijiHBH = ''
@@ -471,26 +473,42 @@
         this.$refs.personHealthForm.validate(valid => {
           if (valid) {
             // this.getData(isExport)
+            this.loading = true
+            this.$confirm('是否确定要添加/修改健康情况?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning',
+              // center: true
+            }).then(() => {
+              let param = {
+                method: 'person_health',
+                project_id: this.project_id,
+                person_id: this.personHealthDialog.person_id,
+                travel_info: travel_info,
+                travel_in_hb: this.personHealthForm.travelInHb,
+                contact_hb: this.personHealthForm.contactHb,
+                symptom: this.personHealthForm.symptom,
+                back_date: moment(this.personHealthForm.BackDate).format("YYYY-MM-DD"),
+                use_traffic: this.personHealthForm.useTraffic
+              }
+              if (this.personHealthInfo !== null) {
+                param['id'] = this.personHealthInfo.id
+              }
+              console.log('param', param)
+              this.$store.dispatch('SetPersonHealth', param).then((personList) => {
+                this.$message({
+                  message: '修改成功',
+                  type: 'success'
+                })
+                this.loading = false
+                this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
+                this.handleCloseDialog()
+              })
+            }).catch(() => {
+              this.loading = false
+            });
 
-            let param = {
-              method: 'person_health',
-              project_id: this.project_id,
-              person_id: this.personHealthDialog.person_id,
-              travel_info: travel_info,
-              travel_in_hb: this.personHealthForm.travelInHb,
-              contact_hb: this.personHealthForm.contactHb,
-              symptom: this.personHealthForm.symptom,
-              back_date: moment(this.personHealthForm.BackDate).format("YYYY-MM-DD"),
-              use_traffic: this.personHealthForm.useTraffic
-            }
-            if (this.personHealthInfo !== null) {
-              param['id'] = this.personHealthInfo.id
-            }
-            console.log('param', param)
-            this.$store.dispatch('SetPersonHealth', param).then((personList) => {
-              this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
-              this.handleCloseDialog()
-            })
+
           }
         })
       },
