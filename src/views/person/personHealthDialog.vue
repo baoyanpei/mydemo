@@ -318,8 +318,8 @@
           project_id: this.project_id,
           person_id:this.person_id
         }
-        this.$store.dispatch('GetPersonHealthList', param).then((personHealthList) => {
-          console.log("健康记录查询", personHealthList)
+        this.$store.dispatch('GetPersonHealthList', param).then((personHealth) => {
+          console.log("健康记录查询", personHealth)
           // this.optionsProjectPersion = this.projectPersonList
           // this.loadingInstance.close();
         }).catch(() => {
