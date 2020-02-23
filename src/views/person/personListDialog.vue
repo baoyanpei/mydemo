@@ -190,14 +190,34 @@
         </el-table-column>
         <el-table-column label="健康信息">
           <el-table-column property="" align="center" label="疫区旅居史" width="70" header-align="center">
+            <template slot-scope="scope">
+              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)" class="healthText">
+                <div v-if="scope.row.healthInfo.travel_in_hb === 1" >有</div>
+                <div v-if="scope.row.healthInfo.travel_in_hb === 0">无</div>
+              </div>
+            </template>
           </el-table-column>
           <el-table-column property="" align="center" label="接触疫区人员" width="80" header-align="center">
             <template slot-scope="scope">
-              <el-button size="mini" type="primary" class="btn-health" @click="openPersonHealthDialogHandle(scope.row)">登记健康情况
-              </el-button>
+              <div v-if="scope.row.healthInfo === ''">
+                <el-button size="mini" type="primary" class="btn-health"
+                  @click="openPersonHealthDialogHandle(scope.row)">
+                  登记健康情况
+                </el-button>
+              </div>
+              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)" class="healthText">
+                <div v-if="scope.row.healthInfo.contact_hb === 1">有</div>
+                <div v-if="scope.row.healthInfo.contact_hb === 0">无</div>
+              </div>
             </template>
           </el-table-column>
           <el-table-column property="" align="center" label="干咳等症状" width="70" header-align="center">
+            <template slot-scope="scope">
+              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)" class="healthText">
+                <div v-if="scope.row.healthInfo.symptom === 1">有</div>
+                <div v-if="scope.row.healthInfo.symptom === 0">无</div>
+              </div>
+            </template>
           </el-table-column>
         </el-table-column>
         <!--<el-table-column property="created_time" sortable align="left" label="入职时间" width="120" header-align="center">-->
@@ -318,7 +338,8 @@
         isMatchPerson: false, // 是否匹配人员名称
         personInoutTableEmptyText: '请点击查询按钮进行查询',
         checkedPersonType: false, //false 只有项目部
-        totalPerson: 0
+        totalPerson: 0,
+        personHealthMap: new Map()
         // list: []
       }
     },
@@ -340,6 +361,7 @@
             this.initData()
             this.getProjectGroups()
             this.getProjectPersons()
+
             this.getProjectPersonInout(false)
           } else {
             this.initData()
@@ -436,7 +458,35 @@
 
         })
       },
-      getProjectPersonInout(isExport) {
+      // 健康记录查询
+      getPersonHealthList() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'person_health_list',
+            project_id: this.project_id,
+            page: 1,
+            limit: 10000
+          }
+          this.$store.dispatch('GetPersonHealthList', param).then((personHealthList) => {
+            // console.log("健康记录查询", personHealthList)
+            // this.optionsProjectPersion = this.projectPersonList
+            // this.loadingInstance.close();
+            resolve(personHealthList)
+          }).catch(() => {
+
+          })
+
+        })
+
+      },
+      async getProjectPersonInout(isExport) {
+        const personHealthList = await this.getPersonHealthList()
+
+        this.personHealthMap = new Map()
+        personHealthList.forEach(personHealth => {
+          this.personHealthMap.set(personHealth.person_id, personHealth)
+        })
+        console.log('this.personHealthMap', this.personHealthMap)
         this.personInoutList = []
         this.loading = true
         const param = {
@@ -500,6 +550,16 @@
         }
         if (this.isMatchPerson === true) {
           // person.datum_uploaded = "10101010"
+
+          const _personHealth = this.personHealthMap.get(person.person_id)
+          // console.log('_personHealth', _personHealth)
+          if (_personHealth !== undefined) {
+            person['healthInfo'] = _personHealth
+            console.log('person', person)
+          } else {
+            person['healthInfo'] = ''
+          }
+
           this.personInoutList.push(person)
           this.personinto2.push(person)
         }
