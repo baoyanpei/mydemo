@@ -320,6 +320,7 @@
         }
         this.$store.dispatch('GetPersonHealthList', param).then((personHealth) => {
           console.log("健康记录查询", personHealth)
+          //
           // this.optionsProjectPersion = this.projectPersonList
           // this.loadingInstance.close();
         }).catch(() => {
