@@ -20,13 +20,15 @@
               </el-col>
               <el-col :span="5" class="fatherchange">
                 <!--<div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"-->
-                     <!--@click="changegroup">更换组别</div>-->
+                <!--@click="changegroup">更换组别</div>-->
                 <el-popover placement="right" width="400" trigger="click">
-                 <el-cascader-panel v-model="optionmodel" :options="optionGroups" @change="changevalue"></el-cascader-panel>
-                   <el-button type="primary" style="float: right;margin-top: 10px;" @click="open">确认</el-button>
-                  <div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"
-                     slot="reference" @click="changegroup">更换组别</div>
-              </el-popover>
+                  <el-cascader-panel v-model="optionmodel" :options="optionGroups" @change="changevalue">
+                  </el-cascader-panel>
+                  <el-button type="primary" style="float: right;margin-top: 10px;" @click="open">确认</el-button>
+                  <div
+                    style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"
+                    slot="reference" @click="changegroup">更换组别</div>
+                </el-popover>
               </el-col>
               <el-col :span="8">
                 班组：{{zhuanye}}
@@ -42,8 +44,8 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="24">
-                电话：{{mobile}} <el-button id='btnCopy' type="primary" v-clipboard:copy="mobile" v-clipboard:success="onCopySuccess"
-                  v-clipboard:error="onCopyError" size="mini">复制</el-button>
+                电话：{{mobile}} <el-button id='btnCopy' type="primary" v-clipboard:copy="mobile"
+                  v-clipboard:success="onCopySuccess" v-clipboard:error="onCopyError" size="mini">复制</el-button>
               </el-col>
             </el-row>
             <el-row :gutter="24">
@@ -62,8 +64,26 @@
               </el-col>
 
             </el-row>
+            <el-divider>健康信息</el-divider>
 
+            <el-row v-if="personHealthInfo!==null" :gutter="24">
+              <el-col :span="24">
+                重点疫区旅居史:
+                <span v-if="personHealthInfo.travel_in_hb===1">有</span>
+                <span v-if="personHealthInfo.travel_in_hb===0">无</span>
+                &nbsp;
+                接触疫区人员:
+                <span v-if="personHealthInfo.contact_hb===1">有</span>
+                <span v-if="personHealthInfo.contact_hb===0">无</span>
+                &nbsp;
+                返兰时间:{{personHealthInfo.back_date}}&nbsp;
+                方式:{{personHealthInfo.useTrafficDesc}}
+              </el-col>
+              <el-col :span="24">
 
+              </el-col>
+
+            </el-row>
             <!-- <el-form-item label="姓名:">
                 {{name}}
               </el-form-item> -->
@@ -101,6 +121,13 @@
                       <img :src="entry_pic" style="width:500px;;margin: 0px auto" />
                     </a>
                   </a>
+                </div>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="体检日历" name="tjrl">
+              <div class="div-tab-item">
+                <div style="text-align: center">
+                  敬请期待
                 </div>
               </div>
             </el-tab-pane>
@@ -230,14 +257,15 @@
         loadingIdCardb: '',
         BtnKaiChuDisable: true,
         BtnZhuXiaoKaDisable: true,
-        groupchange:false,
+        groupchange: false,
         BtnKaiChu: true,
-        groupall:[],
-        songroup1:[],
-        newsongroup:[],
-        optionmodel:'',
+        groupall: [],
+        songroup1: [],
+        newsongroup: [],
+        optionmodel: '',
         optionGroups: [],
-        change_personid:0
+        change_personid: 0,
+        personHealthInfo: null
 
       }
     },
@@ -274,6 +302,7 @@
             this.initData()
             this.getProjectPersonInfo()
             this.getPersonDatum()
+            this.getPersonHealth()
             // this.getPerson()
           } else {
             this.initData()
@@ -295,15 +324,15 @@
         }
         return timeFormat
       },
-      changegroup(){//更换组别
-        console.log("this.projectGroupList.group",this.projectGroupList.group)
+      changegroup() { //更换组别
+        console.log("this.projectGroupList.group", this.projectGroupList.group)
         const rootGroup = this.projectGroupList.group
         this.optionGroups = []
         if (rootGroup !== undefined && rootGroup.length > 0) {
           //1为管理部门 0为施工部门3为建设单位4为监理单位5为外部单位 grouptype类型说明,并且做了筛选这部操作
           // console.log("item.group.groups_type", item.group)
           rootGroup.forEach(item1 => {
-            if (item1.groups_type === 0 || item1.groups_type === 1|| item1.groups_type === 10) {
+            if (item1.groups_type === 0 || item1.groups_type === 1 || item1.groups_type === 10) {
               // console.log('item1', item1)
               let children = []
               if (item1.group !== undefined && item1.group.length > 0) {
@@ -324,8 +353,8 @@
           });
         }
       },
-      changevalue(){
-        console.log("123321123",this.optionmodel[1])
+      changevalue() {
+        console.log("123321123", this.optionmodel[1])
       },
       open() {
         this.$alert('<span>更换部门成功</span>', '更换部门提示', {
@@ -335,11 +364,10 @@
         const param = {
           method: 'set_person_props',
           project_id: this.project_id,
-          person_id:this.change_personid,
-          group_id:this.optionmodel[1]
+          person_id: this.change_personid,
+          group_id: this.optionmodel[1]
         }
-        this.$store.dispatch('PersonGroupChange', param).then(() => {
-        }).catch(() => {
+        this.$store.dispatch('PersonGroupChange', param).then(() => {}).catch(() => {
 
         })
       },
@@ -403,6 +431,7 @@
         this.BtnZhuXiaoKaDisable = true
         this.BtnKaiChuDisable = true
         this.BtnKaiChu = true
+        this.personHealthInfo = null
       },
       getProjectPersonInfo() {
         const param = {
@@ -413,8 +442,8 @@
         console.log('this.personInfoDialog', this.personInfoDialog)
         this.$store.dispatch('QueryProjectPerson', param).then((data_list) => {
           console.log("-data-->", data_list)
-          this.change_personid=data_list[0].person_id
-          console.log("projectGroupList",this.projectGroupList.group)
+          this.change_personid = data_list[0].person_id
+          console.log("projectGroupList", this.projectGroupList.group)
           const _personInfo = data_list[0]
           const _idcard_pic = _personInfo.idcard_pic
           if (_idcard_pic.length > 0) {
@@ -462,6 +491,38 @@
         })
 
 
+      },
+      getPersonHealth() {
+        const param = {
+          method: 'person_health_list',
+          project_id: this.project_id,
+          person_id: this.personInfoDialog.person_id
+        }
+        this.$store.dispatch('GetPersonHealthList', param).then((personHealth) => {
+
+          if (personHealth.length !== 0) {
+            this.personHealthInfo = personHealth[0]
+            console.log("健康记录查询", this.personHealthInfo)
+            let _useTrafficDesc = "-"
+            if (this.personHealthInfo.use_traffic !== '') {
+              const useTrafficListArray = this.personHealthInfo.use_traffic.split(',')
+              let useTrafficTypeList = []
+              useTrafficListArray.forEach((useTrafficList) => {
+
+                const useTrafficArray = useTrafficList.split('－')
+                if (useTrafficArray.length > 0) {
+                  useTrafficTypeList.push(useTrafficArray[0])
+                }
+
+              })
+              _useTrafficDesc = useTrafficTypeList.length > 0 ? useTrafficTypeList.join(',') : '-'
+            }
+
+            this.personHealthInfo['useTrafficDesc'] = _useTrafficDesc
+          }
+        }).catch(() => {
+
+        })
       },
       getPersonDatum() {
         const param = {
