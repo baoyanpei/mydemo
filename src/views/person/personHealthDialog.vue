@@ -28,12 +28,12 @@
               </el-table-column>
             </el-table>
           </el-form-item>
-          <el-form-item prop="BackDate" label="返兰日期" :rules="ruleBackDate">
+          <el-form-item prop="BackDate" label="返项目日期" :rules="ruleBackDate">
             <el-date-picker type="date" v-model="personHealthForm.BackDate" name="BackDate" :editable="false"
               :clearable="false" placeholder="选择日期" size="mini" style="width: 140px;">
             </el-date-picker>
           </el-form-item>
-          <el-form-item prop="useTraffic" label="外地返兰乘坐交通工具" :rules="ruleUseTraffic">
+          <el-form-item prop="useTraffic" label="外地返项目乘坐交通工具" :rules="ruleUseTraffic">
             <el-radio-group v-model="radioUseTraffic" size="mini" @change="changeRadioUseTrafficHandle">
               <el-radio-button label="飞机"></el-radio-button>
               <el-radio-button label="火车"></el-radio-button>
@@ -121,7 +121,7 @@
     data() {
       const validateInoutDaterange = (rule, value, callback) => {
         if (value.length === 0) {
-          callback(new Error('必须选择返兰日期'))
+          callback(new Error('必须选择返项目日期'))
         } else {
           callback()
         }
@@ -156,7 +156,7 @@
       }
       const validateUseTraffic = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('必须填写外地返兰乘坐的交通工具'))
+          callback(new Error('必须填写外地返项目乘坐的交通工具'))
         } else {
           callback()
         }

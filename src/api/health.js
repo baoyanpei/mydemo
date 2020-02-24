@@ -104,7 +104,7 @@ export function personHealthDay(data) {
 
 // 6.2 用户健康日记录
 /*
-6.2.2 健康记录查询
+6.2.2 用户健康日记录
 
 api:/api/logs/rec
 method:person_health_day_list

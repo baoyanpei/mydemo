@@ -60,6 +60,30 @@ const health = {
         })
       })
     },
+    // 
+    SetPersonHealthDay({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        personHealthDay(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 用户健康日记录
+    GetPersonHealthDayList({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        personHealthDayList(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
   }
 }
 

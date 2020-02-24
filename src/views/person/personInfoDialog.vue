@@ -4,16 +4,16 @@
 </style>
 <template>
   <div class="person-info-dialog">
-    <el-dialog :modal="true" top="0.5vh" width="770px" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="true" top="0.5vh" width="800px" :lock-scroll="true" :close-on-click-modal="false"
       @open="openPersonFacePercentDetailDialogHandle" :visible.sync="personInfoDialog.show"
       :title="personInfoDialog.name">
       <div id="person-face-person-detail-form" class="person-face-person-detail-form">
         <el-row :gutter="24" style="width: 700px;">
-          <el-col :span="6" style="text-align: center;padding-right:0px;">
+          <el-col :span="5" style="text-align: center;padding-right:0px;">
             <div><img :src="idcard_pic" style="height:120px;" /></div>
             <!-- <div>(身份证照)</div> -->
           </el-col>
-          <el-col :span="18" class="persion-info-txt" style="text-align: left;padding: 2px;">
+          <el-col :span="19" class="persion-info-txt" style="text-align: left;padding: 2px;">
             <el-row :gutter="20">
               <el-col :span="6">
                 部门：{{bumen}}
@@ -76,17 +76,31 @@
                 <span v-if="personHealthInfo.contact_hb===1">有</span>
                 <span v-if="personHealthInfo.contact_hb===0">无</span>
                 &nbsp;
-                返兰时间:{{personHealthInfo.back_date}}&nbsp;
+                返项目时间:{{personHealthInfo.back_date}}&nbsp;
                 方式:{{personHealthInfo.useTrafficDesc}}
               </el-col>
-              <el-col :span="24">
-
-              </el-col>
-
             </el-row>
-            <!-- <el-form-item label="姓名:">
-                {{name}}
-              </el-form-item> -->
+            <el-row v-if="personHealthInfo===null" :gutter="24">
+              <el-col :span="24">未录入健康信息</el-col>
+            </el-row>
+            <el-row v-if="personLastHealthDayInfo!==null" :gutter="24">
+              <el-col :span="24">
+                体温：{{personLastHealthDayInfo.temp}}°C
+                <span v-if="personLastHealthDayInfo.give_out_heat===1">有发热</span>
+                <span v-if="personLastHealthDayInfo.give_out_heat===0">无发热</span>
+                &nbsp;
+                <span v-if="personLastHealthDayInfo.cough===1">有干咳等症状</span>
+                <span v-if="personLastHealthDayInfo.cough===0">无干咳等症状</span>
+                &nbsp;
+                <span v-if="personLastHealthDayInfo.symptom!==''">过去14天,有{{personLastHealthDayInfo.symptom}}等症状</span>
+                <br/>
+                最后记录时间：{{personLastHealthDayInfo.created_time}}
+              </el-col>
+            </el-row>
+            <el-row v-if="personLastHealthDayInfo===null" :gutter="24">
+              <el-col :span="24">未记录体检信息</el-col>
+            </el-row>
+
           </el-col>
         </el-row>
         <div v-if="personInfoDialog.opShow">
@@ -109,7 +123,8 @@
         </div>
         <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
           style="position:absolute;top:85px;right:20px;">上工日志</el-button>
-
+        <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
+          style="position:absolute;top:200px;right:20px;">记录体检信息</el-button>
         <el-row>
           <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
             <el-tab-pane label="入职照片" name="rzzp">
@@ -265,7 +280,8 @@
         optionmodel: '',
         optionGroups: [],
         change_personid: 0,
-        personHealthInfo: null
+        personHealthInfo: null, //健康信息
+        personLastHealthDayInfo: null // 最新的一条健康日志
 
       }
     },
@@ -303,6 +319,7 @@
             this.getProjectPersonInfo()
             this.getPersonDatum()
             this.getPersonHealth()
+            this.getPersonHealthDayLast()
             // this.getPerson()
           } else {
             this.initData()
@@ -432,6 +449,7 @@
         this.BtnKaiChuDisable = true
         this.BtnKaiChu = true
         this.personHealthInfo = null
+        this.personLastHealthDayInfo = null
       },
       getProjectPersonInfo() {
         const param = {
@@ -521,6 +539,23 @@
             this.personHealthInfo['useTrafficDesc'] = _useTrafficDesc
           }
         }).catch(() => {
+
+        })
+      },
+      getPersonHealthDayLast() {
+        this.personLastHealthDayInfo = null
+        const param = {
+          method: 'person_health_day_list',
+          project_id: this.project_id,
+          person_id: this.personInfoDialog.person_id,
+          page: 1,
+          limit: 1
+        }
+        this.$store.dispatch('GetPersonHealthDayList', param).then((personHealth) => {
+          if (personHealth.length > 0) {
+            this.personLastHealthDayInfo = personHealth[0]
+            console.log('this.personLastHealthDayInfo', this.personLastHealthDayInfo)
+          }
 
         })
       },
