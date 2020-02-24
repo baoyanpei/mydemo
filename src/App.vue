@@ -53,9 +53,12 @@
     <!--人员健康对话框-->
     <PersonHealthDialog></PersonHealthDialog>
 
+    <!--人员健康日志对话框-->
+    <PersonHealthDayLogDialog></PersonHealthDayLogDialog>
+
     <!--世界城市dialog-->
     <worldCitysDialog></worldCitysDialog>
-    
+
   </div>
 </template>
 
@@ -76,6 +79,9 @@
 
   // 人员健康dialog
   import PersonHealthDialog from './views/person/personHealthDialog'
+
+  // 人员体检日志dialog
+  import PersonHealthDayLogDialog from './views/person/personHealthDayLogDialog'
 
   // 人员进出详细dialog
   import PersonInOutDetailDialog from './views/person/personInOutDetailDialog'
@@ -129,6 +135,7 @@
       PersonGoOutDialog,
       LogsPersonComfirmDialog,
       PersonInfoDialog,
+      PersonHealthDayLogDialog,
       PersonHealthDialog,
       PersonInOutDetailDialog,
       PersonQuitLeftDialog,

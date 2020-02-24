@@ -721,7 +721,16 @@
           // },
           // timeFormat: 'HH:mm{ - HH:mm}',
           eventClick: (event) => {
-            console.log('event', event,event.start.format('YYYY-MM-DD'))
+            console.log('event', event, event.start.format('YYYY-MM-DD'))
+
+            const param = {
+              show: true,
+              person_id: this.personInfoDialog.person_id,
+              date: event.start.format('YYYY-MM-DD')
+            }
+            this.$store.dispatch('SetHealthDayLogDialog', param).then(() => {}).catch(() => {
+
+            })
           },
           // loading: function (bool) {},
 
@@ -782,7 +791,7 @@
                 borderColor: "#4a86e8", //red
                 titleFormat: ""
               })
-            }else{
+            } else {
               events.push({
                 title: _total + "/3",
                 start: moment(info.created_time).format('YYYY-MM-DD 00:00:02'),
