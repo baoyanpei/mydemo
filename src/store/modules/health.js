@@ -2,7 +2,8 @@ import {
   personHealth,
   personHealthList,
   personHealthDay,
-  personHealthDayList
+  personHealthDayList,
+  personHealthDayLastList
 } from '@/api/health'
 const health = {
   state: {
@@ -78,6 +79,18 @@ const health = {
     }, param) {
       return new Promise((resolve, reject) => {
         personHealthDayList(param).then(response => {
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 健康记录按天最新查询
+    GetPersonHealthDayLastList({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        personHealthDayLastList(param).then(response => {
           resolve(response.data)
         }).catch(error => {
           reject(error)

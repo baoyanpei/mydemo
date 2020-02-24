@@ -113,7 +113,8 @@ method:person_health_day_list
         person_id:可选
         page:1 默认
         limit:1 默认
-
+        bt: yyyy-mm-dd 可选
+        et: yyyy-mm-dd 可选 （bt,et 成对使用）
 返回：
   {
     "count": 2,
@@ -145,6 +146,69 @@ method:person_health_day_list
 */
 
 export function personHealthDayList(data) {
+  return request({
+    url: '/api/logs/rec',
+    method: 'post',
+    data: data
+  })
+}
+
+/*
+6.2.3 健康记录按天最新查询
+取每天最新一条记录
+api:/api/logs/rec
+method:person_health_day_last_list
+参数：
+        project_id:必选
+        person_id:可选
+        page:1 默认
+        limit:31 默认
+        bt: yyyy-mm-dd 可选
+        et: yyyy-mm-dd 可选 （bt,et 成对使用）
+
+返回：
+ {
+  "count": 2,
+  "data": [
+    {
+      "contact_hb": 0,
+      "cough": 0,
+      "created_person": {
+        "id": 100747,
+        "name": "徐英"
+      },
+      "created_time": "2020-02-24 00:02:13",
+      "day": "2020-02-24",
+      "give_out_heat": 0,
+      "id": 90,
+      "person_id": 100589,
+      "symptom": "无上述症状",
+      "temp": 36.5
+    },
+    {
+      "contact_hb": 0,
+      "cough": 0,
+      "created_person": {
+        "id": 100566,
+        "name": "张垚"
+      },
+      "created_time": "2020-02-22 16:08:47",
+      "day": "2020-02-22",
+      "give_out_heat": 1,
+      "id": 33,
+      "person_id": 100589,
+      "symptom": "无上述症状",
+      "temp": 37.5
+    }
+  ],
+  "msg": "",
+  "page": 1,
+  "status": "success"
+}
+
+*/
+
+export function personHealthDayLastList(data) {
   return request({
     url: '/api/logs/rec',
     method: 'post',

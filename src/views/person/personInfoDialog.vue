@@ -5,7 +5,7 @@
 <template>
   <div class="person-info-dialog">
     <el-dialog :modal="true" top="0.5vh" width="800px" :lock-scroll="true" :close-on-click-modal="false"
-      @open="openPersonFacePercentDetailDialogHandle" :visible.sync="personInfoDialog.show"
+      @open="openPersonInfoDialogHandle" @close="closePersonInfoDialogHandle" :visible.sync="personInfoDialog.show"
       :title="personInfoDialog.name">
       <div id="person-face-person-detail-form" class="person-face-person-detail-form">
         <el-row :gutter="24" style="width: 700px;">
@@ -92,8 +92,9 @@
                 <span v-if="personLastHealthDayInfo.cough===1">有干咳等症状</span>
                 <span v-if="personLastHealthDayInfo.cough===0">无干咳等症状</span>
                 &nbsp;
-                <span v-if="personLastHealthDayInfo.symptom!==''">过去14天,有{{personLastHealthDayInfo.symptom}}等症状</span>
-                <br/>
+                <span
+                  v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom!=='无上述症状'">过去14天,有{{personLastHealthDayInfo.symptom}}等症状</span>
+                <br />
                 最后记录时间：{{personLastHealthDayInfo.created_time}}
               </el-col>
             </el-row>
@@ -142,7 +143,9 @@
             <el-tab-pane label="体检日历" name="tjrl">
               <div class="div-tab-item">
                 <div style="text-align: center">
-                  敬请期待
+                  <div id="person-health-full-calender" class="person-health-full-calender">
+                    <div id="person-health-fullcalender"></div>
+                  </div>
                 </div>
               </div>
             </el-tab-pane>
@@ -234,6 +237,8 @@
 
 <script>
   import moment from 'moment'
+  import 'fullcalendar/dist/locale/zh-cn'
+  import $ from 'jquery'
   // import vpdf from 'vpdf'
   // import pdf from 'vue-pdf'
   // import vueshowpdf from 'vueshowpdf'
@@ -416,12 +421,21 @@
         return _text
       },
       // 打开窗口
-      openPersonFacePercentDetailDialogHandle() {
+      openPersonInfoDialogHandle() {
         // console.log("----22222---")
       },
+      closePersonInfoDialogHandle() {
+        $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
+      },
       tabHandleClick(tab, event) {
-        console.log(tab, event);
+        console.log("tab.paneName", tab.paneName);
         this.activeTabName = tab.name
+        if (tab.paneName === 'tjrl') {
+          console.log("tab.体检");
+          this.renderFullCalender()
+        } else {
+          $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
+        }
         // this.reloadData()
         // console.log('this.activeTabName', this.activeTabName)
       },
@@ -679,6 +693,111 @@
         this.$message({
           message: '复制失败',
           type: 'error'
+        })
+      },
+      renderFullCalender() {
+        // console.log("renderFullCalenderrenderFullCalender")
+        $('#person-health-fullcalender').fullCalendar({
+          height: 500,
+          header: {
+            right: 'prev,next today',
+            center: 'title',
+            left: ''
+          },
+          theme: false,
+          editable: false,
+          allDaySlot: false,
+          eventLimit: 100,
+          events: (start, end, timezone, callback) => {
+            console.log("--->", start, end, timezone, callback)
+            this.getFullCal(start, end, timezone, callback);
+            // console.log(start, end)
+
+            // $(".fc-time").html("2");
+          },
+          // dayClick: function (date, allDay, jsEvent, view) {
+          //   console.log(date.format('YYYY-MM-DD'), allDay, jsEvent, view)
+          //   return false;
+          // },
+          // timeFormat: 'HH:mm{ - HH:mm}',
+          eventClick: (event) => {
+            console.log('event', event,event.start.format('YYYY-MM-DD'))
+          },
+          // loading: function (bool) {},
+
+        });
+      },
+      getFullCal(start, end, timezone, callback) {
+        const _start = start.format('YYYY-MM-DD')
+        const _end = end.format('YYYY-MM-DD')
+        console.log("ccc->", _start, _end)
+
+        const param = {
+          method: 'person_health_day_last_list',
+          project_id: this.project_id,
+          person_id: this.personInfoDialog.person_id,
+          bt: _start,
+          et: _end
+        }
+        let events = [];
+        this.loading = this.$loading({
+          // lock: true,
+          // text: '正在读取数据...',
+          // spinner: 'el-icon-loading',
+          // background: 'rgba(0, 0, 0, 0.5)',
+          // customClass: 'loading-class',
+          target: document.querySelector('.worktime-full-calender')
+        });
+
+        this.$store.dispatch('GetPersonHealthDayLastList', param).then((personHealthDayLastList) => {
+          this.loading.close();
+          // console.log("personHealthDayLastList", personHealthDayLastList)
+          personHealthDayLastList.forEach((info, index) => {
+            // console.log('info', info, moment(info.created_time).format('YYYY-MM-DD 00:00:00'))
+            let _total = 0
+
+            if (info.give_out_heat === 0) {
+              _total = _total + 1
+            }
+            if (info.cough === 0) {
+              _total = _total + 1
+            }
+
+            if (info.symptom === '' || info.symptom === '无上述症状') {
+              _total = _total + 1
+            }
+            events.push({
+              title: "\r\r" + info.temp + "°C",
+              start: moment(info.created_time).format('YYYY-MM-DD 00:00:01'),
+              backgroundColor: "#29bb9c", //red
+              borderColor: "#29bb9c", //red
+
+              titleFormat: ""
+            })
+            if (_total === 3) {
+              events.push({
+                title: _total + "/3",
+                start: moment(info.created_time).format('YYYY-MM-DD 00:00:02'),
+                backgroundColor: "#4a86e8", //red
+                borderColor: "#4a86e8", //red
+                titleFormat: ""
+              })
+            }else{
+              events.push({
+                title: _total + "/3",
+                start: moment(info.created_time).format('YYYY-MM-DD 00:00:02'),
+                backgroundColor: "#b00000", //red
+                borderColor: "#b00000", //red
+                titleFormat: ""
+              })
+            }
+          })
+
+          callback(events);
+          // console.log("111")
+
+        }).catch(() => {
+          //   this.loading = false
         })
       }
     },

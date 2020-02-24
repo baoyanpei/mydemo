@@ -1,4 +1,15 @@
 .person-info-dialog {
+  .person-health-full-calender {
+    .fc-time {
+      display: none;
+    }
+
+    .fc-day-grid-event .fc-content {
+      text-align: center;
+      font-weight: 600;
+    }
+  }
+
   .el-message-box__content {
     padding: 0px;
   }
