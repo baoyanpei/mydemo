@@ -12,6 +12,11 @@ const health = {
       show: false,
       data: {}
     },
+    personHealthDayDialog: { // 健康体检编辑窗口
+      refresh: 0,
+      show: false,
+      data: {}
+    },
     personHealthDayLogDialog: { // 健康日志
       refresh: 0,
       show: false,
@@ -29,6 +34,17 @@ const health = {
       //     state.personHealthDialog.opShow = false
       //   }
       state.personHealthDialog.refresh = genRandom(1, 1000)
+    },
+    SET_PERSON_HEALTH_DAY_DIALOG: (state, data) => {
+      // console.log('SET_PERSON_INFO_DIALOG', data)
+      state.personHealthDayDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      // console.log('opShow', data.opShow)
+      //   if (data.opShow === undefined) {
+      //     // 是否显示操作按钮
+      //     state.personHealthDialog.opShow = false
+      //   }
+      state.personHealthDayDialog.refresh = genRandom(1, 1000)
     },
     SET_PERSON_HEALTH_DAY_LOG_DIALOG: (state, data) => {
       // console.log('SET_PERSON_HEALTH_DAY_LOG_DIALOG', data)
@@ -50,6 +66,14 @@ const health = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SET_PERSON_HEALTH_DIALOG', param)
+        resolve()
+      })
+    },
+    SetHealthDayDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PERSON_HEALTH_DAY_DIALOG', param)
         resolve()
       })
     },

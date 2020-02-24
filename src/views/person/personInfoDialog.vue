@@ -124,7 +124,7 @@
         </div>
         <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
           style="position:absolute;top:85px;right:20px;">上工日志</el-button>
-        <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
+        <el-button type="success" @click.native.prevent="handlePersonHealthDaySubmit()" size="mini"
           style="position:absolute;top:200px;right:20px;">记录体检信息</el-button>
         <el-row>
           <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
@@ -598,6 +598,15 @@
           ...this.personInfoDialog
         }
         this.$store.dispatch('SetWorktimeFullCalenderDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
+      handlePersonHealthDaySubmit() {
+        const param = {
+          show: true,
+          person_id: this.personInfoDialog.person_id,
+        }
+        this.$store.dispatch('SetHealthDayDialog', param).then(() => {}).catch(() => {
 
         })
       },

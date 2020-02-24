@@ -53,6 +53,9 @@
     <!--人员健康对话框-->
     <PersonHealthDialog></PersonHealthDialog>
 
+    <!--人员健康体检对话框-->
+    <PersonHealthDayDialog></PersonHealthDayDialog>
+
     <!--人员健康日志对话框-->
     <PersonHealthDayLogDialog></PersonHealthDayLogDialog>
 
@@ -79,6 +82,9 @@
 
   // 人员健康dialog
   import PersonHealthDialog from './views/person/personHealthDialog'
+
+  // 人员健康体检dialog
+  import PersonHealthDayDialog from './views/person/personHealthDayDialog'
 
   // 人员体检日志dialog
   import PersonHealthDayLogDialog from './views/person/personHealthDayLogDialog'
@@ -137,6 +143,7 @@
       PersonInfoDialog,
       PersonHealthDayLogDialog,
       PersonHealthDialog,
+      PersonHealthDayDialog,
       PersonInOutDetailDialog,
       PersonQuitLeftDialog,
       PersonListDialog,
