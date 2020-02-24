@@ -308,6 +308,9 @@
       },
       personInfoChanged() {
         return this.$store.state.project.personInfoChanged
+      },
+      personHealthDayChanged() {
+        return this.$store.state.health.personHealthDayChanged
       }
 
     },
@@ -336,6 +339,14 @@
       personInfoChanged(curVal, oldVal) {
         this.initData()
         this.getProjectPersonInfo()
+      },
+      personHealthDayChanged(curVal, oldVal) {
+        this.getPersonHealthDayLast()
+        // console.log('activeTabName', this.activeTabName)
+        if (this.activeTabName === 'tjrl'){
+          $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
+          this.renderFullCalender()
+        } 
       },
     },
     methods: {
@@ -428,10 +439,10 @@
         $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
       },
       tabHandleClick(tab, event) {
-        console.log("tab.paneName", tab.paneName);
+        // console.log("tab.paneName", tab.paneName);
         this.activeTabName = tab.name
         if (tab.paneName === 'tjrl') {
-          console.log("tab.体检");
+          // console.log("tab.体检");
           this.renderFullCalender()
         } else {
           $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历

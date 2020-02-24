@@ -178,6 +178,14 @@
         this.personHealthDayForm.symptom = ""
         this.$refs.personHealthDayForm.resetFields();
       },
+      handleCloseDialog() {
+        const param = {
+          show: false,
+        }
+        this.$store.dispatch('SetHealthDayDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
       handleSubmit() {
         // console.log('this.symptomList0', this.symptomList)
         this.$refs.personHealthDayForm.validate(valid => {
@@ -195,12 +203,22 @@
               project_id: this.project_id,
               person_id: this.personHealthDayDialog.person_id,
               temp: this.personHealthDayForm.temp, //体温
-              give_out_heat: this.personHealthDayForm.give_out_heat, //有无发热0无1有
-              cough: this.personHealthDayForm.cough, //有无干咳0无1有
-              symptom: this.personHealthDayForm.symptom //有无以下症状
-
+              give_out_heat: parseInt(this.personHealthDayForm.give_out_heat), //有无发热0无1有
+              cough: parseInt(this.personHealthDayForm.cough), //有无干咳0无1有
+              symptom: this.personHealthDayForm.symptom, //有无以下症状
+              contact_hb: 0,
+              remark: ''
             }
             console.log('param', param)
+            this.$store.dispatch('SetPersonHealthDay', param).then((personList) => {
+              this.$message({
+                message: '提交成功',
+                type: 'success'
+              })
+              this.loading = false
+              this.$store.dispatch('SetPersonHealthDayChanged', {}).then(() => {})
+              this.handleCloseDialog()
+            })
           }
         })
       },

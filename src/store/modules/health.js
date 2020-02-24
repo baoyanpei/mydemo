@@ -22,6 +22,7 @@ const health = {
       show: false,
       data: {}
     },
+    personHealthDayChanged: 0 // 数据发生变化
   },
   mutations: {
     SET_PERSON_HEALTH_DIALOG: (state, data) => {
@@ -57,6 +58,10 @@ const health = {
       //   }
       state.personHealthDayLogDialog.refresh = genRandom(1, 1000)
       console.log('SET_PERSON_HEALTH_DAY_LOG_DIALOG', state.personHealthDayLogDialog)
+    },
+    SET_PERSON_HEALTH_DAY_CHANGED: (state) => {
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.personHealthDayChanged = genRandom(1, 1000)
     },
   },
 
@@ -143,6 +148,14 @@ const health = {
         }).catch(error => {
           reject(error)
         })
+      })
+    },
+    SetPersonHealthDayChanged({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SET_PERSON_HEALTH_DAY_CHANGED')
+        resolve()
       })
     },
   }
