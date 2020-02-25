@@ -252,6 +252,14 @@
         set: function (newValue) {
           this.$store.state.tools.healthWorldCitysData = newValue
         }
+      },
+      useTrafficData: {
+        get: function () {
+          return this.$store.state.tools.useTrafficData
+        },
+        set: function (newValue) {
+          this.$store.state.tools.useTrafficData = newValue
+        }
       }
       // personInfoChanged() {
       //   return this.$store.state.project.personInfoChanged
@@ -289,6 +297,17 @@
         },
         deep: true
       },
+      useTrafficData: {
+        handler: function (newVal, oldVal) {
+          // console.info('value newValnewVal ', newVal)
+          this.personHealthForm.useTrafficList.push({
+            name: newVal.name,
+            id: newVal.id
+          })
+          // console.log('travelInfoList', this.personHealthForm.travelInfoList)
+        },
+        deep: true
+      }
       // personInfoChanged(curVal, oldVal) {
       //   this.initData()
       //   this.getProjectPersonInfo()
@@ -355,76 +374,27 @@
             let travelInfoArray = this.personHealthInfo.travel_info.split(',')
             // console.log('travelInfoArray', travelInfoArray)
             travelInfoArray.forEach(travelInfo => {
-              const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
-              this.personHealthForm.travelInfoList.push({
-                name: travelInfo,
-                id: genRandom(1, 1000)
-              })
+              if (travelInfo !== '') {
+                const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+                this.personHealthForm.travelInfoList.push({
+                  name: travelInfo,
+                  id: genRandom(1, 1000)
+                })
+              }
             })
 
             const useTrafficListArray = this.personHealthInfo.use_traffic.split(',')
             console.log('useTrafficListArray', useTrafficListArray)
             useTrafficListArray.forEach(useTrafficInfo => {
-              const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
-              this.personHealthForm.useTrafficList.push({
-                name: useTrafficInfo,
-                id: genRandom(1, 1000)
-              })
-              /*
-              const useTrafficArray = useTrafficList.split('－')
-              console.log('useTrafficArray', useTrafficArray)
-              let _trafficType = useTrafficArray[0]
-              this.radioUseTraffic = _trafficType
-              if (useTrafficArray[1] !== undefined) {
-                switch (_trafficType) {
-                  case "飞机":
-                    const _feijiHBHArray = useTrafficArray[1].split(':')
-                    // console.log('_feijiHBHArray', _feijiHBHArray)
-                    if (_feijiHBHArray[0] === '航班号') {
-                      this.personHealthForm.feijiHBH = _feijiHBHArray[1]
-                    }
-                    const _feijiWZHArray = useTrafficArray[2].split(':')
-                    // console.log('_feijiHBHArray', _feijiHBHArray)
-                    if (_feijiWZHArray[0] === '位置') {
-                      this.personHealthForm.feijiZW = _feijiWZHArray[1]
-                    }
-                    break
-                  case "火车":
-                    const _houcheHBHArray = useTrafficArray[1].split(':')
-                    // console.log('_feijiHBHArray', _feijiHBHArray)
-                    if (_houcheHBHArray[0] === '车次') {
-                      this.personHealthForm.huocheBC = _houcheHBHArray[1]
-                    }
-                    const _feijiZWHArray = useTrafficArray[2].split(':')
-                    // console.log('_feijiHBHArray', _feijiHBHArray)
-                    if (_feijiZWHArray[0] === '座位') {
-                      this.personHealthForm.huocheZW = _feijiZWHArray[1]
-                    }
-                    break
-                  case "班车":
-                    const _bancheCPHHArray = useTrafficArray[1].split(':')
-                    // console.log('_feijiHBHArray', _feijiHBHArray)
-                    if (_bancheCPHHArray[0] === '车牌号') {
-                      this.personHealthForm.bancheCPH = _bancheCPHHArray[1]
-                    }
+              if (useTrafficInfo !== '') {
+                const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+                this.personHealthForm.useTrafficList.push({
+                  name: useTrafficInfo,
+                  id: genRandom(1, 1000)
+                })
+              }
 
-                    break
-                  case "自驾":
 
-                    const _cphArray = useTrafficArray[1].split(':')
-                    if (_cphArray[0] === '车牌号') {
-                      this.personHealthForm.zijiaCPH = _cphArray[1]
-                    }
-                    // console.log('useTrafficArrayuseTrafficArray',useTrafficArray[2]) 
-                    break
-                  case "其他":
-                    const _jiaotongBZArray = useTrafficArray[1].split(':')
-                    if (_jiaotongBZArray[0] === '备注') {
-                      this.personHealthForm.jiaotongBZ = _jiaotongBZArray[1]
-                    }
-                    break
-                }
-              }*/
             })
           }
         }).catch(() => {
@@ -518,7 +488,6 @@
                 param['id'] = this.personHealthInfo.id
               }
               console.log('param', param)
-              return;
               this.$store.dispatch('SetPersonHealth', param).then((personList) => {
                 this.$message({
                   message: '修改成功',
