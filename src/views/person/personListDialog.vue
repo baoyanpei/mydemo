@@ -129,7 +129,7 @@
             <el-button type="success" :loading="loading" icon="el-icon-search"
               @click.native.prevent="handleSubmit(false)" size="mini">查询</el-button>
             <el-button type="success" :loading="loading" icon="el-icon-download"
-              @click.native.prevent="handleSubmit(true)" size="mini">导出Excel</el-button>
+              @click.native.prevent="handleSubmit(true)" size="mini">导出人员信息</el-button>
             <el-button type="success" :loading="loading" icon="el-icon-download"
               @click.native.prevent="handleExpertHealthSubmit()" size="mini">导出健康状态</el-button>
           </el-form-item>
