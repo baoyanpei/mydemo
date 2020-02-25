@@ -3,7 +3,8 @@ import {
   personHealthList,
   personHealthDay,
   personHealthDayList,
-  personHealthDayLastList
+  personHealthDayLastList,
+  personHealthExcel
 } from '@/api/health'
 const health = {
   state: {
@@ -156,6 +157,17 @@ const health = {
       return new Promise((resolve, reject) => {
         commit('SET_PERSON_HEALTH_DAY_CHANGED')
         resolve()
+      })
+    },
+    GetPersonHealthExcel({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        personHealthExcel(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
       })
     },
   }

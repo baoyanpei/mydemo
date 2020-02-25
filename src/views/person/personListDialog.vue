@@ -80,9 +80,9 @@
 
 </style>
 <template>
-  <el-dialog :modal="true" width="1000px" top="1vh" :lock-scroll="true" :append-to-body="true" :close-on-click-modal="false"
-    @open="openPersonListDialogHandle" @close="closediv" :visible.sync="personListDialog.show" title="人员信息"
-    v-dialogDrag>
+  <el-dialog :modal="true" width="1000px" top="1vh" :lock-scroll="true" :append-to-body="true"
+    :close-on-click-modal="false" @open="openPersonListDialogHandle" @close="closediv"
+    :visible.sync="personListDialog.show" title="人员信息" v-dialogDrag>
     <div id="person-list-from" class="person-list-from">
       <el-form ref="personInoutForm" :model="personInoutForm" label-width="80px" :inline="true">
         <div>
@@ -130,6 +130,8 @@
               @click.native.prevent="handleSubmit(false)" size="mini">查询</el-button>
             <el-button type="success" :loading="loading" icon="el-icon-download"
               @click.native.prevent="handleSubmit(true)" size="mini">导出Excel</el-button>
+            <el-button type="success" :loading="loading" icon="el-icon-download"
+              @click.native.prevent="handleExpertHealthSubmit()" size="mini">导出健康状态</el-button>
           </el-form-item>
         </div>
 
@@ -191,8 +193,9 @@
         <el-table-column label="健康信息">
           <el-table-column property="" align="center" label="疫区旅居史" width="70" header-align="center">
             <template slot-scope="scope">
-              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)" class="healthText">
-                <div v-if="scope.row.healthInfo.travel_in_hb === 1" >有</div>
+              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)"
+                class="healthText">
+                <div v-if="scope.row.healthInfo.travel_in_hb === 1">有</div>
                 <div v-if="scope.row.healthInfo.travel_in_hb === 0">无</div>
               </div>
             </template>
@@ -205,7 +208,8 @@
                   登记健康情况
                 </el-button>
               </div>
-              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)" class="healthText">
+              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)"
+                class="healthText">
                 <div v-if="scope.row.healthInfo.contact_hb === 1">有</div>
                 <div v-if="scope.row.healthInfo.contact_hb === 0">无</div>
               </div>
@@ -213,7 +217,8 @@
           </el-table-column>
           <el-table-column property="" align="center" label="干咳等症状" width="70" header-align="center">
             <template slot-scope="scope">
-              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)" class="healthText">
+              <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)"
+                class="healthText">
                 <div v-if="scope.row.healthInfo.symptom === 1">有</div>
                 <div v-if="scope.row.healthInfo.symptom === 0">无</div>
               </div>
@@ -477,7 +482,61 @@
           })
 
         })
+      },
+      download(blobUrl, filename) {
+        var a = document.createElement('a');
+        if (a.click) {
+          a.href = blobUrl;
+          a.target = '_parent';
+          if ('download' in a) {
+            a.download = filename;
+          }
+          (document.body || document.documentElement).appendChild(a);
+          a.click();
+          a.parentNode.removeChild(a);
+        } else {
+          if (window.top === window && blobUrl.split('#')[0] === window.location.href.split('#')[0]) {
+            var padCharacter = blobUrl.indexOf('?') === -1 ? '?' : '&';
+            blobUrl = blobUrl.replace(/#|$/, padCharacter + '$&');
+          }
+          window.open(blobUrl, '_parent');
+        }
+      },
+      getPersonHealthExcel() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'person_health_excel',
+            project_id: this.project_id,
+            t: 'url'
+          }
+          this.$store.dispatch('GetPersonHealthExcel', param).then((res) => {
+            console.log('res', res)
+            if (res.status === "success") {
+              console.log('res', res.url)
+              this.download(res.url,'downlod')
+            }
+            // 二进制流的方式
+            /*
+            const link = document.createElement('a')
+            let blob = new Blob([res], {
+              type: 'application/vnd.ms-excel'
+            });
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob);
+            let num = ''
+            for (let i = 0; i < 10; i++) {
+              num += Math.ceil(Math.random() * 10)
+            }
+            link.setAttribute('download', '劳务作业人员健康信息登记表.xlsx')
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            */
+          }).catch(() => {
 
+          })
+
+        })
       },
       async getProjectPersonInout(isExport) {
         const personHealthList = await this.getPersonHealthList()
@@ -778,12 +837,16 @@
             // console.log(this.lackdata.value)
             // console.log(Math.pow(2,this.lackdata.value))
             // console.log(parseInt(item.datum_uploaded,2))
-            return (Math.pow(2, this.lackdata.value) & parseInt(item.datum_uploaded, 2)) === 0 //查找出来00000000中筛选出数据
+            return (Math.pow(2, this.lackdata.value) & parseInt(item.datum_uploaded, 2)) ===
+              0 //查找出来00000000中筛选出数据
           });
           console.log('this.personInoutList2', this.personInoutList)
         } else {}
       },
-      groupChangeHandle() {}
+      groupChangeHandle() {},
+      handleExpertHealthSubmit() {
+        this.getPersonHealthExcel()
+      },
     },
     mounted() {
       console.log('project_id', this.project_id)
