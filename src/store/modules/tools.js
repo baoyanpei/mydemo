@@ -8,6 +8,11 @@ const tools = {
     healthWorldCitysData: { // 健康窗口
       data: {}
     },
+    useTrafficDialog: { // 交通
+      refresh: 0,
+      show: false,
+      data: {}
+    },
   },
   mutations: {
     SET_WORLD_CITYS_DIALOG: (state, data) => {
@@ -27,6 +32,12 @@ const tools = {
       state.healthWorldCitysData.refresh = genRandom(1, 1000)
       console.log('state.healthWorldCitysData', state.healthWorldCitysData)
     },
+    SET_USE_TRAFFIC_DIALOG: (state, data) => {
+      // console.log('SET_PERSON_INFO_DIALOG', data)
+      state.useTrafficDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.useTrafficDialog.refresh = genRandom(1, 1000)
+    },
   },
 
   actions: {
@@ -43,6 +54,14 @@ const tools = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SET_WORLD_CITYS_DATA', param)
+        resolve()
+      })
+    },
+    SetUseTrafficDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SET_USE_TRAFFIC_DIALOG', param)
         resolve()
       })
     },

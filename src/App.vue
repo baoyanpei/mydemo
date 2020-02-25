@@ -62,6 +62,9 @@
     <!--世界城市dialog-->
     <worldCitysDialog></worldCitysDialog>
 
+    <!--交通dialog-->
+    <useTrafficDialog></useTrafficDialog>
+
   </div>
 </template>
 
@@ -126,6 +129,9 @@
   // 世界城市dialog
   import worldCitysDialog from './views/components/worldCitysDialog'
 
+  // 交通dialog
+  import useTrafficDialog from './views/components/useTrafficDialog'
+
   export default {
     name: 'App',
     components: {
@@ -153,7 +159,8 @@
       PointViewManageDialog,
       PointViewSaveDialog,
       bindBimDialog,
-      worldCitysDialog
+      worldCitysDialog,
+      useTrafficDialog
     },
     directives: {
       elDragDialog
