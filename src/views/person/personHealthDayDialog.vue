@@ -172,6 +172,7 @@
       },
       clearData() {
         this.symptomList = []
+        this.noSymptom = false
         this.personHealthDayForm.temp = 36.0
         this.personHealthDayForm.give_out_heat = -1
         this.personHealthDayForm.cough = -1
