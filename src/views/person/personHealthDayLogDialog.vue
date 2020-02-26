@@ -25,7 +25,7 @@
             <span v-if="info.cough===0">无干咳等症状</span>
 
             <span v-if="info.symptom!=='' && info.symptom.indexOf('无上述症状')===-1"
-              style="color:red;">近期有{{info.symptom}}等症状</span>
+              style="color:red;">近期{{info.symptom}}</span>
 
             <span
               v-if="info.symptom==='' || info.symptom.indexOf('无上述症状')!==-1">{{info.symptom}}</span>

@@ -97,7 +97,7 @@
                 <span v-if="personLastHealthDayInfo.cough===0">无干咳等症状</span>
                 &nbsp;
                 <span
-                  v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom.indexOf('无上述症状')===-1" class="redFont">近期有{{personLastHealthDayInfo.symptom}}等症状</span>
+                  v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom.indexOf('无上述症状')===-1" class="redFont">近期{{personLastHealthDayInfo.symptom}}</span>
                   <span
                   v-if="personLastHealthDayInfo.symptom==='' || personLastHealthDayInfo.symptom.indexOf('无上述症状')!==-1" >{{personLastHealthDayInfo.symptom}}</span>
                 <br />
