@@ -80,7 +80,7 @@
 
 </style>
 <template>
-  <el-dialog :modal="true" width="1000px" top="1vh" :lock-scroll="true" :append-to-body="true"
+  <el-dialog :modal="true" width="1100px" top="1vh" :lock-scroll="true" :append-to-body="true"
     :close-on-click-modal="false" @open="openPersonListDialogHandle" @close="closediv"
     :visible.sync="personListDialog.show" title="人员信息" v-dialogDrag>
     <div id="person-list-from" class="person-list-from">
@@ -161,6 +161,11 @@
                   :class="{'redicon':(Math.pow(2,8)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
                 <i title="身份证扫描件" class="icon-credentials_icon"
                   :class="{'redicon':(Math.pow(2,7)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
+                <i title="健康信息">
+                  <font-awesome-icon icon="stethoscope" style="color:#c7c7c7"
+                    :class="{'redicon':(Math.pow(2,9)&parseInt(scope.row.datum_uploaded,2))>0}" />
+                </i>
+
                 <i title="安全责任书" class="icon-anquandunpai"
                   :class="{'redicon':(Math.pow(2,6)&parseInt(scope.row.datum_uploaded,2))>0}"></i>
                 <i title="劳动合同" class="icon-hetong"
@@ -191,6 +196,11 @@
           </el-table-column>
         </el-table-column>
         <el-table-column label="健康信息">
+          <el-table-column property="" align="center" label="当前体温" width="70" header-align="center">
+            <template slot-scope="scope">
+
+            </template>
+          </el-table-column>
           <el-table-column property="" align="center" label="疫区旅居史" width="70" header-align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)"
@@ -310,6 +320,10 @@
           }, {
             value: '7',
             label: '身份证扫描件'
+          },
+          {
+            value: '9',
+            label: '健康信息'
           }, {
             value: '1',
             label: '安全责任书'
@@ -483,6 +497,26 @@
 
         })
       },
+      // 健康记录温度查询
+      getPersonHealthDayLast() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'person_health_day_last_list',
+            project_id: this.project_id,
+            page: 1,
+            limit: 10000
+          }
+          this.$store.dispatch('GetPersonHealthDayList', param).then((personHealth) => {
+            console.log("GetPersonHealthDayList", personHealthList)
+            // this.optionsProjectPersion = this.projectPersonList
+            // this.loadingInstance.close();
+            resolve(personHealth)
+          }).catch(() => {
+
+          })
+
+        })
+      },
       download(blobUrl, filename) {
         var a = document.createElement('a');
         if (a.click) {
@@ -513,7 +547,7 @@
             console.log('res', res)
             if (res.status === "success") {
               console.log('res', res.url)
-              this.download(res.url,'downlod')
+              this.download(res.url, 'downlod')
             }
             // 二进制流的方式
             /*
@@ -540,12 +574,13 @@
       },
       async getProjectPersonInout(isExport) {
         const personHealthList = await this.getPersonHealthList()
-
+        // const personHealthDayLastList = await this.getPersonHealthDayLast()
+        // console.log('personHealthDayLastList123', personHealthDayLastList)
         this.personHealthMap = new Map()
         personHealthList.forEach(personHealth => {
           this.personHealthMap.set(personHealth.person_id, personHealth)
         })
-        // console.log('this.personHealthMap', this.personHealthMap)
+
         this.personInoutList = []
         this.loading = true
         const param = {
@@ -808,7 +843,7 @@
         if (this.lackdatavalue.length !== 0) {
           if (this.lackdatavalue === '9') {
             this.lackdatavalue = []
-            this.lackdatavalue.push('8', '7', '6', '5', '4', '3', '2', '1')
+            this.lackdatavalue.push('8', '7', '9', '6', '5', '4', '3', '2', '1')
             for (let i = 0; i < this.lackdatavalue.length; i++) {
               this.personInoutList = this.personinto2.filter((item) => {
                 return (Math.pow(2, parseInt(this.lackdatavalue[i])) & parseInt(item.datum_uploaded, 2)) > 0

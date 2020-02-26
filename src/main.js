@@ -69,7 +69,8 @@ import {
   faMarker,
   faMapMarked,
   faClipboardCheck,
-  faTimesCircle
+  faTimesCircle,
+  faStethoscope
 } from '@fortawesome/free-solid-svg-icons'
 
 import {
@@ -83,7 +84,7 @@ import {
 
 // 图标来源
 // https://fontawesome.com/icons?d=gallery&s=solid&m=free
-library.add(faQrcode, faDesktop, faMagic, faTimesCircle, faBell, faCircle, faPlusSquare, faSquare, faMapMarked, faClipboardCheck, faLongArrowAltUp, faSignature, faSyncAlt, faLayerGroup, faMarker, faFont, faSave, faNetworkWired, faCalendarCheck, faUser, faCrosshairs, faHome, faUserCog, faChartLine, faChartBar, faMobileAlt, faCoffee, faUserSecret, faCalendarAlt, faBookOpen, faAddressCard, faCalendarCheck, faCalendarPlus, faStreetView, faListAlt)
+library.add(faQrcode, faDesktop, faMagic, faTimesCircle, faStethoscope, faBell, faCircle, faPlusSquare, faSquare, faMapMarked, faClipboardCheck, faLongArrowAltUp, faSignature, faSyncAlt, faLayerGroup, faMarker, faFont, faSave, faNetworkWired, faCalendarCheck, faUser, faCrosshairs, faHome, faUserCog, faChartLine, faChartBar, faMobileAlt, faCoffee, faUserSecret, faCalendarAlt, faBookOpen, faAddressCard, faCalendarCheck, faCalendarPlus, faStreetView, faListAlt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('icon', Icon)
 Vue.use(VueWorker)
