@@ -19,8 +19,6 @@
                 部门：{{bumen}}
               </el-col>
               <el-col :span="5" class="fatherchange">
-                <!--<div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"-->
-                     <!--@click="changegroup">更换组别</div>-->
                 <el-popover placement="right" width="400" trigger="click">
                  <el-cascader-panel v-model="optionmodel" :options="optionGroups" @change="changevalue"></el-cascader-panel>
                    <el-button type="primary" style="float: right;margin-top: 10px;" @click="open">确认</el-button>
@@ -247,7 +245,6 @@
       },
       projectGroupList() {
         return this.$store.state.project.projectGroupList
-        // console.log("projectGroupList",projectGroupList)
       },
       personInfoDialog: {
         get: function () {
@@ -300,8 +297,6 @@
         const rootGroup = this.projectGroupList.group
         this.optionGroups = []
         if (rootGroup !== undefined && rootGroup.length > 0) {
-          //1为管理部门 0为施工部门3为建设单位4为监理单位5为外部单位 grouptype类型说明,并且做了筛选这部操作
-          // console.log("item.group.groups_type", item.group)
           rootGroup.forEach(item1 => {
             if (item1.groups_type === 0 || item1.groups_type === 1|| item1.groups_type === 10) {
               // console.log('item1', item1)

@@ -25,6 +25,8 @@
     <LogsPersonComfirmDialog></LogsPersonComfirmDialog>
     <!--任务大厅任务详情对话框-->
     <TaskInfoDialog></TaskInfoDialog>
+    <!--发布任务-->
+    <ReleaseTask></ReleaseTask>
     <!--人员详细信息对话框-->
     <PersonInfoDialog></PersonInfoDialog>
     <!--人员进出详细信息对话框-->
@@ -68,6 +70,8 @@
   import InOutPersonDetailDialog from './views/person/inOutPersonDetailDialog'
   //任务详情信息
   import TaskInfoDialog from './views/taskinfo/info'
+  //发布任务
+  import ReleaseTask from './views/releasetask/release'
   // 人员信息信息dialog
   import PersonInfoDialog from './views/person/personInfoDialog'
 
@@ -115,6 +119,7 @@
       NowinDialog,
       TaskInfoDialog,
       PersonFullCalender,
+      ReleaseTask,
       PersonFacePercentDetailForm,
       InOutPersonDetailDialog,
       PersonGoOutDialog,

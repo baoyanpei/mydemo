@@ -4,6 +4,79 @@
 <template>
 <div>
   <div class="left">
+    <el-button type="success" class="Release_task" @click="releasefnc">发布任务</el-button>
+    <el-dialog
+      title="发布"
+      :visible.sync="dialogVisible"
+      width="40%"
+    @open="openeldialog" @close="closedialog">
+      <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
+        <div class="ding" v-show="dingshow" style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -270px;width: 250px;height: 400px;">
+          <el-cascader :props="props" :options="grouparr" :show-all-levels="false" @change="handleChange" style="display: block;margin: auto;"></el-cascader>
+          <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
+            <el-button style="margin-left: 25px">取消</el-button>
+            <el-button type="success" @click="grouparrqueren" style="float: right;margin-right: 25px">确认</el-button>
+          </div>
+        </div>
+
+        <span style="margin-right: 20px">选择类别:</span>
+        <el-cascader :options="gettypearr" @change="handleChangegettypearr" :show-all-levels="false"></el-cascader>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 20px">发布内容:</span>
+        <el-input
+          type="textarea"
+          placeholder="请输入200字以内的作品介绍"
+          v-model="textarea"
+          maxlength="200"
+          style="width: 400px"
+          show-word-limit>
+        </el-input>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 20px;">
+        <span style="margin-right: 20px;float: left;">添加附件:</span>
+        <el-upload
+          class="upload-demo"
+          action="https://xcx.tddata.net/upload"
+          :on-success="successupload"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+            multiple
+          :limit="8"
+          :on-exceed="handleExceed"
+          :file-list="fileList"
+        style="width: 500px;">
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip" style="display: none;">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 50px">类型:</span>
+        <el-cascader :options="leibieoptions" @change="handleChangegetleixin" :show-all-levels="false"></el-cascader>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 50px">地点:</span>
+        <el-cascader :options="didianarr" @change="didianarrchange" :show-all-levels="false" style="width:350px;"></el-cascader>
+        <el-button type="primary">查看BIM</el-button>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 50px;opacity: 0;">地点:</span>
+        <el-input v-model="beizhuinput" placeholder="请输入备注信息" style="width:400px;"></el-input>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 10px;">指定负责人:</span>
+        <el-button type="primary" @click="addperson()">添加人员</el-button>
+        <span v-for="item in this.fabu_people">
+          <span style="margin-right: 10px">{{item.name}}</span>
+        </span>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right:40px;float: left">重要性:</span>
+        <el-rate v-model="zhongyaoxing" @change="startchange" :max="3" style="float: left"></el-rate>
+      </div>
+      <el-button type="primary" @click="fabufnc()" style="width: 100%;margin-top: 20px;">发布</el-button>
+    </el-dialog>
     <el-tabs type="border-card" v-model="activeName" @tab-click="mytask">
       <el-tab-pane :label="bannertitle" name="first">
         <div class="taskbox1">
@@ -32,6 +105,7 @@
             <el-option v-for="item in options3" :key="item.value3" :label="item.label" :value="item.label"></el-option>
           </el-select>
           </template>
+
           <div class="details" v-for="(item,index) in boxinfo1" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
             <div class="details_top">
               <img src="/static/icon/BrowserPreview_tmp%20(2).png" alt="" style="width: 25px;height: 25px;margin-left: 10px;margin-top: 5px;float: left;">
@@ -114,6 +188,55 @@
     data() {
       return {
         bannertitle:'任务大厅(0)',
+        dialogVisible:false,
+        textarea:'',
+        fileList:[],
+        beizhuinput:'',
+        gettypearr:[],
+        zhongyaoxing:null,
+        getcategory_flowid:'',
+        didianarr:[],
+        optionmodel:'',
+        dingshow:false,
+        optionGroups:[],
+        props:{ multiple: true},
+        grouparr:[],
+        aaaa:[],
+        fabufncflowid:'',
+        fabuquestions_type:'',
+        fabustartvalue:'',
+        fabu_people:[],
+        datalistfrom: {
+          title: "",
+          modify_count: 0,
+          check_count: 0,
+          basic: [{
+            lx:"basic",
+            id:"questions_photo",
+            lable:"现场拍摄",
+            type:"multi_attach",
+            value:[]
+            },{
+            lx:"basic",
+            id:"questions_remark",
+            lable:"问题描述",
+            type:"multi_text",
+            value:"",
+            voicelst:[]
+            },{
+            id:"questions_type",
+            lx:"basic",
+            lable:"",
+            type:"text",
+            value:""
+            }],
+          time: "",
+          address: "",
+          receive: [],
+          modify_check: [],
+          receiver:""
+        },
+        fabuadress:'',
         secondtitle:"我的任务(0)",
         fullscreenLoading: false,//页面加载
         activeName:'first',
@@ -146,6 +269,8 @@
           colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
           value:2,
         }],
+        didian: [],
+        leibieoptions:[],
         options: [{ value: '选项1', label: '任务' }, { value: '选项2', label: '通知' }, { value: '选项3', label: '会议' },
           { value: '选项4', label: '资料' },{ value: '选项5', label: '安全' }],
         value: '',
@@ -166,6 +291,9 @@
     computed: {
       project_id() {
         return this.$store.state.project.project_id
+      },
+      projectGroupList() {//组别
+        return this.$store.state.project.projectGroupList
       },
       person_info(){
         return this.$store.state.person.personInfo
@@ -193,12 +321,242 @@
       }
     },
     methods:{
+      openeldialog(){//打开发布任务窗口
+        console.log("我爱中国111")
+        console.log("组别",this.projectGroupList)
+        this.gettype()
+        this.getdidian()
+      },
+      closedialog(){
+        this.dingshow=false
+      },
+      gettype() {//类型
+        return new Promise((resolve, reject) => {
+          const param = {
+            method:'get_flow_list',
+            project_id: this.project_id
+          }
+          this.$store.dispatch('SafeInspection', param).then((data) => {
+            console.log('要获取到的类型',data.data)
+            this.gettypearr=[]
+            for (let i=0;i<data.data.length;i++){
+              if(data.data[i].flowId=="ProblemFindSolve02"){
+                this.gettypearr.push({ label:"计划", value:i,flowid:data.data[i].flowId })
+              }
+              if(data.data[i].flowId=="ProblemFindSolve01"){
+                this.gettypearr.push({ label:"任务", value:i,flowid:data.data[i].flowId })
+              }
+              if(data.data[i].flowId=="Meeting01"){
+                this.gettypearr.push({ label:"会议", value:i,flowid:data.data[i].flowId })
+              }
+              if(data.data[i].flowId=="Documents01"){
+                this.gettypearr.push({ label:"资料", value:i,flowid:data.data[i].flowId })
+              }
+              if(data.data[i].flowId=="Notice01"){
+                this.gettypearr.push({ label:"通知", value:i,flowid:data.data[i].flowId })
+              }
+              if(data.data[i].flowId=="SafetyInspection01"){
+                this.gettypearr.push({ label:"安全", value:i,flowid:data.data[i].flowId })
+              }
+            }
+            console.log("getarr",this.gettypearr)
+          }).catch(() => {
+            resolve()
+          })
+        })
+      },
+      gettypearrchange(index){
+        this.getcategory_flowid=this.gettypearr[index].flowid
+        console.log("getcategory_flowid",this.getcategory_flowid,index)
+        this.getcategory()
+      },
+      getcategory(){//类别
+        this.leibieoptions=[]
+        console.log("flow_id",this.getcategory_flowid)
+          const param = {
+            method:'get_questions_type',
+            project_id: this.project_id,
+            flow_id:this.getcategory_flowid
+          }
+          this.$store.dispatch('SafeInspection', param).then((data) => {
+            console.log('要获取到的类别',data.data,typeof data.data)
+            if(typeof data.data=='object'){
+              for(let i=0;i<data.data.length;i++){
+                this.leibieoptions.push({label:data.data[i],value:i})
+              }
+            }
+          }).catch(() => {
+            resolve()
+          })
+      },
+      getdidian(){
+        return new Promise((resolve, reject) => {
+          const param = {
+            method:'GetViewpointsByFileId',
+            file_id:"",
+            project_id: this.project_id
+          }
+          this.$store.dispatch('GetItemInfoListByItemIDs', param).then((data) => {
+            console.log("地点data",data)
+            this.didianarr=[]
+            this.didian=[]
+            var aaa=[]
+            var newarr=[]
+            //提出楼层
+            for(let i=0;i<data.length;i++){
+              if(data[i].floor_name!=""){
+                aaa.push(data[i].floor_name)
+              }
+            }
+            for(let i=0;i<aaa.length;i++){
+              if(newarr.indexOf(aaa[i])==-1){
+                newarr.push(aaa[i])
+              }
+            }
+            for(let j=0;j<newarr.length;j++){
+              newarr.splice(j,1,{label:newarr[j],value:j,children:[]})
+            }
+            // 楼层提出结束
+            for(let i=0;i<data.length;i++){
+              if(data[i].floor_name!=""){
+                for(let j=0;j<newarr.length;j++){
+                  if(newarr[j].label==data[i].floor_name){
+                    newarr[j].children.push({label:data[i].name,value:"第"+data[i].floor_name+"层"+data[i].name,})
+                  }
+                }
+              }
+            }
+            this.didianarr=newarr
+            console.log("地点数组",this.didianarr)
+            // console.log("aaa",newarr)
+          }).catch(() => {
+            resolve()
+          })
+        })
+      },
+      addperson(){
+        this.grouparr=[]
+        this.aaaa=[]
+        for(let i=0;i<this.projectPersonList.length;i++){
+            this.grouparr.push([this.projectPersonList[i].group_name_level[0],this.projectPersonList[i].group_name_level[1]])//拿到全部人员
+        }
+        for(let j=0;j<this.grouparr.length;j++){
+          // console.log("bianli---->",j,this.grouparr[j][0])
+          if(this.aaaa.indexOf(this.grouparr[j][0]) == -1){//去除重复数组
+            this.aaaa.push(this.grouparr[j][0])
+          }
+        }
+        for(let i=0;i<this.grouparr.length;i++){
+          for(let j=0;j<this.aaaa.length;j++){
+            if(this.aaaa[j]==this.grouparr[i][0]){
+              this.aaaa.splice(j,1,{label:this.aaaa[j],value:j,children:[{label:this.grouparr[i][1],value:"1"}]})
+            }
+          }
+        }
+        console.log("人员信息",this.projectPersonList)
+          this.aaaa.forEach(item=>{
+            item.children[0]["children"]=[]
+          })
+        for(let i=0;i<this.projectPersonList.length;i++){
+          for (let j=0;j<this.aaaa.length;j++){
+            if(this.projectPersonList[i].group_name_level[1]==this.aaaa[j].children[0].label){
+              this.aaaa[j].children[0].children.push({label:this.projectPersonList[i].name,value:this.projectPersonList[i].person_id,personname:this.projectPersonList[i].name})
+            }
+          }
+        }
+        this.grouparr=this.aaaa
+        this.dingshow=true
+        console.log("this.aaaa",this.aaaa)
+        console.log("gettypearr",this.grouparr)
+      },
+      // this.data.datalist.form = {
+      //   title: this.data.datalist.title,
+      //   modify_count: 0,
+      //   check_count: 0,
+      //   "basic": [],
+      //    "time": "",
+      //   "address": "",
+      //    "receive": [],
+      //    "modify_check": [],
+      //     receiver:this.data.seluser
+      // }
+      fabufnc(){//发布任务
+        let namebox=""
+        for(let i=0;i<this.fabu_people.length;i++){
+          namebox=namebox+"@"+this.fabu_people[i].name
+        }
+        this.datalistfrom.title=namebox+this.textarea
+        this.datalistfrom.receiver=this.fabu_people
+        console.log("发布任务",this.datalistfrom)
+        const _param = {
+          method: 'start_issue',
+          project_id: this.project_id,
+          questions_type:this.fabuquestions_type,
+          title:namebox+this.textarea,
+          flow_id:this.fabufncflowid,
+          priority: this.fabustartvalue,
+          form:this.datalistfrom,
+          subjectionId:"",
+          nosend:1
+        }
+        this.$store.dispatch('GetAllInstList', _param).then((data) => {
+          console.log("任务发布成功",data)
+        })
+      },
+      grouparrqueren(){
+        this.dingshow=false
+      },
+      handleChange(value) {//选择指定人员
+        // this.grouparr    projectPersonList
+        console.log("选择人员",value);
+        for(let i=0;i<value.length;i++){
+          this.fabu_people.push({name:'',id:value[i][2]})
+        }
+        for(let i=0;i<this.fabu_people.length;i++){
+          for(let j=0;j<this.projectPersonList.length;j++){
+            if(this.fabu_people[i].id==this.projectPersonList[j].person_id){
+              this.fabu_people[i].name=this.projectPersonList[j].name
+            }
+          }
+        }
+        console.log("获取到的ID",this.fabu_people)
+      },
+      handleChangegettypearr(index){//更换类别
+        console.log("index类别",index)
+        this.getcategory_flowid=this.gettypearr[index].flowid
+        this.fabufncflowid=this.gettypearr[index].flowid
+        this.getcategory()
+      },
+      handleChangegetleixin(index){
+        console.log("index获取到的类型",index,this.leibieoptions[index[0]].label)
+        this.fabuquestions_type=this.leibieoptions[index[0]].label
+      },
+      didianarrchange(index){//更换地点
+        console.log("地点index",index[1])
+        // this.fabuadress=index[1]
+        this.datalistfrom.address={
+          id:"questions_address",
+          lx:"basic",
+          lable:"地点",
+          type:"text",
+          value:index[1],
+          lat:"",
+          lon:"",
+          address:"",
+          address_id:"",
+          pvid:""
+        }
+      },
       pagechange (e) {//每页多少条数据
       this.currpage = e
       // console.log(this.currpage)
       this.allpersondata()
         // this.secondpage()
     },
+      startchange(index){//改变星级
+        console.log("改变星级别",index)
+        this.fabustartvalue=index
+      },
       getpersonlist(){//人员列表信息接口
         const param = {
           method: 'query_person_list',
@@ -460,6 +818,9 @@
         this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
         })
       },
+      releasefnc(){
+        this.dialogVisible=true
+      },
       //我的任务
       mytask(tab, event){
         if(tab.name=='second'){
@@ -498,6 +859,24 @@
         }else {
           console.log(111)
         }
+      },
+      successupload(response){//图片样式更改
+        console.log("图片信息返回",response.filename)
+        console.log("插入位置",this.datalistfrom.basic[0].value)
+        // this.photosrc.push(response.filename)
+        this.datalistfrom.basic[0].value.push({localsrc:"",lx:"image", src:response.filename})
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePreview(file) {
+        console.log(file);
+      },
+      handleExceed(files, fileList) {
+        this.$message.warning(`当前限制选择8个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      },
+      beforeRemove(file, fileList) {
+        return this.$confirm(`确定移除 ${ file.name }？`);
       }
     }
   }
@@ -509,6 +888,15 @@
     margin-left: 15px;
     margin-top: 25px;
     box-shadow:0px 0px 30px #4a4c4b;
+    position: relative;
+  }
+  .Release_task{
+    position: absolute;
+    right: 10px ;
+    top: 5px;
+    z-index: 10;
+    height: 30px;
+    line-height: 10px;
   }
   .taskbox1{
     width: 100%;

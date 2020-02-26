@@ -14,9 +14,9 @@
         </el-date-picker>
         <el-button type="success" style="background-color: #1abc9c;margin-left: 30px;" @click="findfnc">查找</el-button>
       </div>
-      <el-button type="success" style="background-color: #1abc9c;margin-left: 30px;">批量下载打印</el-button>
+      <el-button type="success" style="background-color: #1abc9c;margin-left: 30px;" @click="batchonload">批量下载打印</el-button>
 
-      <el-table :data="tableData" :header-cell-style="headClass"
+      <el-table :data="tableData" :header-cell-style="headClass" ref = "multipleTable "
         style="width: 98%;margin:20px auto;border-collapse:collapse;" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
@@ -84,6 +84,7 @@
         infonum: 0,
         pagesize: 20,
         tableData: [],
+        workids:[],
         multipleSelection: []
       }
     },
@@ -106,8 +107,47 @@
       }
     },
     methods: {
-      handleSelectionChange(val) {
+      handleSelectionChange(val) {//空白格选中未选中
         this.multipleSelection = val;
+        this.workids=[]
+        for(let i=0;i<this.multipleSelection.length;i++){
+          this.workids.push(this.multipleSelection[i].workId)
+        }
+        console.log("空格index",this.multipleSelection)
+        console.log("workids",this.workids)
+      },
+      batchonload(){//批量下载
+        console.log("这是批量下载按钮")
+        const param = {
+          method: 'batch',
+          project_id: this.project_id,
+          work_ids:this.workids
+        }
+        this.$store.dispatch('Allbatchdownload', param).then((data) => {
+          console.log("批量下载成功返回",data)
+          let url=window.URL.createObjectURL(new Blob([data]))
+          let link = document.createElement('a')
+          link.href=url
+          link.setAttribute("download","批量下载.pdf")
+          document.body.appendChild(link)
+          link.click()
+          // var blob=new Blob([data],{type: 'application/pdf'})
+          // let reader=new FileReader()
+          // reader.readAsDataURL(blob);
+          // reader.onload = function (e) {
+          //     if('download'in document.createElement("a")){
+          //       const link = document.createElement('a')
+          //       link.href = URL.createObjectURL(blob)
+          //       link.download = '批量下载.pdf';
+          //       document.body.appendChild(link)
+          //       window.open(link.href)
+          //       link.click()//执行下载
+          //       URL.revokeObjectURL(link.href) //释放url
+          //       document.body.removeChild(link)//释放标签
+          //   }
+          // }
+        }).catch(() => {
+        })
       },
       headClass() {
         return 'text-align: center;'
@@ -134,7 +174,13 @@
           et: this.value1[1]
         }
         this.$store.dispatch('SafeInspection', param).then((data) => {
-          this.tableData = data.data
+          data.data.forEach(item=>{
+            console.log("item",item)
+            if(item.workId="HZ000000702de06e0170367ab6cf18f9"){
+              this.tableData.push(item)
+            }
+          })
+          // this.tableData = data.data
           console.log("表格数据", this.tableData)
           this.infonum = data.count
           this.tableData.forEach(item => {

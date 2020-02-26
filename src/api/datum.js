@@ -86,6 +86,15 @@ export function queryLocationHis(data) {
 }
 
 
+//safety-inspection   批量下载
+export function allbatchdownload(data) {
+  return request({
+    url:'/api/oa/file/batch/safe',
+    method:'post',
+    data:data,
+  })
+}
+
 // task/index.vue    接受全部任務列表信息
 export function allpersondata(data) {
   // console.log("allpersondata",data)
@@ -93,7 +102,6 @@ export function allpersondata(data) {
     url:'/api/oa/workflow',
     method:'post',
     data:data,
-    // baseURL: 'http://w.yidebim.com:3004'
   })
 }
 

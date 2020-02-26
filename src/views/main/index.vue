@@ -53,7 +53,6 @@
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="日历" placement="top">
             <el-button @click="personFullCalendarHandle" style="padding-top:4px;">
-              <!-- <icon name="el-icon-date" scale="1.7"></icon> -->
               <font-awesome-icon icon="calendar-alt" size="2x" />
             </el-button>
           </el-tooltip>
@@ -63,6 +62,11 @@
               <font-awesome-icon icon="desktop" size="2x" />
             </el-button>
           </el-tooltip>
+          <!--<el-tooltip class="item" effect="dark" content="测试" placement="top">-->
+            <!--<el-button @click="ceshi">-->
+              <!--<font-awesome-icon icon="user-cog" size="2x" />-->
+            <!--</el-button>-->
+          <!--</el-tooltip>-->
         </div>
 
       </div>
@@ -312,7 +316,6 @@
           show: true,
         }
         this.$store.dispatch('SetPersonInoutDialog', param).then(() => {}).catch(() => {
-
         })
       },
       personNowInDialogHandle() {
@@ -329,6 +332,14 @@
           show: true,
         }
         this.$store.dispatch('SetPersonListDialog', param).then(() => {}).catch(() => {
+
+        })
+      },ceshi() {
+        console.log("测试")
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('ceshipro', param).then(() => {}).catch(() => {
 
         })
       },

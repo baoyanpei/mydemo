@@ -237,11 +237,11 @@ const project = {
     SET_INFO_DIALOG: async (state, data) => { // 任务大厅，任务详情
       state.taskInfoDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
-      // state.taskInfoDialog.dialogTitle = data.name + ' - 上工时间'
       state.taskInfoDialog.refresh = genRandom(1, 1000)
     },
-
-
+    SET_RELEASE_DIALOG: async (state, data) => { //任务发布
+      console.log("任务发布SetRelease")
+    },
 
 
     SET_PERSON_INOUT_DIALOG: async (state, data) => { // 人员考勤
@@ -264,7 +264,19 @@ const project = {
           project_id: state.project_id,
           url: 'huamingce_admin'
         })
-        // console.log("_hasPermission", _hasPermission)
+        if (_hasPermission.result === true) {
+          state.personListDialog = data
+        }
+      } else {
+        state.personListDialog = data
+      }
+    },
+    SET_CESHI_DIALOG: async (state, data) => { // 测试
+      if (data.show === true) {
+        const _hasPermission = await hasPermissionToOperation({
+          project_id: state.project_id,
+          url: 'huamingce_admin'
+        })
         if (_hasPermission.result === true) {
           state.personListDialog = data
         }
@@ -497,21 +509,40 @@ const project = {
 
       })
     },
+    SetRelease({//发布任务
+      commit,
+      rootState
+    }, param) {
+      return new Promise((resolve, reject) => {
+        console.log("任务发布")
+        console.log(param)
+        commit('SET_RELEASE_DIALOG', param)
+        resolve()
+
+      })
+    },
     SetPersonListDialog({
       commit,
       rootState
     }, param) {
       return new Promise((resolve, reject) => {
-        console.log('project_id', rootState.project.project_id)
-
-        console.log('_hasPermissionToOperation')
-        // return
+        console.log('project_id111111', rootState.project.project_id)
         commit('SET_PERSON_LIST_DIALOG', param)
         resolve()
 
       })
     },
+    ceshipro({
+      commit,
+      rootState
+    }, param) {
+      return new Promise((resolve, reject) => {
+        console.log('测试管理', rootState.project.project_id)
+        commit('SET_CESHI_DIALOG', param)
+        resolve()
 
+      })
+    },
 
     SetPersonNowInDialog({
       commit

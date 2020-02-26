@@ -3,23 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+  <!--<audio controls autoplay="true" loop="true" src="于梓贝%20-%20处处吻%20(钢琴版).mp3"></audio>-->
+  <!--<input id="fujian" type="file" onchange="changefile()"/>-->
+  <!--<input type="button" value="下载" onclick="xiazai()">-->
 </head>
 <body>
-<!--<input type="number" onblur="upload()" class="input1" placeholder="请输入数字">-->
-<table border="1" for="item in arr">
-  <tr>
-    <th>ID</th>
-    <th>操作</th>
-  </tr>
-  <tr>
-    <td>{{item.id}}</td>
-    <td><input type="button" value="按钮" onclick="btnid(item.id)"></td>
-  </tr>
-</table>
 </body>
 </html>
 <script>
-  function btnid(index) {
-    console.log(index)
+  //要求 arr=[{label:1,name:"张三"},{label:2,name:"王五"},{label:3,name:'二狗'}]
+   var arr=[];
+   var aaa=[{label:1,name:"张三"},{label:1,name:"张四"},{label:2,name:"王五"},{label:2,name:"王六"},{label:3,name:'二狗'}]
+
+  for(let i=0;i<aaa.length;i++){
+    if(arr.indexOf(aaa[i].label)==-1){
+      arr.push(aaa[i].label)
+    }
   }
+  for(let j=0;j<arr.length;j++){
+    arr.splice(j,1,{label:arr.indexOf(arr[j]),value:"aaa"+j})
+  }
+console.log(arr)
+</script>
+<script>
+  let blob=document.getElementById("fujian")
+  var aaa=0
+  function changefile(){
+    var reader = new FileReader();
+    var AllowImgFileSize = 2100000; //上传图片最大值(单位字节)（ 2 M = 2097152 B ）超过2M上传失败
+    var file = blob.files[0];
+    var imgUrlBase64;
+    if (file) {
+        //将文件以Data URL形式读入页面
+        imgUrlBase64 = reader.readAsDataURL(file);
+        console.log(imgUrlBase64);
+        reader.onload = function (e) {
+          if (AllowImgFileSize != 0 && AllowImgFileSize < reader.result.length) {
+                alert( '上传失败，请上传不大于2M的图片！');
+                return;
+            }else{
+              aaa=reader.result
+              xiazai(aaa)
+            }
+        }
+     }
+  }
+  function xiazai(index) {
+    // var blob=new Blob([index])
+    let reader=new FileReader()
+    reader.readAsDataURL(index);
+    reader.onload = function (e) {
+        if('download'in document.createElement("a")){
+          const link = document.createElement('a')
+          link.href = URL.createObjectURL(blob)
+          document.body.appendChild(link)
+          window.open(link.href)
+          link.click()//执行下载
+          URL.revokeObjectURL(link.href) //释放url
+          document.body.removeChild(link)//释放标签
+      }
+    }
+  }
+</script>
+<script>
 </script>

@@ -3,6 +3,7 @@ import {
   queryDatumMeterDays,
   queryDatumMeterHours,
   allpersondata,
+  allbatchdownload,
   postmomment,
   allinfodictionary,
   queryLocationHis,
@@ -52,6 +53,17 @@ const datum = {
         queryDatumMeterHours(param).then(response => {
           //   commit('SET_PROJECT_PERSON_LIST', response.data)
           resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    Allbatchdownload({
+      commit
+    },param){
+      return new Promise((resolve, reject) => {
+        allbatchdownload(param).then(response => {
+          resolve(response)
         }).catch(error => {
           reject(error)
         })

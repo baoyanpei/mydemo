@@ -96,13 +96,6 @@
           </el-form-item>
         </div>
         <div>
-          <!--<el-form-item prop="lackid" label="缺失资料">-->
-            <!--<el-select v-model="lackdata.value" name="value" placeholder="请选择缺少资料（可多选）"  filterable @change="handleSubmit(false)" clearable size="mini">-->
-              <!--<el-option v-for="item in lackdata" :key="item.value" :label="item.label"-->
-                <!--:value="item.value">-->
-              <!--</el-option>-->
-            <!--</el-select>-->
-          <!--</el-form-item>-->
 
           <el-form-item prop="lackid" label="个人资料">
             <!--personInoutList-->

@@ -2,13 +2,20 @@
   span{
     color: #1dc6f2;
   }
+  .ding{
+    width: 300px;
+    height: 500px;
+    background-color: #1dc6f2;
+    position: absolute;
+    top: 0;
+    right: -300px;
+  }
   .el-header, .el-footer {
     background-color: #B3C0D1;
     color: #333;
     text-align: center;
     line-height: 60px;
   }
-
   .el-aside {
     background-color: #D3DCE6;
     color: #333;
