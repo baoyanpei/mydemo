@@ -85,15 +85,21 @@
             </el-row>
             <el-row v-if="personLastHealthDayInfo!==null" :gutter="24">
               <el-col :span="24">
-                体温：{{personLastHealthDayInfo.temp}}°C
-                <span v-if="personLastHealthDayInfo.give_out_heat===1">有发热</span>
+                体温：
+                <span v-if="parseFloat(personLastHealthDayInfo.temp)>=37.3"
+                  class="redFont">{{personLastHealthDayInfo.temp}}°C</span>
+                <span v-if="parseFloat(personLastHealthDayInfo.temp)<37.3">{{personLastHealthDayInfo.temp}}°C</span>
+
+                <span v-if="personLastHealthDayInfo.give_out_heat===1" class="redFont">有发热</span>
                 <span v-if="personLastHealthDayInfo.give_out_heat===0">无发热</span>
                 &nbsp;
-                <span v-if="personLastHealthDayInfo.cough===1">有干咳等症状</span>
+                <span v-if="personLastHealthDayInfo.cough===1" class="redFont">有干咳等症状</span>
                 <span v-if="personLastHealthDayInfo.cough===0">无干咳等症状</span>
                 &nbsp;
                 <span
-                  v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom!=='无上述症状'">过去14天,有{{personLastHealthDayInfo.symptom}}等症状</span>
+                  v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom.indexOf('无上述症状')===-1" class="redFont">近期有{{personLastHealthDayInfo.symptom}}等症状</span>
+                  <span
+                  v-if="personLastHealthDayInfo.symptom==='' || personLastHealthDayInfo.symptom.indexOf('无上述症状')!==-1" >{{personLastHealthDayInfo.symptom}}</span>
                 <br />
                 最后记录时间：{{personLastHealthDayInfo.created_time}}
               </el-col>
@@ -777,7 +783,7 @@
           // spinner: 'el-icon-loading',
           // background: 'rgba(0, 0, 0, 0.5)',
           // customClass: 'loading-class',
-          target: document.querySelector('.worktime-full-calender')
+          target: document.querySelector('.person-health-full-calender')
         });
 
         this.$store.dispatch('GetPersonHealthDayLastList', param).then((personHealthDayLastList) => {
@@ -794,7 +800,7 @@
               _total = _total + 1
             }
 
-            if (info.symptom === '' || info.symptom === '无上述症状') {
+            if (info.symptom === '' || info.symptom.indexOf('无上述症状') > -1) {
               _total = _total + 1
             }
             events.push({

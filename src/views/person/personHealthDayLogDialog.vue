@@ -4,7 +4,7 @@
 </style>
 <template>
   <div class="person-health-day-log-dialog">
-    <el-dialog :modal="true"  width="570px" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="true" width="570px" :lock-scroll="true" :close-on-click-modal="false"
       @open="openPersonHealthDayLogDialogHandle" @close="closePersonHealthDayLogDialogHandle"
       :visible.sync="personHealthDayLogDialog.show" :title="title">
       <div class="person-health-from">
@@ -24,8 +24,11 @@
             <span v-if="info.cough===1" style="color:red;">有干咳等症状</span>
             <span v-if="info.cough===0">无干咳等症状</span>
 
+            <span v-if="info.symptom!=='' && info.symptom.indexOf('无上述症状')===-1"
+              style="color:red;">近期有{{info.symptom}}等症状</span>
+
             <span
-              v-if="info.symptom!=='' && info.symptom!=='无上述症状'" style="color:red;">过去14天,有{{info.symptom}}等症状</span>
+              v-if="info.symptom==='' || info.symptom.indexOf('无上述症状')!==-1">{{info.symptom}}</span>
 
           </div>
         </el-row>

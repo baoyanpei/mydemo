@@ -30,7 +30,7 @@
               <el-checkbox label="呼吸困难" @change="handleSymptomCheckChange"></el-checkbox>
               <el-checkbox label="腹泻" @change="handleSymptomCheckChange"></el-checkbox>
             </el-checkbox-group>
-            <el-checkbox label="无上述症状" v-model="noSymptom" @change="handleNoSymptomCheckChange"></el-checkbox>
+            <el-checkbox label="近期无上述症状" v-model="noSymptom" @change="handleNoSymptomCheckChange"></el-checkbox>
           </el-form-item>
 
 
@@ -198,7 +198,7 @@
             if (this.symptomList.length > 0) {
               this.personHealthDayForm.symptom = this.symptomList.join(',')
             } else {
-              this.personHealthDayForm.symptom = '无上述症状'
+              this.personHealthDayForm.symptom = '近期无上述症状'
             }
 
             let param = {
