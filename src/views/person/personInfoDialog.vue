@@ -97,9 +97,10 @@
                 <span v-if="personLastHealthDayInfo.cough===0">无干咳等症状</span>
                 &nbsp;
                 <span
-                  v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom.indexOf('无上述症状')===-1" class="redFont">近期{{personLastHealthDayInfo.symptom}}</span>
-                  <span
-                  v-if="personLastHealthDayInfo.symptom==='' || personLastHealthDayInfo.symptom.indexOf('无上述症状')!==-1" >{{personLastHealthDayInfo.symptom}}</span>
+                  v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom.indexOf('无上述症状')===-1"
+                  class="redFont">近期{{personLastHealthDayInfo.symptom}}</span>
+                <span
+                  v-if="personLastHealthDayInfo.symptom==='' || personLastHealthDayInfo.symptom.indexOf('无上述症状')!==-1">{{personLastHealthDayInfo.symptom}}</span>
                 <br />
                 最后记录时间：{{personLastHealthDayInfo.created_time}}
               </el-col>
@@ -792,28 +793,44 @@
           personHealthDayLastList.forEach((info, index) => {
             // console.log('info', info, moment(info.created_time).format('YYYY-MM-DD 00:00:00'))
             let _total = 0
-
+            let _zhengzhuang = ""
             if (info.give_out_heat === 0) {
               _total = _total + 1
+            } else {
+              _zhengzhuang = "发热"
             }
             if (info.cough === 0) {
               _total = _total + 1
+            } else {
+              _zhengzhuang = (_zhengzhuang === "" ? "干咳" : (_zhengzhuang + " 干咳"))
             }
 
             if (info.symptom === '' || info.symptom.indexOf('无上述症状') > -1) {
               _total = _total + 1
+            } else {
+              _zhengzhuang = (_zhengzhuang === "" ? `近期${info.symptom}` :  (_zhengzhuang + ` 近期${info.symptom}`))
             }
-            events.push({
-              title: "\r\r" + info.temp + "°C",
-              start: moment(info.created_time).format('YYYY-MM-DD 00:00:01'),
-              backgroundColor: "#29bb9c", //red
-              borderColor: "#29bb9c", //red
+            if (info.temp >= 37.3) {
+              events.push({
+                title: info.temp + "°C",
+                start: moment(info.created_time).format('YYYY-MM-DD 00:00:01'),
+                backgroundColor: "#FF0000", //red
+                borderColor: "#FF0000", //red
+                titleFormat: ""
+              })
+            } else {
+              events.push({
+                title: info.temp + "°C",
+                start: moment(info.created_time).format('YYYY-MM-DD 00:00:01'),
+                backgroundColor: "#29bb9c", //red
+                borderColor: "#29bb9c", //red
+                titleFormat: ""
+              })
+            }
 
-              titleFormat: ""
-            })
             if (_total === 3) {
               events.push({
-                title: _total + "/3",
+                title: "无症状",
                 start: moment(info.created_time).format('YYYY-MM-DD 00:00:02'),
                 backgroundColor: "#4a86e8", //red
                 borderColor: "#4a86e8", //red
@@ -821,7 +838,7 @@
               })
             } else {
               events.push({
-                title: _total + "/3",
+                title: _zhengzhuang,
                 start: moment(info.created_time).format('YYYY-MM-DD 00:00:02'),
                 backgroundColor: "#b00000", //red
                 borderColor: "#b00000", //red

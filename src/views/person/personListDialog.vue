@@ -200,9 +200,9 @@
             <template slot-scope="scope">
               <div v-if="scope.row.healthDayLastInfo !== ''" class="healthText"
                 @click="SetHealthDayLogDialog(scope.row)">
-                <div v-if="parseFloat(scope.row.healthDayLastInfo.max_temp)>=37.0" class="redFont">
+                <div v-if="parseFloat(scope.row.healthDayLastInfo.max_temp)>=37.3" class="redFont">
                   {{scope.row.healthDayLastInfo.max_temp}}</div>
-                <div v-if="parseFloat(scope.row.healthDayLastInfo.max_temp)<37.0">
+                <div v-if="parseFloat(scope.row.healthDayLastInfo.max_temp)<37.3">
                   {{scope.row.healthDayLastInfo.max_temp}}</div>
               </div>
               <div v-if="scope.row.healthDayLastInfo === ''" class="healthText">
