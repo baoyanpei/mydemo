@@ -311,7 +311,7 @@
           multiple: true
         },
         lackdata: [{
-            value: '9',
+            value: '99',
             label: '全选'
           },
           {
@@ -841,7 +841,7 @@
       },
       personchange() { //资料框数据
         if (this.lackdatavalue.length !== 0) {
-          if (this.lackdatavalue === '9') {
+          if (this.lackdatavalue === '99') {
             this.lackdatavalue = []
             this.lackdatavalue.push('8', '7', '9', '6', '5', '4', '3', '2', '1')
             for (let i = 0; i < this.lackdatavalue.length; i++) {
