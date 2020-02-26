@@ -343,10 +343,10 @@
       personHealthDayChanged(curVal, oldVal) {
         this.getPersonHealthDayLast()
         // console.log('activeTabName', this.activeTabName)
-        if (this.activeTabName === 'tjrl'){
+        if (this.activeTabName === 'tjrl') {
           $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
           this.renderFullCalender()
-        } 
+        }
       },
     },
     methods: {
@@ -616,6 +616,7 @@
         const param = {
           show: true,
           person_id: this.personInfoDialog.person_id,
+          person_name: this.personInfoDialog.name
         }
         this.$store.dispatch('SetHealthDayDialog', param).then(() => {}).catch(() => {
 
@@ -746,7 +747,8 @@
             const param = {
               show: true,
               person_id: this.personInfoDialog.person_id,
-              date: event.start.format('YYYY-MM-DD')
+              date: event.start.format('YYYY-MM-DD'),
+              person_name: this.personInfoDialog.name
             }
             this.$store.dispatch('SetHealthDayLogDialog', param).then(() => {}).catch(() => {
 

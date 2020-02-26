@@ -95,7 +95,7 @@
 
       return {
         loading: false,
-        title: '记录每日体温',
+        title: '',
         symptomList: [],
         noSymptom: false,
         personHealthDayForm: {
@@ -165,12 +165,14 @@
     methods: {
       openPersonHealthDayDialogHandle() {
         console.log('personHealthDayDialog', this.personHealthDayDialog)
+        this.title = `记录每日体温 - ${this.personHealthDayDialog.person_name}`
       },
       closePersonHealthDayDialogHandle() {
 
         this.clearData()
       },
       clearData() {
+        this.title = ""
         this.symptomList = []
         this.noSymptom = false
         this.personHealthDayForm.temp = 36.0

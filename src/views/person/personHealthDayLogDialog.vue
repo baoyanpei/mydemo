@@ -14,7 +14,7 @@
         <el-row v-for="info in personHealthDayLastList" :key="info.id" :gutter="24">
           <div class="title">· {{info.created_time|formatTime}} 体温记录</div>
           <div class="content">
-            <span v-if="info.temp>37.3" style="color:red;">体温：{{info.temp}}°C</span>
+            <span v-if="info.temp>=37.3" style="color:red;">体温：{{info.temp}}°C</span>
             <span v-if="info.temp<37.3">体温：{{info.temp}}°C</span>
 
 
@@ -107,7 +107,7 @@
     },
     methods: {
       initData() {
-        this.title = this.personHealthDayLogDialog.date
+        this.title = `${this.personHealthDayLogDialog.date} - ${this.personHealthDayLogDialog.person_name}`
       },
       clearData() {
         this.title = ""

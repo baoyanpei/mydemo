@@ -140,7 +140,7 @@
       <!-- <hr class="hr1" /> -->
       <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
       <hr class="hr1" />
-      <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="400px"
+      <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="420px"
         :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
         size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
         <el-table-column label="基本信息">
@@ -151,7 +151,7 @@
               <el-button @click="handleNameClick(scope.row)" type="text" size="small">{{scope.row.name}}</el-button>
             </template>
           </el-table-column>
-          <el-table-column property="" align="center" sortable label="资料" width="140" header-align="center">
+          <el-table-column property="" align="center" sortable label="资料" width="150" header-align="center">
             <template slot-scope="scope">
               <!--八种缺少的资料 datum_uploaded-->
               <el-button type="text" size="small">
@@ -198,14 +198,26 @@
         <el-table-column label="健康信息">
           <el-table-column property="" align="center" label="当前体温" width="70" header-align="center">
             <template slot-scope="scope">
-
+              <div v-if="scope.row.healthDayLastInfo !== ''" class="healthText"
+                @click="SetHealthDayLogDialog(scope.row)">
+                <div v-if="parseFloat(scope.row.healthDayLastInfo.max_temp)>=37.0" class="redFont">
+                  {{scope.row.healthDayLastInfo.max_temp}}</div>
+                <div v-if="parseFloat(scope.row.healthDayLastInfo.max_temp)<37.0">
+                  {{scope.row.healthDayLastInfo.max_temp}}</div>
+              </div>
+              <div v-if="scope.row.healthDayLastInfo === ''" class="healthText">
+                <el-button size="mini" type="primary" class="btn-health-day-last"
+                  @click.native.prevent="handlePersonHealthDaySubmit(scope.row)">
+                  记录体温
+                </el-button>
+              </div>
             </template>
           </el-table-column>
           <el-table-column property="" align="center" label="疫区旅居史" width="70" header-align="center">
             <template slot-scope="scope">
               <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)"
                 class="healthText">
-                <div v-if="scope.row.healthInfo.travel_in_hb === 1">有</div>
+                <div v-if="scope.row.healthInfo.travel_in_hb === 1" class="redFont">有</div>
                 <div v-if="scope.row.healthInfo.travel_in_hb === 0">无</div>
               </div>
             </template>
@@ -220,7 +232,7 @@
               </div>
               <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)"
                 class="healthText">
-                <div v-if="scope.row.healthInfo.contact_hb === 1">有</div>
+                <div v-if="scope.row.healthInfo.contact_hb === 1" class="redFont">有</div>
                 <div v-if="scope.row.healthInfo.contact_hb === 0">无</div>
               </div>
             </template>
@@ -229,7 +241,7 @@
             <template slot-scope="scope">
               <div v-if="scope.row.healthInfo !== ''" @click="openPersonHealthDialogHandle(scope.row)"
                 class="healthText">
-                <div v-if="scope.row.healthInfo.symptom === 1">有</div>
+                <div v-if="scope.row.healthInfo.symptom === 1" class="redFont">有</div>
                 <div v-if="scope.row.healthInfo.symptom === 0">无</div>
               </div>
             </template>
@@ -297,6 +309,9 @@
       },
       personListChanged() {
         return this.$store.state.project.personListChanged
+      },
+      personHealthDayChanged() {
+        return this.$store.state.health.personHealthDayChanged
       }
     },
     data() {
@@ -358,7 +373,8 @@
         personInoutTableEmptyText: '请点击查询按钮进行查询',
         checkedPersonType: false, //false 只有项目部
         totalPerson: 0,
-        personHealthMap: new Map()
+        personHealthMap: new Map(),
+        personHealthDayLastMap: new Map()
         // list: []
       }
     },
@@ -392,6 +408,10 @@
       personListChanged(curVal, oldVal) {
         this.handleSubmit(false)
       },
+      personHealthDayChanged(curVal, oldVal) {
+        this.handleSubmit(false)
+      }
+
     },
     methods: {
       titlechange() {
@@ -498,19 +518,24 @@
         })
       },
       // 健康记录温度查询
-      getPersonHealthDayLast() {
+      getPersonHealthDayLastList() {
         return new Promise((resolve, reject) => {
+          const startTime = moment().add('day', 0).format('YYYY-MM-DD 00:00:00')
+          const endTime = moment().format('YYYY-MM-DD HH:mm:ss')
+          console.log(startTime, endTime)
           const param = {
             method: 'person_health_day_last_list',
             project_id: this.project_id,
             page: 1,
-            limit: 10000
+            limit: 10000,
+            bt: startTime,
+            et: endTime
           }
-          this.$store.dispatch('GetPersonHealthDayList', param).then((personHealth) => {
-            console.log("GetPersonHealthDayList", personHealthList)
+          this.$store.dispatch('GetPersonHealthDayLastList', param).then((HealthDayLastList) => {
+            // console.log("GetPersonHealthDayList", personHealth)
             // this.optionsProjectPersion = this.projectPersonList
             // this.loadingInstance.close();
-            resolve(personHealth)
+            resolve(HealthDayLastList)
           }).catch(() => {
 
           })
@@ -574,11 +599,17 @@
       },
       async getProjectPersonInout(isExport) {
         const personHealthList = await this.getPersonHealthList()
-        // const personHealthDayLastList = await this.getPersonHealthDayLast()
-        // console.log('personHealthDayLastList123', personHealthDayLastList)
+
         this.personHealthMap = new Map()
         personHealthList.forEach(personHealth => {
           this.personHealthMap.set(personHealth.person_id, personHealth)
+        })
+
+        const personHealthDayLastList = await this.getPersonHealthDayLastList()
+        console.log('personHealthDayLastList123', personHealthDayLastList)
+        this.personHealthDayLastMap = new Map()
+        personHealthDayLastList.forEach(personHealth => {
+          this.personHealthDayLastMap.set(personHealth.person_id, personHealth)
         })
 
         this.personInoutList = []
@@ -652,6 +683,13 @@
             // console.log('person', person)
           } else {
             person['healthInfo'] = ''
+          }
+          const _personHealthDayLast = this.personHealthDayLastMap.get(person.person_id)
+          if (_personHealthDayLast !== undefined) {
+            person['healthDayLastInfo'] = _personHealthDayLast
+            // console.log('person', person)
+          } else {
+            person['healthDayLastInfo'] = ''
           }
 
           this.personInoutList.push(person)
@@ -814,6 +852,30 @@
           ...row
         }
         this.$store.dispatch('SetHealthDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
+      handlePersonHealthDaySubmit(row) {
+        console.log('row', row)
+        const param = {
+          show: true,
+          person_id: row.person_id,
+          person_name: row.name
+        }
+        this.$store.dispatch('SetHealthDayDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
+      SetHealthDayLogDialog(row) {
+        console.log('moment', moment().format('YYYY-MM-DD'))
+
+        const param = {
+          show: true,
+          person_id: row.person_id,
+          date: moment().format('YYYY-MM-DD'),
+          person_name: row.name
+        }
+        this.$store.dispatch('SetHealthDayLogDialog', param).then(() => {}).catch(() => {
 
         })
       },
