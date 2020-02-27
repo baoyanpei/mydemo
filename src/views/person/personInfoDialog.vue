@@ -89,18 +89,16 @@
                 <span v-if="parseFloat(personLastHealthDayInfo.temp)>=37.3"
                   class="redFont">{{personLastHealthDayInfo.temp}}°C</span>
                 <span v-if="parseFloat(personLastHealthDayInfo.temp)<37.3">{{personLastHealthDayInfo.temp}}°C</span>
-
-                <span v-if="personLastHealthDayInfo.give_out_heat===1" class="redFont">有发热</span>
-                <span v-if="personLastHealthDayInfo.give_out_heat===0">无发热</span>
-                &nbsp;
-                <span v-if="personLastHealthDayInfo.cough===1" class="redFont">有干咳等症状</span>
-                <span v-if="personLastHealthDayInfo.cough===0">无干咳等症状</span>
-                &nbsp;
+                
+                <span v-if="personLastHealthDayInfo.give_out_heat===1" class="redFont">当前有发热，</span>
+                <span v-if="personLastHealthDayInfo.give_out_heat===0">当前无发热，</span>
+                <span v-if="personLastHealthDayInfo.cough===1" class="redFont">有干咳等症状；</span>
+                <span v-if="personLastHealthDayInfo.cough===0">无干咳等症状；</span>
                 <span
                   v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom.indexOf('无上述症状')===-1"
-                  class="redFont">近期{{personLastHealthDayInfo.symptom}}</span>
+                  class="redFont">近期{{personLastHealthDayInfo.symptom}}。</span>
                 <span
-                  v-if="personLastHealthDayInfo.symptom==='' || personLastHealthDayInfo.symptom.indexOf('无上述症状')!==-1">{{personLastHealthDayInfo.symptom}}</span>
+                  v-if="personLastHealthDayInfo.symptom==='' || personLastHealthDayInfo.symptom.indexOf('无上述症状')!==-1">{{personLastHealthDayInfo.symptom}}。</span>
                 <br />
                 最后记录时间：{{personLastHealthDayInfo.created_time}}
               </el-col>
@@ -808,7 +806,7 @@
             if (info.symptom === '' || info.symptom.indexOf('无上述症状') > -1) {
               _total = _total + 1
             } else {
-              _zhengzhuang = (_zhengzhuang === "" ? `近期${info.symptom}` :  (_zhengzhuang + ` 近期${info.symptom}`))
+              _zhengzhuang = (_zhengzhuang === "" ? `近期${info.symptom}` : (_zhengzhuang + ` 近期${info.symptom}`))
             }
             if (info.temp >= 37.3) {
               events.push({

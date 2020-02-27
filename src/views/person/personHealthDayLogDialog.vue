@@ -18,17 +18,17 @@
             <span v-if="info.temp<37.3">体温：{{info.temp}}°C</span>
 
 
-            <span v-if="info.give_out_heat===1" style="color:red;">有发热</span>
-            <span v-if="info.give_out_heat===0">无发热</span>
+            <span v-if="info.give_out_heat===1" style="color:red;">当前有发热，</span>
+            <span v-if="info.give_out_heat===0">当前无发热，</span>
 
-            <span v-if="info.cough===1" style="color:red;">有干咳等症状</span>
-            <span v-if="info.cough===0">无干咳等症状</span>
+            <span v-if="info.cough===1" style="color:red;">有干咳等症状；</span>
+            <span v-if="info.cough===0">无干咳等症状；</span>
 
             <span v-if="info.symptom!=='' && info.symptom.indexOf('无上述症状')===-1"
-              style="color:red;">近期{{info.symptom}}</span>
+              style="color:red;">近期{{info.symptom}}。</span>
 
             <span
-              v-if="info.symptom==='' || info.symptom.indexOf('无上述症状')!==-1">{{info.symptom}}</span>
+              v-if="info.symptom==='' || info.symptom.indexOf('无上述症状')!==-1">{{info.symptom}}。</span>
 
           </div>
         </el-row>

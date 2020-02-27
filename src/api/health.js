@@ -193,6 +193,8 @@ method:person_health_day_last_list
         bt: yyyy-mm-dd 可选
         et: yyyy-mm-dd 可选 （bt,et 成对使用）
 
+        增加了个 max_temp 最大体温 ，temp是最新， 带et,bt 是按天统计，不带bt,et, max_temp 是 所有记录的最大 体温， temp是所有记录最新记录，如果查当前体温就et,bt带当前日期
+        
 返回：
  {
   "count": 2,
