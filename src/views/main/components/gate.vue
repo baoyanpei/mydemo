@@ -6,7 +6,8 @@
   <div class="data-gate">
     <el-row>
       <el-col :span="12" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
-        <img v-show="persion_data.entry_pic !==''" :src="persion_data.entry_pic" @click="handleNameClick(persion_data)" class="photo info-name-link">
+        <img v-show="persion_data.entry_pic !==''" :src="persion_data.entry_pic" @click="handleNameClick(persion_data)"
+          class="photo info-name-link">
         <span v-show="persion_data.entry_pic ===''">&nbsp;</span>
         <div v-if="persion_data.card_type===4" class="person-type-desc">临时人员</div>
       </el-col>
@@ -198,6 +199,10 @@
               break;
             case 5:
               this.errorMessage = `${this.persion_data.name}已经离职`
+              // this.persion_data.entry_pic = '../../static/not_valid.jpg'
+              break;
+            case 19:
+              this.errorMessage = `${this.persion_data.name}，您的健康登记表还没有填写！`
               // this.persion_data.entry_pic = '../../static/not_valid.jpg'
               break;
           }

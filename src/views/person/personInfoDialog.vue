@@ -4,27 +4,34 @@
 </style>
 <template>
   <div class="person-info-dialog">
-    <el-dialog :modal="false" top="0.5vh" width="770px" :lock-scroll="true" :close-on-click-modal="false"
-      @open="openPersonFacePercentDetailDialogHandle" :visible.sync="personInfoDialog.show"
+    <el-dialog :modal="true" top="0.5vh" width="800px" :lock-scroll="true" :close-on-click-modal="false"
+      @open="openPersonInfoDialogHandle" @close="closePersonInfoDialogHandle" :visible.sync="personInfoDialog.show"
       :title="personInfoDialog.name">
       <div id="person-face-person-detail-form" class="person-face-person-detail-form">
         <el-row :gutter="24" style="width: 700px;">
-          <el-col :span="6" style="text-align: center;padding-right:0px;">
+          <el-col :span="5" style="text-align: center;padding-right:0px;">
             <div><img :src="idcard_pic" style="height:120px;" /></div>
             <!-- <div>(身份证照)</div> -->
           </el-col>
-          <el-col :span="18" class="persion-info-txt" style="text-align: left;padding: 2px;">
+          <el-col :span="19" class="persion-info-txt" style="text-align: left;padding: 2px;">
             <el-row :gutter="20">
               <el-col :span="6">
                 部门：{{bumen}}
               </el-col>
               <el-col :span="5" class="fatherchange">
+<<<<<<< HEAD
+=======
+                <!--<div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"-->
+                <!--@click="changegroup">更换组别</div>-->
+>>>>>>> 2dc58bb5e15bd118ef2f12a8bd34f0f9cae3c485
                 <el-popover placement="right" width="400" trigger="click">
-                 <el-cascader-panel v-model="optionmodel" :options="optionGroups" @change="changevalue"></el-cascader-panel>
-                   <el-button type="primary" style="float: right;margin-top: 10px;" @click="open">确认</el-button>
-                  <div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"
-                     slot="reference" @click="changegroup">更换组别</div>
-              </el-popover>
+                  <el-cascader-panel v-model="optionmodel" :options="optionGroups" @change="changevalue">
+                  </el-cascader-panel>
+                  <el-button type="primary" style="float: right;margin-top: 10px;" @click="open">确认</el-button>
+                  <div
+                    style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"
+                    slot="reference" @click="changegroup">更换组别</div>
+                </el-popover>
               </el-col>
               <el-col :span="8">
                 班组：{{zhuanye}}
@@ -40,8 +47,8 @@
             </el-row>
             <el-row :gutter="24">
               <el-col :span="24">
-                电话：{{mobile}} <el-button id='btnCopy' type="primary" v-clipboard:copy="mobile" v-clipboard:success="onCopySuccess"
-                  v-clipboard:error="onCopyError" size="mini">复制</el-button>
+                电话：{{mobile}} <el-button id='btnCopy' type="primary" v-clipboard:copy="mobile"
+                  v-clipboard:success="onCopySuccess" v-clipboard:error="onCopyError" size="mini">复制</el-button>
               </el-col>
             </el-row>
             <el-row :gutter="24">
@@ -60,11 +67,49 @@
               </el-col>
 
             </el-row>
+            <el-divider>健康信息</el-divider>
 
+            <el-row v-if="personHealthInfo!==null" :gutter="24">
+              <el-col :span="24">
+                重点疫区旅居史:
+                <span v-if="personHealthInfo.travel_in_hb===1">有</span>
+                <span v-if="personHealthInfo.travel_in_hb===0">无</span>
+                &nbsp;
+                接触疫区人员:
+                <span v-if="personHealthInfo.contact_hb===1">有</span>
+                <span v-if="personHealthInfo.contact_hb===0">无</span>
+                &nbsp;
+                返项目时间:{{personHealthInfo.back_date}}&nbsp;
+                方式:{{personHealthInfo.useTrafficDesc}}
+              </el-col>
+            </el-row>
+            <el-row v-if="personHealthInfo===null" :gutter="24">
+              <el-col :span="24">未录入健康信息</el-col>
+            </el-row>
+            <el-row v-if="personLastHealthDayInfo!==null" :gutter="24">
+              <el-col :span="24">
+                体温：
+                <span v-if="parseFloat(personLastHealthDayInfo.temp)>=37.3"
+                  class="redFont">{{personLastHealthDayInfo.temp}}°C</span>
+                <span v-if="parseFloat(personLastHealthDayInfo.temp)<37.3">{{personLastHealthDayInfo.temp}}°C</span>
+                
+                <span v-if="personLastHealthDayInfo.give_out_heat===1" class="redFont">当前有发热，</span>
+                <span v-if="personLastHealthDayInfo.give_out_heat===0">当前无发热，</span>
+                <span v-if="personLastHealthDayInfo.cough===1" class="redFont">有干咳等症状；</span>
+                <span v-if="personLastHealthDayInfo.cough===0">无干咳等症状；</span>
+                <span
+                  v-if="personLastHealthDayInfo.symptom!=='' && personLastHealthDayInfo.symptom.indexOf('无上述症状')===-1"
+                  class="redFont">近期{{personLastHealthDayInfo.symptom}}。</span>
+                <span
+                  v-if="personLastHealthDayInfo.symptom==='' || personLastHealthDayInfo.symptom.indexOf('无上述症状')!==-1">{{personLastHealthDayInfo.symptom}}。</span>
+                <br />
+                最后记录时间：{{personLastHealthDayInfo.created_time}}
+              </el-col>
+            </el-row>
+            <el-row v-if="personLastHealthDayInfo===null" :gutter="24">
+              <el-col :span="24">未记录体检信息</el-col>
+            </el-row>
 
-            <!-- <el-form-item label="姓名:">
-                {{name}}
-              </el-form-item> -->
           </el-col>
         </el-row>
         <div v-if="personInfoDialog.opShow">
@@ -87,7 +132,8 @@
         </div>
         <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
           style="position:absolute;top:85px;right:20px;">上工日志</el-button>
-
+        <el-button type="success" @click.native.prevent="handlePersonHealthDaySubmit()" size="mini"
+          style="position:absolute;top:200px;right:20px;">记录体检信息</el-button>
         <el-row>
           <el-tabs v-model="activeTabName" type="card" @tab-click="tabHandleClick">
             <el-tab-pane label="入职照片" name="rzzp">
@@ -99,6 +145,15 @@
                       <img :src="entry_pic" style="width:500px;;margin: 0px auto" />
                     </a>
                   </a>
+                </div>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane label="体检日历" name="tjrl">
+              <div class="div-tab-item">
+                <div style="text-align: center">
+                  <div id="person-health-full-calender" class="person-health-full-calender">
+                    <div id="person-health-fullcalender"></div>
+                  </div>
                 </div>
               </div>
             </el-tab-pane>
@@ -190,6 +245,8 @@
 
 <script>
   import moment from 'moment'
+  import 'fullcalendar/dist/locale/zh-cn'
+  import $ from 'jquery'
   // import vpdf from 'vpdf'
   // import pdf from 'vue-pdf'
   // import vueshowpdf from 'vueshowpdf'
@@ -228,14 +285,16 @@
         loadingIdCardb: '',
         BtnKaiChuDisable: true,
         BtnZhuXiaoKaDisable: true,
-        groupchange:false,
+        groupchange: false,
         BtnKaiChu: true,
-        groupall:[],
-        songroup1:[],
-        newsongroup:[],
-        optionmodel:'',
+        groupall: [],
+        songroup1: [],
+        newsongroup: [],
+        optionmodel: '',
         optionGroups: [],
-        change_personid:0
+        change_personid: 0,
+        personHealthInfo: null, //健康信息
+        personLastHealthDayInfo: null // 最新的一条健康日志
 
       }
     },
@@ -256,6 +315,9 @@
       },
       personInfoChanged() {
         return this.$store.state.project.personInfoChanged
+      },
+      personHealthDayChanged() {
+        return this.$store.state.health.personHealthDayChanged
       }
 
     },
@@ -271,6 +333,8 @@
             this.initData()
             this.getProjectPersonInfo()
             this.getPersonDatum()
+            this.getPersonHealth()
+            this.getPersonHealthDayLast()
             // this.getPerson()
           } else {
             this.initData()
@@ -283,6 +347,14 @@
         this.initData()
         this.getProjectPersonInfo()
       },
+      personHealthDayChanged(curVal, oldVal) {
+        this.getPersonHealthDayLast()
+        // console.log('activeTabName', this.activeTabName)
+        if (this.activeTabName === 'tjrl') {
+          $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
+          this.renderFullCalender()
+        }
+      },
     },
     methods: {
       trasRuZHiShiJian(time) {
@@ -292,13 +364,13 @@
         }
         return timeFormat
       },
-      changegroup(){//更换组别
-        console.log("this.projectGroupList.group",this.projectGroupList.group)
+      changegroup() { //更换组别
+        console.log("this.projectGroupList.group", this.projectGroupList.group)
         const rootGroup = this.projectGroupList.group
         this.optionGroups = []
         if (rootGroup !== undefined && rootGroup.length > 0) {
           rootGroup.forEach(item1 => {
-            if (item1.groups_type === 0 || item1.groups_type === 1|| item1.groups_type === 10) {
+            if (item1.groups_type === 0 || item1.groups_type === 1 || item1.groups_type === 10) {
               // console.log('item1', item1)
               let children = []
               if (item1.group !== undefined && item1.group.length > 0) {
@@ -319,8 +391,8 @@
           });
         }
       },
-      changevalue(){
-        console.log("123321123",this.optionmodel[1])
+      changevalue() {
+        console.log("123321123", this.optionmodel[1])
       },
       open() {
         this.$alert('<span>更换部门成功</span>', '更换部门提示', {
@@ -330,11 +402,10 @@
         const param = {
           method: 'set_person_props',
           project_id: this.project_id,
-          person_id:this.change_personid,
-          group_id:this.optionmodel[1]
+          person_id: this.change_personid,
+          group_id: this.optionmodel[1]
         }
-        this.$store.dispatch('PersonGroupChange', param).then(() => {
-        }).catch(() => {
+        this.$store.dispatch('PersonGroupChange', param).then(() => {}).catch(() => {
 
         })
       },
@@ -366,12 +437,21 @@
         return _text
       },
       // 打开窗口
-      openPersonFacePercentDetailDialogHandle() {
+      openPersonInfoDialogHandle() {
         // console.log("----22222---")
       },
+      closePersonInfoDialogHandle() {
+        $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
+      },
       tabHandleClick(tab, event) {
-        console.log(tab, event);
+        // console.log("tab.paneName", tab.paneName);
         this.activeTabName = tab.name
+        if (tab.paneName === 'tjrl') {
+          // console.log("tab.体检");
+          this.renderFullCalender()
+        } else {
+          $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
+        }
         // this.reloadData()
         // console.log('this.activeTabName', this.activeTabName)
       },
@@ -398,6 +478,8 @@
         this.BtnZhuXiaoKaDisable = true
         this.BtnKaiChuDisable = true
         this.BtnKaiChu = true
+        this.personHealthInfo = null
+        this.personLastHealthDayInfo = null
       },
       getProjectPersonInfo() {
         const param = {
@@ -408,8 +490,8 @@
         console.log('this.personInfoDialog', this.personInfoDialog)
         this.$store.dispatch('QueryProjectPerson', param).then((data_list) => {
           console.log("-data-->", data_list)
-          this.change_personid=data_list[0].person_id
-          console.log("projectGroupList",this.projectGroupList.group)
+          this.change_personid = data_list[0].person_id
+          console.log("projectGroupList", this.projectGroupList.group)
           const _personInfo = data_list[0]
           const _idcard_pic = _personInfo.idcard_pic
           if (_idcard_pic.length > 0) {
@@ -458,6 +540,55 @@
 
 
       },
+      getPersonHealth() {
+        const param = {
+          method: 'person_health_list',
+          project_id: this.project_id,
+          person_id: this.personInfoDialog.person_id
+        }
+        this.$store.dispatch('GetPersonHealthList', param).then((personHealth) => {
+
+          if (personHealth.length !== 0) {
+            this.personHealthInfo = personHealth[0]
+            console.log("健康记录查询", this.personHealthInfo)
+            let _useTrafficDesc = "-"
+            if (this.personHealthInfo.use_traffic !== '') {
+              const useTrafficListArray = this.personHealthInfo.use_traffic.split(',')
+              let useTrafficTypeList = []
+              useTrafficListArray.forEach((useTrafficList) => {
+
+                const useTrafficArray = useTrafficList.split('－')
+                if (useTrafficArray.length > 0) {
+                  useTrafficTypeList.push(useTrafficArray[0])
+                }
+
+              })
+              _useTrafficDesc = useTrafficTypeList.length > 0 ? useTrafficTypeList.join(',') : '-'
+            }
+
+            this.personHealthInfo['useTrafficDesc'] = _useTrafficDesc
+          }
+        }).catch(() => {
+
+        })
+      },
+      getPersonHealthDayLast() {
+        this.personLastHealthDayInfo = null
+        const param = {
+          method: 'person_health_day_list',
+          project_id: this.project_id,
+          person_id: this.personInfoDialog.person_id,
+          page: 1,
+          limit: 1
+        }
+        this.$store.dispatch('GetPersonHealthDayList', param).then((personHealth) => {
+          if (personHealth.length > 0) {
+            this.personLastHealthDayInfo = personHealth[0]
+            console.log('this.personLastHealthDayInfo', this.personLastHealthDayInfo)
+          }
+
+        })
+      },
       getPersonDatum() {
         const param = {
           method: 'query',
@@ -483,6 +614,16 @@
           ...this.personInfoDialog
         }
         this.$store.dispatch('SetWorktimeFullCalenderDialog', param).then(() => {}).catch(() => {
+
+        })
+      },
+      handlePersonHealthDaySubmit() {
+        const param = {
+          show: true,
+          person_id: this.personInfoDialog.person_id,
+          person_name: this.personInfoDialog.name
+        }
+        this.$store.dispatch('SetHealthDayDialog', param).then(() => {}).catch(() => {
 
         })
       },
@@ -578,6 +719,137 @@
         this.$message({
           message: '复制失败',
           type: 'error'
+        })
+      },
+      renderFullCalender() {
+        // console.log("renderFullCalenderrenderFullCalender")
+        $('#person-health-fullcalender').fullCalendar({
+          height: 500,
+          header: {
+            right: 'prev,next today',
+            center: 'title',
+            left: ''
+          },
+          theme: false,
+          editable: false,
+          allDaySlot: false,
+          eventLimit: 100,
+          events: (start, end, timezone, callback) => {
+            console.log("--->", start, end, timezone, callback)
+            this.getFullCal(start, end, timezone, callback);
+            // console.log(start, end)
+
+            // $(".fc-time").html("2");
+          },
+          // dayClick: function (date, allDay, jsEvent, view) {
+          //   console.log(date.format('YYYY-MM-DD'), allDay, jsEvent, view)
+          //   return false;
+          // },
+          // timeFormat: 'HH:mm{ - HH:mm}',
+          eventClick: (event) => {
+            console.log('event', event, event.start.format('YYYY-MM-DD'))
+
+            const param = {
+              show: true,
+              person_id: this.personInfoDialog.person_id,
+              date: event.start.format('YYYY-MM-DD'),
+              person_name: this.personInfoDialog.name
+            }
+            this.$store.dispatch('SetHealthDayLogDialog', param).then(() => {}).catch(() => {
+
+            })
+          },
+          // loading: function (bool) {},
+
+        });
+      },
+      getFullCal(start, end, timezone, callback) {
+        const _start = start.format('YYYY-MM-DD')
+        const _end = end.format('YYYY-MM-DD')
+        console.log("ccc->", _start, _end)
+
+        const param = {
+          method: 'person_health_day_last_list',
+          project_id: this.project_id,
+          person_id: this.personInfoDialog.person_id,
+          bt: _start,
+          et: _end
+        }
+        let events = [];
+        this.loading = this.$loading({
+          // lock: true,
+          // text: '正在读取数据...',
+          // spinner: 'el-icon-loading',
+          // background: 'rgba(0, 0, 0, 0.5)',
+          // customClass: 'loading-class',
+          target: document.querySelector('.person-health-full-calender')
+        });
+
+        this.$store.dispatch('GetPersonHealthDayLastList', param).then((personHealthDayLastList) => {
+          this.loading.close();
+          // console.log("personHealthDayLastList", personHealthDayLastList)
+          personHealthDayLastList.forEach((info, index) => {
+            // console.log('info', info, moment(info.created_time).format('YYYY-MM-DD 00:00:00'))
+            let _total = 0
+            let _zhengzhuang = ""
+            if (info.give_out_heat === 0) {
+              _total = _total + 1
+            } else {
+              _zhengzhuang = "发热"
+            }
+            if (info.cough === 0) {
+              _total = _total + 1
+            } else {
+              _zhengzhuang = (_zhengzhuang === "" ? "干咳" : (_zhengzhuang + " 干咳"))
+            }
+
+            if (info.symptom === '' || info.symptom.indexOf('无上述症状') > -1) {
+              _total = _total + 1
+            } else {
+              _zhengzhuang = (_zhengzhuang === "" ? `近期${info.symptom}` : (_zhengzhuang + ` 近期${info.symptom}`))
+            }
+            if (info.temp >= 37.3) {
+              events.push({
+                title: info.temp + "°C",
+                start: moment(info.created_time).format('YYYY-MM-DD 00:00:01'),
+                backgroundColor: "#FF0000", //red
+                borderColor: "#FF0000", //red
+                titleFormat: ""
+              })
+            } else {
+              events.push({
+                title: info.temp + "°C",
+                start: moment(info.created_time).format('YYYY-MM-DD 00:00:01'),
+                backgroundColor: "#29bb9c", //red
+                borderColor: "#29bb9c", //red
+                titleFormat: ""
+              })
+            }
+
+            if (_total === 3) {
+              events.push({
+                title: "无症状",
+                start: moment(info.created_time).format('YYYY-MM-DD 00:00:02'),
+                backgroundColor: "#4a86e8", //red
+                borderColor: "#4a86e8", //red
+                titleFormat: ""
+              })
+            } else {
+              events.push({
+                title: _zhengzhuang,
+                start: moment(info.created_time).format('YYYY-MM-DD 00:00:02'),
+                backgroundColor: "#b00000", //red
+                borderColor: "#b00000", //red
+                titleFormat: ""
+              })
+            }
+          })
+
+          callback(events);
+          // console.log("111")
+
+        }).catch(() => {
+          //   this.loading = false
         })
       }
     },

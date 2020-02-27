@@ -203,6 +203,10 @@
               this.errorMessage = `${this.persion_data.name}已经离职`
               // this.persion_data.entry_pic = '../../static/not_valid.jpg'
               break;
+            case 19:
+              this.errorMessage = `${this.persion_data.name}，您的健康登记表还没有填写！`
+              // this.persion_data.entry_pic = '../../static/not_valid.jpg'
+              break;
           }
         }
       },

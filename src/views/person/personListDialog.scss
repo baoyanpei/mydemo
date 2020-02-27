@@ -27,29 +27,62 @@
   .statu0 {
     color: #67C23A
   }
+
   .statu2 {
     color: #E6A23C
   }
+
   .statu4 {
     color: #E6A23C
   }
+
   .statu10 {
     color: #EEEEEE
   }
-  i{
+
+  i {
     color: #c7c7c7;
   }
-  .redicon{
-    color: #29d2a4;
+
+  .redicon {
+    color: #29d2a4 !important;
   }
-  .el-table th,.el-table td{
+
+  .greyicon {
+    color: #c7c7c7;
+  }
+
+  .el-table th,
+  .el-table td {
     text-align: center;
-    border:none!important;
+    border: none !important;
   }
-  body .el-table th.gutter{
-    display: table-cell!important;
+
+  body .el-table th.gutter {
+    display: table-cell !important;
   }
+
   .el-table .cell {
-    padding: 0!important;
+    padding: 0 !important;
+  }
+
+  .btn-health {
+    padding: 5px 2px;
+  }
+
+  .btn-health-day-last {
+    padding: 5px 2px;
+    background: #ebb100;
+    border-color: #ebb100;
+  }
+
+  .healthText {
+    cursor: pointer;
+    // text-decoration: underline;
+  }
+
+  .redFont {
+    color: red;
+    font-weight: 300;
   }
 }

@@ -49,12 +49,24 @@
     <!--视点保存dialog-->
     <PointViewSaveDialog></PointViewSaveDialog>
 
-<<<<<<< HEAD
-=======
     <!--绑定BIM-->
     <bindBimDialog></bindBimDialog>
 
->>>>>>> 2146f35bc8023d489ec8579586b9539f1dc33546
+    <!--人员健康对话框-->
+    <PersonHealthDialog></PersonHealthDialog>
+
+    <!--人员健康体检对话框-->
+    <PersonHealthDayDialog></PersonHealthDayDialog>
+
+    <!--人员健康日志对话框-->
+    <PersonHealthDayLogDialog></PersonHealthDayLogDialog>
+
+    <!--世界城市dialog-->
+    <worldCitysDialog></worldCitysDialog>
+
+    <!--交通dialog-->
+    <useTrafficDialog></useTrafficDialog>
+
   </div>
 </template>
 
@@ -74,6 +86,15 @@
   import ReleaseTask from './views/releasetask/release'
   // 人员信息信息dialog
   import PersonInfoDialog from './views/person/personInfoDialog'
+
+  // 人员健康dialog
+  import PersonHealthDialog from './views/person/personHealthDialog'
+
+  // 人员健康体检dialog
+  import PersonHealthDayDialog from './views/person/personHealthDayDialog'
+
+  // 人员体检日志dialog
+  import PersonHealthDayLogDialog from './views/person/personHealthDayLogDialog'
 
   // 人员进出详细dialog
   import PersonInOutDetailDialog from './views/person/personInOutDetailDialog'
@@ -109,6 +130,12 @@
   // 绑定BIM
   import bindBimDialog from './views/bindBim/bindBimDialog'
 
+  // 世界城市dialog
+  import worldCitysDialog from './views/components/worldCitysDialog'
+
+  // 交通dialog
+  import useTrafficDialog from './views/components/useTrafficDialog'
+
   export default {
     name: 'App',
     components: {
@@ -125,6 +152,9 @@
       PersonGoOutDialog,
       LogsPersonComfirmDialog,
       PersonInfoDialog,
+      PersonHealthDayLogDialog,
+      PersonHealthDialog,
+      PersonHealthDayDialog,
       PersonInOutDetailDialog,
       PersonQuitLeftDialog,
       PersonListDialog,
@@ -133,7 +163,9 @@
       VideoDialog,
       PointViewManageDialog,
       PointViewSaveDialog,
-      bindBimDialog
+      bindBimDialog,
+      worldCitysDialog,
+      useTrafficDialog
     },
     directives: {
       elDragDialog
@@ -264,8 +296,8 @@
   }
 
   .el-dialog__wrapper {
-    /*穿透该层*/
-    pointer-events: none;
+    /*穿透该层  不能添加,否则Dialog 超过窗口以后,滚动条无法拖动*/
+    /* pointer-events: none; */
   }
 
   .el-dialog {
@@ -369,8 +401,9 @@
     cursor: pointer;
   }
 
-  /deep/ .el-upload-list__item{
-  display: flex!important;
-  justify-content: space-between!important;
-}
+  /deep/ .el-upload-list__item {
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
 </style>

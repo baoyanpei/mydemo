@@ -19,7 +19,6 @@
     // AppMain,
     TagsView
   } from './components'
-//   import Navbar from './components/Navbar2'
   import ResizeMixin from './mixin/ResizeHandler'
   import AppMain from './components/AppMain3'
   export default {

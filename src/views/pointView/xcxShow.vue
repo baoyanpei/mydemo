@@ -172,10 +172,61 @@
         // console.log('_urlList', _urlList)
         if (_urlList.length !== 0) {
           await this.init3DView(_urlList)
-          this.ShowViewPoint()
+
+
+          // this.viewer.addEventListener(
+          //   // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+
+          //   Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+          //   this.onSelectionChanged
+          // );
+
+
           console.log('init3DView - complete')
+
         }
 
+      },
+      onLoadedEvent(event) {
+        console.log('ononLoadedEvent', event)
+        this.ShowViewPoint()
+      },
+      onSelectionChanged(event) {
+        // console.log('this.viewer', this.viewer)
+        console.log('event1', event)
+        let _selections = event.selections
+        console.log('_selections', _selections)
+        // this.selectedDbId = _dbIds
+        this.selectedDbId = []
+        _selections.forEach(selection => {
+          let _dbIdArray = selection.dbIdArray
+          _dbIdArray.forEach(dbId => {
+            console.log('dbId', dbId)
+            selection.model.getProperties(dbId,
+              (elements) => {
+                var dbid = elements.dbId;
+                // this.viewer.select(dbid)
+                this.selectedDbId.push(dbid)
+                console.log('elements', elements)
+                // let min = this.getFragXYZ(dbid)
+                // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+
+
+              })
+          })
+
+        })
+        // Asyncronous method that gets object properties
+        // 异步获取模型的属性
+        // this.viewer.getProperties(_dbIds[0],
+        //   (elements) => {
+        //     var dbid = elements.dbId;
+        //     console.log('elements', elements)
+        //     // let min = this.getFragXYZ(dbid)
+        //     // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
+
+
+        //   })
       },
       init3DView(modelURLList) {
         return new Promise((resolve, reject) => {
@@ -183,6 +234,12 @@
           Autodesk.Viewing.Initializer(this.options, async () => {
             this.element = document.getElementById('viewer-local');
             this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
+            this.viewer.addEventListener(
+              // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+
+              Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+              this.onLoadedEvent
+            );
             // this.subscribeToAllEvents()
             var startedCode = this.viewer.start();
             if (startedCode > 0) {
@@ -329,34 +386,43 @@
       async ShowViewPoint() {
         console.log('ShowViewPoint', this.ViewPointCurrentShow)
         console.log('this.ViewPointInfo', this.ViewPointInfo)
-        this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
-          this.isShowToolbarMarker = false
-          this.isShowToolbarMarkerStyle = false
-          this.isShowViewPointArea = true
-          console.log('ViewPointInfo', this.ViewPointInfo)
-          this.ViewPointType = this.ViewPointInfo.type
-          this.viewPointTitleName = this.ViewPointInfo.name
-          this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
-          console.log('this.markupsExt', this.markupsExt)
-          // markupsExt.deleteMarkup()
-          this.markupsExt.clear()
-          this.markupsExt.leaveEditMode();
-          this.markupsExt.hide()
-          this.isShowToolbarRestore = false
-          this.isShowToolbarRestore2 = false
-          this.isShowViewPointThumbArea = false
-          this.isShowSaveMarkerArea = false
+        this.ViewPointType = this.ViewPointInfo.type
+        let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))
+        if (this.ViewPointType === 1) {
 
-          let _marekup_svg = Base64.decode(this.ViewPointInfo.svg_info)
-          let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))
           // let picBase64 = picture_info.base64
-          this.viewPointImgUrl = this.ViewPointInfo.pictureFullSrc
+          // this.viewPointImgUrl = this.ViewPointInfo.pictureFullSrc
           console.log('camera_info', camera_info)
           this.viewer.restoreState(camera_info); //it fails to restore state
-          // markupsExt.viewer.impl.invalidate(true);
-          this.isShowToolbarRestore = true
-          this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-          if (this.ViewPointType !== 1) {
+        } else {
+          this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
+            // this.isShowToolbarMarker = false
+            // this.isShowToolbarMarkerStyle = false
+            // this.isShowViewPointArea = true
+            console.log('ViewPointInfo', this.ViewPointInfo)
+
+            this.viewPointTitleName = this.ViewPointInfo.name
+            this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
+            console.log('this.markupsExt', this.markupsExt)
+            // markupsExt.deleteMarkup()
+            this.markupsExt.clear()
+            this.markupsExt.leaveEditMode();
+            this.markupsExt.hide()
+
+            // this.isShowToolbarRestore = false
+            // this.isShowToolbarRestore2 = false
+            // this.isShowViewPointThumbArea = false
+            // this.isShowSaveMarkerArea = false
+
+            let _marekup_svg = Base64.decode(this.ViewPointInfo.svg_info)
+            // let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))
+            // let picBase64 = picture_info.base64
+            // this.viewPointImgUrl = this.ViewPointInfo.pictureFullSrc
+            console.log('camera_info', camera_info)
+            this.viewer.restoreState(camera_info); //it fails to restore state
+            // markupsExt.viewer.impl.invalidate(true);
+            // this.isShowToolbarRestore = true
+            this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
             setTimeout(() => {
               markupsExt.leaveEditMode();
               markupsExt.show();
@@ -364,9 +430,12 @@
               // this.enterMarkerEditMode()
               this.isShowOldViewPoint = true
             }, 1000);
-          }
 
-        })
+          })
+        }
+
+
+
       }
     }
   }

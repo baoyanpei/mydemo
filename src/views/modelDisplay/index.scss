@@ -1,6 +1,15 @@
 .model-display-index {
   height: calc(100vh - 48px);
-
+  .mymlLabel {
+    background-color: #FFFFFF;
+    color: #000000;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 10px;
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px
+  }
   // min-width: 1000px;
   // #canvas {
   //   position: absolute;
@@ -14,7 +23,7 @@
   .toolbar-marker {
     position: absolute;
     top: 40px;
-    left: 40px;
+    left: 0px;
     background-color: #2f2f2f;
     height: calc(100vh - 48px - 27px);
     width: 50px;
@@ -53,9 +62,9 @@
   .toolbar-restore {
     position: absolute;
     top: 40px;
-    left: 40px;
+    left: 0px;
     background-color: #2f2f2f;
-    height: calc(100vh - 48px - 40px);
+    height: calc(100vh - 48px - 0px);
     width: 50px;
     // border-radius: 5px;
     z-index: 999;
@@ -91,9 +100,9 @@
   .toolbar-restore2 {
     position: absolute;
     top: 40px;
-    left: 40px;
+    left: 0px;
     background-color: #2f2f2f;
-    height: calc(100vh - 48px - 40px);
+    height: calc(100vh - 48px - 0px);
     width: 50px;
     // border-radius: 5px;
     z-index: 999;
@@ -359,7 +368,7 @@
     // background-color: #FFFFFF;
     z-index: 100;
     // height: 100%;
-    width: calc(100vw - 40px);//100%;
+    width: calc(100vw - 0px);//100%;
     min-width: 970px;
     // background-color: #FFFFFF;
     background: -moz-linear-gradient(top, #b8c4cb, #f6f6f8);
@@ -389,7 +398,21 @@
 
 
   }
-
+  .viewPointTypeArea{
+    position: absolute;
+    background-color: #FFFFFF;
+    z-index: 100;
+    left: 60px;
+    top: 50px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    color:#19babf;
+    line-height: 24px;
+    .iconBell{
+      font-size: 20px;
+    }
+  }
   .viewPointThumbArea {
     /*视点展示区域*/
     position: absolute;

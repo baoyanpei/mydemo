@@ -1,5 +1,6 @@
 import {
-  getAllInstList
+  getAllInstList,
+  queryTaskAll
 } from '@/api/workflow'
 
 const workflow = {
@@ -24,6 +25,19 @@ const workflow = {
         })
       })
     },
+    // 获取任务列表
+    QueryTaskAll({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        queryTaskAll(param).then(response => {
+          //   commit('SET_PROJECT_PERSON_LIST', response.data)
+          resolve(response.data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    }
 
   }
 }

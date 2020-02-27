@@ -23,3 +23,13 @@ export function getAllInstList(data) {
     // baseURL: 'http://w.yidebim.com:3004'
   })
 }
+
+export function queryTaskAll(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/oa/workflow',
+    method: 'post',
+    data: data,
+    // baseURL: 'http://w.yidebim.com:3004'
+  })
+}
