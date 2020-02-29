@@ -19,11 +19,8 @@
                 部门：{{bumen}}
               </el-col>
               <el-col :span="5" class="fatherchange">
-<<<<<<< HEAD
-=======
                 <!--<div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"-->
                 <!--@click="changegroup">更换组别</div>-->
->>>>>>> 2dc58bb5e15bd118ef2f12a8bd34f0f9cae3c485
                 <el-popover placement="right" width="400" trigger="click">
                   <el-cascader-panel v-model="optionmodel" :options="optionGroups" @change="changevalue">
                   </el-cascader-panel>
