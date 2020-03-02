@@ -80,7 +80,7 @@
 
 </style>
 <template>
-  <el-dialog :modal="true" width="1100px" top="1vh" :lock-scroll="true" :append-to-body="true"
+  <el-dialog :modal="true" width="1105px" top="1vh" :lock-scroll="true" :append-to-body="true"
     :close-on-click-modal="false" @open="openPersonListDialogHandle" @close="closediv"
     :visible.sync="personListDialog.show" title="人员信息" v-dialogDrag>
     <div id="person-list-from" class="person-list-from">
@@ -142,6 +142,15 @@
               @click.native.prevent="handleSubmit(true)" size="mini">导出人员信息</el-button> -->
             <!-- <el-button type="success" :loading="loading" icon="el-icon-download"
               @click.native.prevent="handleExpertHealthSubmit()" size="mini">导出健康状态</el-button> -->
+            <el-dropdown @command="handleExpertPersonSubmit" trigger="click">
+              <el-button type="success" size="mini" icon="el-icon-download">
+                导出个人<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="jkzt">健康状态</el-dropdown-item>
+                <el-dropdown-item command="cwjl">测温记录</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </el-form-item>
         </div>
 
@@ -151,10 +160,13 @@
       <span class="table-title">人员名单</span><span class="table-total">共 {{ totalPerson }} 人</span>
       <hr class="hr1" />
       <el-table ref="personInoutTable" v-loading="loading" :data="personInoutList" height="420px"
-        :empty-text="personInoutTableEmptyText" highlight-current-row @row-click="handleRowClick" style="width: 100%"
-        size="mini" :show-header="true" header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
+        @selection-change="handlePersonListSelectionChange" :empty-text="personInoutTableEmptyText"
+        highlight-current-row @row-click="handleRowClick" style="width: 100%" size="mini" :show-header="true"
+        header-align="center" :default-sort="{prop: 'name', order: 'ascending'}">
         <el-table-column label="基本信息">
-          <el-table-column type="index" width="40">
+          <el-table-column type="selection" width="30">
+          </el-table-column>
+          <el-table-column type="index" width="35">
           </el-table-column>
           <el-table-column property="name" sortable align="center" label="姓名" width="80" header-align="center">
             <template slot-scope="scope">
@@ -384,7 +396,8 @@
         checkedPersonType: false, //false 只有项目部
         totalPerson: 0,
         personHealthMap: new Map(),
-        personHealthDayLastMap: new Map()
+        personHealthDayLastMap: new Map(),
+        selectedPersonList: [] // 被选中的人员列表
         // list: []
       }
     },
@@ -957,14 +970,36 @@
       handleExpertAllSubmit(command) {
         // this.$message('click on item ' + command);
         switch (command) {
-          case 'ryxx':
+          case 'jkzt':
             this.handleSubmit(true)
             break;
-          case 'jkzt':
+          case 'cwxx':
             this.handleExpertHealthSubmit()
             break;
         }
-      }
+      },
+      handleExpertPersonSubmit(command) {
+        if (this.selectedPersonList.length === 0) {
+          this.$message({
+            message: '请先选择要导出的人员！',
+            type: 'error'
+          })
+          return;
+        }
+        switch (command) {
+          case 'jkzt':
+            console.log('command1 jkzt')
+            break;
+          case 'cwjl':
+            console.log('command2 cwjl')
+            break;
+        }
+      },
+      handlePersonListSelectionChange(selection) {
+        this.selectedPersonList = selection;
+        console.log('this.selectedPersonList', this.selectedPersonList)
+      },
+
     },
     mounted() {
       // console.log('project_id', this.project_id)
