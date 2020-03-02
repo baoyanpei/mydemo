@@ -122,16 +122,26 @@
             <!--personInoutList-->
             <!--<el-cascader :options="lackdata" ref="cascaderAddr" :props="props" v-model="lackdatavalue" @change="titlechange()" collapse-tags></el-cascader>-->
             <el-cascader :options="lackdata" ref="cascaderAddr" :props="props" v-model="lackdatavalue"
-              @change="handleSubmit(false)" collapse-tags></el-cascader>
+              @change="handleSubmit(false)" collapse-tags size="mini"></el-cascader>
           </el-form-item>
 
           <el-form-item>
             <el-button type="success" :loading="loading" icon="el-icon-search"
               @click.native.prevent="handleSubmit(false)" size="mini">查询</el-button>
-            <el-button type="success" :loading="loading" icon="el-icon-download"
-              @click.native.prevent="handleSubmit(true)" size="mini">导出人员信息</el-button>
-            <el-button type="success" :loading="loading" icon="el-icon-download"
-              @click.native.prevent="handleExpertHealthSubmit()" size="mini">导出健康状态</el-button>
+
+            <el-dropdown @command="handleExpertAllSubmit" trigger="click">
+              <el-button type="success" size="mini" icon="el-icon-download">
+                导出全部<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="ryxx">人员信息</el-dropdown-item>
+                <el-dropdown-item command="jkzt">健康状态</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <!-- <el-button type="success" :loading="loading" icon="el-icon-download"
+              @click.native.prevent="handleSubmit(true)" size="mini">导出人员信息</el-button> -->
+            <!-- <el-button type="success" :loading="loading" icon="el-icon-download"
+              @click.native.prevent="handleExpertHealthSubmit()" size="mini">导出健康状态</el-button> -->
           </el-form-item>
         </div>
 
@@ -154,7 +164,7 @@
           <el-table-column property="" align="center" sortable label="资料" width="150" header-align="center">
             <template slot-scope="scope">
               <!--八种缺少的资料 datum_uploaded-->
-              <el-button type="text" size="small">
+              <el-button type="text" size="small" class="datum_uploaded_button">
                 <!--<span>{{scope.row.datum_uploaded}}</span>-->
                 <!--{{Math.pow(2,8)&parseInt(scope.row.datum_uploaded,2)>0}}-->
                 <i title="入职照片" class="icon-geren"
@@ -944,9 +954,20 @@
       handleExpertHealthSubmit() {
         this.getPersonHealthExcel()
       },
+      handleExpertAllSubmit(command) {
+        // this.$message('click on item ' + command);
+        switch (command) {
+          case 'ryxx':
+            this.handleSubmit(true)
+            break;
+          case 'jkzt':
+            this.handleExpertHealthSubmit()
+            break;
+        }
+      }
     },
     mounted() {
-      console.log('project_id', this.project_id)
+      // console.log('project_id', this.project_id)
 
     }
   }
