@@ -130,7 +130,7 @@
               @click.native.prevent="handleSubmit(false)" size="mini">查询</el-button>
 
             <el-dropdown @command="handleExpertAllSubmit" trigger="click">
-              <el-button type="success" size="mini" icon="el-icon-download">
+              <el-button type="success" size="mini" icon="el-icon-download" :loading="loading">
                 导出全部<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
@@ -143,7 +143,7 @@
             <!-- <el-button type="success" :loading="loading" icon="el-icon-download"
               @click.native.prevent="handleExpertHealthSubmit()" size="mini">导出健康状态</el-button> -->
             <el-dropdown @command="handleExpertPersonSubmit" trigger="click">
-              <el-button type="success" size="mini" icon="el-icon-download">
+              <el-button type="success" size="mini" icon="el-icon-download" :loading="loading">
                 导出个人<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
@@ -152,6 +152,7 @@
               </el-dropdown-menu>
             </el-dropdown>
           </el-form-item>
+          <span style="line-height: 40px;">(<span style="color:red">*</span>导出个人信息请先勾选)</span>
         </div>
 
 
@@ -591,12 +592,14 @@
             project_id: this.project_id,
             t: 'url'
           }
+          this.loading = true
           this.$store.dispatch('GetPersonHealthExcel', param).then((res) => {
             console.log('res', res)
             if (res.status === "success") {
               console.log('res', res.url)
               this.download(res.url, 'downlod')
             }
+            this.loading = false
             // 二进制流的方式
             /*
             const link = document.createElement('a')
@@ -615,7 +618,51 @@
             document.body.removeChild(link)
             */
           }).catch(() => {
+            this.loading = false
+          })
 
+        })
+      },
+      getPersonHealthExcel3(person_ids) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'person_health_excel3',
+            project_id: this.project_id,
+            person_ids: person_ids,
+            t: 'url'
+          }
+          this.loading = true
+          this.$store.dispatch('GetPersonHealthExcel3', param).then((res) => {
+            console.log('res', res)
+            if (res.status === "success") {
+              console.log('res', res.url)
+              this.download(res.url, 'downlod')
+            }
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+
+        })
+      },
+      getPersonHealthExcel2(person_ids) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'person_health_excel2',
+            project_id: this.project_id,
+            person_ids: person_ids,
+            t: 'url'
+          }
+          this.loading = true
+          this.$store.dispatch('GetPersonHealthExcel2', param).then((res) => {
+            console.log('res', res)
+            if (res.status === "success") {
+              console.log('res', res.url)
+              this.download(res.url, 'downlod')
+            }
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
           })
 
         })
@@ -970,10 +1017,10 @@
       handleExpertAllSubmit(command) {
         // this.$message('click on item ' + command);
         switch (command) {
-          case 'jkzt':
+          case 'ryxx':
             this.handleSubmit(true)
             break;
-          case 'cwxx':
+          case 'jkzt':
             this.handleExpertHealthSubmit()
             break;
         }
@@ -986,12 +1033,20 @@
           })
           return;
         }
+        let person_ids = []
+        this.selectedPersonList.forEach(personInfo => {
+          // console.log(person_id)
+          person_ids.push(personInfo.person_id);
+        });
+        // console.log('person_ids', person_ids)
         switch (command) {
           case 'jkzt':
             console.log('command1 jkzt')
+            this.getPersonHealthExcel3(person_ids)
             break;
           case 'cwjl':
             console.log('command2 cwjl')
+            this.getPersonHealthExcel2(person_ids)
             break;
         }
       },

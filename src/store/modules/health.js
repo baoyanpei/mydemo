@@ -4,7 +4,9 @@ import {
   personHealthDay,
   personHealthDayList,
   personHealthDayLastList,
-  personHealthExcel
+  personHealthExcel,
+  personHealthExcel2,
+  personHealthExcel3
 } from '@/api/health'
 const health = {
   state: {
@@ -170,6 +172,28 @@ const health = {
         })
       })
     },
+    GetPersonHealthExcel2({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        personHealthExcel2(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    GetPersonHealthExcel3({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        personHealthExcel3(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    }
   }
 }
 

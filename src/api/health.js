@@ -100,6 +100,61 @@ export function personHealthExcel(data) {
     data: data
   })
 }
+// 6.1.4 健康记录表下载《入场人员体温监测记录表》
+
+/*
+http: GET,POST
+api:/api/logs/rec
+method:person_health_excel2
+参数：
+        project_id:必选
+        person_ids: person_id 集合，[]
+        t: url 表示返回下载的 url(不带域名) 否则直接返回二进制文件流
+
+返回：
+xlsx 二进制个流
+
+返回（t:url）：
+{"data":[],"msg":"","status":"success","url":"/api/oa/file/download/tmp/eyJhbGciOiJIUzI1NiIsImV4cCI6MTU4MjY0NjI4OSwiaWF0IjoxNTgyNjE3NDg5fQ.eyJwZXJzb25faWQiOjAsInByb2plY3RfaWQiOiIxMDAwNCIsImZuYW1lIjoibHd6eWprZGpiXzM1YmJlN2RjMWZlMDRlNzI5NWVhNDNmMmExMmRmNGRiLnhsc3giLCJ0aXRsZSI6Ilx1NTJiM1x1NTJhMVx1NGY1Y1x1NGUxYVx1NGViYVx1NTQ1OFx1NTA2NVx1NWViN1x1NGZlMVx1NjA2Zlx1NzY3Ylx1OGJiMFx1ODg2OCJ9.yB2n65C-OWknrkfnaeE7iPpsIUnP3Ing8b91Nzj2BMY",:"count":1}
+count 记录数，count=0没查到数据
+
+*/
+
+export function personHealthExcel2(data) {
+  return request({
+    url: '/api/logs/rec',
+    method: 'post',
+    // responseType: 'blob',
+    data: data
+  })
+}
+
+// 6.1.5 健康记录表下载《入场人员健康登记卡》
+/*
+http: GET,POST
+api:/api/logs/rec
+method:person_health_excel3
+参数：
+        project_id:必选
+        person_ids: person_id 集合，[]
+        t: url 表示返回下载的 url(不带域名) 否则直接返回二进制文件流
+
+返回：
+xlsx 二进制个流
+
+返回（t:url）：
+{"data":[],"msg":"","status":"success","url":"/api/oa/file/download/tmp/eyJhbGciOiJIUzI1NiIsImV4cCI6MTU4MjY0NjI4OSwiaWF0IjoxNTgyNjE3NDg5fQ.eyJwZXJzb25faWQiOjAsInByb2plY3RfaWQiOiIxMDAwNCIsImZuYW1lIjoibHd6eWprZGpiXzM1YmJlN2RjMWZlMDRlNzI5NWVhNDNmMmExMmRmNGRiLnhsc3giLCJ0aXRsZSI6Ilx1NTJiM1x1NTJhMVx1NGY1Y1x1NGUxYVx1NGViYVx1NTQ1OFx1NTA2NVx1NWViN1x1NGZlMVx1NjA2Zlx1NzY3Ylx1OGJiMFx1ODg2OCJ9.yB2n65C-OWknrkfnaeE7iPpsIUnP3Ing8b91Nzj2BMY",:"count":1}
+count 记录数，count=0没查到数据
+*/
+export function personHealthExcel3(data) {
+  return request({
+    url: '/api/logs/rec',
+    method: 'post',
+    // responseType: 'blob',
+    data: data
+  })
+}
+
 
 // 6.2 用户健康日记录
 /*
