@@ -1486,7 +1486,10 @@
                     // this.viewer.setThemingColor(_id, red, model);
                     let average = this.getFragXYZ(model, _id)
                     let markId = `mark_${item.id}_${_id}`
+                    // 添加任务的标注的标签-是标签
                     this.drawViewPointLabel(average, markId, _name, 'dasd')
+
+                    // 添加任务的标注的点 - 是点
                     this.drawViewPointMarker(average, markId, _name, 'dasd')
                   })
                 }
@@ -1537,7 +1540,8 @@
                     // this.viewer.setThemingColor(_id, red, model);
                     let average = this.getFragXYZ(model, _id)
                     let markId = `mark_${_pvData.id}_${_id}`
-                    this.drawViewPointLabel(average, markId, _name, 'dasd')
+                    // 任务的标题
+                    // this.drawViewPointLabel(average, markId, _name, 'dasd')
                     this.drawViewPointMarker(average, markId, _name, 'dasd')
                   })
 
