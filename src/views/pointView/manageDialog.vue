@@ -5,7 +5,7 @@
 <template>
 
   <div id="view-point-manage-dialog" class="view-point-manage-dialog">
-    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :close-on-click-modal="false" :visible.sync="ViewPointManageDialog.show"
+    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :close-on-click-modal="false" :close-on-press-escape="true" :visible.sync="ViewPointManageDialog.show"
       @opened="openedManageDialogHandle" @close="closeManageDialogHandle" :title="dialogTitle" v-el-drag-dialog>
       <el-tabs v-model="activeTabName" @tab-click="tabHandleClick">
         <el-tab-pane label="普通视点" name="2"></el-tab-pane>
