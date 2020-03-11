@@ -5,7 +5,7 @@
 <template>
 
   <div id="view-point-manage-dialog" class="view-point-manage-dialog">
-    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :visible.sync="ViewPointManageDialog.show"
+    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :close-on-click-modal="false" :visible.sync="ViewPointManageDialog.show"
       @opened="openedManageDialogHandle" @close="closeManageDialogHandle" :title="dialogTitle" v-el-drag-dialog>
       <el-tabs v-model="activeTabName" @tab-click="tabHandleClick">
         <el-tab-pane label="普通视点" name="2"></el-tab-pane>
@@ -217,13 +217,13 @@
         // await this.GetViewpointsByFileIdDataAll() // 获取所有的视点数据
         // console.log(12313123)
         // await this.GetViewpointsData()
-        this.FilterData()
+        this.getPointViewData()
       },
       tabHandleClick(tab, event) {
         console.log(tab, event);
         this.activeTabName = tab.name
         // console.log('this.activeTabName', this.activeTabName)
-        this.FilterData()
+        this.getPointViewData()
       },
       openedManageDialogHandle() {
         this.tipMessage = "正在查询视点数据"
@@ -315,8 +315,8 @@
         })
       },
       GetViewpointsByItemIdDataAll() {
-        
-        
+
+
         return new Promise((resolve, reject) => {
           let _itemInfoList = this.ViewPointManageDialog.itemInfoList
           let reqList = []
@@ -333,7 +333,7 @@
             })
             // 去处视点列表中'FILE_IDS'和'ID'重复的数据 
             this.viewPointAllList = lodash.unionBy(this.viewPointAllList, 'file_ids', 'id')
-            
+
             resolve()
             console.log("this.viewPointAllList", this.viewPointAllList);
           })
@@ -370,7 +370,7 @@
 
       //   })
       // },
-      async FilterData() {
+      async getPointViewData() {
         this.loadingFull = this.$loading({
           // lock: true,
           // text: '正在读取数据...',
@@ -415,11 +415,11 @@
                 item['bgShowNormal'] = 'bgShow'
               }
 
-              if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
-                item['bgShow'] = 'bgShowSelected'
-              } else {
-                item['bgShow'] = item['bgShowNormal']
-              }
+              // if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
+              //   item['bgShow'] = 'bgShowSelected'
+              // } else {
+              //   item['bgShow'] = item['bgShowNormal']
+              // }
               let _item_id = item.item_id
               // console.log('_mapBuild.get(item_id)', _mapBuild.get(_item_id))
 
@@ -457,6 +457,7 @@
 
 
           });
+
           // let _buildList = []
           this.activeBuildNames = []
           this.activeFloorNames = []
@@ -492,7 +493,7 @@
 
           })
 
-
+          this.setCurrentChoosedStyleByItemId()
           // console.log('_mapBuild', _mapBuild)
           // console.log('_buildList', _buildList)
           console.log('this.viewPointPosDataList', this.viewPointPosDataList)
@@ -510,22 +511,23 @@
                 `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
               item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
               item['className'] = `imagesPreview-${item.id}`
-              console.log('1231231231',item,this.CurrentFileIDList)
+              console.log('1231231231', item, this.CurrentFileIDList)
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
                 item['bgShow'] = 'bgShow'
                 item['bgShowNormal'] = 'bgShow'
               }
-              if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
-                item['bgShow'] = 'bgShowSelected'
-              } else {
-                item['bgShow'] = item['bgShowNormal']
-              }
+              // if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
+              //   item['bgShow'] = 'bgShowSelected'
+              // } else {
+              //   item['bgShow'] = item['bgShowNormal']
+              // }
               this.viewPointDataList.push(item)
             }
 
 
           });
+          this.setCurrentChoosedStyle()
           console.log('this.viewPointDataList', this.viewPointDataList)
           this.tipMessage = ''
           if (this.viewPointDataList.length === 0) {
@@ -534,15 +536,50 @@
         }
         this.loadingFull.close();
       },
+      setCurrentChoosedStyle() {
+        let tempList = []
+        this.viewPointDataList.forEach(item => {
+          console.log('12222222', item, this.currentChoosedItem)
+          if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
+            item['bgShow'] = 'bgShowSelected'
+            // console.log('1222222222222222')
+          } else {
+            item['bgShow'] = item['bgShowNormal']
+          }
+          tempList.push(item)
+        })
+        this.viewPointDataList = tempList
+      },
+      setCurrentChoosedStyleByItemId() {
+        this.viewPointPosDataList.forEach(build => {
+          build.floorList.forEach(floor => {
+            floor.viewPointList.forEach(viewPoint => {
+              if (this.currentChoosedItem !== null && viewPoint.id === this.currentChoosedItem.id) {
+                viewPoint['bgShow'] = 'bgShowSelected'
+                // Vue.set(viewPoint, 'bgShow', 'bgShowSelected')
+                console.log('122222222-2222222')
+              } else {
+                viewPoint['bgShow'] = viewPoint['bgShowNormal']
+              }
+              
+            })
+          })
+        })
+        const tempList = this.viewPointPosDataList
+        this.viewPointPosDataList = []
+        this.viewPointPosDataList = tempList
+      },
       getViewPointsDataHandle(rowData) {
         console.log('getViewPointsDataHandle', rowData)
         this.currentChoosedItem = rowData
-        this.FilterData()
+        // this.getPointViewData()
+        if (parseInt(this.activeTabName) === 1) { // 项目位置视点
+          this.setCurrentChoosedStyleByItemId()
+        }else{
+          this.setCurrentChoosedStyle()
+        }
+        
         this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
-
-
-
-
       },
       deleteViewPointHander(item) {
         console.log('deleteViewPointHander', item)
