@@ -5,7 +5,7 @@
 <template>
 
   <div id="view-point-manage-dialog" class="view-point-manage-dialog">
-    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :visible.sync="ViewPointManageDialog.show"
+    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :close-on-click-modal="false" :close-on-press-escape="true" :visible.sync="ViewPointManageDialog.show"
       @opened="openedManageDialogHandle" @close="closeManageDialogHandle" :title="dialogTitle" v-el-drag-dialog>
       <el-tabs v-model="activeTabName" @tab-click="tabHandleClick">
         <el-tab-pane label="普通视点" name="2"></el-tab-pane>
@@ -125,6 +125,9 @@
   } from '@/utils/auth'
   import moment from 'moment'
   import lodash from 'lodash'
+  import {
+    Loading
+  } from 'element-ui';
 
   import 'viewerjs/dist/viewer.css'
   import Viewer from 'v-viewer'
@@ -141,6 +144,7 @@
     directives: {},
     data() {
       return {
+        loadingFull: false,
         dialogTitle: '视点管理',
         activeTabName: '1',
         ProjectItemsAll: new Map(),
@@ -150,6 +154,7 @@
         viewPointAllList: [], // 从接口获取的所有数据
         tipMessage: '',
         CurrentFileIDList: '', //当前打开的模型的file_id列表
+        CurrentItemIDList: '', //当前打开的模型的item_id列表
         viewOptions: "{'inline': true,'navbar': false,'movable':false}",
         activeBuildNames: [],
         activeFloorNames: [],
@@ -203,20 +208,22 @@
         this.activeTabName = '1'
         this.ProjectItemsAll = new Map()
         this.currentChoosedItem = null
+        this.CurrentFileIDList = []
+        this.CurrentItemIDList = []
       },
       async getData() {
         // await this.exchangeToken(getToken())
         await this.getProjectItemsAll() // 获取模型的item列表（最新版本）
-        await this.GetViewpointsDataAll() // 获取所有的视点数据
-        console.log(12313123)
+        // await this.GetViewpointsByFileIdDataAll() // 获取所有的视点数据
+        // console.log(12313123)
         // await this.GetViewpointsData()
-        this.FilterData()
+        this.getPointViewData()
       },
       tabHandleClick(tab, event) {
         console.log(tab, event);
         this.activeTabName = tab.name
         // console.log('this.activeTabName', this.activeTabName)
-        this.FilterData()
+        this.getPointViewData()
       },
       openedManageDialogHandle() {
         this.tipMessage = "正在查询视点数据"
@@ -229,9 +236,26 @@
         this.ViewPointManageDialog.itemInfoList.forEach(item => {
           this.CurrentFileIDList.push(item.file_id)
         })
+        this.CurrentItemIDList = []
+        this.ViewPointManageDialog.itemInfoList.forEach(item => {
+          // console.log('itemitemitem', item.item_id)
+          this.CurrentItemIDList.push(item.item_id)
+        })
+
         this.getData()
       },
+      closeManageDialogHandle() {
+        this.clearData()
+      },
       getProjectItemsAll() {
+        this.loadingFull = this.$loading({
+          // lock: true,
+          // text: '正在读取数据...',
+          // spinner: 'el-icon-loading',
+          // background: 'rgba(0, 0, 0, 0.5)',
+          // customClass: 'loading-class',
+          target: document.getElementById("view-point-manage-dialog").querySelector('.el-dialog')
+        });
         return new Promise((resolve, reject) => {
           this.ProjectItemsAll = new Map()
           const param = {
@@ -244,13 +268,13 @@
             _itemList.forEach(async build => {
               this.ProjectItemsAll.set(build.id, build)
             });
-
+            this.loadingFull.close()
             resolve()
           })
 
         })
       },
-      GetViewpointsDataAll() {
+      GetViewpointsByFileIdDataAll() {
         return new Promise((resolve, reject) => {
           let _itemInfoList = this.ViewPointManageDialog.itemInfoList
           let reqList = []
@@ -290,9 +314,47 @@
 
         })
       },
-      closeManageDialogHandle() {
-        this.clearData()
+      GetViewpointsByItemIdDataAll() {
+
+
+        return new Promise((resolve, reject) => {
+          let _itemInfoList = this.ViewPointManageDialog.itemInfoList
+          let reqList = []
+          this.viewPointAllList = []
+          for (const item of _itemInfoList) {
+            console.log('item', item)
+            let p = this.GetViewPoints(item)
+            reqList.push(p)
+          }
+          Promise.all(reqList).then(_viewPointList => {
+            console.log("Promise.all", _viewPointList);
+            _viewPointList.forEach(itemList => {
+              this.viewPointAllList = [...this.viewPointAllList, ...itemList]
+            })
+            // 去处视点列表中'FILE_IDS'和'ID'重复的数据 
+            this.viewPointAllList = lodash.unionBy(this.viewPointAllList, 'file_ids', 'id')
+
+            resolve()
+            console.log("this.viewPointAllList", this.viewPointAllList);
+          })
+        })
+
       },
+      GetViewPoints(item) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'GetViewPoints',
+            item_id: item.item_id,
+            project_id: this.project_id
+          }
+          this.$store.dispatch('GetViewPoints', param).then((_viewPointList) => {
+            console.log('GetViewPoints - _viewPointList', _viewPointList)
+            resolve(_viewPointList)
+          })
+
+        })
+      },
+
       // GetViewpointsData() {
       //   return new Promise((resolve, reject) => {
       //     const param = {
@@ -308,11 +370,22 @@
 
       //   })
       // },
-      FilterData() {
+      async getPointViewData() {
+        this.loadingFull = this.$loading({
+          // lock: true,
+          // text: '正在读取数据...',
+          // spinner: 'el-icon-loading',
+          // background: 'rgba(0, 0, 0, 0.5)',
+          // customClass: 'loading-class',
+          target: document.getElementById("view-point-manage-dialog").querySelector('.el-dialog')
+        });
         this.viewPointDataList = []
         this.viewPointPosDataList = []
         console.log('this.ViewPointManageDialog.type', this.ViewPointManageDialog)
-        if (parseInt(this.activeTabName) === 1) {
+        if (parseInt(this.activeTabName) === 1) { // 项目位置视点
+
+          await this.GetViewpointsByItemIdDataAll()
+
           let _mapBuild = new Map()
           this.viewPointAllList.forEach(item => {
 
@@ -329,16 +402,24 @@
               item['className'] = `imagesPreview-${item.id}`
               // console.log('picture_info', picture_info)
 
-              if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
+              // if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
+              //   // console.log(`.imagesPreview-${rowData.ID}`)
+              //   item['bgShow'] = 'bgShow'
+              //   item['bgShowNormal'] = 'bgShow'
+              // }
+
+              // console.log('item1111item', item, this.CurrentItemIDList[0])
+              if (this.CurrentItemIDList.length > 1) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
                 item['bgShow'] = 'bgShow'
                 item['bgShowNormal'] = 'bgShow'
               }
-              if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
-                item['bgShow'] = 'bgShowSelected'
-              } else {
-                item['bgShow'] = item['bgShowNormal']
-              }
+
+              // if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
+              //   item['bgShow'] = 'bgShowSelected'
+              // } else {
+              //   item['bgShow'] = item['bgShowNormal']
+              // }
               let _item_id = item.item_id
               // console.log('_mapBuild.get(item_id)', _mapBuild.get(_item_id))
 
@@ -376,6 +457,7 @@
 
 
           });
+
           // let _buildList = []
           this.activeBuildNames = []
           this.activeFloorNames = []
@@ -411,7 +493,7 @@
 
           })
 
-
+          this.setCurrentChoosedStyleByItemId()
           // console.log('_mapBuild', _mapBuild)
           // console.log('_buildList', _buildList)
           console.log('this.viewPointPosDataList', this.viewPointPosDataList)
@@ -420,6 +502,7 @@
             this.tipMessage = "没有此模型相关的视点数据"
           }
         } else {
+          await this.GetViewpointsByFileIdDataAll() // 获取所有的视点数据
           this.viewPointAllList.forEach(item => {
             console.log('item', item)
             if (parseInt(item.type) === parseInt(this.activeTabName)) {
@@ -428,39 +511,75 @@
                 `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
               item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
               item['className'] = `imagesPreview-${item.id}`
-
+              console.log('1231231231', item, this.CurrentFileIDList)
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
                 item['bgShow'] = 'bgShow'
                 item['bgShowNormal'] = 'bgShow'
               }
-              if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
-                item['bgShow'] = 'bgShowSelected'
-              } else {
-                item['bgShow'] = item['bgShowNormal']
-              }
+              // if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
+              //   item['bgShow'] = 'bgShowSelected'
+              // } else {
+              //   item['bgShow'] = item['bgShowNormal']
+              // }
               this.viewPointDataList.push(item)
             }
 
 
           });
+          this.setCurrentChoosedStyle()
           console.log('this.viewPointDataList', this.viewPointDataList)
           this.tipMessage = ''
           if (this.viewPointDataList.length === 0) {
             this.tipMessage = "没有此模型相关的视点数据"
           }
         }
-
+        this.loadingFull.close();
+      },
+      setCurrentChoosedStyle() {
+        let tempList = []
+        this.viewPointDataList.forEach(item => {
+          console.log('12222222', item, this.currentChoosedItem)
+          if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
+            item['bgShow'] = 'bgShowSelected'
+            // console.log('1222222222222222')
+          } else {
+            item['bgShow'] = item['bgShowNormal']
+          }
+          tempList.push(item)
+        })
+        this.viewPointDataList = tempList
+      },
+      setCurrentChoosedStyleByItemId() {
+        this.viewPointPosDataList.forEach(build => {
+          build.floorList.forEach(floor => {
+            floor.viewPointList.forEach(viewPoint => {
+              if (this.currentChoosedItem !== null && viewPoint.id === this.currentChoosedItem.id) {
+                viewPoint['bgShow'] = 'bgShowSelected'
+                // Vue.set(viewPoint, 'bgShow', 'bgShowSelected')
+                console.log('122222222-2222222')
+              } else {
+                viewPoint['bgShow'] = viewPoint['bgShowNormal']
+              }
+              
+            })
+          })
+        })
+        const tempList = this.viewPointPosDataList
+        this.viewPointPosDataList = []
+        this.viewPointPosDataList = tempList
       },
       getViewPointsDataHandle(rowData) {
         console.log('getViewPointsDataHandle', rowData)
         this.currentChoosedItem = rowData
-        this.FilterData()
+        // this.getPointViewData()
+        if (parseInt(this.activeTabName) === 1) { // 项目位置视点
+          this.setCurrentChoosedStyleByItemId()
+        }else{
+          this.setCurrentChoosedStyle()
+        }
+        
         this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
-
-
-
-
       },
       deleteViewPointHander(item) {
         console.log('deleteViewPointHander', item)
