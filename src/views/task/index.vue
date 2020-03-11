@@ -56,9 +56,13 @@
         <el-cascader :options="leibieoptions" @change="handleChangegetleixin" :show-all-levels="false"></el-cascader>
       </div>
       <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 50px">建筑:</span>
+        <el-cascader :options="building" @change="buildingchange" :show-all-levels="false" style="width:350px;"></el-cascader>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
         <span style="margin-right: 50px">地点:</span>
         <el-cascader :options="didianarr" @change="didianarrchange" :show-all-levels="false" style="width:350px;"></el-cascader>
-        <el-button type="primary">查看BIM</el-button>
+        <el-button type="primary" @click="findbim">查看BIM</el-button>
       </div>
       <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
         <span style="margin-right: 50px;opacity: 0;">地点:</span>
@@ -195,6 +199,8 @@
         gettypearr:[],
         zhongyaoxing:null,
         getcategory_flowid:'',
+        building:[],
+        buileding_fowlid:'',
         didianarr:[],
         optionmodel:'',
         dingshow:false,
@@ -206,6 +212,7 @@
         fabuquestions_type:'',
         fabustartvalue:'',
         fabu_people:[],
+        bimitemid:'',
         datalistfrom: {
           title: "",
           modify_count: 0,
@@ -242,6 +249,7 @@
         activeName:'first',
         chaxuninput:'',
         personlist:'',
+        bimopen:[],
         mybox:[],//我的任务
         flow_word:'',
         qtype_word:"",
@@ -262,6 +270,7 @@
           xian2:false,
           xian3:true,
           stateall:'11111',
+          didiandataarr:[],
           workId:'',
           questions_type:'资料',
           created:'2019年9月2日 13:09:30',
@@ -325,7 +334,8 @@
         console.log("我爱中国111")
         console.log("组别",this.projectGroupList)
         this.gettype()
-        this.getdidian()
+        this.getmodel()
+        // this.getdidian()
       },
       closedialog(){
         this.dingshow=false
@@ -389,15 +399,33 @@
             resolve()
           })
       },
+      getmodel(){//建筑模型
+        const param = {
+            method:'project_items',
+            project_id: this.project_id
+          }
+          this.$store.dispatch('GetItemInfoListByItemIDs', param).then((data) => {
+            console.log("建筑模型",data)
+            var aaa=[]
+            //提出模型名字
+            for(let i=0;i<data.length;i++){
+              if(data[i].name!=""){
+                aaa.push({label:data[i].name,value:data[i].file_id})
+              }
+            }
+            this.building=aaa
+          })
+      },
       getdidian(){
         return new Promise((resolve, reject) => {
           const param = {
             method:'GetViewpointsByFileId',
-            file_id:"",
+            file_id:this.buileding_fowlid,
             project_id: this.project_id
           }
           this.$store.dispatch('GetItemInfoListByItemIDs', param).then((data) => {
             console.log("地点data",data)
+            this.didiandataarr=data
             this.didianarr=[]
             this.didian=[]
             var aaa=[]
@@ -421,7 +449,7 @@
               if(data[i].floor_name!=""){
                 for(let j=0;j<newarr.length;j++){
                   if(newarr[j].label==data[i].floor_name){
-                    newarr[j].children.push({label:data[i].name,value:"第"+data[i].floor_name+"层"+data[i].name,})
+                    newarr[j].children.push({label:data[i].name,value:data[i].id,itemid:"第"+data[i].floor_name+"层"+data[i].name})
                   }
                 }
               }
@@ -469,17 +497,6 @@
         console.log("this.aaaa",this.aaaa)
         console.log("gettypearr",this.grouparr)
       },
-      // this.data.datalist.form = {
-      //   title: this.data.datalist.title,
-      //   modify_count: 0,
-      //   check_count: 0,
-      //   "basic": [],
-      //    "time": "",
-      //   "address": "",
-      //    "receive": [],
-      //    "modify_check": [],
-      //     receiver:this.data.seluser
-      // }
       fabufnc(){//发布任务
         let namebox=""
         for(let i=0;i<this.fabu_people.length;i++){
@@ -531,9 +548,22 @@
         console.log("index获取到的类型",index,this.leibieoptions[index[0]].label)
         this.fabuquestions_type=this.leibieoptions[index[0]].label
       },
+      buildingchange(index){//更换建筑
+        console.log("地点index",index[0])
+        this.buileding_fowlid=index[0]
+        this.getdidian()
+      },
       didianarrchange(index){//更换地点
+        this.bimopen=[]
         console.log("地点index",index[1])
-        // this.fabuadress=index[1]
+        this.bimitemid=index[1]
+        console.log("aaaaaaaaaaa",this.bimitemid)
+        for(let i=0;i<this.didiandataarr.length;i++){
+          if(index[1]==this.didiandataarr[i].id){
+            this.bimopen.push(this.didiandataarr[i].camera_info,this.didiandataarr[i].id)
+          }
+        }
+        console.log("bim-----",this.bimopen)
         this.datalistfrom.address={
           id:"questions_address",
           lx:"basic",
@@ -545,6 +575,11 @@
           address:"",
           address_id:"",
           pvid:""
+        }
+      },
+      findbim(){
+        if(this.bimopen.length!=0){
+          window.open("https://xcx.tddata.net/smz/#/xcx/pvshow?projectid="+this.project_id+"&"+"pvid="+this.bimopen[1]+"&"+"token="+this.bimopen[0])
         }
       },
       pagechange (e) {//每页多少条数据
