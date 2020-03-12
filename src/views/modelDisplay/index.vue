@@ -298,22 +298,37 @@
         
 
       },
+      getItemInfoListByItemIDs(item_ids) {
+        // console.log('this.project_id', this.project_id)
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'GetItemInfoListByItemIDs',
+            project_id: this.project_id,
+            item_id: item_ids
+
+          }
+          this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
+            this.itemInfoList = _itemList
+            resolve()
+          })
+        })
+      },
       async getUrlAndInitView() {
         return new Promise(async (resolve, reject) => {
           let _result = this.getModelUrl()
           // console.log('_result', _result)
           let _urlList = _result['urlList']
-          let _itemInfoList = _result['itemInfoList']
+          // let _itemInfoList = _result['itemInfoList']
           if (_urlList.length !== 0) {
             this.loadedModels = []
             // console.log('_result123 _itemInfoList', _itemInfoList)
-            _itemInfoList.forEach(itemInfo => {
+            this.itemInfoList.forEach(itemInfo => {
               if (itemInfo.item_id === undefined) {
                 itemInfo['item_id'] = itemInfo.id
               }
             })
 
-            await this.init3DView(_urlList, _itemInfoList)
+            await this.init3DView(_urlList, this.itemInfoList)
             // console.log('init3DView - complete')
             this.viewer.addEventListener(
               // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
@@ -324,6 +339,26 @@
           }
           resolve()
         })
+      },
+      getModelUrl() {
+        let result = null
+        let _urlList = []
+        // let _itemInfoList = []
+        this.itemInfoList.forEach(itemInfo => {
+          console.log('itemInfo111', itemInfo)
+          // 服务端地址转换
+          // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
+          // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
+          // _itemInfoList.push(itemInfo)
+          // 本地地址转换
+          // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
+        });
+        result = {
+          'urlList': _urlList,
+          // 'itemInfoList': _itemInfoList
+        }
+        return result
       },
       init3DView(modelURLList, itemInfoList) {
         return new Promise((resolve, reject) => {
@@ -352,12 +387,7 @@
 
             }
             Promise.all(_Plist).then(result => {
-              // console.log("Promise.all", result);
-              // _viewPointList.forEach(itemList => {
-              //   this.viewPointAllList = [...this.viewPointAllList, ...itemList]
-              // })
               resolve()
-              // console.log("this.viewPointAllList", this.viewPointAllList);
             })
           });
 
@@ -376,22 +406,13 @@
               z: 0
             }
           };
-          // console.log('iiiiii', index, modelURL)
           this.viewer.loadModel(modelURL, modelOpts, (model) => {
-            // console.log('itemInfoitemInfoitemInfo', itemInfo)
             model['item_id'] = itemInfo.item_id
             this.loadedModels.push(model)
-            // console.log('this.viewer', this.viewer)
-            // console.log('model', model)
-            // this.viewer.addEventListener(
-            //   Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-            //   this.onSelectionChanged
-            // );
             if (index === 0) {
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
               this.viewer.setGroundShadow(false)
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
-              //unloadModel(model)
               if (!this.viewer.overlays.hasScene('custom-scene-1')) {
                 this.viewer.overlays.addScene('custom-scene-1');
               }
@@ -831,52 +852,8 @@
         var storeData = JSON.stringify(pushpinModelPt)
         div.data('3DData', storeData)
       },
-      getModelUrl() {
-        let result = null
-        let _urlList = []
-        let _itemInfoList = []
-        this.itemInfoList.forEach(itemInfo => {
-          console.log('itemInfo111', itemInfo)
-          // 服务端地址转换
-          // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
-          // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
-          _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
-          _itemInfoList.push(itemInfo)
-          // 本地地址转换
-          // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
-        });
-        result = {
-          'urlList': _urlList,
-          'itemInfoList': _itemInfoList
-        }
-        return result
-      },
-      getItemInfoListByItemIDs(item_ids) {
-        // console.log('this.project_id', this.project_id)
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: 'GetItemInfoListByItemIDs',
-            project_id: this.project_id,
-            item_id: item_ids
-
-          }
-          this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
-            // console.log('_itemList_itemList', _itemList)
-            this.itemInfoList = _itemList
-            // _itemList.forEach(build => {
-            //   this.itemInfoList.push(build)
-            //   this.itemList.forEach(item => {
-            //     if (item.FILE_ID === build.file_id) {
-            //       this.itemInfoList.push(build)
-            //     }
-            //   })
-
-            // });
-            // console.log('this.itemInfoList', this.itemInfoList)
-            resolve()
-          })
-        })
-      },
+      
+      
       getItemInfoListByProID(file_ids) {
         // console.log('this.project_id', this.project_id)
         this.itemInfoList = []
@@ -1218,17 +1195,12 @@
             let ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(screenshot, 0, 0, canvas.width, canvas.height);
-            // console.log('ctx', ctx)
-            // console.log('canvas.width, canvas.height', canvas.width, canvas.height, this.markupsExt)
             try {
               this.markupsExt.renderToCanvas(ctx);
             } catch (err) {
-              // document.getElementById("demo").innerHTML = err.message;
               console.log('renderToCanvas', err)
             }
-            // this.loadingSaveViewPoint = true
             setTimeout(() => {
-
               // 视点数据
               let saveStatus = JSON.stringify(this.viewer.getState());
               // 标记的svg数据
@@ -1243,19 +1215,8 @@
               }
               // 标记的图片base64数据
               let markupsBase64 = document.getElementById('snapshot').toDataURL("image/png")
-
-              // let markerInfo = {
-              //   base64: markupsBase64,
-              //   svg: markupsExtData
-              // }
-              // console.log('markerInfo', markerInfo)
               this.viewPointImgUrl = markupsBase64
-              // return
-              // let fileIDList = []
-              // this.itemList.forEach(item => {
-              //   fileIDList.push(item.FILE_ID)
-              // })
-              console.log('personInfo', this.personInfo)
+
               const __data = {
                 // "method": "SaveViewPoint",
                 "editType": editType,
@@ -1272,12 +1233,9 @@
                 "itemInfoList": this.itemInfoList,
                 "ViewPointCurrentData": this.ViewPointCurrentData
               }
-              // console.log('personInfo', this.personInfo)
               console.log('__data', __data)
-              
               const param = {
                 show: true,
-                // itemInfoList: this.itemInfoList
                 data: __data
               }
               // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
@@ -1285,11 +1243,6 @@
 
             }, 1000);
           })
-
-
-
-
-
         };
 
         // Get the full image
@@ -1298,11 +1251,6 @@
           screenshot.src = blobURL;
           console.log('blobURL', blobURL)
         });
-
-
-
-
-
       },
       openViewPointManageHandle() {
         // 打开视角管理窗口
@@ -1383,14 +1331,28 @@
             break;
           case 2: // 2-普通视点
 
-            let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
-            console.log('files_id_list1231231', this.itemCurrentFileIdList, files_id_list)
-            if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
-              this.itemCurrentFileIdList.forEach(item => {
+            // let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
+            let item_ids_list = JSON.parse(this.ViewPointCurrentData.item_ids)
+            
+            // console.log('files_id_list1231231', this.itemCurrentFileIdList, files_id_list)
+            // if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
+            //   this.itemCurrentFileIdList.forEach(item => {
+            //     this.viewer.unloadModel(this.viewer.model)
+            //   })
+            //   this.itemCurrentFileIdList = files_id_list
+            //   await this.getItemInfoListByProID(files_id_list)
+            //   await this.getUrlAndInitView()
+
+            // }
+
+            console.log('itemCurrentItemIdList123123', this.itemCurrentItemIdList, item_ids_list)
+            if (this.itemCurrentItemIdList.sort().toString() !== item_ids_list.sort().toString()) {
+              this.itemCurrentItemIdList.forEach(item => {
                 this.viewer.unloadModel(this.viewer.model)
               })
-              this.itemCurrentFileIdList = files_id_list
-              await this.getItemInfoListByProID(files_id_list)
+              this.itemCurrentItemIdList = item_ids_list
+              // await this.getItemInfoListByProID(files_id_list)
+              await this.getItemInfoListByItemIDs(item_ids_list.join(','))
               await this.getUrlAndInitView()
 
             }
