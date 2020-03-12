@@ -1264,6 +1264,7 @@
                 "name": "",
                 "desc": "",
                 "file_ids": this.itemCurrentFileIdList.join(','),
+                "item_ids": this.itemCurrentItemIdList.join(','),
                 "camera_info": Base64.encode(saveStatus),
                 "picture_info": markupsBase64,
                 "svg_info": Base64.encode(markupsExtData),
@@ -1273,7 +1274,7 @@
               }
               // console.log('personInfo', this.personInfo)
               console.log('__data', __data)
-
+              
               const param = {
                 show: true,
                 // itemInfoList: this.itemInfoList

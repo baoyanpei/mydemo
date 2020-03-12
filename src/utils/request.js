@@ -51,7 +51,7 @@ PC网页账号：admin_web
     // }
 
     // Do something before request is sent
-    console.log('config.data', config.data.access_token)
+    // console.log('config.data', config.data.access_token)
     if (config.data.access_token !== undefined) {
       config.headers['Authorization'] = 'JWT ' + config.data.access_token
     } else if (store.getters.token) {

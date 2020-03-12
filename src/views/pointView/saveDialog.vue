@@ -230,6 +230,7 @@
           "name": _name,
           "desc": "",
           "file_ids": __data.file_ids,
+          "item_ids": __data.item_ids,
           "camera_info": __data.camera_info,
           "picture_info": __data.picture_info,
           "svg_info": __data.svg_info,

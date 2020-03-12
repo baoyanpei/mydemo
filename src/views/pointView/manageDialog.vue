@@ -5,8 +5,9 @@
 <template>
 
   <div id="view-point-manage-dialog" class="view-point-manage-dialog">
-    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :close-on-click-modal="false" :close-on-press-escape="true" :visible.sync="ViewPointManageDialog.show"
-      @opened="openedManageDialogHandle" @close="closeManageDialogHandle" :title="dialogTitle" v-el-drag-dialog>
+    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :close-on-click-modal="false"
+      :close-on-press-escape="true" :visible.sync="ViewPointManageDialog.show" @opened="openedManageDialogHandle"
+      @close="closeManageDialogHandle" :title="dialogTitle" v-el-drag-dialog>
       <el-tabs v-model="activeTabName" @tab-click="tabHandleClick">
         <el-tab-pane label="普通视点" name="2"></el-tab-pane>
         <el-tab-pane label="项目位置视点" name="1"></el-tab-pane>
@@ -212,11 +213,7 @@
         this.CurrentItemIDList = []
       },
       async getData() {
-        // await this.exchangeToken(getToken())
         await this.getProjectItemsAll() // 获取模型的item列表（最新版本）
-        // await this.GetViewpointsByFileIdDataAll() // 获取所有的视点数据
-        // console.log(12313123)
-        // await this.GetViewpointsData()
         this.getPointViewData()
       },
       tabHandleClick(tab, event) {
@@ -227,11 +224,7 @@
       },
       openedManageDialogHandle() {
         this.tipMessage = "正在查询视点数据"
-        // let dialogHeaderEl = document.getElementById("view-point-manage-dialog").querySelector('.el-dialog')
-        // console.log('dialogHeaderEl', dialogHeaderEl)
-        // dialogHeaderEl.style.cssText = `;right:500px !important;`
-        // console.log('ViewPointManageDialog', this.ViewPointManageDialog)
-
+        console.log('this.ViewPointManageDialog', this.ViewPointManageDialog)
         this.CurrentFileIDList = []
         this.ViewPointManageDialog.itemInfoList.forEach(item => {
           this.CurrentFileIDList.push(item.file_id)
@@ -249,11 +242,6 @@
       },
       getProjectItemsAll() {
         this.loadingFull = this.$loading({
-          // lock: true,
-          // text: '正在读取数据...',
-          // spinner: 'el-icon-loading',
-          // background: 'rgba(0, 0, 0, 0.5)',
-          // customClass: 'loading-class',
           target: document.getElementById("view-point-manage-dialog").querySelector('.el-dialog')
         });
         return new Promise((resolve, reject) => {
@@ -261,10 +249,8 @@
           const param = {
             method: 'project_items',
             project_id: this.project_id
-            // access_token: this.access_token
           }
           this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
-            // console.log('getProjectItemsAll - _itemList', _itemList)
             _itemList.forEach(async build => {
               this.ProjectItemsAll.set(build.id, build)
             });
@@ -274,6 +260,7 @@
 
         })
       },
+      /*
       GetViewpointsByFileIdDataAll() {
         return new Promise((resolve, reject) => {
           let _itemInfoList = this.ViewPointManageDialog.itemInfoList
@@ -313,10 +300,43 @@
           })
 
         })
+      },*/
+      GetViewpointsByItemIdsAll(type) {
+        // console.log('typetype,', type)
+        return new Promise(async (resolve, reject) => {
+          let _itemInfoList = this.ViewPointManageDialog.itemInfoList
+          let _viewPointList = await this.GetViewPointsByType(type)
+          this.viewPointAllList = []
+          for (const item of _itemInfoList) {
+            // console.log('itemitem,', item)
+            _viewPointList.forEach(viewPoint => {
+              // console.log('viewPointviewPoint,', viewPoint.item_ids)
+              if (viewPoint.item_ids !== undefined && viewPoint.item_ids !== '') {
+                if (JSON.parse(viewPoint.item_ids).indexOf(item.item_id) !== -1) {
+                  this.viewPointAllList.push(viewPoint)
+                }
+              }
+            })
+          }
+          this.viewPointAllList = lodash.unionBy(this.viewPointAllList, 'item_ids', 'id')
+          resolve()
+        })
+      },
+      GetViewPointsByType(type) {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'GetViewPoints',
+            type: parseInt(type),
+            project_id: this.project_id
+          }
+          this.$store.dispatch('GetViewPoints', param).then((_viewPointList) => {
+            // console.log('GetViewPoints - _viewPointList', _viewPointList)
+            resolve(_viewPointList)
+          })
+
+        })
       },
       GetViewpointsByItemIdDataAll() {
-
-
         return new Promise((resolve, reject) => {
           let _itemInfoList = this.ViewPointManageDialog.itemInfoList
           let reqList = []
@@ -354,34 +374,12 @@
 
         })
       },
-
-      // GetViewpointsData() {
-      //   return new Promise((resolve, reject) => {
-      //     const param = {
-      //       method: 'GetViewpointsByProjectId',
-      //       project_id: this.project_id
-      //     }
-      //     this.$store.dispatch('GetViewpointsByProjectId', param).then((_viewPointList) => {
-      //       console.log('GetViewpointsByProjectId - _viewPointList', _viewPointList)
-      //       this.tipMessage = ""
-      //       this.viewPointAllList = _viewPointList
-      //       resolve()
-      //     })
-
-      //   })
-      // },
       async getPointViewData() {
         this.loadingFull = this.$loading({
-          // lock: true,
-          // text: '正在读取数据...',
-          // spinner: 'el-icon-loading',
-          // background: 'rgba(0, 0, 0, 0.5)',
-          // customClass: 'loading-class',
           target: document.getElementById("view-point-manage-dialog").querySelector('.el-dialog')
         });
         this.viewPointDataList = []
         this.viewPointPosDataList = []
-        // console.log('this.ViewPointManageDialog.type', this.ViewPointManageDialog)
         if (parseInt(this.activeTabName) === 1) { // 项目位置视点
 
           await this.GetViewpointsByItemIdDataAll()
@@ -400,28 +398,14 @@
               // item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
               item['pictureFullSrc'] = ''
               item['className'] = `imagesPreview-${item.id}`
-              // console.log('picture_info', picture_info)
 
-              // if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
-              //   // console.log(`.imagesPreview-${rowData.ID}`)
-              //   item['bgShow'] = 'bgShow'
-              //   item['bgShowNormal'] = 'bgShow'
-              // }
-
-              // console.log('item1111item', item, this.CurrentItemIDList[0])
               if (this.CurrentItemIDList.length > 1) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
                 item['bgShow'] = 'bgShow'
                 item['bgShowNormal'] = 'bgShow'
               }
 
-              // if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
-              //   item['bgShow'] = 'bgShowSelected'
-              // } else {
-              //   item['bgShow'] = item['bgShowNormal']
-              // }
               let _item_id = item.item_id
-              // console.log('_mapBuild.get(item_id)', _mapBuild.get(_item_id))
 
               let _buildInfo = _mapBuild.get(_item_id)
               if (_buildInfo === undefined) {
@@ -494,15 +478,13 @@
           })
 
           this.setCurrentChoosedStyleByItemId()
-          // console.log('_mapBuild', _mapBuild)
-          // console.log('_buildList', _buildList)
-          // console.log('this.viewPointPosDataList', this.viewPointPosDataList)
           this.tipMessage = ''
           if (this.viewPointPosDataList.length === 0) {
             this.tipMessage = "没有此模型相关的视点数据"
           }
         } else {
-          await this.GetViewpointsByFileIdDataAll() // 获取所有的视点数据
+          // await this.GetViewpointsByFileIdDataAll() // 获取所有的视点数据
+          await this.GetViewpointsByItemIdsAll(this.activeTabName)
           this.viewPointAllList.forEach(item => {
             // console.log('item', item)
             if (parseInt(item.type) === parseInt(this.activeTabName)) {
@@ -511,24 +493,19 @@
                 `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
               item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
               item['className'] = `imagesPreview-${item.id}`
-              // console.log('1231231231', item, this.CurrentFileIDList)
-              if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
+              console.log('1231231231', item, this.CurrentFileIDList, this.CurrentItemIDList)
+              // if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
+              if (JSON.parse(item.item_ids).sort().toString() !== this.CurrentItemIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
                 item['bgShow'] = 'bgShow'
                 item['bgShowNormal'] = 'bgShow'
               }
-              // if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
-              //   item['bgShow'] = 'bgShowSelected'
-              // } else {
-              //   item['bgShow'] = item['bgShowNormal']
-              // }
               this.viewPointDataList.push(item)
             }
 
 
           });
           this.setCurrentChoosedStyle()
-          // console.log('this.viewPointDataList', this.viewPointDataList)
           this.tipMessage = ''
           if (this.viewPointDataList.length === 0) {
             this.tipMessage = "没有此模型相关的视点数据"
@@ -561,7 +538,7 @@
               } else {
                 viewPoint['bgShow'] = viewPoint['bgShowNormal']
               }
-              
+
             })
           })
         })
@@ -575,10 +552,10 @@
         // this.getPointViewData()
         if (parseInt(this.activeTabName) === 1) { // 项目位置视点
           this.setCurrentChoosedStyleByItemId()
-        }else{
+        } else {
           this.setCurrentChoosedStyle()
         }
-        
+
         this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
       },
       deleteViewPointHander(item) {
