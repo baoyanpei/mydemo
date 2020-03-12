@@ -294,38 +294,8 @@
         })
         // console.log('itemIDList', itemIDList, itemIDList.join(','))
         await this.getItemInfoListByItemIDs(itemIDList.join(','))
-        // console.log('this.itemInfoList', this.itemInfoList)
-
-        // let _urlList = this.getModelUrl()
-        // if (_urlList.length !== 0) {
-        //   await this.init3DView(_urlList)
-        //   console.log('init3DView - complete')
-        //   this.viewer.addEventListener(
-        //     // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-
-        //     Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-        //     this.onSelectionChanged
-        //   );
-        //   this.initEvent()
-        // }
         await this.getUrlAndInitView()
-        /*
-        let _result = this.getModelUrl()
-        console.log('_result', _result)
-        let _urlList = _result['urlList']
-        let _itemInfoList = _result['itemInfoList']
-        console.log('_itemInfoList123_itemInfoList', _itemInfoList)
-        if (_urlList.length !== 0) {
-          await this.init3DView(_urlList, _itemInfoList)
-
-          console.log('init3DView - complete')
-          this.viewer.addEventListener(
-            // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-            Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-            this.onSelectionChanged
-          );
-          this.initEvent()
-        }*/
+        
 
       },
       async getUrlAndInitView() {
@@ -865,8 +835,6 @@
         let result = null
         let _urlList = []
         let _itemInfoList = []
-        // console.log('this.project_id', this.project_id)
-        // console.log('this.itemInfoList', this.itemInfoList)
         this.itemInfoList.forEach(itemInfo => {
           console.log('itemInfo111', itemInfo)
           // 服务端地址转换
@@ -894,14 +862,16 @@
           }
           this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
             // console.log('_itemList_itemList', _itemList)
-            _itemList.forEach(build => {
-              this.itemList.forEach(item => {
-                if (item.FILE_ID === build.file_id) {
-                  this.itemInfoList.push(build)
-                }
-              })
+            this.itemInfoList = _itemList
+            // _itemList.forEach(build => {
+            //   this.itemInfoList.push(build)
+            //   this.itemList.forEach(item => {
+            //     if (item.FILE_ID === build.file_id) {
+            //       this.itemInfoList.push(build)
+            //     }
+            //   })
 
-            });
+            // });
             // console.log('this.itemInfoList', this.itemInfoList)
             resolve()
           })
@@ -1374,49 +1344,13 @@
           isEditMode: true
         }).then(() => {})
 
-        
-        let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
-        // console.log('files_id_list', files_id_list)
-        // console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
-        if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
-          this.itemCurrentFileIdList.forEach(item => {
-            this.viewer.unloadModel(this.viewer.model)
-          })
 
 
-          this.itemCurrentFileIdList = files_id_list
-          // return
-          await this.getItemInfoListByProID(files_id_list)
-          // console.log('this.itemInfoList', this.itemInfoList)
 
-          // await this.getItemInfoListByItemIDs(itemIDList.join(','))
-          // console.log('this.itemInfoList', this.itemInfoList)
-          await this.getUrlAndInitView()
-          /*
-          let _result = this.getModelUrl()
-
-          let _urlList = _result['urlList']
-          let _itemInfoList = _result['itemInfoList']
-          if (_urlList.length !== 0) {
-            this.loadedModels = []
-            console.log('_result _itemInfoList', _itemInfoList)
-            _itemInfoList.forEach(itemInfo => {
-              itemInfo['item_id'] = itemInfo.id
-            })
-            await this.init3DView(_urlList, _itemInfoList)
-            this.viewer.addEventListener(
-              // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-
-              Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-              this.onSelectionChanged
-            );
-            console.log('init3DView - complete')
-            this.initEvent()
-          }*/
-        }
-        
         switch (_pointType) {
           case 1: // 1-基于项目的公共位置视点
+            // let _itemId = JSON.parse(this.ViewPointCurrentData.item_id)
+            // console.log('123213', this.itemCurrentItemIdList, _itemId)
             this.isShowToolbarMarker = true
 
             this.isShowToolbarMarkerStyle = false
@@ -1447,6 +1381,18 @@
 
             break;
           case 2: // 2-普通视点
+
+            let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
+            console.log('files_id_list1231231', this.itemCurrentFileIdList, files_id_list)
+            if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
+              this.itemCurrentFileIdList.forEach(item => {
+                this.viewer.unloadModel(this.viewer.model)
+              })
+              this.itemCurrentFileIdList = files_id_list
+              await this.getItemInfoListByProID(files_id_list)
+              await this.getUrlAndInitView()
+
+            }
             this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
               this.isShowToolbarMarker = false
               this.isShowToolbarMarkerStyle = false
