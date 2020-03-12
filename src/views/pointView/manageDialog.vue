@@ -195,7 +195,7 @@
     },
     watch: {
       ViewPointDataChanged(curVal, oldVal) {
-        console.log("ViewPointDataChanged")
+        // console.log("ViewPointDataChanged")
         this.getData()
       }
 
@@ -220,7 +220,7 @@
         this.getPointViewData()
       },
       tabHandleClick(tab, event) {
-        console.log(tab, event);
+        // console.log(tab, event);
         this.activeTabName = tab.name
         // console.log('this.activeTabName', this.activeTabName)
         this.getPointViewData()
@@ -230,7 +230,7 @@
         // let dialogHeaderEl = document.getElementById("view-point-manage-dialog").querySelector('.el-dialog')
         // console.log('dialogHeaderEl', dialogHeaderEl)
         // dialogHeaderEl.style.cssText = `;right:500px !important;`
-        console.log('ViewPointManageDialog', this.ViewPointManageDialog)
+        // console.log('ViewPointManageDialog', this.ViewPointManageDialog)
 
         this.CurrentFileIDList = []
         this.ViewPointManageDialog.itemInfoList.forEach(item => {
@@ -280,19 +280,19 @@
           let reqList = []
           this.viewPointAllList = []
           for (const item of _itemInfoList) {
-            console.log('item', item)
+            // console.log('item', item)
             let p = this.GetViewpointsByFileId(item)
             reqList.push(p)
           }
           Promise.all(reqList).then(_viewPointList => {
-            console.log("Promise.all", _viewPointList);
+            // console.log("Promise.all", _viewPointList);
             _viewPointList.forEach(itemList => {
               this.viewPointAllList = [...this.viewPointAllList, ...itemList]
             })
             // 去处视点列表中'FILE_IDS'和'ID'重复的数据 
             this.viewPointAllList = lodash.unionBy(this.viewPointAllList, 'file_ids', 'id')
             resolve()
-            console.log("this.viewPointAllList", this.viewPointAllList);
+            // console.log("this.viewPointAllList", this.viewPointAllList);
           })
         })
 
@@ -305,7 +305,7 @@
             project_id: this.project_id
           }
           this.$store.dispatch('GetViewpointsByFileId', param).then((_viewPointList) => {
-            console.log('GetViewpointsByFileId - _viewPointList', _viewPointList)
+            // console.log('GetViewpointsByFileId - _viewPointList', _viewPointList)
             // this.tipMessage = ""
             // this.viewPointAllList = _viewPointList
 
@@ -322,12 +322,12 @@
           let reqList = []
           this.viewPointAllList = []
           for (const item of _itemInfoList) {
-            console.log('item', item)
+            // console.log('item', item)
             let p = this.GetViewPoints(item)
             reqList.push(p)
           }
           Promise.all(reqList).then(_viewPointList => {
-            console.log("Promise.all", _viewPointList);
+            // console.log("Promise.all", _viewPointList);
             _viewPointList.forEach(itemList => {
               this.viewPointAllList = [...this.viewPointAllList, ...itemList]
             })
@@ -335,7 +335,7 @@
             this.viewPointAllList = lodash.unionBy(this.viewPointAllList, 'file_ids', 'id')
 
             resolve()
-            console.log("this.viewPointAllList", this.viewPointAllList);
+            // console.log("this.viewPointAllList", this.viewPointAllList);
           })
         })
 
@@ -348,7 +348,7 @@
             project_id: this.project_id
           }
           this.$store.dispatch('GetViewPoints', param).then((_viewPointList) => {
-            console.log('GetViewPoints - _viewPointList', _viewPointList)
+            // console.log('GetViewPoints - _viewPointList', _viewPointList)
             resolve(_viewPointList)
           })
 
@@ -381,7 +381,7 @@
         });
         this.viewPointDataList = []
         this.viewPointPosDataList = []
-        console.log('this.ViewPointManageDialog.type', this.ViewPointManageDialog)
+        // console.log('this.ViewPointManageDialog.type', this.ViewPointManageDialog)
         if (parseInt(this.activeTabName) === 1) { // 项目位置视点
 
           await this.GetViewpointsByItemIdDataAll()
@@ -463,7 +463,7 @@
           this.activeFloorNames = []
 
           _mapBuild.forEach(item => {
-            console.log('item111', item)
+            // console.log('item111', item)
 
             let floorList = []
             let _floorInfos = item.floorInfos
@@ -496,7 +496,7 @@
           this.setCurrentChoosedStyleByItemId()
           // console.log('_mapBuild', _mapBuild)
           // console.log('_buildList', _buildList)
-          console.log('this.viewPointPosDataList', this.viewPointPosDataList)
+          // console.log('this.viewPointPosDataList', this.viewPointPosDataList)
           this.tipMessage = ''
           if (this.viewPointPosDataList.length === 0) {
             this.tipMessage = "没有此模型相关的视点数据"
@@ -504,14 +504,14 @@
         } else {
           await this.GetViewpointsByFileIdDataAll() // 获取所有的视点数据
           this.viewPointAllList.forEach(item => {
-            console.log('item', item)
+            // console.log('item', item)
             if (parseInt(item.type) === parseInt(this.activeTabName)) {
 
               item['pictureLiteSrc'] =
                 `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
               item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
               item['className'] = `imagesPreview-${item.id}`
-              console.log('1231231231', item, this.CurrentFileIDList)
+              // console.log('1231231231', item, this.CurrentFileIDList)
               if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)
                 item['bgShow'] = 'bgShow'
@@ -528,7 +528,7 @@
 
           });
           this.setCurrentChoosedStyle()
-          console.log('this.viewPointDataList', this.viewPointDataList)
+          // console.log('this.viewPointDataList', this.viewPointDataList)
           this.tipMessage = ''
           if (this.viewPointDataList.length === 0) {
             this.tipMessage = "没有此模型相关的视点数据"
@@ -539,7 +539,7 @@
       setCurrentChoosedStyle() {
         let tempList = []
         this.viewPointDataList.forEach(item => {
-          console.log('12222222', item, this.currentChoosedItem)
+          // console.log('12222222', item, this.currentChoosedItem)
           if (this.currentChoosedItem !== null && item.id === this.currentChoosedItem.id) {
             item['bgShow'] = 'bgShowSelected'
             // console.log('1222222222222222')
@@ -557,7 +557,7 @@
               if (this.currentChoosedItem !== null && viewPoint.id === this.currentChoosedItem.id) {
                 viewPoint['bgShow'] = 'bgShowSelected'
                 // Vue.set(viewPoint, 'bgShow', 'bgShowSelected')
-                console.log('122222222-2222222')
+                // console.log('122222222-2222222')
               } else {
                 viewPoint['bgShow'] = viewPoint['bgShowNormal']
               }
@@ -570,7 +570,7 @@
         this.viewPointPosDataList = tempList
       },
       getViewPointsDataHandle(rowData) {
-        console.log('getViewPointsDataHandle', rowData)
+        // console.log('getViewPointsDataHandle', rowData)
         this.currentChoosedItem = rowData
         // this.getPointViewData()
         if (parseInt(this.activeTabName) === 1) { // 项目位置视点
@@ -582,7 +582,7 @@
         this.$store.dispatch('SetViewPointsShow', rowData).then(() => {})
       },
       deleteViewPointHander(item) {
-        console.log('deleteViewPointHander', item)
+        // console.log('deleteViewPointHander', item)
         this.$confirm(`是否要删除名为<label style="color:#0000FF;">${item.name}</label>的视点?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -595,7 +595,7 @@
             project_id: this.project_id
           }
           this.$store.dispatch('DeleteViewpointById', param).then((result) => {
-            console.log('DeleteViewpointById - result', result)
+            // console.log('DeleteViewpointById - result', result)
             this.getData()
             this.$message({
               message: '视点删除成功！',

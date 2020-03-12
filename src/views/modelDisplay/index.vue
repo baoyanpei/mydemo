@@ -174,7 +174,7 @@
         modelData: null,
         itemList: [],
         itemCurrentFileIdList: [], //当前显示模型的FILE
-        itemCurrentItemIdList:[],
+        itemCurrentItemIdList: [],
         itemInfoList: [],
         loadingSaveViewPoint: false, // 保存视点按钮加载
         config: {
@@ -285,7 +285,7 @@
           this.modelData = JSON.parse(MODEL_DISPLAY_DATA)
         }
         this.itemList = this.modelData.item_list
-        console.log('this.itemList', this.itemList)
+        // console.log('this.itemList', this.itemList)
         let itemIDList = []
         this.itemList.forEach(item => {
           itemIDList.push(item.ITEM_ID)
@@ -308,24 +308,52 @@
         //   );
         //   this.initEvent()
         // }
-
+        await this.getUrlAndInitView()
+        /*
         let _result = this.getModelUrl()
         console.log('_result', _result)
         let _urlList = _result['urlList']
         let _itemInfoList = _result['itemInfoList']
+        console.log('_itemInfoList123_itemInfoList', _itemInfoList)
         if (_urlList.length !== 0) {
           await this.init3DView(_urlList, _itemInfoList)
 
           console.log('init3DView - complete')
           this.viewer.addEventListener(
             // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-
             Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
             this.onSelectionChanged
           );
           this.initEvent()
-        }
+        }*/
 
+      },
+      async getUrlAndInitView() {
+        return new Promise(async (resolve, reject) => {
+          let _result = this.getModelUrl()
+          // console.log('_result', _result)
+          let _urlList = _result['urlList']
+          let _itemInfoList = _result['itemInfoList']
+          if (_urlList.length !== 0) {
+            this.loadedModels = []
+            // console.log('_result123 _itemInfoList', _itemInfoList)
+            _itemInfoList.forEach(itemInfo => {
+              if (itemInfo.item_id === undefined) {
+                itemInfo['item_id'] = itemInfo.id
+              }
+            })
+
+            await this.init3DView(_urlList, _itemInfoList)
+            // console.log('init3DView - complete')
+            this.viewer.addEventListener(
+              // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+              Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+              this.onSelectionChanged
+            );
+            this.initEvent()
+          }
+          resolve()
+        })
       },
       init3DView(modelURLList, itemInfoList) {
         return new Promise((resolve, reject) => {
@@ -354,7 +382,7 @@
 
             }
             Promise.all(_Plist).then(result => {
-              console.log("Promise.all", result);
+              // console.log("Promise.all", result);
               // _viewPointList.forEach(itemList => {
               //   this.viewPointAllList = [...this.viewPointAllList, ...itemList]
               // })
@@ -384,7 +412,7 @@
             model['item_id'] = itemInfo.item_id
             this.loadedModels.push(model)
             // console.log('this.viewer', this.viewer)
-            console.log('model', model)
+            // console.log('model', model)
             // this.viewer.addEventListener(
             //   Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
             //   this.onSelectionChanged
@@ -489,7 +517,7 @@
         let buttonMarker2 = new Autodesk.Viewing.UI.Button('my-marker2-button')
         buttonMarker2.addClass('my-marker2-button')
 
-        console.log("this.itemList.length", this.itemList.length)
+        // console.log("this.itemList.length", this.itemList.length)
         if (this.itemList.length === 1) {
           buttonMarker2.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
           buttonMarker2.onClick = (e) => {
@@ -644,12 +672,12 @@
           let reqList = []
           let viewPointAllList = []
           for (const item of _itemInfoList) {
-            console.log('item', item)
+            // console.log('item', item)
             let p = this.GetViewpointsByFileId(item)
             reqList.push(p)
           }
           Promise.all(reqList).then(_viewPointList => {
-            console.log("Promise.all", _viewPointList);
+            // console.log("Promise.all", _viewPointList);
             _viewPointList.forEach(itemList => {
               viewPointAllList = [...viewPointAllList, ...itemList]
             })
@@ -669,7 +697,7 @@
             project_id: this.project_id
           }
           this.$store.dispatch('GetViewpointsByFileId', param).then((_viewPointList) => {
-            console.log('GetViewpointsByFileId - _viewPointList', _viewPointList)
+            // console.log('GetViewpointsByFileId - _viewPointList', _viewPointList)
             // this.tipMessage = ""
             // this.viewPointAllList = _viewPointList
 
@@ -683,7 +711,7 @@
       },
       onSelectionChanged(event) {
         // console.log('this.viewer', this.viewer)
-        console.log('event1', event)
+        // console.log('event1', event)
         let _selections = event.selections
         console.log('_selections', _selections)
         // this.selectedDbId = _dbIds
@@ -865,7 +893,7 @@
 
           }
           this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
-            console.log('_itemList_itemList', _itemList)
+            // console.log('_itemList_itemList', _itemList)
             _itemList.forEach(build => {
               this.itemList.forEach(item => {
                 if (item.FILE_ID === build.file_id) {
@@ -874,7 +902,7 @@
               })
 
             });
-            console.log('this.itemInfoList', this.itemInfoList)
+            // console.log('this.itemInfoList', this.itemInfoList)
             resolve()
           })
         })
@@ -1345,9 +1373,11 @@
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: true
         }).then(() => {})
+
+
         let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
-        console.log('files_id_list', files_id_list)
-        console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
+        // console.log('files_id_list', files_id_list)
+        // console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
         if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
           this.itemCurrentFileIdList.forEach(item => {
             this.viewer.unloadModel(this.viewer.model)
@@ -1361,6 +1391,8 @@
 
           // await this.getItemInfoListByItemIDs(itemIDList.join(','))
           // console.log('this.itemInfoList', this.itemInfoList)
+          await this.getUrlAndInitView()
+          /*
           let _result = this.getModelUrl()
 
           let _urlList = _result['urlList']
@@ -1379,8 +1411,8 @@
               this.onSelectionChanged
             );
             console.log('init3DView - complete')
-
-          }
+            this.initEvent()
+          }*/
         }
         let _pointType = this.ViewPointCurrentData.type
         switch (_pointType) {
@@ -1390,7 +1422,7 @@
             this.isShowToolbarMarkerStyle = false
             this.isShowViewPointArea = true
             this.resetIsolateMode()
-            console.log('ViewPointCurrentData', this.ViewPointCurrentData)
+            // console.log('ViewPointCurrentData', this.ViewPointCurrentData)
             this.ViewPointType = this.ViewPointCurrentData.type
             this.viewPointTitleName = this.ViewPointCurrentData.name
             // this.viewPointName = this.ViewPointCurrentData.name
@@ -1402,7 +1434,7 @@
             let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentData.camera_info))
             // let picBase64 = picture_info.base64
             this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc
-            console.log('camera_info', camera_info)
+            // console.log('camera_info', camera_info)
             this.viewer.restoreState(camera_info); //it fails to restore state
             // markupsExt.viewer.impl.invalidate(true);
             // this.isShowToolbarRestore = true
@@ -1420,12 +1452,12 @@
               this.isShowToolbarMarkerStyle = false
               this.isShowViewPointArea = true
               this.resetIsolateMode()
-              console.log('ViewPointCurrentData', this.ViewPointCurrentData)
+              // console.log('ViewPointCurrentData', this.ViewPointCurrentData)
               this.ViewPointType = this.ViewPointCurrentData.type
               this.viewPointTitleName = this.ViewPointCurrentData.name
               // this.viewPointName = this.ViewPointCurrentData.name
               this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
-              console.log('this.markupsExt', this.markupsExt)
+              // console.log('this.markupsExt', this.markupsExt)
               // markupsExt.deleteMarkup()
               this.markupsExt.clear()
               this.markupsExt.leaveEditMode();
@@ -1439,7 +1471,7 @@
               let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentData.camera_info))
               // let picBase64 = picture_info.base64
               this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc
-              console.log('camera_info', camera_info)
+              // console.log('camera_info', camera_info)
               this.viewer.restoreState(camera_info); //it fails to restore state
               // markupsExt.viewer.impl.invalidate(true);
               this.isShowToolbarRestore = true
@@ -1465,8 +1497,8 @@
       async ShowViewPointMarkerAll() {
         let red = new THREE.Vector4(1, 0, 0, 1);
         let _viewPointAllList = await this.GetViewpointsDataAll()
-        console.log('_viewPointAllList', _viewPointAllList)
-        console.log('this.loadedModels', this.loadedModels)
+        // console.log('_viewPointAllList', _viewPointAllList)
+        // console.log('this.loadedModels', this.loadedModels)
         this.loadedModels.forEach(model => {
           let objectSetIDList = []
           _viewPointAllList.forEach(item => {
