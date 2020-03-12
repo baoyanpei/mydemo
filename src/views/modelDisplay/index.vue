@@ -1364,17 +1364,17 @@
         console.log('ShowViewPoint', this.ViewPointCurrentData)
         console.log('this.itemList', this.itemList)
 
-
+        let _pointType = this.ViewPointCurrentData.type
         this.isSaveViewValid = true
         // this.viewer.toolbar.setVisible(false)
         this.viewer.toolbar.removeControl(this.ControlGroupViewPoint)
         this.viewer.toolbar.removeControl(this.ControlGroupShowAllViewPoint)
-        this.viewer.overlays.removeScene('custom-scene-2');
+        this.viewer.overlays.removeScene('custom-scene-2')
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: true
         }).then(() => {})
 
-
+        
         let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
         // console.log('files_id_list', files_id_list)
         // console.log('this.itemCurrentFileIdList', this.itemCurrentFileIdList)
@@ -1414,7 +1414,7 @@
             this.initEvent()
           }*/
         }
-        let _pointType = this.ViewPointCurrentData.type
+        
         switch (_pointType) {
           case 1: // 1-基于项目的公共位置视点
             this.isShowToolbarMarker = true
