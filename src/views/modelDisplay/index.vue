@@ -174,6 +174,7 @@
         modelData: null,
         itemList: [],
         itemCurrentFileIdList: [], //当前显示模型的FILE
+        itemCurrentItemIdList:[],
         itemInfoList: [],
         loadingSaveViewPoint: false, // 保存视点按钮加载
         config: {
@@ -289,6 +290,7 @@
         this.itemList.forEach(item => {
           itemIDList.push(item.ITEM_ID)
           this.itemCurrentFileIdList.push(item.FILE_ID)
+          this.itemCurrentItemIdList.push(item.ITEM_ID)
         })
         // console.log('itemIDList', itemIDList, itemIDList.join(','))
         await this.getItemInfoListByItemIDs(itemIDList.join(','))
