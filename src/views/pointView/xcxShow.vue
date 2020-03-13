@@ -129,10 +129,11 @@
             `没有查询到相关视点数据，请核对参数<br/>projectid:${this.project_id}<br/>projectid:${this.point_view_id}<br/>token:${this.access_token}`
           return
         }
-
-        let files_id_list = JSON.parse(this.ViewPointInfo.file_ids)
-        console.log('files_id_list', files_id_list)
-        await this.getItemInfoListByProID(files_id_list)
+        
+        // let files_id_list = JSON.parse(this.ViewPointInfo.file_ids)
+        // console.log('files_id_list', files_id_list)
+        const _itemId = this.ViewPointInfo.item_id
+        await this.getItemInfoListByItemIDs(_itemId)
         if (this.itemInfoList.length === 0) {
           this.tip_message =
             `没有符合的模型文件<br/>projectid:${this.project_id}<br/>projectid:${this.point_view_id}<br/>token:${this.access_token}`
@@ -149,26 +150,6 @@
       onLoadedEvent(event) {
         console.log('ononLoadedEvent', event)
         this.ShowViewPoint()
-      },
-      onSelectionChanged(event) {
-        console.log('event1', event)
-        let _selections = event.selections
-        console.log('_selections', _selections)
-        this.selectedDbId = []
-        _selections.forEach(selection => {
-          let _dbIdArray = selection.dbIdArray
-          _dbIdArray.forEach(dbId => {
-            console.log('dbId', dbId)
-            selection.model.getProperties(dbId,
-              (elements) => {
-                var dbid = elements.dbId;
-                this.selectedDbId.push(dbid)
-
-              })
-          })
-
-        })
-
       },
       init3DView(modelURLList) {
         return new Promise((resolve, reject) => {
@@ -235,7 +216,6 @@
       getModelUrl() {
         let _urlList = []
         this.itemInfoList.forEach(itemInfo => {
-          // console.log('itemInfo', itemInfo)
           // 服务端地址转换
           // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
           // _urlList.push(itemInfo.URL.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM_XCX))
@@ -263,57 +243,48 @@
         })
       },
 
-      // getItemInfoListByItemIDs(item_ids) {
-      //   // console.log('this.project_id', this.project_id)
+      getItemInfoListByItemIDs(item_ids) {
+        // console.log('this.project_id', this.project_id)
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'GetItemInfoListByItemIDs',
+            project_id: this.project_id,
+            item_id: item_ids
+
+          }
+          this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
+            this.itemInfoList = _itemList
+            console.log('this.itemInfoList', this.itemInfoList)
+            resolve()
+          })
+        })
+      },
+      // getItemInfoListByProID(file_ids) {
+      //   this.itemInfoList = []
       //   return new Promise((resolve, reject) => {
       //     const param = {
-      //       method: 'GetItemInfoListByItemIDs',
-      //       // project_id: this.project_id,
-      //       item_id: item_ids
+      //       method: 'project_items',
+      //       project_id: this.project_id
+      //       // item_id: item_ids
 
       //     }
-      //     this.$store.dispatch('GetItemInfoListByItemIDs', param).then((_itemList) => {
+      //     this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
       //       console.log('_itemList_itemList', _itemList)
       //       _itemList.forEach(build => {
-      //         this.itemList.forEach(item => {
-      //           if (item.FILE_ID === build.FILE_ID) {
+      //         file_ids.forEach(file_id => {
+      //           if (file_id === build.file_id) {
       //             this.itemInfoList.push(build)
       //           }
       //         })
 
       //       });
-      //       console.log('this.itemInfoList', this.itemInfoList)
+      //       console.log('this.itemInfoList111', this.itemInfoList)
       //       resolve()
       //     })
       //   })
       // },
-      getItemInfoListByProID(file_ids) {
-        this.itemInfoList = []
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: 'project_items',
-            project_id: this.project_id
-            // item_id: item_ids
-
-          }
-          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
-            console.log('_itemList_itemList', _itemList)
-            _itemList.forEach(build => {
-              file_ids.forEach(file_id => {
-                if (file_id === build.file_id) {
-                  this.itemInfoList.push(build)
-                }
-              })
-
-            });
-            console.log('this.itemInfoList111', this.itemInfoList)
-            resolve()
-          })
-        })
-      },
       //显示视点
       async ShowViewPoint() {
-        console.log('ShowViewPoint', this.ViewPointCurrentShow)
         console.log('this.ViewPointInfo', this.ViewPointInfo)
         this.ViewPointType = this.ViewPointInfo.type
         let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))

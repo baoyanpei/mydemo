@@ -869,31 +869,31 @@
       },
 
 
-      getItemInfoListByProID(file_ids) {
-        // console.log('this.project_id', this.project_id)
-        this.itemInfoList = []
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: 'project_items',
-            project_id: this.project_id
-            // item_id: item_ids
+      // getItemInfoListByProID(file_ids) {
+      //   // console.log('this.project_id', this.project_id)
+      //   this.itemInfoList = []
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: 'project_items',
+      //       project_id: this.project_id
+      //       // item_id: item_ids
 
-          }
-          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
-            console.log('_itemList_itemList', _itemList)
-            _itemList.forEach(build => {
-              file_ids.forEach(file_id => {
-                if (file_id === build.file_id) {
-                  this.itemInfoList.push(build)
-                }
-              })
+      //     }
+      //     this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
+      //       console.log('_itemList_itemList', _itemList)
+      //       _itemList.forEach(build => {
+      //         file_ids.forEach(file_id => {
+      //           if (file_id === build.file_id) {
+      //             this.itemInfoList.push(build)
+      //           }
+      //         })
 
-            });
-            console.log('this.itemInfoList111', this.itemInfoList)
-            resolve()
-          })
-        })
-      },
+      //       });
+      //       console.log('this.itemInfoList111', this.itemInfoList)
+      //       resolve()
+      //     })
+      //   })
+      // },
       snaphot(type) {
 
         let screenshot = new Image();
