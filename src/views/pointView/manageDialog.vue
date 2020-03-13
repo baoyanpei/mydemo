@@ -493,7 +493,7 @@
                 `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
               item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
               item['className'] = `imagesPreview-${item.id}`
-              console.log('1231231231', item, this.CurrentFileIDList, this.CurrentItemIDList)
+              // console.log('1231231231', item, this.CurrentFileIDList, this.CurrentItemIDList)
               // if (JSON.parse(item.file_ids).sort().toString() !== this.CurrentFileIDList.sort().toString()) {
               if (JSON.parse(item.item_ids).sort().toString() !== this.CurrentItemIDList.sort().toString()) {
                 // console.log(`.imagesPreview-${rowData.ID}`)

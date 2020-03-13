@@ -289,8 +289,8 @@
         let itemIDList = []
         this.itemList.forEach(item => {
           itemIDList.push(item.ITEM_ID)
-          this.itemCurrentFileIdList.push(item.FILE_ID)
-          this.itemCurrentItemIdList.push(item.ITEM_ID)
+          // this.itemCurrentFileIdList.push(item.FILE_ID)
+          // this.itemCurrentItemIdList.push(item.ITEM_ID)
         })
         // console.log('itemIDList', itemIDList, itemIDList.join(','))
         await this.getItemInfoListByItemIDs(itemIDList.join(','))
@@ -322,7 +322,12 @@
           if (_urlList.length !== 0) {
             this.loadedModels = []
             // console.log('_result123 _itemInfoList', _itemInfoList)
+            this.itemCurrentFileIdList = []
+            this.itemCurrentItemIdList = []
             this.itemInfoList.forEach(itemInfo => {
+              console.log('itemInfoitemInfo123',itemInfo)
+              this.itemCurrentFileIdList.push(itemInfo.file_id)
+              this.itemCurrentItemIdList.push(itemInfo.item_id)
               if (itemInfo.item_id === undefined) {
                 itemInfo['item_id'] = itemInfo.id
               }
@@ -1350,7 +1355,7 @@
               this.itemCurrentItemIdList.forEach(item => {
                 this.viewer.unloadModel(this.viewer.model)
               })
-              this.itemCurrentItemIdList = item_ids_list
+              // this.itemCurrentItemIdList = item_ids_list
               // await this.getItemInfoListByProID(files_id_list)
               await this.getItemInfoListByItemIDs(item_ids_list.join(','))
               await this.getUrlAndInitView()
