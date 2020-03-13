@@ -295,7 +295,7 @@
         // console.log('itemIDList', itemIDList, itemIDList.join(','))
         await this.getItemInfoListByItemIDs(itemIDList.join(','))
         await this.getUrlAndInitView()
-        
+
 
       },
       getItemInfoListByItemIDs(item_ids) {
@@ -325,7 +325,7 @@
             this.itemCurrentFileIdList = []
             this.itemCurrentItemIdList = []
             this.itemInfoList.forEach(itemInfo => {
-              console.log('itemInfoitemInfo123',itemInfo)
+              // console.log('itemInfoitemInfo123',itemInfo)
               this.itemCurrentFileIdList.push(itemInfo.file_id)
               this.itemCurrentItemIdList.push(itemInfo.item_id)
               if (itemInfo.item_id === undefined) {
@@ -857,8 +857,8 @@
         var storeData = JSON.stringify(pushpinModelPt)
         div.data('3DData', storeData)
       },
-      
-      
+
+
       getItemInfoListByProID(file_ids) {
         // console.log('this.project_id', this.project_id)
         this.itemInfoList = []
@@ -1081,12 +1081,25 @@
         // type 0 保存，1 新增
         // this.isShowSaveMarkerArea = true
         // 打开视角管理窗口
-        if (this.ViewPointType === 1 && this.selectedDbId.length === 0) {
-          this.$message({
-            message: '请先选择一个构件',
-            type: 'error'
-          })
-          return
+        if (this.ViewPointType === 1) {
+
+          if (this.itemCurrentItemIdList.length > 1) {
+            this.$message({
+              message: '合并模式下不能进行位置视点的编辑或新增！',
+              type: 'error'
+            })
+            return
+          } else {
+            if (this.selectedDbId.length === 0) {
+              this.$message({
+                message: '请先选择一个构件',
+                type: 'error'
+              })
+              return
+            }
+          }
+
+
         }
         this.SavePositionViewPointHandle(editType)
 
@@ -1338,7 +1351,7 @@
 
             // let files_id_list = JSON.parse(this.ViewPointCurrentData.file_ids)
             let item_ids_list = JSON.parse(this.ViewPointCurrentData.item_ids)
-            
+
             // console.log('files_id_list1231231', this.itemCurrentFileIdList, files_id_list)
             // if (this.itemCurrentFileIdList.sort().toString() !== files_id_list.sort().toString()) {
             //   this.itemCurrentFileIdList.forEach(item => {
