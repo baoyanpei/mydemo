@@ -167,7 +167,7 @@
         let files_id_list = JSON.parse(this.ViewPointInfo.file_ids)
         console.log('files_id_list', files_id_list)
         await this.getItemInfoListByProID(files_id_list)
-
+        
         let _urlList = this.getModelUrl()
         // console.log('_urlList', _urlList)
         if (_urlList.length !== 0) {
@@ -301,8 +301,6 @@
       },
       getModelUrl() {
         let _urlList = []
-        // console.log('this.project_id', this.project_id)
-        // console.log('this.itemInfoList', this.itemInfoList)
         this.itemInfoList.forEach(itemInfo => {
           // console.log('itemInfo', itemInfo)
           // 服务端地址转换
@@ -315,7 +313,6 @@
         return _urlList
       },
       getViewpointsById(item_ids) { // 通过视点ID获取视点信息接口
-        // console.log('this.project_id', this.project_id)
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetViewPoints',
@@ -358,7 +355,6 @@
       //   })
       // },
       getItemInfoListByProID(file_ids) {
-        // console.log('this.project_id', this.project_id)
         this.itemInfoList = []
         return new Promise((resolve, reject) => {
           const param = {
@@ -390,38 +386,22 @@
         let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))
         if (this.ViewPointType === 1) {
 
-          // let picBase64 = picture_info.base64
-          // this.viewPointImgUrl = this.ViewPointInfo.pictureFullSrc
           console.log('camera_info', camera_info)
           this.viewer.restoreState(camera_info); //it fails to restore state
         } else {
           this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
-            // this.isShowToolbarMarker = false
-            // this.isShowToolbarMarkerStyle = false
-            // this.isShowViewPointArea = true
             console.log('ViewPointInfo', this.ViewPointInfo)
 
             this.viewPointTitleName = this.ViewPointInfo.name
             this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
             console.log('this.markupsExt', this.markupsExt)
-            // markupsExt.deleteMarkup()
             this.markupsExt.clear()
             this.markupsExt.leaveEditMode();
             this.markupsExt.hide()
 
-            // this.isShowToolbarRestore = false
-            // this.isShowToolbarRestore2 = false
-            // this.isShowViewPointThumbArea = false
-            // this.isShowSaveMarkerArea = false
-
             let _marekup_svg = Base64.decode(this.ViewPointInfo.svg_info)
-            // let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))
-            // let picBase64 = picture_info.base64
-            // this.viewPointImgUrl = this.ViewPointInfo.pictureFullSrc
             console.log('camera_info', camera_info)
             this.viewer.restoreState(camera_info); //it fails to restore state
-            // markupsExt.viewer.impl.invalidate(true);
-            // this.isShowToolbarRestore = true
             this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
             setTimeout(() => {
               markupsExt.leaveEditMode();
