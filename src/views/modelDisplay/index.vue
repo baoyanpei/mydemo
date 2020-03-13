@@ -693,10 +693,6 @@
             project_id: this.project_id
           }
           this.$store.dispatch('GetViewpointsByFileId', param).then((_viewPointList) => {
-            // console.log('GetViewpointsByFileId - _viewPointList', _viewPointList)
-            // this.tipMessage = ""
-            // this.viewPointAllList = _viewPointList
-
             resolve(_viewPointList)
           })
 

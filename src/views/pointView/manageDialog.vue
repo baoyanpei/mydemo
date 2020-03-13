@@ -330,20 +330,19 @@
             project_id: this.project_id
           }
           this.$store.dispatch('GetViewPoints', param).then((_viewPointList) => {
-            // console.log('GetViewPoints - _viewPointList', _viewPointList)
             resolve(_viewPointList)
           })
 
         })
       },
-      GetViewpointsByItemIdDataAll() {
+      GetViewpointsByItemIdDataAll(type) {
         return new Promise((resolve, reject) => {
           let _itemInfoList = this.ViewPointManageDialog.itemInfoList
           let reqList = []
           this.viewPointAllList = []
           for (const item of _itemInfoList) {
             // console.log('item', item)
-            let p = this.GetViewPoints(item)
+            let p = this.GetViewPointsByItemId(item,type)
             reqList.push(p)
           }
           Promise.all(reqList).then(_viewPointList => {
@@ -360,15 +359,15 @@
         })
 
       },
-      GetViewPoints(item) {
+      GetViewPointsByItemId(item, type) {
         return new Promise((resolve, reject) => {
           const param = {
             method: 'GetViewPoints',
+            type: parseInt(type),
             item_id: item.item_id,
             project_id: this.project_id
           }
           this.$store.dispatch('GetViewPoints', param).then((_viewPointList) => {
-            // console.log('GetViewPoints - _viewPointList', _viewPointList)
             resolve(_viewPointList)
           })
 
@@ -382,7 +381,7 @@
         this.viewPointPosDataList = []
         if (parseInt(this.activeTabName) === 1) { // 项目位置视点
 
-          await this.GetViewpointsByItemIdDataAll()
+          await this.GetViewpointsByItemIdDataAll(this.activeTabName)
 
           let _mapBuild = new Map()
           this.viewPointAllList.forEach(item => {
