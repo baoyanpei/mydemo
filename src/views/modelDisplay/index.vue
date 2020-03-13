@@ -662,14 +662,14 @@
           }
         })
       },
-      GetViewpointsDataAll() {
+      GetViewpointsDataAll(viewPointType) {
         return new Promise((resolve, reject) => {
           let _itemInfoList = this.itemInfoList
           let reqList = []
           let viewPointAllList = []
           for (const item of _itemInfoList) {
             // console.log('item', item)
-            let p = this.GetViewpointsByFileId(item)
+            let p = this.GetViewPointsByItemId(item,viewPointType)
             reqList.push(p)
           }
           Promise.all(reqList).then(_viewPointList => {
@@ -685,19 +685,33 @@
         })
 
       },
-      GetViewpointsByFileId(item) {
+      GetViewPointsByItemId(item, type) {
         return new Promise((resolve, reject) => {
           const param = {
-            method: 'GetViewpointsByFileId',
-            file_id: item.file_id,
+            method: 'GetViewPoints',
+            type: parseInt(type),
+            item_id: item.item_id,
             project_id: this.project_id
           }
-          this.$store.dispatch('GetViewpointsByFileId', param).then((_viewPointList) => {
+          this.$store.dispatch('GetViewPoints', param).then((_viewPointList) => {
             resolve(_viewPointList)
           })
 
         })
       },
+      // GetViewpointsByFileId(item) {
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: 'GetViewpointsByFileId',
+      //       file_id: item.file_id,
+      //       project_id: this.project_id
+      //     }
+      //     this.$store.dispatch('GetViewpointsByFileId', param).then((_viewPointList) => {
+      //       resolve(_viewPointList)
+      //     })
+
+      //   })
+      // },
       onLoadError(event) {
         console.log('fail');
       },
@@ -1419,7 +1433,7 @@
       // 显示所有添加的视点
       async ShowViewPointMarkerAll() {
         let red = new THREE.Vector4(1, 0, 0, 1);
-        let _viewPointAllList = await this.GetViewpointsDataAll()
+        let _viewPointAllList = await this.GetViewpointsDataAll(1)
         // console.log('_viewPointAllList', _viewPointAllList)
         // console.log('this.loadedModels', this.loadedModels)
         this.loadedModels.forEach(model => {
@@ -1463,7 +1477,7 @@
       async ShowViewPointTaskMarker() {
         // console.log('ShowViewPointTaskMarker')
         // console.log('itemInfoList', this.itemInfoList)
-        let _viewPointAllList = await this.GetViewpointsDataAll()
+        let _viewPointAllList = await this.GetViewpointsDataAll(1)
         // console.log('_viewPointAllList', _viewPointAllList)
         this.loadedModels.forEach(async model => {
           // let objectSetIDList = []
