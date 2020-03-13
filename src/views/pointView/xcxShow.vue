@@ -22,8 +22,6 @@
 </template>
 
 <script>
-  // let element = null; // document.getElementById('viewer-local');
-  // let viewer = null; //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
   import {
     setToken
   } from '@/utils/auth'
@@ -44,12 +42,8 @@
         project_id: '',
         point_view_id: '',
         ViewPointInfo: null,
-        token: '',
         ViewPointType: 2, //2 普通视点
-        modelData: null,
-        itemList: [],
         itemInfoList: [],
-        loadingSaveViewPoint: false, // 保存视点按钮加载
         config: {
           extensions: [
             // "Autodesk.Viewing.ZoomWindow",
@@ -72,33 +66,9 @@
           useConsolidation: true,
           useADP: false
         },
-        MarkupsCore: null,
-        isShowToolbarMarker: false, //视点黑色工具条
-        isShowToolbarMarkerStyle: false, // 视点编辑工具条
-        isShowToolbarRestore: false,
-        isShowToolbarRestore2: false,
         isShowViewPointArea: false,
-        isShowViewPointThumbArea: false, // 缩略图
-        isShowSaveMarkerArea: false, // 保存视点区域
-        markupsPersist: null,
-        viewerStatePersist: null,
-        nsu: null,
-        styleAttributes: ['stroke-width', 'stroke-color', 'stroke-opacity', 'stroke-linejoin', 'font-family',
-          'font-style', 'fill-opacity', 'font-size'
-        ],
-        styleObject: null,
-        markerStyle: {
-          strokeColor: '#FF0000',
-          strokeWidth: 1,
-          fontSize: 12
-        },
-        saveStatus: null,
-        saveMarkupStatus: null,
-        saveMarkupData: null,
-        startedRotate: false,
-        viewPointName: '', // 视点的标题
+
         viewPointTitleName: '', //标题栏显示的视点名字
-        viewPointImgUrl: '',
         isShowOldViewPoint: false //是否显示的是老的视点
       }
     },
@@ -131,11 +101,7 @@
 
       this.project_id = parseInt(__PROJECT_ID)
       this.point_view_id = parseInt(__POINT_VIEW_ID)
-      console.log('this', this.project_id, this.point_view_id)
-      // await this.getViewpointsById()
-      // this.ShowViewPoint()
-
-
+      // console.log('this', this.project_id, this.point_view_id)
       this.init()
 
     },
@@ -167,22 +133,15 @@
         let files_id_list = JSON.parse(this.ViewPointInfo.file_ids)
         console.log('files_id_list', files_id_list)
         await this.getItemInfoListByProID(files_id_list)
-        
+        if (this.itemInfoList.length === 0) {
+          this.tip_message =
+            `没有符合的模型文件<br/>projectid:${this.project_id}<br/>projectid:${this.point_view_id}<br/>token:${this.access_token}`
+          return
+        }
         let _urlList = this.getModelUrl()
         // console.log('_urlList', _urlList)
         if (_urlList.length !== 0) {
           await this.init3DView(_urlList)
-
-
-          // this.viewer.addEventListener(
-          //   // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-
-          //   Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-          //   this.onSelectionChanged
-          // );
-
-
-          console.log('init3DView - complete')
 
         }
 
@@ -192,11 +151,9 @@
         this.ShowViewPoint()
       },
       onSelectionChanged(event) {
-        // console.log('this.viewer', this.viewer)
         console.log('event1', event)
         let _selections = event.selections
         console.log('_selections', _selections)
-        // this.selectedDbId = _dbIds
         this.selectedDbId = []
         _selections.forEach(selection => {
           let _dbIdArray = selection.dbIdArray
@@ -205,28 +162,13 @@
             selection.model.getProperties(dbId,
               (elements) => {
                 var dbid = elements.dbId;
-                // this.viewer.select(dbid)
                 this.selectedDbId.push(dbid)
-                console.log('elements', elements)
-                // let min = this.getFragXYZ(dbid)
-                // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
-
 
               })
           })
 
         })
-        // Asyncronous method that gets object properties
-        // 异步获取模型的属性
-        // this.viewer.getProperties(_dbIds[0],
-        //   (elements) => {
-        //     var dbid = elements.dbId;
-        //     console.log('elements', elements)
-        //     // let min = this.getFragXYZ(dbid)
-        //     // this.drawPushpinLot(min, 'aaa', 'asd', 'dasd')
 
-
-        //   })
       },
       init3DView(modelURLList) {
         return new Promise((resolve, reject) => {
@@ -235,8 +177,6 @@
             this.element = document.getElementById('viewer-local');
             this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
             this.viewer.addEventListener(
-              // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-
               Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
               this.onLoadedEvent
             );
@@ -247,8 +187,7 @@
               return;
             }
             let _Plist = []
-            // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
-            // onLoadSuccess, onLoadError);
+
             for (var i = 0; i < modelURLList.length; i++) {
               let p = await this.loadModel(modelURLList[i], i)
               _Plist.push(p)
@@ -256,11 +195,8 @@
             }
             Promise.all(_Plist).then(result => {
               console.log("Promise.all", result);
-              // _viewPointList.forEach(itemList => {
-              //   this.viewPointAllList = [...this.viewPointAllList, ...itemList]
-              // })
+
               resolve()
-              // console.log("this.viewPointAllList", this.viewPointAllList);
             })
           });
 
@@ -282,13 +218,10 @@
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
               this.viewer.setGroundShadow(false)
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
-              //unloadModel(model)
               if (!this.viewer.overlays.hasScene('custom-scene')) {
                 this.viewer.overlays.addScene('custom-scene');
               }
-              this.saveStatus = JSON.stringify(this.viewer.getState());
-              // this.addCustomToolBar()
-              // this.addViewpointToolBar()
+              // this.saveStatus = JSON.stringify(this.viewer.getState());
             }
             resolve(index)
           }, this.onLoadError);
