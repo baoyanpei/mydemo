@@ -23,6 +23,11 @@
       padding-left: 10px;
     }
 
+    .el-step__title.is-success {
+      color: #19b491;
+      font-weight: 600;
+    }
+
     .el-step__icon {
       display: none;
     }
@@ -48,6 +53,7 @@
       margin-bottom: 10px;
       float: left;
       padding-left: 30px;
+
       .pv-picture-area {
         float: left;
       }
