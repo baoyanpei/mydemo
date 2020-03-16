@@ -1,0 +1,16 @@
+.position-picture-save-dialog {
+  .el-dialog__header {
+    display: none;
+  } 
+  .el-dialog__body {
+    padding: 10px 10px;
+  }
+  .oper-area {
+      text-align: right;
+      padding: 10px;
+  }
+
+  .position-picture-save-area {
+    height: 500px;
+  }
+}

@@ -19,7 +19,7 @@
       </div>
       <div v-if="stepActive===1" class="position-view-point-picture">
         <div class="pv-picture">
-          <div class="pv-picture-area">
+          <div class="pv-picture-area" @click="openPositionPicuureDialogHandle(1)">
             <div class="el-upload-dragger"><i class="el-icon-picture"></i>
               <div class="el-upload__text">添加俯视图</div>
             </div>
@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="pv-picture">
-          <div class="pv-picture-area">
+          <div class="pv-picture-area" @click="openPositionPicuureDialogHandle(1)">
             <div class="el-upload-dragger"><i class="el-icon-picture"></i>
               <div class="el-upload__text">添加侧视图</div>
             </div>
@@ -62,7 +62,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click='handleSaveDialogCancel'>取 消</el-button>
-        <el-button v-if="stepActive==2" type="primary" :loading="loadingSaveViewPoint" @click="handlePrevSubmit">上一步
+        <el-button v-if="stepActive==2" :loading="loadingSaveViewPoint" @click="handlePrevSubmit">上一步
         </el-button>
         <el-button v-if="stepActive==2" type="primary" :loading="loadingSaveViewPoint" @click="handleSaveDialogSubmit">
           完成</el-button>
@@ -148,6 +148,12 @@
       handleSaveDialogCancel() {
         this.closeSaveDialogHandle()
       },
+      openPositionPicuureDialogHandle(){
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('ShowPositionPictureSaveDialog', param).then(() => {}).catch(() => {})
+      }
     }
   }
 

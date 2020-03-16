@@ -70,6 +70,9 @@
     <!--位置视点管理dialog-->
     <PositonPVManageDialog></PositonPVManageDialog>
 
+    <!--位置视点截图保存dialog-->
+    <PositionPictureSaveDialog></PositionPictureSaveDialog>
+
   </div>
 </template>
 
@@ -132,6 +135,9 @@
   // 位置视点管理dialog
   import PositonPVManageDialog from './views/pointView/positonPVManageDialog'
 
+  // 位置视点截图保存ialog
+  import PositionPictureSaveDialog from './views/pointView/positionPictureSaveDialog'
+
   // 绑定BIM
   import bindBimDialog from './views/bindBim/bindBimDialog'
 
@@ -171,7 +177,8 @@
       bindBimDialog,
       worldCitysDialog,
       useTrafficDialog,
-      PositonPVManageDialog
+      PositonPVManageDialog,
+      PositionPictureSaveDialog
     },
     directives: {
       elDragDialog

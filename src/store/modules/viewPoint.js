@@ -30,6 +30,11 @@ const viewPoint = {
       refresh: 0,
       show: false,
       data: {}
+    },
+    PositionPictureSaveDialog: { // 位置视点截图保存窗口
+      refresh: 0,
+      show: false,
+      data: {}
     }
   },
   mutations: {
@@ -65,8 +70,13 @@ const viewPoint = {
       state.PositionViewPointManageDialog.refresh = genRandom(1, 1000)
       console.log('----->', state.PositionViewPointManageDialog)
     },
+    SHOW_POSITION_PICTURE_SAVE_DIALOG: (state, data) => {
+      state.PositionPictureSaveDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.PositionPictureSaveDialog.refresh = genRandom(1, 1000)
+      console.log('----->', state.PositionPictureSaveDialog)
+    }
 
-    
   },
   actions: {
     ShowViewPointManagerDialog({
@@ -99,7 +109,16 @@ const viewPoint = {
         resolve()
       })
     },
-    
+    ShowPositionPictureSaveDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_POSITION_PICTURE_SAVE_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
     SaveViewPoint({
       commit
     }, param) {
