@@ -67,6 +67,9 @@
     <!--交通dialog-->
     <useTrafficDialog></useTrafficDialog>
 
+    <!--位置视点管理dialog-->
+    <PositonPVManageDialog></PositonPVManageDialog>
+
   </div>
 </template>
 
@@ -126,6 +129,8 @@
   // 视点保存dialog
   import PointViewSaveDialog from './views/pointView/saveDialog'
 
+  // 位置视点管理dialog
+  import PositonPVManageDialog from './views/pointView/positonPVManageDialog'
 
   // 绑定BIM
   import bindBimDialog from './views/bindBim/bindBimDialog'
@@ -165,7 +170,8 @@
       PointViewSaveDialog,
       bindBimDialog,
       worldCitysDialog,
-      useTrafficDialog
+      useTrafficDialog,
+      PositonPVManageDialog
     },
     directives: {
       elDragDialog

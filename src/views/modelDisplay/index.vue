@@ -1279,7 +1279,13 @@
                 data: __data
               }
               // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-              this.$store.dispatch('ShowViewPointSaveDialog', param).then(() => {}).catch(() => {})
+
+              if (_pointType === 1){ //位置视点
+                this.$store.dispatch('ShowPositionViewPointSaveDialog', param).then(() => {}).catch(() => {})
+              }else{
+                this.$store.dispatch('ShowViewPointSaveDialog', param).then(() => {}).catch(() => {})
+              }
+              
 
             }, 1000);
           })

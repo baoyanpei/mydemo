@@ -25,7 +25,12 @@ const viewPoint = {
       show: false,
       data: {}
     },
-    IsViewPointEditMode: false // 是否为视点编辑模式
+    IsViewPointEditMode: false, // 是否为视点编辑模式
+    PositionViewPointManageDialog: { // 位置视点保存窗口
+      refresh: 0,
+      show: false,
+      data: {}
+    }
   },
   mutations: {
     SHOW_VIEW_POINT_MANAGER_DIALOG: (state, data) => {
@@ -53,7 +58,15 @@ const viewPoint = {
     SET_VIEW_POINT_EDIT_MODE: (state, isEditMode) => {
       // const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.IsViewPointEditMode = isEditMode
-    }
+    },
+    SHOW_POSITION_VIEW_POINT_MANAGE_DIALOG: (state, data) => {
+      state.PositionViewPointManageDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.PositionViewPointManageDialog.refresh = genRandom(1, 1000)
+      console.log('----->', state.PositionViewPointManageDialog)
+    },
+
+    
   },
   actions: {
     ShowViewPointManagerDialog({
@@ -76,6 +89,17 @@ const viewPoint = {
         resolve()
       })
     },
+    ShowPositionViewPointSaveDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_POSITION_VIEW_POINT_MANAGE_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
+    
     SaveViewPoint({
       commit
     }, param) {
