@@ -1,3 +1,87 @@
-.positon-view-point-manage-dialog{
-    
+.positon-view-point-manage-dialog {
+  .el-dialog__header {
+    display: none;
+  }
+
+  .el-dialog__body {
+    padding: 10px 10px;
+  }
+
+  .el-steps--simple {
+    padding: 13px 10px;
+    border-radius: 4px;
+    background: #F5F7FA;
+  }
+
+  .el-step.is-simple {
+
+
+    .el-step__title {
+      max-width: 100% !important;
+      width: 100% !important;
+      word-break: break-all;
+      padding-left: 10px;
+    }
+
+    .el-step__icon {
+      display: none;
+    }
+
+
+  }
+
+  .step-title {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px;
+
+
+
+
+
+  }
+
+  .position-view-point-picture {
+    height: 380px;
+
+    .pv-picture {
+      margin-bottom: 10px;
+      float: left;
+      padding-left: 30px;
+      .pv-picture-area {
+        float: left;
+      }
+
+      .pv-picture-delete-icon {
+        float: left;
+        margin-left: 20px;
+
+        .el-icon-delete {
+          line-height: 180px;
+          font-size: 30px;
+          cursor: pointer;
+          color: red;
+        }
+      }
+    }
+
+
+
+  }
+
+  .position-view-point-picture {
+    .el-upload-dragger {
+      margin: 0px auto;
+    }
+
+    .el-upload-dragger .el-icon-picture {
+      font-size: 67px;
+      color: #C0C4CC;
+      margin: 40px 0 16px;
+      line-height: 50px;
+
+    }
+  }
+
+
 }
