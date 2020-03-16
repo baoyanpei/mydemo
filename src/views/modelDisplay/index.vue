@@ -350,7 +350,7 @@
         let _urlList = []
         // let _itemInfoList = []
         this.itemInfoList.forEach(itemInfo => {
-          console.log('itemInfo111', itemInfo)
+          // console.log('itemInfo111', itemInfo)
           // 服务端地址转换
           // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
           // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
@@ -656,8 +656,8 @@
               pushpinModelPt.z))
             // update the SVG position.
             divEle.css({
-              'left': screenpoint.x - pushpinModelPt.radius * 2,
-              'top': screenpoint.y - pushpinModelPt.radius
+              'left': screenpoint.x - pushpinModelPt.radius * 2 + 10,
+              'top': screenpoint.y - pushpinModelPt.radius - 10
             })
           }
         })
@@ -669,7 +669,7 @@
           let viewPointAllList = []
           for (const item of _itemInfoList) {
             // console.log('item', item)
-            let p = this.GetViewPointsByItemId(item,viewPointType)
+            let p = this.GetViewPointsByItemId(item, viewPointType)
             reqList.push(p)
           }
           Promise.all(reqList).then(_viewPointList => {
@@ -812,6 +812,18 @@
         var geom = new THREE.SphereGeometry(0.5);
         var material = new THREE.MeshBasicMaterial({
           color: 0xff0000
+        });
+        var sphereMesh = new THREE.Mesh(geom, material);
+        sphereMesh.position.set(pushpinModelPt.x, pushpinModelPt.y, pushpinModelPt.z);
+        if (!this.viewer.overlays.hasScene('custom-scene-2')) {
+          this.viewer.overlays.addScene('custom-scene-2');
+        }
+        this.viewer.overlays.addMesh(sphereMesh, 'custom-scene-2');
+      },
+      drawViewPointMarkerBlue(pushpinModelPt, id, name, data) {
+        var geom = new THREE.SphereGeometry(0.5);
+        var material = new THREE.MeshBasicMaterial({
+          color: 0x0000ff
         });
         var sphereMesh = new THREE.Mesh(geom, material);
         sphereMesh.position.set(pushpinModelPt.x, pushpinModelPt.y, pushpinModelPt.z);
@@ -1100,13 +1112,13 @@
             })
             return
           } else {
-            if (this.selectedDbId.length === 0) {
-              this.$message({
-                message: '请先选择一个构件',
-                type: 'error'
-              })
-              return
-            }
+            // if (this.selectedDbId.length === 0) {
+            //   this.$message({
+            //     message: '请先选择一个构件',
+            //     type: 'error'
+            //   })
+            //   return
+            // }
           }
 
 
@@ -1437,13 +1449,34 @@
         // console.log('_viewPointAllList', _viewPointAllList)
         // console.log('this.loadedModels', this.loadedModels)
         this.loadedModels.forEach(model => {
-          let objectSetIDList = []
-          _viewPointAllList.forEach(item => {
+          // let objectSetIDList = []
+          _viewPointAllList.forEach(viewPoint => {
 
-            let _camera_info = JSON.parse(Base64.decode(item.camera_info))
-            let _item_id = item.item_id
-            let _name = item.name
+            let _camera_info = JSON.parse(Base64.decode(viewPoint.camera_info))
+            let _item_id = viewPoint.item_id
+            let _name = viewPoint.name
+            // console.log('_name', _name)
+            // console.log('_camera_info', _camera_info)
+            if (model.item_id === _item_id) {
+              // objectSetIDList.push(_id)
+              let markId = `mark_${viewPoint.id}`
 
+
+
+              // 眼睛的位置
+              const eyeData = _camera_info.viewport.eye
+              var eyeV = new THREE.Vector3(eyeData[0], eyeData[1], eyeData[2]);
+
+              // 添加任务的标注的标签-是标签
+              this.drawViewPointLabel(eyeV, markId, _name, 'dasd')
+
+              // console.log('eyeV',eyeV)
+              this.drawViewPointMarker(eyeV, markId, _name, 'dasd')
+            }
+
+
+
+            /*
             let _objectSetList = _camera_info.objectSet
             // console.log('this.loadedModels', this.loadedModels)
             _objectSetList.forEach(objectIds => {
@@ -1457,6 +1490,8 @@
                     // this.viewer.setThemingColor(_id, red, model);
                     let average = this.getFragXYZ(model, _id)
                     let markId = `mark_${item.id}_${_id}`
+
+                    // 构件的位置
                     // 添加任务的标注的标签-是标签
                     this.drawViewPointLabel(average, markId, _name, 'dasd')
 
@@ -1465,7 +1500,7 @@
                   })
                 }
               }
-            })
+            })*/
           })
           // this.viewer.impl.visibilityManager.isolate(objectSetIDList, model);
           this.viewer.impl.visibilityManager.isolate(-1, model);
@@ -1502,6 +1537,18 @@
             if (_pvData !== undefined) {
               let _name = taskData.title
               let _camera_info = JSON.parse(Base64.decode(_pvData.camera_info))
+              let markId = `mark_${_pvData.id}`
+              // 眼睛的位置
+              const eyeData = _camera_info.viewport.eye
+              var eyeV = new THREE.Vector3(eyeData[0], eyeData[1], eyeData[2]);
+
+              // 添加任务的标注的标签-是标签
+              // this.drawViewPointLabel(eyeV, markId, _name, 'dasd')
+
+              // console.log('eyeV',eyeV)
+              this.drawViewPointMarker(eyeV, markId, _name, 'dasd')
+
+              /*
               let _objectSetList = _camera_info.objectSet
               _objectSetList.forEach(objectIds => {
                 let idList = objectIds.id
@@ -1517,7 +1564,7 @@
                   })
 
                 }
-              })
+              })*/
             }
             // console.log('_pvData', _pvData)
           })
