@@ -33,7 +33,7 @@
       return {
         dialogTitle: '编辑位置信息',
         loadingSaveViewPoint: false, // 保存视点按钮加载
-
+        pointViewData: null
       }
     },
     computed: {
@@ -71,7 +71,7 @@
 
       },
       async openedSaveDialogHandle() {
-
+        console.log('PositionPictureSaveDialog', this.PositionPictureSaveDialog)
       },
       handleSaveDialogCancel() {
         this.closeSaveDialogHandle()

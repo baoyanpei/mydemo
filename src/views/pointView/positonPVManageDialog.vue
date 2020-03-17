@@ -90,6 +90,7 @@
         floorMin: -10,
         floorMax: 100,
         buildList: [], // 1 楼层 2 普通
+        pointViewData: null
       }
     },
     computed: {
@@ -127,7 +128,8 @@
 
       },
       async openedSaveDialogHandle() {
-
+        console.log('PositionViewPointManageDialog', this.PositionViewPointManageDialog)
+        this.pointViewData = this.PositionViewPointManageDialog['data'];
       },
       closeSaveDialogHandle() {
         this.clearData()
@@ -148,9 +150,10 @@
       handleSaveDialogCancel() {
         this.closeSaveDialogHandle()
       },
-      openPositionPicuureDialogHandle(){
+      openPositionPicuureDialogHandle() {
         const param = {
           show: true,
+          pointViewData: this.pointViewData
         }
         this.$store.dispatch('ShowPositionPictureSaveDialog', param).then(() => {}).catch(() => {})
       }
