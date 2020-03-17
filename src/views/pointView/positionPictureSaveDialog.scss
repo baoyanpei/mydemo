@@ -11,6 +11,13 @@
   }
 
   .position-picture-save-area {
-    height: 500px;
+    height: 600px;
+    position: relative;
+    .viewer-positon-picture-save{
+      width:100%;
+      height:400px;
+    }
   }
+
+
 }
