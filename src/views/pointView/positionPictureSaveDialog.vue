@@ -33,6 +33,7 @@
     data() {
       return {
         dialogTitle: '编辑位置信息',
+        type: 1, // type 1 俯视图 2 侧视图
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
         options: {
           env: 'Local',
@@ -130,6 +131,7 @@
         console.log('PositionPictureSaveDialog', this.PositionPictureSaveDialog)
         this.pointViewData = this.PositionPictureSaveDialog.pointViewData
         let _item_ids = this.pointViewData.item_ids
+        this.type = this.PositionPictureSaveDialog.type
         await this.getItemInfoListByItemIDs(_item_ids)
         await this.getUrlAndInitView()
       },
@@ -332,8 +334,15 @@
         console.log('this.viewer', this.viewer)
         // this.viewer.autocam.cube.cubeRotateTo('top'); 
         let vc = await this.viewer.loadExtension('Autodesk.ViewCubeUi')
-        // vc.setViewCube('top');
-        vc.setViewCube('left top front');
+        switch (this.type) {
+          case 1:
+            vc.setViewCube('top');
+            break;
+
+          case 2:
+            vc.setViewCube('left top front');
+            break;
+        }
 
 
       },

@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="pv-picture">
-          <div class="pv-picture-area" @click="openPositionPicuureDialogHandle(1)">
+          <div class="pv-picture-area" @click="openPositionPicuureDialogHandle(2)">
             <div class="el-upload-dragger"><i class="el-icon-picture"></i>
               <div class="el-upload__text">添加侧视图</div>
             </div>
@@ -150,9 +150,11 @@
       handleSaveDialogCancel() {
         this.closeSaveDialogHandle()
       },
-      openPositionPicuureDialogHandle() {
+      openPositionPicuureDialogHandle(type) {
+        // type 1 俯视图 2 侧视图
         const param = {
           show: true,
+          type: type,
           pointViewData: this.pointViewData
         }
         this.$store.dispatch('ShowPositionPictureSaveDialog', param).then(() => {}).catch(() => {})
