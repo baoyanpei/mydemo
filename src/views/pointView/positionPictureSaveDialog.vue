@@ -334,7 +334,7 @@
           this.viewer.impl.visibilityManager.isolate(-1, model);
 
         })
-        console.log('this.viewer', this.viewer)
+        // console.log('this.viewer', this.viewer)
         // this.viewer.autocam.cube.cubeRotateTo('top'); 
         let vc = await this.viewer.loadExtension('Autodesk.ViewCubeUi')
         switch (this.type) {
@@ -402,7 +402,9 @@
               markupsBase64: markupsBase64,
               type: this.type
             }
-            this.$store.dispatch('GetPositionPictureSaveData', param).then(() => {}).catch(() => {})
+            this.$store.dispatch('GetPositionPictureSaveData', param).then(() => {
+              this.closeSaveDialogHandle()
+            }).catch(() => {})
 
           }, 1000);
         };

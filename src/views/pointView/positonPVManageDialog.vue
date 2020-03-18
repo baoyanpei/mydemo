@@ -24,20 +24,21 @@
               <div class="el-upload__text">添加俯视图</div>
             </div>
           </div>
-          <div v-if="picData1!==null" class="pv-picture-img">
+          <div v-if="picData1!==null" class="pv-picture-img" @click="openPositionPicuureDialogHandle(1)">
             <img v-bind:src="picData1" />
           </div>
-
-
           <div class="pv-picture-delete-icon">
             <i class="el-icon-delete"></i>
           </div>
         </div>
         <div class="pv-picture">
-          <div class="pv-picture-area" @click="openPositionPicuureDialogHandle(2)">
+          <div v-if="picData2===null"  class="pv-picture-area" @click="openPositionPicuureDialogHandle(2)">
             <div class="el-upload-dragger"><i class="el-icon-picture"></i>
               <div class="el-upload__text">添加侧视图</div>
             </div>
+          </div>
+          <div v-if="picData2!==null" class="pv-picture-img" @click="openPositionPicuureDialogHandle(2)">
+            <img v-bind:src="picData2" />
           </div>
           <div class="pv-picture-delete-icon">
             <i class="el-icon-delete"></i>
@@ -138,8 +139,9 @@
     watch: {
       PositionPictureSaveData: { // 视角列表选择的结果发生改变
         handler: function (newVal, oldVal) {
-          console.log('value changed123 ', newVal)
-          this.picData1 = newVal.markupsBase64
+          // console.log('value changed123 ', newVal)
+          this.setPicture(newVal)
+
           // this.ViewPointCurrentData = newVal
           // this.ShowViewPoint()
           // if (newVal === true) {
@@ -186,6 +188,20 @@
           pointViewData: this.pointViewData
         }
         this.$store.dispatch('ShowPositionPictureSaveDialog', param).then(() => {}).catch(() => {})
+      },
+      setPicture(data) {
+        console.log('setPicture', data)
+        const _type = data.type
+        switch (_type) {
+          case 1:
+            this.picData1 = data.markupsBase64
+            break;
+
+          case 2:
+            this.picData2 = data.markupsBase64
+            break;
+        }
+
       }
     }
   }
