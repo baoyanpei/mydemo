@@ -98,7 +98,11 @@
         buildList: [], // 1 楼层 2 普通
         pointViewData: null,
         picData1: null,
-        picData2: null
+        picData2: null,
+        itemInfoListMap: new Map(),
+        ViewPointTitle: '',
+        editType: 1, // 1 新增 0 修改
+        ViewPointCurrentData: null
       }
     },
     computed: {
@@ -155,12 +159,81 @@
     },
     methods: {
       clearData() {
+        this.stepActive = 1
         this.picData1 = null
         this.picData2 = null
+
+        this.buildList = []
+        this.SelectedBuild = ''
+        this.floor = 0
+        this.ViewPointType = 0
+        this.PositionTitle = ''
+        this.ViewPointTitle = ''
+        this.itemInfoListMap = new Map()
+        this.loadingSaveViewPoint = false
+        this.editType = 1
+        this.ViewPointCurrentData = null
       },
       async openedSaveDialogHandle() {
         console.log('PositionViewPointManageDialog', this.PositionViewPointManageDialog)
         this.pointViewData = this.PositionViewPointManageDialog['data'];
+        this.editType = this.pointViewData.editType
+        this.ViewPointType = this.pointViewData.type
+
+        this.ViewPointCurrentData = this.pointViewData.ViewPointCurrentData
+
+        if (this.ViewPointCurrentData !== null && this.editType === 0) {
+          this.PositionTitle = this.ViewPointCurrentData.name
+          this.ViewPointTitle = this.ViewPointCurrentData.name
+
+          this.floor = this.ViewPointCurrentData.floor_name
+          this.picData1 = this.ViewPointCurrentData.top_pic === "" ? null :
+            `/api/bim/bcp/thumbnail.jpg?vpid=${this.ViewPointCurrentData.id}&project_id=${this.project_id}&w=380&t=top`
+        }
+        this.itemInfoListMap = new Map()
+
+        const __itemInfoList = this.pointViewData.itemInfoList
+        __itemInfoList.forEach(itemInfo => {
+          console.log('itemInfo', itemInfo)
+          this.itemInfoListMap.set(itemInfo.item_id, itemInfo)
+        })
+        console.log('this.itemInfoListMap', this.itemInfoListMap)
+        // await this.exchangeToken(getToken())
+        await this.getProjectItemsAll()
+        // if (this.editType === 1) { // 新增模式
+        if (this.buildList.length === 1) {
+          this.SelectedBuild = this.buildList[0].value
+        }
+
+      },
+      getProjectItemsAll() {
+        return new Promise((resolve, reject) => {
+          this.buildList = []
+          const param = {
+            method: 'project_items',
+            project_id: this.project_id,
+            // access_token: this.access_token
+          }
+          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
+            console.log('getProjectItemsAll - _itemList', _itemList)
+
+            _itemList.forEach(build => {
+              let _itemInfo = this.itemInfoListMap.get(build.id)
+              if (_itemInfo !== undefined) {
+                if (build.name !== '') {
+                  this.buildList.push({
+                    value: build.id,
+                    label: build.name
+                  })
+                }
+              }
+
+            });
+            console.log('buildList', this.buildList)
+            resolve()
+          })
+
+        })
       },
       closeSaveDialogHandle() {
         this.clearData()
@@ -170,22 +243,91 @@
         this.$store.dispatch('ShowPositionViewPointSaveDialog', param).then(() => {}).catch(() => {})
       },
       handleSaveDialogSubmit() {
+        let _name = ""
+        if (this.ViewPointType === 1) {
+          if (this.SelectedBuild === '') {
+            this.$message({
+              message: '请选择所属建筑!',
+              type: 'error'
+            });
+            return
+          } else if (this.PositionTitle === '') {
+            this.$message({
+              message: '请填写位置说明!',
+              type: 'error'
+            });
+            return
+          }
+          _name = this.PositionTitle
+        } else if (this.ViewPointType === 2) {
+          if (this.ViewPointTitle === '') {
+            this.$message({
+              message: '请填写视点名字!',
+              type: 'error'
+            });
+            return
+          }
+          _name = this.ViewPointTitle
+        }
 
+
+        const __data = this.pointViewData
+        this.loadingSaveViewPoint = true
+        const param = {
+          "method": "SaveViewPoint",
+          "type": __data.type,
+          "project_id": this.project_id,
+          "item_id": this.SelectedBuild,
+          "floor_name": this.floor === 0 ? "" : this.floor,
+          "name": _name,
+          "desc": "",
+          "file_ids": __data.file_ids,
+          "item_ids": __data.item_ids,
+          "camera_info": __data.camera_info,
+          "picture_info": __data.picture_info,
+          "svg_info": __data.svg_info,
+          "creator": __data.creator
+        }
+
+        if (this.picData1 !== null && this.picData1.indexOf('data:image') !== -1) {
+          param['top_pic'] = this.picData1
+        }
+        if (this.picData2 !== null && this.picData2.indexOf('data:image') !== -1) {
+          param['side_pic'] = this.picData2
+        }
+        if (this.editType === 0) {
+          param['id'] = this.ViewPointCurrentData.id
+        }
+        console.log('this.ViewPointSaveDialog.param', param)
+        return
+        this.$store.dispatch('SaveViewPoint', param).then((result) => {
+          console.log('result', result)
+          setTimeout(() => {
+            this.$store.dispatch('SetViewPointDataChanged', {}).then((result) => {
+              this.$message({
+                message: '视点保存成功！',
+                type: 'success'
+              })
+              this.loadingSaveViewPoint = false
+              this.closeSaveDialogHandle()
+            })
+          }, 2500);
+        })
       },
       handleNextSubmit() {
-        if (this.picData1 === null) {
-          this.$message({
-            message: '请添加俯视图截图',
-            type: 'success'
-          })
-          return
-        } else if (this.picData2 === null) {
-          this.$message({
-            message: '请添加侧视图截图',
-            type: 'success'
-          })
-          return
-        }
+        // if (this.picData1 === null) {
+        //   this.$message({
+        //     message: '请添加俯视图截图',
+        //     type: 'success'
+        //   })
+        //   return
+        // } else if (this.picData2 === null) {
+        //   this.$message({
+        //     message: '请添加侧视图截图',
+        //     type: 'success'
+        //   })
+        //   return
+        // }
 
         this.stepActive = this.stepActive + 1;
       },
