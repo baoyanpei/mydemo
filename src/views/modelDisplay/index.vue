@@ -31,6 +31,14 @@
       <div class="title">原始视角</div>
       <img v-bind:src="viewPointImgUrl" class="viewPointImg" />
     </div>
+    <div v-show="isShowViewPointArea === true && ViewPointType===1 && viewPointImgTopUrl !==''" class="viewPointThumbTopArea" v-drag
+      draggable="true">
+      <img v-bind:src="viewPointImgTopUrl" class="viewPointImgTop" />
+    </div>
+    <div v-show="isShowViewPointArea === true && ViewPointType===1 && viewPointImgSideUrl !==''" class="viewPointThumbSideArea" v-drag
+      draggable="true">
+      <img v-bind:src="viewPointImgSideUrl" class="viewPointImgSide" />
+    </div>
     <div v-if="isShowToolbarRestore" class="toolbar-restore">
       <!-- <el-button class="marker-button" title="退出标注">
           <font-awesome-icon icon="sign-out-alt" @click="exitRestoreHandle" />
@@ -206,6 +214,7 @@
         isShowToolbarRestore2: false,
         isShowViewPointArea: false,
         isShowViewPointThumbArea: false, // 缩略图
+        // isShowViewPointThumbTopArea:false, // 顶部缩略图
         // isShowSaveMarkerArea: false, // 保存视点区域
         markupsPersist: null,
         viewerStatePersist: null,
@@ -225,7 +234,9 @@
         startedRotate: false,
         // viewPointName: '', // 视点的标题
         viewPointTitleName: '', //标题栏显示的视点名字
-        viewPointImgUrl: '',
+        viewPointImgUrl: '', // 缩略图
+        viewPointImgTopUrl: '', // 顶部缩略图
+        viewPointImgSideUrl:'', // 侧面缩略图
         isShowOldViewPoint: false, //是否显示的是老的视点
         isSaveViewValid: false, // 保存视点的按钮是否有效
         selectedDbId: [], // 选择的构件id
@@ -263,7 +274,7 @@
         },
         deep: true
       },
-      
+
     },
     mounted() {
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
@@ -1039,6 +1050,9 @@
         this.isShowToolbarRestore2 = false
 
         this.isShowOldViewPoint = false
+
+        this.viewPointImgTopUrl = ''
+        this.viewPointImgSideUrl = ''
       },
       exitMarkerHandle() {
         // this.markupsPersist = this.markupsExt.generateData()
@@ -1281,12 +1295,12 @@
               }
               // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
 
-              if (_pointType === 1){ //位置视点
+              if (_pointType === 1) { //位置视点
                 this.$store.dispatch('ShowPositionViewPointSaveDialog', param).then(() => {}).catch(() => {})
-              }else{
+              } else {
                 this.$store.dispatch('ShowViewPointSaveDialog', param).then(() => {}).catch(() => {})
               }
-              
+
 
             }, 1000);
           })
@@ -1364,6 +1378,8 @@
             let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentData.camera_info))
             // let picBase64 = picture_info.base64
             this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc
+            this.viewPointImgTopUrl = this.ViewPointCurrentData.pictureTopSrc
+            this.viewPointImgSideUrl = this.ViewPointCurrentData.pictureSideSrc
             // console.log('camera_info', camera_info)
             this.viewer.restoreState(camera_info); //it fails to restore state
             // markupsExt.viewer.impl.invalidate(true);

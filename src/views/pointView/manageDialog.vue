@@ -342,7 +342,7 @@
           this.viewPointAllList = []
           for (const item of _itemInfoList) {
             // console.log('item', item)
-            let p = this.GetViewPointsByItemId(item,type)
+            let p = this.GetViewPointsByItemId(item, type)
             reqList.push(p)
           }
           Promise.all(reqList).then(_viewPointList => {
@@ -389,13 +389,21 @@
 
             item['bgShowNormal'] = ''
             // console.log('item', item)
-            if (parseInt(item.type) === 1) {
+            if (parseInt(item.type) === 1) { // 项目位置视点
 
               // let picture_info = "/api/bim/bcp/thumbnail.jpg?vpid=32&project_id=10000&w=200" //item.PICTURE_INFO.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM)
               item['pictureLiteSrc'] =
                 `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
               // item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
               item['pictureFullSrc'] = ''
+
+              item['pictureTopSrc'] = item.top_pic === "" ? "" :
+                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=380&t=top`
+
+
+              item['pictureSideSrc'] = item.top_pic === "" ? "" :
+                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=380&t=side`
+
               item['className'] = `imagesPreview-${item.id}`
 
               if (this.CurrentItemIDList.length > 1) {

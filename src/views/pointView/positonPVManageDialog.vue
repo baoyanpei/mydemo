@@ -189,6 +189,9 @@
           this.floor = this.ViewPointCurrentData.floor_name
           this.picData1 = this.ViewPointCurrentData.top_pic === "" ? null :
             `/api/bim/bcp/thumbnail.jpg?vpid=${this.ViewPointCurrentData.id}&project_id=${this.project_id}&w=380&t=top`
+
+          this.picData2 = this.ViewPointCurrentData.side_pic === "" ? null :
+            `/api/bim/bcp/thumbnail.jpg?vpid=${this.ViewPointCurrentData.id}&project_id=${this.project_id}&w=380&t=top`
         }
         this.itemInfoListMap = new Map()
 
