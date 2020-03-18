@@ -19,28 +19,28 @@
       </div>
       <div v-if="stepActive===1" class="position-view-point-picture">
         <div class="pv-picture">
-          <div v-if="picData1===null" class="pv-picture-area" @click="openPositionPicuureDialogHandle(1)">
+          <div v-if="picData1===null" class="pv-picture-area" @click="openPositionPictureDialogHandle(1)">
             <div class="el-upload-dragger"><i class="el-icon-picture"></i>
               <div class="el-upload__text">添加俯视图</div>
             </div>
           </div>
-          <div v-if="picData1!==null" class="pv-picture-img" @click="openPositionPicuureDialogHandle(1)">
+          <div v-if="picData1!==null" class="pv-picture-img" @click="openPositionPictureDialogHandle(1)">
             <img v-bind:src="picData1" />
           </div>
-          <div class="pv-picture-delete-icon">
+          <div class="pv-picture-delete-icon" @click="removePositionPictureHandle(1)">
             <i class="el-icon-delete"></i>
           </div>
         </div>
         <div class="pv-picture">
-          <div v-if="picData2===null"  class="pv-picture-area" @click="openPositionPicuureDialogHandle(2)">
+          <div v-if="picData2===null" class="pv-picture-area" @click="openPositionPictureDialogHandle(2)">
             <div class="el-upload-dragger"><i class="el-icon-picture"></i>
               <div class="el-upload__text">添加侧视图</div>
             </div>
           </div>
-          <div v-if="picData2!==null" class="pv-picture-img" @click="openPositionPicuureDialogHandle(2)">
+          <div v-if="picData2!==null" class="pv-picture-img" @click="openPositionPictureDialogHandle(2)">
             <img v-bind:src="picData2" />
           </div>
-          <div class="pv-picture-delete-icon">
+          <div class="pv-picture-delete-icon" @click="removePositionPictureHandle(2)">
             <i class="el-icon-delete"></i>
           </div>
         </div>
@@ -155,7 +155,8 @@
     },
     methods: {
       clearData() {
-
+        this.picData1 = null
+        this.picData2 = null
       },
       async openedSaveDialogHandle() {
         console.log('PositionViewPointManageDialog', this.PositionViewPointManageDialog)
@@ -172,6 +173,20 @@
 
       },
       handleNextSubmit() {
+        if (this.picData1 === null) {
+          this.$message({
+            message: '请添加俯视图截图',
+            type: 'success'
+          })
+          return
+        } else if (this.picData2 === null) {
+          this.$message({
+            message: '请添加侧视图截图',
+            type: 'success'
+          })
+          return
+        }
+
         this.stepActive = this.stepActive + 1;
       },
       handlePrevSubmit() {
@@ -180,7 +195,7 @@
       handleSaveDialogCancel() {
         this.closeSaveDialogHandle()
       },
-      openPositionPicuureDialogHandle(type) {
+      openPositionPictureDialogHandle(type) {
         // type 1 俯视图 2 侧视图
         const param = {
           show: true,
@@ -202,6 +217,17 @@
             break;
         }
 
+      },
+      removePositionPictureHandle(type) {
+        switch (type) {
+          case 1:
+            this.picData1 = null
+            break;
+
+          case 2:
+            this.picData2 = null
+            break;
+        }
       }
     }
   }
