@@ -57,6 +57,16 @@
       .pv-picture-area {
         float: left;
       }
+      .pv-picture-img {
+        width: 360px;
+        height: 210px;
+        float: left;
+        img{
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+      }
 
       .pv-picture-delete-icon {
         float: left;

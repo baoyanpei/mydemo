@@ -17,7 +17,9 @@
       <div class="position-picture-save-area">
         <div id="viewer-positon-picture-save"></div>
       </div>
-
+      <div style="width:100vw; height:100vh;display:none;top:0px;left:0px;">
+        <canvas id="snapshotPositionPictureSave" style="position:absolute;"></canvas>
+      </div>
     </el-dialog>
   </div>
 
@@ -35,6 +37,7 @@
         dialogTitle: '编辑位置信息',
         type: 1, // type 1 俯视图 2 侧视图
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+        markupsExt: null,
         options: {
           env: 'Local',
           offline: 'true',
@@ -358,8 +361,58 @@
         }
         this.viewer.overlays.addMesh(sphereMesh, 'custom-scene-2');
       },
+      openPicture() {
+        const img = new Image();
+        img.src = document.getElementById('snapshotPositionPictureSave').toDataURL("image/png");
+        // console.log('dada', document.getElementById('snapshot').toDataURL("image/png"))
+        const newWin = window.open("", "_blank");
+        newWin.document.write(img.outerHTML);
+        newWin.document.title = "截图"
+        newWin.document.close();
+      },
       handleSaveDialogSubmit() {
-        this.clearData()
+        let screenshot = new Image();
+        screenshot.onload = () => {
+          this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
+            this.markupsExt = this.viewer.getExtension("Autodesk.Viewing.MarkupsCore");
+            let canvas = document.getElementById('snapshotPositionPictureSave');
+            canvas.width = this.viewer.container.clientWidth;
+            canvas.height = this.viewer.container.clientHeight;
+            let ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(screenshot, 0, 0, canvas.width, canvas.height);
+            // console.log('ctx', ctx)
+            // console.log('canvas.width, canvas.height', canvas.width, canvas.height, this.markupsExt)
+            try {
+              this.markupsExt.renderToCanvas(ctx);
+            } catch (err) {
+              // document.getElementById("demo").innerHTML = err.message;
+              console.log('renderToCanvas', err)
+            }
+
+          });
+
+
+          setTimeout(() => {
+            // this.openPicture()
+            let markupsBase64 = document.getElementById('snapshotPositionPictureSave').toDataURL("image/png")
+            // console.log(markupsBase64)
+
+            const param = {
+              markupsBase64: markupsBase64,
+              type: this.type
+            }
+            this.$store.dispatch('GetPositionPictureSaveData', param).then(() => {}).catch(() => {})
+
+          }, 1000);
+        };
+
+        // Get the full image
+        this.viewer.getScreenShot(this.viewer.container.clientWidth, this.viewer.container.clientHeight, function (
+          blobURL) {
+          screenshot.src = blobURL;
+          console.log('blobURL', blobURL)
+        });
       },
     }
   }

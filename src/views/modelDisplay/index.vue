@@ -252,7 +252,7 @@
     watch: {
       ViewPointCurrentShow: { // 视角列表选择的结果发生改变
         handler: function (newVal, oldVal) {
-          console.info('value changed ', newVal)
+          console.log('value changed ', newVal)
           this.ViewPointCurrentData = newVal
           this.ShowViewPoint()
           // if (newVal === true) {
@@ -263,6 +263,7 @@
         },
         deep: true
       },
+      
     },
     mounted() {
       const __PROJECT_ID = Cookies.get("PROJECT_ID")

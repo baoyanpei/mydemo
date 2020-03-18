@@ -35,6 +35,10 @@ const viewPoint = {
       refresh: 0,
       show: false,
       data: {}
+    },
+    PositionPictureSaveData: { // 位置视点截图
+      refresh: 0,
+      data: {}
     }
   },
   mutations: {
@@ -58,7 +62,7 @@ const viewPoint = {
       state.ViewPointSaveDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.ViewPointSaveDialog.refresh = genRandom(1, 1000)
-      console.log('----->', state.ViewPointSaveDialog)
+      // console.log('----->', state.ViewPointSaveDialog)
     },
     SET_VIEW_POINT_EDIT_MODE: (state, isEditMode) => {
       // const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
@@ -68,14 +72,20 @@ const viewPoint = {
       state.PositionViewPointManageDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.PositionViewPointManageDialog.refresh = genRandom(1, 1000)
-      console.log('----->', state.PositionViewPointManageDialog)
+      // console.log('----->', state.PositionViewPointManageDialog)
     },
     SHOW_POSITION_PICTURE_SAVE_DIALOG: (state, data) => {
       state.PositionPictureSaveDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.PositionPictureSaveDialog.refresh = genRandom(1, 1000)
-      console.log('----->', state.PositionPictureSaveDialog)
-    }
+      // console.log('----->', state.PositionPictureSaveDialog)
+    },
+    GET_POSITION_PICTURE_SAVE_DATA: (state, data) => {
+      state.PositionPictureSaveData = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.PositionPictureSaveData.refresh = genRandom(1, 1000)
+      // console.log('----->', state.PositionPictureSaveData)
+    },
 
   },
   actions: {
@@ -114,6 +124,16 @@ const viewPoint = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SHOW_POSITION_PICTURE_SAVE_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
+    GetPositionPictureSaveData({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('GET_POSITION_PICTURE_SAVE_DATA', {
           ...param
         })
         resolve()

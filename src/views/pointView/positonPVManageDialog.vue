@@ -19,11 +19,16 @@
       </div>
       <div v-if="stepActive===1" class="position-view-point-picture">
         <div class="pv-picture">
-          <div class="pv-picture-area" @click="openPositionPicuureDialogHandle(1)">
+          <div v-if="picData1===null" class="pv-picture-area" @click="openPositionPicuureDialogHandle(1)">
             <div class="el-upload-dragger"><i class="el-icon-picture"></i>
               <div class="el-upload__text">添加俯视图</div>
             </div>
           </div>
+          <div v-if="picData1!==null" class="pv-picture-img">
+            <img v-bind:src="picData1" />
+          </div>
+
+
           <div class="pv-picture-delete-icon">
             <i class="el-icon-delete"></i>
           </div>
@@ -90,7 +95,9 @@
         floorMin: -10,
         floorMax: 100,
         buildList: [], // 1 楼层 2 普通
-        pointViewData: null
+        pointViewData: null,
+        picData1: null,
+        picData2: null
       }
     },
     computed: {
@@ -110,6 +117,14 @@
           this.$store.state.viewPoint.PositionViewPointManageDialog = newValue
         }
       },
+      PositionPictureSaveData: {
+        get: function () {
+          return this.$store.state.viewPoint.PositionPictureSaveData
+        },
+        set: function (newValue) {
+          this.$store.state.viewPoint.PositionPictureSaveData = newValue
+        }
+      },
     },
     props: {
 
@@ -121,7 +136,20 @@
 
     },
     watch: {
+      PositionPictureSaveData: { // 视角列表选择的结果发生改变
+        handler: function (newVal, oldVal) {
+          console.log('value changed123 ', newVal)
+          this.picData1 = newVal.markupsBase64
+          // this.ViewPointCurrentData = newVal
+          // this.ShowViewPoint()
+          // if (newVal === true) {
+          // this.initData()
+          // this.getPersonInfo()
+          // }
 
+        },
+        deep: true
+      },
     },
     methods: {
       clearData() {
