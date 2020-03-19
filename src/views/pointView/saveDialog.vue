@@ -242,27 +242,19 @@
         console.log('this.ViewPointSaveDialog.param', param)
         this.$store.dispatch('SaveViewPoint', param).then((result) => {
           console.log('result', result)
-          // this.isShowSaveMarkerArea = false
-          // this.loadingSaveViewPoint = false
-          // this.viewPointTitleName = this.viewPointName
-          // this.viewPointName = ""
-
-
-
-          setTimeout(() => {
-            this.$store.dispatch('SetViewPointDataChanged', {}).then((result) => {
-              this.$message({
-                message: '视点保存成功！',
-                type: 'success'
+          if (result.status === "success") {
+            setTimeout(() => {
+              param['id'] = result.id
+              this.$store.dispatch('SetViewPointDataChanged', param).then((result) => {
+                this.$message({
+                  message: '视点保存成功！',
+                  type: 'success'
+                })
+                this.loadingSaveViewPoint = false
+                this.closeSaveDialogHandle()
               })
-              this.loadingSaveViewPoint = false
-              this.closeSaveDialogHandle()
-            })
-          }, 2500);
-
-
-
-          // resolve()
+            }, 2500);
+          }
         })
 
       }

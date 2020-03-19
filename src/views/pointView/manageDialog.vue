@@ -154,7 +154,7 @@
         viewPointPosDataList: [], // 位置数据列表
         viewPointAllList: [], // 从接口获取的所有数据
         tipMessage: '',
-        CurrentFileIDList: '', //当前打开的模型的file_id列表
+        // CurrentFileIDList: '', //当前打开的模型的file_id列表
         CurrentItemIDList: '', //当前打开的模型的item_id列表
         viewOptions: "{'inline': true,'navbar': false,'movable':false}",
         activeBuildNames: [],
@@ -195,9 +195,14 @@
 
     },
     watch: {
-      ViewPointDataChanged(curVal, oldVal) {
-        // console.log("ViewPointDataChanged")
-        this.getData()
+      ViewPointDataChanged: {
+        handler: function (newVal, oldVal) {
+          console.log('ViewPointDataChanged ', newVal)
+          this.getData()
+          this.getViewPointsDataHandle(newVal)
+
+        },
+        deep: true
       }
 
     },
@@ -209,7 +214,7 @@
         this.activeTabName = '1'
         this.ProjectItemsAll = new Map()
         this.currentChoosedItem = null
-        this.CurrentFileIDList = []
+        // this.CurrentFileIDList = []
         this.CurrentItemIDList = []
       },
       async getData() {
@@ -225,10 +230,10 @@
       openedManageDialogHandle() {
         this.tipMessage = "正在查询视点数据"
         console.log('this.ViewPointManageDialog', this.ViewPointManageDialog)
-        this.CurrentFileIDList = []
-        this.ViewPointManageDialog.itemInfoList.forEach(item => {
-          this.CurrentFileIDList.push(item.file_id)
-        })
+        // this.CurrentFileIDList = []
+        // this.ViewPointManageDialog.itemInfoList.forEach(item => {
+        //   this.CurrentFileIDList.push(item.file_id)
+        // })
         this.CurrentItemIDList = []
         this.ViewPointManageDialog.itemInfoList.forEach(item => {
           // console.log('itemitemitem', item.item_id)

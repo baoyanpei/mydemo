@@ -19,7 +19,6 @@
           <font-awesome-icon icon="times-circle" style="font-size: 12px;" />&nbsp;&nbsp;&nbsp;&nbsp;关&nbsp;&nbsp;&nbsp;闭
         </el-button>
       </div>
-      <!-- <img v-bind:src="viewPointImgUrl" class="viewPointImg" /> -->
     </div>
 
     <div v-if="isShowViewPointArea" class="viewPointTypeArea">
@@ -31,12 +30,12 @@
       <div class="title">原始视角</div>
       <img v-bind:src="viewPointImgUrl" class="viewPointImg" />
     </div>
-    <div v-show="isShowViewPointArea === true && ViewPointType===1 && viewPointImgTopUrl !==''" class="viewPointThumbTopArea" v-drag
-      draggable="true">
+    <div v-show="isShowViewPointArea === true && ViewPointType===1 && viewPointImgTopUrl !==''"
+      class="viewPointThumbTopArea" v-drag draggable="true">
       <img v-bind:src="viewPointImgTopUrl" class="viewPointImgTop" />
     </div>
-    <div v-show="isShowViewPointArea === true && ViewPointType===1 && viewPointImgSideUrl !==''" class="viewPointThumbSideArea" v-drag
-      draggable="true">
+    <div v-show="isShowViewPointArea === true && ViewPointType===1 && viewPointImgSideUrl !==''"
+      class="viewPointThumbSideArea" v-drag draggable="true">
       <img v-bind:src="viewPointImgSideUrl" class="viewPointImgSide" />
     </div>
     <div v-if="isShowToolbarRestore" class="toolbar-restore">
@@ -236,7 +235,7 @@
         viewPointTitleName: '', //标题栏显示的视点名字
         viewPointImgUrl: '', // 缩略图
         viewPointImgTopUrl: '', // 顶部缩略图
-        viewPointImgSideUrl:'', // 侧面缩略图
+        viewPointImgSideUrl: '', // 侧面缩略图
         isShowOldViewPoint: false, //是否显示的是老的视点
         isSaveViewValid: false, // 保存视点的按钮是否有效
         selectedDbId: [], // 选择的构件id
@@ -254,6 +253,9 @@
       },
       personInfo() {
         return this.$store.state.person.personInfo
+      },
+      ViewPointDataChanged() {
+        return this.$store.state.viewPoint.ViewPointDataChanged
       }
 
     },
@@ -274,6 +276,16 @@
         },
         deep: true
       },
+      ViewPointDataChanged: {
+        handler: function (newVal, oldVal) {
+          console.log('ViewPointDataChanged ', newVal)
+          if (newVal.type === 1) {
+            this.refreshDisplay(newVal)
+          }
+
+        },
+        deep: true
+      }
 
     },
     mounted() {
@@ -1377,7 +1389,7 @@
 
             let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentData.camera_info))
             // let picBase64 = picture_info.base64
-            this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc
+            // this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc
             this.viewPointImgTopUrl = this.ViewPointCurrentData.pictureTopSrc
             this.viewPointImgSideUrl = this.ViewPointCurrentData.pictureSideSrc
             // console.log('camera_info', camera_info)
@@ -1613,7 +1625,32 @@
           })
 
         })
-      }
+      },
+      async refreshDisplay(viewPoint) {
+        const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+       
+        
+        this.ViewPointCurrentData = await this.getViewpointsById(viewPoint)
+        this.ViewPointCurrentData.pictureTopSrc = viewPoint.top_pic
+        this.ViewPointCurrentData.pictureSideSrc = viewPoint.side_pic
+        this.ShowViewPoint()
+        
+      },
+      getViewpointsById(viewPoint) { // 通过视点ID获取视点信息接口
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'GetViewPoints',
+            project_id: this.project_id,
+            id: viewPoint.id
+          }
+          this.$store.dispatch('GetViewPoints', param).then((infoDataList) => {
+            // console.log('GetViewpointsById', infoDataList)
+            if (infoDataList.length > 0) {
+              resolve(infoDataList[0])
+            }
+          })
+        })
+      },
 
     }
   }

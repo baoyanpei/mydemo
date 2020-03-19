@@ -19,7 +19,10 @@ const viewPoint = {
       refresh: 0,
       data: {}
     },
-    ViewPointDataChanged: 0, // 数据发生变化
+    ViewPointDataChanged: {
+      refresh: 0,
+      data: {}
+    }, // 数据发生变化
     ViewPointSaveDialog: { // 保存窗口
       refresh: 0,
       show: false,
@@ -54,9 +57,10 @@ const viewPoint = {
       state.ViewPointCurrentShow.refresh = genRandom(1, 1000)
       console.log('----->', state.ViewPointCurrentShow)
     },
-    SET_VIEW_POINT_DATA_IS_CHANGED: (state) => {
+    SET_VIEW_POINT_DATA_IS_CHANGED: (state, data) => {
+      state.ViewPointDataChanged = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
-      state.ViewPointDataChanged = genRandom(1, 1000)
+      state.ViewPointDataChanged.refresh = genRandom(1, 1000)
     },
     SHOW_VIEW_POINT_SAVE_DIALOG: (state, data) => {
       state.ViewPointSaveDialog = data
@@ -144,7 +148,7 @@ const viewPoint = {
     }, param) {
       return new Promise((resolve, reject) => {
         saveViewPoint(param).then(response => {
-          resolve(response.data)
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
@@ -230,7 +234,7 @@ const viewPoint = {
       commit
     }, param) {
       return new Promise((resolve, reject) => {
-        commit('SET_VIEW_POINT_DATA_IS_CHANGED')
+        commit('SET_VIEW_POINT_DATA_IS_CHANGED', param)
         resolve()
       })
     },

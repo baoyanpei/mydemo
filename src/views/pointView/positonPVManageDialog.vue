@@ -191,7 +191,7 @@
             `/api/bim/bcp/thumbnail.jpg?vpid=${this.ViewPointCurrentData.id}&project_id=${this.project_id}&w=380&t=top`
 
           this.picData2 = this.ViewPointCurrentData.side_pic === "" ? null :
-            `/api/bim/bcp/thumbnail.jpg?vpid=${this.ViewPointCurrentData.id}&project_id=${this.project_id}&w=380&t=top`
+            `/api/bim/bcp/thumbnail.jpg?vpid=${this.ViewPointCurrentData.id}&project_id=${this.project_id}&w=380&t=side`
         }
         this.itemInfoListMap = new Map()
 
@@ -276,7 +276,7 @@
 
         const __data = this.pointViewData
         this.loadingSaveViewPoint = true
-        const param = {
+        let param = {
           "method": "SaveViewPoint",
           "type": __data.type,
           "project_id": this.project_id,
@@ -303,17 +303,33 @@
         }
         console.log('this.ViewPointSaveDialog.param', param)
         this.$store.dispatch('SaveViewPoint', param).then((result) => {
-          console.log('result', result)
-          setTimeout(() => {
-            this.$store.dispatch('SetViewPointDataChanged', {}).then((result) => {
-              this.$message({
-                message: '视点保存成功！',
-                type: 'success'
+          // console.log('result123', result)
+          if (result.status === "success") {
+            setTimeout(() => {
+              param['id'] = result.id
+              const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+              if (param.top_pic === undefined){
+                param['top_pic'] = `/api/bim/bcp/thumbnail.jpg?vpid=${result.id}&project_id=${this.project_id}&w=380&t=top&random=${genRandom(1,1000)}`
+              }
+              if (param.side_pic === undefined){
+                param['side_pic'] = `/api/bim/bcp/thumbnail.jpg?vpid=${result.id}&project_id=${this.project_id}&w=380&t=side&random=${genRandom(1,1000)}`
+              }
+              this.$store.dispatch('SetViewPointDataChanged', param).then((result) => {
+                this.$message({
+                  message: '视点保存成功！',
+                  type: 'success'
+                })
+                this.loadingSaveViewPoint = false
+                this.closeSaveDialogHandle()
               })
-              this.loadingSaveViewPoint = false
-              this.closeSaveDialogHandle()
+            }, 2500);
+          } else {
+            this.$message({
+              message: `视点保存失败：${result.msg}`,
+              type: 'error'
             })
-          }, 2500);
+          }
+
         })
       },
       handleNextSubmit() {
