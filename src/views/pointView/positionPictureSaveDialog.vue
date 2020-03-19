@@ -8,12 +8,38 @@
     <el-dialog :modal="true" :close-on-click-modal="false" width="900px" top="10vh" :lock-scroll="true"
       :visible.sync="PositionPictureSaveDialog.show" @opened="openedSaveDialogHandle" @close="closeSaveDialogHandle"
       :title="dialogTitle" v-el-drag-dialog>
-      <div class="oper-area">
-        <el-button @click='handleSaveDialogCancel' size="mini">取 消</el-button>
-        <el-button type="primary" :loading="loadingSaveViewPoint" @click="handleSaveDialogSubmit" size="mini">保 存
-        </el-button>
+      <el-row :gutter="20">
+        <el-col :span="3">
+          <span style="line-height: 40px;padding-left: 15px;font-weight: 600;font-size: 12px;">标记点的大小:</span>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple" style="padding:0px;">
+            <el-slider v-model="GeometrySize" :max="10" :min="1" :step="1" :marks="marks" show-stops
+              @change="changeGeometrySizeHandle"></el-slider>
+          </div>
+        </el-col>
+        <el-col :span="9">
+          <div class="grid-content bg-purple">
+            &nbsp;
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">
+            <div class="oper-area">
+              <el-button @click='handleSaveDialogCancel' size="mini">取 消</el-button>
+              <el-button type="primary" :loading="loadingSaveViewPoint" @click="handleSaveDialogSubmit" size="mini">保 存
+              </el-button>
 
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+      <div class="param-area">
+        <div class="block">
+
+        </div>
       </div>
+
       <div class="position-picture-save-area">
         <div id="viewer-positon-picture-save"></div>
       </div>
@@ -36,6 +62,11 @@
       return {
         dialogTitle: '编辑位置信息',
         type: 1, // type 1 俯视图 2 侧视图
+        GeometrySize: 5, // 标记点的尺寸
+        marks: {
+          1: '小',
+          10: '大'
+        },
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
         markupsExt: null,
         options: {
@@ -160,24 +191,16 @@
           let _urlList = _result['urlList']
           if (_urlList.length !== 0) {
             this.loadedModels = []
-            // this.itemCurrentFileIdList = []
             this.itemCurrentItemIdList = []
             this.itemInfoList.forEach(itemInfo => {
-              // this.itemCurrentFileIdList.push(itemInfo.file_id)
               this.itemCurrentItemIdList.push(itemInfo.item_id)
-              // if (itemInfo.item_id === undefined) {
-              //   itemInfo['item_id'] = itemInfo.id
-              // }
+
             })
-            // console.log('_urlList', _urlList, this.itemInfoList)
             await this.init3DView(_urlList, this.itemInfoList)
-            // this.viewer.addEventListener(
-            //   Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-            //   this.onSelectionChanged
-            // );
             this.initEvent()
             this.clearAllViewPointMarkrt()
             this.ShowViewPointMarkerAll()
+            this.setViewCube()
 
           }
           resolve()
@@ -188,18 +211,14 @@
         let _urlList = []
         // let _itemInfoList = []
         this.itemInfoList.forEach(itemInfo => {
-          // console.log('itemInfo111', itemInfo)
           // 服务端地址转换
-          // console.log('process.env.BASE_DOMAIN_BIM', process.env.BASE_DOMAIN_BIM)
           // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
           _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
-          // _itemInfoList.push(itemInfo)
           // 本地地址转换
           // _urlList.push(build.ITEM_URL.replace('/www/bim_proj/', '/static/'))
         });
         result = {
           'urlList': _urlList,
-          // 'itemInfoList': _itemInfoList
         }
         return result
       },
@@ -210,10 +229,6 @@
               this.element = document.getElementById('viewer-positon-picture-save');
               this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
 
-              // this.viewer.addEventListener(
-              //   Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-              //   this.onLoadedEvent
-              // );
               const startedCode = this.viewer.start();
               if (startedCode > 0) {
                 console.error('Failed to create a Viewer: WebGL not supported.');
@@ -222,8 +237,6 @@
             }
 
             let _Plist = []
-            // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
-            // onLoadSuccess, onLoadError);
             for (var i = 0; i < modelURLList.length; i++) {
               let p = await this.loadModel(modelURLList[i], itemInfoList[i], i)
               _Plist.push(p)
@@ -259,9 +272,6 @@
                 this.viewer.overlays.addScene('custom-scene-1');
               }
               this.saveStatus = JSON.stringify(this.viewer.getState());
-              // this.addCustomToolBar()
-              // this.addViewpointToolBar()
-              // this.showAllViewpointToolBar()
             }
             resolve(index)
           }, this.onLoadError);
@@ -313,11 +323,8 @@
         $(".mymlLabel").remove()
       },
       // 显示所有添加的视点
-      async ShowViewPointMarkerAll() {
+      ShowViewPointMarkerAll() {
         let red = new THREE.Vector4(1, 0, 0, 1);
-        // let _viewPointAllList = await this.GetViewpointsDataAll(1)
-        // console.log('_viewPointAllList', _viewPointAllList)
-        // console.log('this.loadedModels', this.loadedModels)
         this.loadedModels.forEach(model => {
           this.itemInfoList.forEach(itemInfo => {
             let _camera_info = JSON.parse(Base64.decode(this.pointViewData.camera_info))
@@ -327,9 +334,7 @@
               let markId = `mark_${_item_id}`
               // 眼睛的位置
               const eyeData = _camera_info.viewport.eye
-              var eyeV = new THREE.Vector3(eyeData[0], eyeData[1], eyeData[2]);
-              // 添加任务的标注的标签-是标签
-              // this.drawViewPointLabel(eyeV, markId, _name, 'dasd')
+              const eyeV = new THREE.Vector3(eyeData[0], eyeData[1], eyeData[2]);
               this.drawViewPointMarker(eyeV, markId, _name, 'dasd')
             }
 
@@ -338,32 +343,11 @@
           this.viewer.impl.visibilityManager.isolate(-1, model);
 
         })
-        // console.log('this.viewer', this.viewer)
-        // this.viewer.autocam.cube.cubeRotateTo('top'); 
-        let vc = await this.viewer.loadExtension('Autodesk.ViewCubeUi')
-        switch (this.type) {
-          case 1:
-            setTimeout(() => {
-              vc.setViewCube('top');
-
-            }, 1000);
-
-
-            break;
-
-          case 2:
-            setTimeout(() => {
-              vc.setViewCube('left top front');
-
-            }, 1000);
-
-            break;
-        }
 
 
       },
       drawViewPointMarker(pushpinModelPt, id, name, data) {
-        const geom = new THREE.SphereGeometry(1);
+        const geom = new THREE.SphereGeometry(this.GeometrySize);
         const material = new THREE.MeshBasicMaterial({
           color: 0xff0000
         });
@@ -374,15 +358,35 @@
         }
         this.viewer.overlays.addMesh(sphereMesh, 'custom-scene-2');
       },
-      openPicture() {
-        const img = new Image();
-        img.src = document.getElementById('snapshotPositionPictureSave').toDataURL("image/png");
-        // console.log('dada', document.getElementById('snapshot').toDataURL("image/png"))
-        const newWin = window.open("", "_blank");
-        newWin.document.write(img.outerHTML);
-        newWin.document.title = "截图"
-        newWin.document.close();
+      changeGeometrySizeHandle(value) {
+        console.log('changeGeometrySizeHandle', value)
+        this.clearAllViewPointMarkrt()
+        this.ShowViewPointMarkerAll()
       },
+      async setViewCube() {
+        let vc = await this.viewer.loadExtension('Autodesk.ViewCubeUi')
+        switch (this.type) {
+          case 1:
+            setTimeout(() => {
+              vc.setViewCube('top');
+            }, 1000);
+            break;
+          case 2:
+            setTimeout(() => {
+              vc.setViewCube('left top front');
+            }, 1000);
+            break;
+        }
+      },
+      // openPicture() {
+      //   const img = new Image();
+      //   img.src = document.getElementById('snapshotPositionPictureSave').toDataURL("image/png");
+      //   // console.log('dada', document.getElementById('snapshot').toDataURL("image/png"))
+      //   const newWin = window.open("", "_blank");
+      //   newWin.document.write(img.outerHTML);
+      //   newWin.document.title = "截图"
+      //   newWin.document.close();
+      // },
       handleSaveDialogSubmit() {
         let screenshot = new Image();
         screenshot.onload = () => {
