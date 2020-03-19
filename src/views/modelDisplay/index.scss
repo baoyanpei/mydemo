@@ -459,6 +459,7 @@
     bottom: 290px;
     right: 20px;
     overflow: hidden;
+    cursor: move;
 
     .viewPointImgTop {
       height: 210px;
@@ -479,7 +480,7 @@
 
     right: 20px;
     overflow: hidden;
-
+    cursor: move;
     .viewPointImgSide {
       height: 210px;
       width: 320px;

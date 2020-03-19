@@ -34,14 +34,16 @@
           </div>
         </el-col>
       </el-row>
-      <div class="param-area">
+      <!-- <div class="param-area">
         <div class="block">
 
         </div>
-      </div>
+      </div> -->
 
       <div class="position-picture-save-area">
-        <div id="viewer-positon-picture-save"></div>
+        <div id="viewer-positon-picture-save">
+          <div v-if="inittips" class="inittips">正在初始化，请耐心等待......</div>
+        </div>
       </div>
       <div style="width:100vw; height:100vh;display:none;top:0px;left:0px;">
         <canvas id="snapshotPositionPictureSave" style="position:absolute;"></canvas>
@@ -61,6 +63,8 @@
     data() {
       return {
         dialogTitle: '编辑位置信息',
+        inittips: false,
+        loading: false,
         type: 1, // type 1 俯视图 2 侧视图
         GeometrySize: 5, // 标记点的尺寸
         marks: {
@@ -132,8 +136,10 @@
     methods: {
       clearData() {
         // this.viewer.shutdown();
+        this.inittips = false
         try {
           if (this.viewer !== null) {
+
             this.clearAllViewPointMarkrt()
             this.viewer.removeEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT)
             this.itemCurrentItemIdList.forEach(async item => {
@@ -162,12 +168,17 @@
 
       },
       async openedSaveDialogHandle() {
+        if (this.viewer === null) {
+          this.inittips = true
+        }
+        this.loadingSaveViewPoint = true
         console.log('PositionPictureSaveDialog', this.PositionPictureSaveDialog)
         this.pointViewData = this.PositionPictureSaveDialog.pointViewData
         let _item_ids = this.pointViewData.item_ids
         this.type = this.PositionPictureSaveDialog.type
         await this.getItemInfoListByItemIDs(_item_ids)
         await this.getUrlAndInitView()
+        
       },
       getItemInfoListByItemIDs(item_ids) {
         // console.log('this.project_id', this.project_id)
@@ -226,10 +237,17 @@
         return new Promise((resolve, reject) => {
           Autodesk.Viewing.Initializer(this.options, async () => {
             if (this.viewer === null) {
+              this.inittips = false
               this.element = document.getElementById('viewer-positon-picture-save');
               this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
+              this.viewer.addEventListener(
+                // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
 
+                Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+                this.onLoadedEvent
+              );
               const startedCode = this.viewer.start();
+
               if (startedCode > 0) {
                 console.error('Failed to create a Viewer: WebGL not supported.');
                 return;
@@ -309,6 +327,7 @@
       },
       onLoadedEvent() {
         console.log('ononLoadedEvent', event)
+        this.loadingSaveViewPoint = false
       },
       // 清除所有的标记点
       clearAllViewPointMarkrt() {
@@ -388,6 +407,7 @@
       //   newWin.document.close();
       // },
       handleSaveDialogSubmit() {
+        this.loadingSaveViewPoint = true
         let screenshot = new Image();
         screenshot.onload = () => {
           this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
@@ -411,6 +431,7 @@
 
 
           setTimeout(() => {
+            this.loadingSaveViewPoint = false
             // this.openPicture()
             let markupsBase64 = document.getElementById('snapshotPositionPictureSave').toDataURL("image/png")
             // console.log(markupsBase64)
