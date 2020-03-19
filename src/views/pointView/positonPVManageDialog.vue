@@ -302,7 +302,6 @@
           param['id'] = this.ViewPointCurrentData.id
         }
         console.log('this.ViewPointSaveDialog.param', param)
-        return
         this.$store.dispatch('SaveViewPoint', param).then((result) => {
           console.log('result', result)
           setTimeout(() => {
@@ -318,19 +317,19 @@
         })
       },
       handleNextSubmit() {
-        // if (this.picData1 === null) {
-        //   this.$message({
-        //     message: '请添加俯视图截图',
-        //     type: 'success'
-        //   })
-        //   return
-        // } else if (this.picData2 === null) {
-        //   this.$message({
-        //     message: '请添加侧视图截图',
-        //     type: 'success'
-        //   })
-        //   return
-        // }
+        if (this.picData1 === null) {
+          this.$message({
+            message: '请添加俯视图截图',
+            type: 'success'
+          })
+          return
+        } else if (this.picData2 === null) {
+          this.$message({
+            message: '请添加侧视图截图',
+            type: 'success'
+          })
+          return
+        }
 
         this.stepActive = this.stepActive + 1;
       },

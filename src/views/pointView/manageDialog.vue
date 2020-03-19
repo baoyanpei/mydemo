@@ -396,13 +396,13 @@
                 `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=200`
               // item['pictureFullSrc'] = `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}`
               item['pictureFullSrc'] = ''
-
+              const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
               item['pictureTopSrc'] = item.top_pic === "" ? "" :
-                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=380&t=top`
+                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=380&t=top&random=${genRandom(1,1000)}`
 
 
               item['pictureSideSrc'] = item.top_pic === "" ? "" :
-                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=380&t=side`
+                `/api/bim/bcp/thumbnail.jpg?vpid=${item.id}&project_id=${this.project_id}&w=380&t=side&random=${genRandom(1,1000)}`
 
               item['className'] = `imagesPreview-${item.id}`
 
