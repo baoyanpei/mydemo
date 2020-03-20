@@ -4,6 +4,9 @@
     border: 0px solid #d8dce5;
     color: #ffffff;
   }
+  .el-button {
+    margin-left: 5px;
+  }
 
   .popper__arrow {
     display: none;
@@ -22,7 +25,7 @@
   }
 
   .navbar .el-button--medium {
-    padding: 5px 10px;
+    padding: 5px 5px;
   }
 
   .navbar .el-button--primary {
