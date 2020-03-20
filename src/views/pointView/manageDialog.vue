@@ -147,7 +147,7 @@
       return {
         loadingFull: false,
         dialogTitle: '视点管理',
-        activeTabName: '1',
+        activeTabName: '',//
         ProjectItemsAll: new Map(),
         access_token: null,
         viewPointDataList: [], // 显示到列表重的数据
@@ -211,7 +211,7 @@
         this.viewPointDataList = [] // 显示到列表重的数据
         this.viewPointPosDataList = []
         this.viewPointAllList = [] // 从接口获取的所有数据
-        this.activeTabName = '1'
+        this.activeTabName = ''
         this.ProjectItemsAll = new Map()
         this.currentChoosedItem = null
         // this.CurrentFileIDList = []
@@ -224,21 +224,21 @@
       tabHandleClick(tab, event) {
         // console.log(tab, event);
         this.activeTabName = tab.name
-        // console.log('this.activeTabName', this.activeTabName)
         this.getPointViewData()
       },
       openedManageDialogHandle() {
         this.tipMessage = "正在查询视点数据"
         console.log('this.ViewPointManageDialog', this.ViewPointManageDialog)
-        // this.CurrentFileIDList = []
-        // this.ViewPointManageDialog.itemInfoList.forEach(item => {
-        //   this.CurrentFileIDList.push(item.file_id)
-        // })
+
         this.CurrentItemIDList = []
         this.ViewPointManageDialog.itemInfoList.forEach(item => {
-          // console.log('itemitemitem', item.item_id)
           this.CurrentItemIDList.push(item.item_id)
         })
+        if (this.CurrentItemIDList.length > 1){
+          this.activeTabName = '2'
+        }else{
+          this.activeTabName = '1'
+        }
 
         this.getData()
       },
@@ -379,6 +379,10 @@
         })
       },
       async getPointViewData() {
+        if (parseInt(this.activeTabName) === 1 && this.CurrentItemIDList.length > 1) {
+          this.tipMessage = "合并模型不能查看位置视点，如需查看位置视点，请单独打开模型查看"
+          return
+        }
         this.loadingFull = this.$loading({
           target: document.getElementById("view-point-manage-dialog").querySelector('.el-dialog')
         });
