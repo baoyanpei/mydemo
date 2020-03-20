@@ -146,11 +146,11 @@ const project = {
   },
   mutations: {
     SET_PROJECT_INFO: (state, data) => {
-      const __PROJECT_ID = Cookies.get("PROJECT_ID")
+      const __PROJECT_ID = Cookies.get('PROJECT_ID')
       const projects = data.project
       state.project_list = projects
       let initProjectID = 0
-      let initProjectName = ""
+      let initProjectName = ''
 
       projects.forEach(project => {
         // console.log("__PROJECT_ID", __PROJECT_ID, project.project_id)
@@ -170,6 +170,7 @@ const project = {
       } else if (projects.length > 0) {
         state.project_id = projects[0].project_id
         state.org_name = projects[0].org_name
+        Cookies.set('PROJECT_ID', projects[0].project_id)
       }
       // console.log("state.project_option", state.project_option)
       // state.projectPersonList = data

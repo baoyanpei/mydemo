@@ -187,7 +187,7 @@
       project_id(curVal, oldVal) {
         console.log('curVal, oldVal', curVal, oldVal)
         if (curVal !== null && oldVal !== null && parseInt(curVal) !== parseInt(oldVal)) {
-          console.log('project_idproject_id', this.project_id)
+          console.log('project_idproject_id-aaa', this.project_id)
           this.clearData()
           this.reloadAllData()
         }
@@ -206,8 +206,11 @@
     async mounted() {
       // console.log('__PROJECT_ID', Cookies.get("PROJECT_ID"))
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
+      if (__PROJECT_ID === undefined) {
+        window.location.href = "/"
+      }
       this.project_id = parseInt(__PROJECT_ID)
-
+      
       this.countTableHeight()
       window.onresize = () => {
         return (() => {
