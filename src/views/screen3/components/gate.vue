@@ -35,7 +35,22 @@
     <el-row>
       <div class="grid-content info-lichang">
         <span v-if="onOffValue === 0 && persion_data.direction===1"
-          style="color:chartreuse;">进场时间：{{nowInOutTime}}</span>
+          style="color:chartreuse;">
+          <span v-if="persion_data.valid_days === undefined" style="color:chartreuse;">
+            进场时间：{{nowInOutTime}}
+          </span>
+          <span v-if="persion_data.valid_days !== undefined">
+            <span v-if="persion_data.valid_days===0 " style="color:#FF66FF;">
+              您的门卡今天到期，请及时激活！
+            </span>
+            <span v-if="persion_data.valid_days>0 && persion_data.valid_days<=3 " style="color:#FF66FF;">
+              您的门卡将于{{persion_data.valid_days}}天后到期，请及时激活！
+            </span>
+            <span v-if="persion_data.valid_days>3" style="color:chartreuse;">
+              进场时间：{{nowInOutTime}}
+            </span>
+          </span>
+        </span>
         <span v-if="onOffValue === 0 && persion_data.direction===2" style="color:red;">离场时间：{{nowInOutTime}}</span>
         <span v-if="onOffValue === 1" style="color:#FF66FF;font-weight: 700;">{{errorMessage}}</span>
         <span>&nbsp;</span>

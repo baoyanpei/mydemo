@@ -297,7 +297,7 @@
       mqttUserCount(data) {
 
         const _data = JSON.parse(data)
-        // console.log('count', _data)
+        console.log('mqttUserCount-mqttUserCount', _data)
         this.count_data = _data
         if (this.$refs.count_info !== undefined) {
           this.$refs.count_info.updateData(_data)
