@@ -9,14 +9,15 @@
     <div style="width:100vw; height:100vh;display:none;top:0px;left:0px;">
       <canvas id="snapshot" style="position:absolute;"></canvas>
     </div>
-    <div v-if="isShowViewPointArea" class="viewPointShowArea">
-      <div class="viewPointTitle">
-        <div class="title">
-          <span v-if="ViewPointType===2">普通视点</span>
-          <span v-if="ViewPointType===1">标定项目位置标准视点</span>
-          <span v-show="viewPointTitleName!==''">> {{viewPointTitleName}}</span> </div>
-      </div>
-      <!-- <img v-bind:src="viewPointImgUrl" class="viewPointImg" /> -->
+    <div ref="viewPointThumbTopArea"
+      v-show="isShowPositionViewPic===true && ViewPointType===1 && viewPointImgTopUrl !==''"
+      class="viewPointThumbTopArea">
+      <img v-bind:src="viewPointImgTopUrl" class="viewPointImgTop" />
+    </div>
+    <div ref="viewPointThumbSideArea"
+      v-show="isShowPositionViewPic===true && ViewPointType===1 && viewPointImgSideUrl !==''"
+      class="viewPointThumbSideArea">
+      <img v-bind:src="viewPointImgSideUrl" class="viewPointImgSide" />
     </div>
   </div>
 </template>
@@ -28,7 +29,6 @@
   import Cookies from 'js-cookie'
   let Base64 = require('js-base64').Base64
   export default {
-    directives: {},
     name: 'point-view-xcx-show',
     components: {},
     data() {
@@ -67,9 +67,10 @@
           useADP: false
         },
         isShowViewPointArea: false,
-
+        viewPointImgTopUrl: '', // 顶部缩略图
+        viewPointImgSideUrl: '', // 侧面缩略图
         viewPointTitleName: '', //标题栏显示的视点名字
-        isShowOldViewPoint: false //是否显示的是老的视点
+        isShowPositionViewPic: true //是否显示位置截图
       }
     },
     computed: {
@@ -121,6 +122,29 @@
           })
         })
       },
+      showAllViewpointToolBar() {
+        // this.viewer.setGhosting(0.2)
+        // this.viewer.setDisplayEdges(false)
+        // 查看所有标注点
+        let buttonMarker = new Autodesk.Viewing.UI.Button('show-view-point-button')
+        buttonMarker.icon.style.backgroundImage = 'url(./static/icon/ico_show_all_view_points.png)'
+        buttonMarker.onClick = (e) => {
+
+
+          this.isShowPositionViewPic = !this.isShowPositionViewPic;
+
+        }
+        buttonMarker.addClass('show-view-point-button')
+        buttonMarker.setToolTip('查看位置全局图')
+
+
+        this.ControlGroupShowAllViewPoint = new Autodesk.Viewing.UI.ControlGroup('show-view-point-toolbar')
+        this.ControlGroupShowAllViewPoint.addControl(buttonMarker)
+
+
+
+        this.viewer.toolbar.addControl(this.ControlGroupShowAllViewPoint)
+      },
       async init() {
         await this.loginByXcxToken()
         await this.getViewpointsById()
@@ -129,7 +153,7 @@
             `没有查询到相关视点数据，请核对参数<br/>projectid:${this.project_id}<br/>projectid:${this.point_view_id}<br/>token:${this.access_token}`
           return
         }
-        
+
         // let files_id_list = JSON.parse(this.ViewPointInfo.file_ids)
         // console.log('files_id_list', files_id_list)
         const _itemId = this.ViewPointInfo.item_id
@@ -203,6 +227,7 @@
                 this.viewer.overlays.addScene('custom-scene');
               }
               // this.saveStatus = JSON.stringify(this.viewer.getState());
+
             }
             resolve(index)
           }, this.onLoadError);
@@ -292,6 +317,32 @@
 
           console.log('camera_info', camera_info)
           this.viewer.restoreState(camera_info); //it fails to restore state
+          const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+          // 顶部缩略图
+          this.viewPointImgTopUrl = this.ViewPointInfo.top_pic === "" ? "" :
+            `/api/bim/bcp/thumbnail.jpg?vpid=${this.ViewPointInfo.id}&project_id=${this.project_id}&w=500&t=top&random=${genRandom(1,1000)}`
+          // 侧面缩略图
+          this.viewPointImgSideUrl = this.ViewPointInfo.side_pic === "" ? "" :
+            `/api/bim/bcp/thumbnail.jpg?vpid=${this.ViewPointInfo.id}&project_id=${this.project_id}&w=500&t=side&random=${genRandom(1,1000)}`
+
+          const width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+          const height = (window.innerHeight > 0) ? window.innerHeight : screen.height;
+          console.log('width', width, height)
+          const _b2 = 120;
+          this.$refs.viewPointThumbSideArea.style.bottom = `${_b2}px`;
+
+          console.log('this.$refs.viewPointThumbSideArea.style.bottom', this.$refs.viewPointThumbSideArea.style
+            .bottom)
+          let picWidth = (width / 10 * 4) >= 300 ? 300 : width / 10 * 4
+          let _b1 = _b2 + picWidth * (140 / 205) + 10 // 140/205 = 图片高宽的比例  10：上下两张图的间距 _b2 最下面那张图离bottom距离
+          console.log("->", _b1)
+          this.$refs.viewPointThumbTopArea.style.bottom = `${_b1}px`;
+
+          if (this.viewPointImgTopUrl !== '') {
+            this.showAllViewpointToolBar()
+          }
+
+
         } else {
           this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
             console.log('ViewPointInfo', this.ViewPointInfo)
@@ -307,13 +358,7 @@
             console.log('camera_info', camera_info)
             this.viewer.restoreState(camera_info); //it fails to restore state
             this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-            setTimeout(() => {
-              markupsExt.leaveEditMode();
-              markupsExt.show();
-              markupsExt.loadMarkups(_marekup_svg, 'markup' + this.ViewPointInfo.id);
-              // this.enterMarkerEditMode()
-              this.isShowOldViewPoint = true
-            }, 1000);
+
 
           })
         }
