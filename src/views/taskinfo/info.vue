@@ -9,18 +9,24 @@
         >
           <div class="infobox">
             <!--任务状态信息-->
-            <div class="statebox_111" :class="{'statered':(taskInfoDialog.data.state==='待认领'),'stateyellow':(taskInfoDialog.data.state==='待处理'),'stategreen':(taskInfoDialog.data.state==='待质检'),'stategray':(taskInfoDialog.data.state==='已完成')}">{{taskInfoDialog.data.state}}</div>
+            <div style="width: 100%;height: 30px">
+               <div class="statebox_111" :class="{'statered':(taskInfoDialog.data.state==='待认领'),'stateyellow':(taskInfoDialog.data.state==='待处理'),'stategreen':(taskInfoDialog.data.state==='待质检'),'stategray':(taskInfoDialog.data.state==='已完成')}">{{taskInfoDialog.data.state}}</div>
+            </div>
+            <!--<div class="statebox_111" :class="{'statered':(taskInfoDialog.data.state==='待认领'),'stateyellow':(taskInfoDialog.data.state==='待处理'),'stategreen':(taskInfoDialog.data.state==='待质检'),'stategray':(taskInfoDialog.data.state==='已完成')}">{{taskInfoDialog.data.state}}</div>-->
             <!--图片1-->
               <div class="topimgbox">
-                <div v-for="item in this.imgbanner">
-                  <img :src=item.onlineurl alt="" @click="imgURL(item.onlineurl)" style="margin-right: 15px">
+                <div v-for="item in this.imgbanner" class="topimgbox_img">
+                  <img :src=item.onlineurl alt="" @click="imgURL(item.onlineurl)">
                 </div>
               </div>
-            <br>
-            <!--标题-->
+
+            <div class="title_div">
+              <!--标题-->
               <span class="titleword">{{taskInfoDialog.data.title}}</span><br>
-            <!--发起人和发起时间-->
+            </div>
+             <!--发起人和发起时间-->
               <span class="faqiname">{{taskInfoDialog.data.originator}}      {{taskInfoDialog.data.created}}</span>
+            <!--<span>{{taskInfoDialog.data}}</span>-->
             <!--状态-->
               <div class="statebox222">
                 <div class="status_box" v-for="item in this.progressbox">
@@ -62,9 +68,9 @@
                   <span style="float: left;display: block;line-height: 40px;font-size: 16px">{{taskInfoDialog.data.header}}</span>
                 </div>
                 <!--整改信息图片-->
-                <div class="rectification_imgbox" v-show="item[1].tpshow_1">
-                  <div class="imgbox_img1" v-for="i in item[1].value">
-                    <img :src=i.imgurl111 @click="imgURL(i.imgurl111)" alt="" style="height: 100%;width: 100%;margin-right: 15px;margin-top: 10px;">
+                <div class="rectification_imgbox" v-show="item[1].tpshow_1" style="margin-bottom: 20px">
+                  <div class="imgbox_img1" v-for="i in item[1].value" style="">
+                    <img :src=i.imgurl111 @click="imgURL(i.imgurl111)" alt="">
                   </div>
                 </div>
                 <!--整改信息文字-->
@@ -93,7 +99,7 @@
                   </div>
                   <!--质检图片-->
                   <!--<div class="rectification_imgbox" v-show="item.tpshow">-->
-                  <div class="rectification_imgbox" v-show="item[4].tpshow">
+                  <div class="rectification_imgbox" v-show="item[4].tpshow" style="margin-bottom: 20px">
                     <div class="imgbox_img1" v-for="o in item[4].value">
                       <img :src=o.imgurl111 @click="imgURL(o.imgurl111)" alt="" style="height: 100%;width: 100%">
                     </div>

@@ -84,31 +84,33 @@
     <el-tabs type="border-card" v-model="activeName" @tab-click="mytask">
       <el-tab-pane :label="bannertitle" name="first">
         <div class="taskbox1">
-          <el-input v-model="chaxuninput" placeholder="请输入姓名，标题搜索" clearable style="width: 420px">
+          <el-input v-model="chaxuninput" placeholder="请输入姓名，标题搜索" clearable style="width: 420px;margin-left: 20px">
             <el-button slot="append" @click="queryFun" style="background-color:#409EFF;width: 100px;color: #fff;">查询</el-button>
           </el-input>
-          <span style="font-size: 14px;margin-left: 40px">精简筛选条件&nbsp;&nbsp;<i class="el-icon-arrow-down"></i></span>
-          <br><br>
-          <span>类别:</span>
-          <template>
-          <el-select v-model="value" placeholder="所有" style="width: 120px" class="btn1">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.label"></el-option>
-          </el-select>
-          </template>
+          <span style="font-size: 14px;margin-left: 50px" @click="jinjianclick">精简筛选条件&nbsp;&nbsp;<i class="el-icon-arrow-down"></i></span>
+          <div style="width: 100%;height: 10px;background-color: #fff"></div>
+          <div v-show="jinjianshow">
+              <span style="margin-left: 20px">类别:</span>
+              <template>
+              <el-select v-model="value" @change="jinjianleibie" placeholder="所有" style="width: 120px" class="btn1">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.label"></el-option>
+              </el-select>
+              </template>
 
-          <span>类型:</span>
-          <template>
-          <el-select v-model="value2" placeholder="所有" style="width: 120px" class="btn1">
-            <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.label2"></el-option>
-          </el-select>
-          </template>
+              <span style="margin-left: 35px">类型:</span>
+              <template>
+              <el-select v-model="value2" @change="jinjianleixing" placeholder="所有" style="width: 120px" class="btn1">
+                <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.label2"></el-option>
+              </el-select>
+              </template>
 
-          <span>状态:</span>
-          <template>
-          <el-select v-model="value3" placeholder="所有" style="width: 120px" class="btn1">
-            <el-option v-for="item in options3" :key="item.value3" :label="item.label" :value="item.label"></el-option>
-          </el-select>
-          </template>
+              <span style="margin-left: 35px">状态:</span>
+              <template>
+              <el-select v-model="value3" @change="jinjianzhuangtai" placeholder="所有" style="width: 120px" class="btn1">
+                <el-option v-for="item in options3" :key="item.value3" :label="item.label" :value="item.label"></el-option>
+              </el-select>
+              </template>
+          </div>
 
           <div class="details" v-for="(item,index) in boxinfo1" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
             <div class="details_top">
@@ -191,6 +193,7 @@
     name: 'index',
     data() {
       return {
+        jinjianshow:false,
         bannertitle:'任务大厅(0)',
         dialogVisible:false,
         textarea:'',
@@ -339,6 +342,18 @@
       },
       closedialog(){
         this.dingshow=false
+      },
+      jinjianclick(){//精简条件显示开关
+        this.jinjianshow=!this.jinjianshow
+      },
+      jinjianleibie(){
+        this.queryFun()
+      },
+      jinjianleixing(){
+        this.queryFun()
+      },
+      jinjianzhuangtai(){
+        this.queryFun()
       },
       gettype() {//类型
         return new Promise((resolve, reject) => {
@@ -872,9 +887,6 @@
             this.boxinfo=data
             //事件监听flowid,判断任务类型
             this.boxinfo.forEach(item=>{
-              // if(item.questions_type===''){
-              //   console.log('第二列表',item)
-              // }
               if(item.flowId==="Meeting01"){
                 item.stateall='会议'
               }
@@ -892,6 +904,7 @@
             this.secondpage()
           })
         }else {
+          this.allpersondata()
           console.log(111)
         }
       },
