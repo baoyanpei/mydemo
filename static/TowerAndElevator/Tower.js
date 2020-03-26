@@ -1,6 +1,6 @@
 function modifyTower(towerGroup, name, high, degree, distance, length) {
   //判断是新增还是更新信息
-  degree = degree - 180 // 根据现场实际的角度进行了修正90度
+  degree = degree - 90 // 根据现场实际的角度进行了修正90度
   var isEx = towerGroup.getObjectByName(name, true);
   if (isEx) {
     updateTower(isEx, degree, distance, length)
@@ -49,7 +49,8 @@ function addTower(towerGroup, Tname, Thigh, Tdegree, Tdistance, Tlength) {
   towerGroup.add(tower)
   towerGroup.add(tower_unmove)
   //定义钻转角度
-  tower.rotation.z = Math.PI / 180 * Tdegree;
+  // tower.rotation.z = Math.PI / 180 * Tdegree;
+  tower.rotation.z = -(Tdegree / 180 * Math.PI);
 }
 
 function initCar(towerGroup, Tname, Tdistance) {
@@ -87,7 +88,8 @@ function initLine(towerGroup, Tname, Tdistance, Tlength, Thigh) {
 //按照参数更新
 function updateTower(isEx, degree, distance, length) {
   //更新旋转角度
-  isEx.rotation.z = Math.PI / 180 * degree;
+  // isEx.rotation.z = Math.PI / 180 * degree;
+  isEx.rotation.z = -(degree / 180 * Math.PI);
   //更新小车，吊钩，初始线段的水平位置
   isEx.getObjectByName("Car", true).position.x = distance;
   isEx.getObjectByName("Hook", true).position.x = distance;
