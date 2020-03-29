@@ -430,6 +430,10 @@ export default {
           this.LoadItemIDList = [100031]
           // this.projID = 10004
           break
+        case 10019: // 兰通棚户区改造项目（二期）
+          this.LoadItemIDList = [100052]
+          // this.projID = 10004
+          break
       }
     },
     initDevlist() {
