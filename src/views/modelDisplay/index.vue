@@ -397,6 +397,8 @@
           Autodesk.Viewing.Initializer(this.options, async () => {
             this.element = document.getElementById('viewer-local');
             this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
+
+            this.viewer.setProgressiveRendering(this.isProgressiveRendering)
             // this.subscribeToAllEvents()
             this.viewer.addEventListener(
               // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
