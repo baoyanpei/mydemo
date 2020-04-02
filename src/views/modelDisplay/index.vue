@@ -201,10 +201,11 @@
           }
         },
         options: {
-          env: 'Local',
+          env: 'Local', // AutodeskDevelopment
           offline: 'true',
           useConsolidation: true,
-          useADP: false
+          useADP: false,
+          // consolidationMemoryLimit: 15000 * 1024 * 1024 // 150MB - Optional, defaults to 100MB
         },
         MarkupsCore: null,
         isShowToolbarMarker: false, //视点黑色工具条
@@ -244,7 +245,8 @@
         ControlGroupShowAllViewPoint: null, // 视点工具条的index
         loadedModels: [],
         phereMesh1: null,
-        aaacolor: 0x000000
+        aaacolor: 0x000000,
+        isProgressiveRendering:true // 模型是否重新渲染，闪烁  又叫渐进式显示 设置中有这个选项
       }
     },
     computed: {
@@ -491,29 +493,29 @@
 
         // 截屏
         let buttonSnapshot = new Autodesk.Viewing.UI.Button('my-snapshot-button')
-        buttonSnapshot.icon.style.backgroundImage = 'url(./static/icon/camera.jpg)'
+        buttonSnapshot.icon.style.backgroundImage = 'url(./static/icon/ico_restoreMarkup.png)'// camera
 
         // 截屏按钮
         buttonSnapshot.onClick = (e) => {
           // viewer.setViewCube('front')
-          this.snaphot('open')
+          // this.snaphot('open')
+          this.isProgressiveRendering = !this.isProgressiveRendering
+          this.viewer.setProgressiveRendering(this.isProgressiveRendering)
         }
         buttonSnapshot.addClass('my-snapshot-button')
-        buttonSnapshot.setToolTip('截屏')
+        buttonSnapshot.setToolTip('关闭/打开渐进式显示（关闭后拖动和旋转时不闪烁，但可能会影响流畅度）')
 
         // SubToolbar
-        /*
         let subToolbar = new Autodesk.Viewing.UI.ControlGroup('my-custom-view-toolbar')
-        subToolbar.addControl(buttonShare)
-        */
+        // subToolbar.addControl(buttonShare)
 
         // subToolbar.addControl(buttonRestoreMarker)
 
-        // subToolbar.addControl(buttonSnapshot)
+        subToolbar.addControl(buttonSnapshot)
 
 
         // Add subToolbar to main toolbar
-        // this.viewer.toolbar.addControl(subToolbar)
+        this.viewer.toolbar.addControl(subToolbar)
       },
       addViewpointToolBar() {
 
