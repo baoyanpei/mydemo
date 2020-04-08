@@ -132,6 +132,7 @@
   import Cookies from 'js-cookie'
   import lodash from 'lodash'
   let Base64 = require('js-base64').Base64
+
   export default {
     directives: {
       drag(el) {
@@ -171,7 +172,10 @@
     },
     data() {
       return {
+        storage: window.localStorage,
+        storageProgressiveRenderingKey: 'Autodesk.Viewing.Private.GuiViewer3D.SavedSettings.progressiveRendering',
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+        // stats: new Stats(),
         globalOffset: null,
         urns: [],
         element: null, //document.getElementById('viewer-local');
@@ -191,6 +195,7 @@
             // "Autodesk.Section",
             "Autodesk.Viewing.MarkupsCore",
             // "Autodesk.Viewing.AxisHelper"
+            // 'Autodesk.Viewing.MemoryLimitedDebug'
           ],
           disabledExtensions: {
             measure: false,
@@ -198,7 +203,9 @@
           },
           memory: {
             limit: 32 * 1024 // 32 GB
-          }
+          },
+          // loaderExtensions: { svf: "Autodesk.MemoryLimited" },
+
         },
         options: {
           env: 'Local', // AutodeskDevelopment
@@ -246,7 +253,13 @@
         loadedModels: [],
         phereMesh1: null,
         aaacolor: 0x000000,
-        isProgressiveRendering:true // 模型是否重新渲染，闪烁  又叫渐进式显示 设置中有这个选项
+        isProgressiveRendering: false, // 模型是否重新渲染，闪烁  又叫渐进式显示 设置中有这个选项
+        // avgFps: 0,
+        totalLowFps: 0, // 低速fps累计量
+        FPS_LOW_LEVEL: 8, // 低于祯数 为慢
+        FPS_HIGH_LEVEL: 15, // 高于祯数 为快
+        FPS_LOW_TIMES: 50, // 低速fps累计次数
+        // totalHighFps: 0 // 高速fps累计量
       }
     },
     computed: {
@@ -397,15 +410,32 @@
           Autodesk.Viewing.Initializer(this.options, async () => {
             this.element = document.getElementById('viewer-local');
             this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
+            // this.viewer.loadExtension('Autodesk.Viewing.MemoryLimitedDebug');
 
-            this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+            // console.log('Autodesk.Viewing', Autodesk.Viewing)
             // this.subscribeToAllEvents()
+            /*
+            this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+            document.body.appendChild(this.stats.dom);
+            */
+
+            // this.animate();
             this.viewer.addEventListener(
               // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
 
               Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
               this.onLoadedEvent
             );
+            // this.viewer.addEventListener(
+            //   Autodesk.Viewing.RENDER_PRESENTED_EVENT,
+            //   this.onRenderPresentedEvent
+            // );
+
+            // this.viewer.addEventListener(
+            //   Autodesk.Viewing.RENDER_OPTION_CHANGED_EVENT,
+            //   this.onRenderOptionChangedEvent
+            // );
+
             var startedCode = this.viewer.start();
             if (startedCode > 0) {
               console.error('Failed to create a Viewer: WebGL not supported.');
@@ -419,15 +449,25 @@
               _Plist.push(p)
 
             }
+
             Promise.all(_Plist).then(result => {
               resolve()
             })
+
+
+            let storageProgressiveRendering = this.storage[this.storageProgressiveRenderingKey]
+            if (storageProgressiveRendering === undefined) {
+              this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+            }
+            console.log('this.storage[storageProgressiveRenderingKey]', this.storage[this
+              .storageProgressiveRenderingKey])
+            this.viewer.setProgressiveRendering(this.isProgressiveRendering)
           });
 
         })
       },
-      onLoadedEvent() {
-        console.log('ononLoadedEvent', event)
+      onLoadedEvent(event) {
+        console.log('ononLoadedEvent---123', event)
       },
       loadModel(modelURL, itemInfo, index) {
         return new Promise((resolve, reject) => {
@@ -495,7 +535,7 @@
 
         // 截屏
         let buttonSnapshot = new Autodesk.Viewing.UI.Button('my-snapshot-button')
-        buttonSnapshot.icon.style.backgroundImage = 'url(./static/icon/ico_restoreMarkup.png)'// camera
+        buttonSnapshot.icon.style.backgroundImage = 'url(./static/icon/ico_restoreMarkup.png)' // camera
 
         // 截屏按钮
         buttonSnapshot.onClick = (e) => {
@@ -503,6 +543,21 @@
           // this.snaphot('open')
           this.isProgressiveRendering = !this.isProgressiveRendering
           this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+          this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+
+          if (this.isProgressiveRendering === true) {
+            this.$message({
+              message: '渐进式显示 已经打开！',
+              type: 'success'
+            })
+          } else {
+            this.$message({
+              message: '渐进式显示 已经关闭！',
+              type: 'success'
+            })
+          }
+
+
         }
         buttonSnapshot.addClass('my-snapshot-button')
         buttonSnapshot.setToolTip('关闭/打开渐进式显示（关闭后拖动和旋转时不闪烁，但可能会影响流畅度）')
@@ -606,6 +661,8 @@
           // window.requestAnimationFrame(this.draw1, 1505);
           this.clearAllViewPointMarkrt()
           this.ShowViewPointMarkerAll()
+          // let aaa = this.viewer.impl.fps()
+          // console.log('aaa', aaa)
           // console.log()
           // this.viewer.impl.isolate(-1);
           // this.viewer.isolate(-1);
@@ -664,7 +721,36 @@
       },
       initEvent() {
         this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
+          const _fps = this.viewer.impl.fps()
 
+          // this.avgFps = (this.avgFps + _fps) / 2
+          // console.log('avgFps', this.avgFps, this.totalLowFps)
+          if (_fps <= this.FPS_LOW_LEVEL) {
+            this.totalLowFps++
+          } else if (_fps >= this.FPS_HIGH_LEVEL) {
+            if (this.totalLowFps > 0) {
+              this.totalLowFps--
+            }
+          }
+          console.log('当前帧数', _fps, '低于', this.FPS_LOW_LEVEL, '帧累计次数:', this.totalLowFps)
+          // let storageData = this.storage["lot3-control-" + this.project_id]
+          // if (this.isProgressiveRendering === false) {
+          if (this.totalLowFps >= this.FPS_LOW_TIMES) {
+            this.totalLowFps = 0
+            // this.totalHighFps = 0
+            this.isProgressiveRendering = true
+            this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+            this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+            console.log('自动打开渐进式显示')
+            this.$message({
+              message: '由于您的模型显示不流畅，已经切换为渐进式显示！',
+              type: 'success'
+            })
+          }
+          // } 
+
+          // monitored code goes here
+          // this.stats.begin();
           // find out all pushpin markups
           var $eles = $("div[id^='mymk']")
           var DOMeles = $eles.get()
@@ -688,6 +774,7 @@
               'top': screenpoint.y - pushpinModelPt.radius - 10
             })
           }
+          // this.stats.end();
         })
       },
       GetViewpointsDataAll(viewPointType) {
@@ -1632,13 +1719,13 @@
       },
       async refreshDisplay(viewPoint) {
         const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
-       
-        
+
+
         this.ViewPointCurrentData = await this.getViewpointsById(viewPoint)
         this.ViewPointCurrentData.pictureTopSrc = viewPoint.top_pic
         this.ViewPointCurrentData.pictureSideSrc = viewPoint.side_pic
         this.ShowViewPoint()
-        
+
       },
       getViewpointsById(viewPoint) { // 通过视点ID获取视点信息接口
         return new Promise((resolve, reject) => {
@@ -1655,6 +1742,20 @@
           })
         })
       },
+      animate() {
+        this.stats.begin();
+        // monitored code goes here
+        this.stats.end();
+        requestAnimationFrame(this.animate);
+      },
+      onRenderPresentedEvent(e) {
+        // console.log('onRenderPresentedEventonRenderPresentedEvent', e)
+        const _fps = this.viewer.impl.fps()
+        console.log('_fps', _fps)
+      },
+      onRenderOptionChangedEvent(e) {
+        console.log('onRenderOptionChangedEvent', e)
+      }
 
     }
   }
