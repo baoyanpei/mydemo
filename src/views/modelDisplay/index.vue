@@ -172,8 +172,7 @@
     },
     data() {
       return {
-        storage: window.localStorage,
-        storageProgressiveRenderingKey: 'Autodesk.Viewing.Private.GuiViewer3D.SavedSettings.progressiveRendering',
+        
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
         // stats: new Stats(),
         globalOffset: null,
@@ -253,8 +252,9 @@
         loadedModels: [],
         phereMesh1: null,
         aaacolor: 0x000000,
+        storage: window.localStorage,
+        storageProgressiveRenderingKey: 'Autodesk.Viewing.Private.GuiViewer3D.SavedSettings.progressiveRendering',
         isProgressiveRendering: false, // 模型是否重新渲染，闪烁  又叫渐进式显示 设置中有这个选项
-        // avgFps: 0,
         totalLowFps: 0, // 低速fps累计量
         FPS_LOW_LEVEL: 8, // 低于祯数 为慢
         FPS_HIGH_LEVEL: 15, // 高于祯数 为快
@@ -454,7 +454,7 @@
               resolve()
             })
 
-
+            // 初始化设置 渐进式显示
             let storageProgressiveRendering = this.storage[this.storageProgressiveRenderingKey]
             if (storageProgressiveRendering === undefined) {
               this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
