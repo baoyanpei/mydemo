@@ -89,6 +89,13 @@
         // viewPointTitleName: '', //标题栏显示的视点名字
         // viewPointImgUrl: '',
         // isShowOldViewPoint: false //是否显示的是老的视点
+        storage: window.localStorage,
+        storageProgressiveRenderingKey: 'Autodesk.Viewing.Private.GuiViewer3D.SavedSettings.progressiveRendering',
+        isProgressiveRendering: false, // 模型是否重新渲染，闪烁  又叫渐进式显示 设置中有这个选项
+        totalLowFps: 0, // 低速fps累计量
+        FPS_LOW_LEVEL: 8, // 低于祯数 为慢
+        FPS_HIGH_LEVEL: 15, // 高于祯数 为快
+        FPS_LOW_TIMES: 30, // 低速fps累计次数
       }
     },
     computed: {
@@ -162,6 +169,7 @@
           await this.init3DView(_urlList)
           //   this.ShowViewPoint()
           console.log('init3DView - complete')
+          this.initEvent()
         }
 
       },
@@ -193,6 +201,15 @@
               resolve()
               // console.log("this.viewPointAllList", this.viewPointAllList);
             })
+
+            // 初始化设置 渐进式显示
+            let storageProgressiveRendering = this.storage[this.storageProgressiveRenderingKey]
+            if (storageProgressiveRendering === undefined) {
+              this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+            }
+            console.log('this.storage[storageProgressiveRenderingKey]', this.storage[this
+              .storageProgressiveRenderingKey])
+            this.viewer.setProgressiveRendering(this.isProgressiveRendering)
           });
 
         })
@@ -218,7 +235,7 @@
                 this.viewer.overlays.addScene('custom-scene');
               }
               this.saveStatus = JSON.stringify(this.viewer.getState());
-              // this.addCustomToolBar()
+              this.addCustomToolBar()
               // this.addViewpointToolBar()
             }
             resolve(index)
@@ -263,6 +280,70 @@
             console.log('this.itemInfoList', this.itemInfoList)
             resolve()
           })
+        })
+      },
+      addCustomToolBar() {
+        // 渐进式显示
+        let buttonProgressiveRendering = new Autodesk.Viewing.UI.Button('my-snapshot-button')
+        buttonProgressiveRendering.icon.style.backgroundImage = 'url(./static/icon/ico_restoreMarkup.png)' // camera
+
+        // 截屏按钮
+        buttonProgressiveRendering.onClick = (e) => {
+          // viewer.setViewCube('front')
+          // this.snaphot('open')
+          this.isProgressiveRendering = !this.isProgressiveRendering
+          this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+          this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+
+          if (this.isProgressiveRendering === true) {
+            this.$message({
+              message: '渐进式显示 已经打开！',
+              type: 'success'
+            })
+          } else {
+            this.$message({
+              message: '渐进式显示 已经关闭！',
+              type: 'success'
+            })
+          }
+
+
+        }
+        buttonProgressiveRendering.addClass('my-snapshot-button')
+        buttonProgressiveRendering.setToolTip('关闭/打开渐进式显示（关闭后拖动和旋转时不闪烁，但可能会影响流畅度）')
+        // SubToolbar
+        let subToolbar = new Autodesk.Viewing.UI.ControlGroup('my-custom-view-toolbar')
+        subToolbar.addControl(buttonProgressiveRendering)
+        this.viewer.toolbar.addControl(subToolbar)
+      },
+      initEvent() {
+        this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
+          const _fps = this.viewer.impl.fps()
+
+          // this.avgFps = (this.avgFps + _fps) / 2
+          // console.log('avgFps', this.avgFps, this.totalLowFps)
+          if (_fps <= this.FPS_LOW_LEVEL) {
+            this.totalLowFps++
+          } else if (_fps >= this.FPS_HIGH_LEVEL) {
+            if (this.totalLowFps > 0) {
+              this.totalLowFps--
+            }
+          }
+          console.log('当前帧数', _fps, '低于', this.FPS_LOW_LEVEL, '帧累计次数:', this.totalLowFps)
+          // let storageData = this.storage["lot3-control-" + this.project_id]
+          // if (this.isProgressiveRendering === false) {
+          if (this.totalLowFps >= this.FPS_LOW_TIMES) {
+            this.totalLowFps = 0
+            // this.totalHighFps = 0
+            this.isProgressiveRendering = true
+            this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+            this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+            console.log('自动打开渐进式显示')
+            this.$message({
+              message: '由于您的模型显示不流畅，已经切换为渐进式显示！',
+              type: 'success'
+            })
+          }
         })
       },
     }

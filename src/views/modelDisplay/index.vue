@@ -337,6 +337,17 @@
 
 
       },
+      initProgressiveRendering() {
+        // 初始化设置 渐进式显示
+        let storageProgressiveRendering = this.storage[this.storageProgressiveRenderingKey]
+        if (storageProgressiveRendering === undefined) {
+          this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+        }
+        console.log('this.storage[storageProgressiveRenderingKey]', this.storage[this
+          .storageProgressiveRenderingKey])
+        this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+
+      },
       getItemInfoListByItemIDs(item_ids) {
         // console.log('this.project_id', this.project_id)
         return new Promise((resolve, reject) => {
@@ -455,13 +466,7 @@
             })
 
             // 初始化设置 渐进式显示
-            let storageProgressiveRendering = this.storage[this.storageProgressiveRenderingKey]
-            if (storageProgressiveRendering === undefined) {
-              this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
-            }
-            console.log('this.storage[storageProgressiveRenderingKey]', this.storage[this
-              .storageProgressiveRenderingKey])
-            this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+            this.initProgressiveRendering()
           });
 
         })
@@ -1560,7 +1565,8 @@
             })
             break;
         }
-
+        // 初始化设置 渐进式显示
+        this.initProgressiveRendering()
 
       },
       // 清除所有的标记点
