@@ -3,6 +3,7 @@ import {
   queryDatumMeterDays,
   queryDatumMeterHours,
   allpersondata,
+  inoutcarquery,
   allbatchdownload,
   postmomment,
   allinfodictionary,
@@ -103,6 +104,18 @@ const datum = {
     },param){
       return new Promise((resolve, reject) => {
         postmomment(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    //inoutcarquery 进出车辆日志查询
+    Inoutcarquery({
+      commit
+    },param){
+      return new Promise((resolve, reject) => {
+        inoutcarquery(param).then(response => {
           resolve(response)
         }).catch(error => {
           reject(error)

@@ -1,17 +1,188 @@
 <style lang="scss">
   @import "./index";
-
+.logobox{
+    float: left;
+    width: 60px;
+    margin-left: 5px;
+    height: 20px;
+    border: 1px solid #1abc9c;
+    font-size: 12px;
+    text-align: center;
+    line-height: 18px;
+    color: #1abc9c;
+  }
+   /*状态信息颜色*/
+  .statered{
+    background-color: red;
+  }
+  .stategray{
+    background-color: #BABABA;
+  }
+  .stateyellow{
+    background-color: yellowgreen;
+  }
+  .stategreen{
+    background-color: green;
+  }
+  .tajijiaoduleft{
+    float: left;
+    width: 50%;
+    height: 100%;
+  }
 </style>
 <template>
   <div class="main-container" style="margin: 0px;">
-    <!-- <div class="xBIM-viewer-div">
-      <canvas id="xBIM-viewer">模型正在加载...</canvas>
-    </div> -->
-
-
     <CountInfoBoard ref="count_info"></CountInfoBoard><!--人员组别清单-->
     <div class="gate-area-div"><!--具体人员清单-->
       <GeteArea ref="gateArea"></GeteArea>
+    </div>
+    <!--温度测试-->
+    <div class="temperature">
+      <h1>环境监测</h1>
+      <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 75px 0 20px">
+        <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">温度:<span>{{temp}}℃</span></span>
+        <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">湿度:<span>{{shiduh}}%</span></span>
+      </div>
+      <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 85px 0 20px">
+        <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">噪声:<span>{{noise}}db</span></span>
+        <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">风速:<span>{{wind}}级</span></span>
+      </div>
+      <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 20px">
+        <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">扬尘:<span>{{powder}}ug/m3</span></span>
+        <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">PM2.5:<span>{{pm25}}ug/m3</span></span>
+      </div>
+    </div>
+    <!--最新任务-->
+    <div class="newtask">
+      <div class="newtask_top">
+        <span>最新任务</span>
+        <i class="el-icon-arrow-right"></i>
+      </div>
+      <div class="taskbottom" style="width: 100%;overflow: hidden">
+        <div class="tasksmall" v-for="item in this.taskbox" style="width: 90%;height: 130px;border: 1px solid #e7e7e7;margin:10px auto;">
+          <div class="taskbanner" style="height: 20px;border-bottom: 1px solid #e7e7e7">
+            <img src="/static/icon/BrowserPreview_tmp%20(2).png" alt="" style="width: 15px;height: 15px;margin-top: 2px;margin-left: 8px;float: left">
+            <span style="font-size: 13px;display: block;float: left;margin-top: 3px;margin-left: 10px;font-weight: 800">{{item.first}}</span>
+            <span style="font-size: 13px;display: block;float: left;margin-top: 3px;margin-left: 10px;font-weight: 800">—</span>
+            <span style="font-size: 13px;display: block;float: left;margin-top: 3px;margin-left: 10px;font-weight: 800">{{item.questions_type}}</span>
+            <div class="statusbox" style="float: right;width: 40px;height: 14px;font-size: 10px;margin-top: 3px;margin-right: -5px;text-align: center;line-height: 14px;color: #eaeefb"
+            :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">
+              {{item.status}}</div>
+          </div>
+          <div class="tasknei" style="width: 100%;height: 108px;">
+            <div class="taskneileft" style="width: 120px;height: 100%;float: left">
+              <img :src=item.imgurl alt="" style="width: 110px;height: 100px;margin-top: 5px;margin-left: 5px">
+            </div>
+            <div class="taskright" style="float: left;width: 265px;height: 100%;position: relative;">
+              <span style="margin-top: 5px;display: block">{{item.title}}</span>
+              <span style="display: block;font-size: 12px;color: #a8a8a8;margin-top: 5px">发起人:<span style="color: #000000">{{item.originator}}</span></span>
+              <span style="display: block;font-size: 12px;color: #a8a8a8;margin-top: 5px">发起时间:<span style="color: #000000">{{item.created}}</span></span>
+              <div class="taskrightbottom" style="position: absolute;bottom: 0;height: 25px;width:100%;">
+                  <div class="logobox">{{item.first}}</div>
+                  <div class="logobox">{{item.questions_type}}</div>
+                  <div class="star_block" style="float: right;"><el-rate v-model="item.value" disabled :max=3></el-rate></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--物联设备-->
+    <div class="equipment">
+      <div class="newtask_top">
+        <span>物联设备</span>
+        <i class="el-icon-arrow-right"></i>
+      </div>
+      <div class="shuidian" style="width: 95%;margin:10px auto;height: 100px;border: 1px solid #e5e5e5;border-radius: 10px;">
+        <div class="shuidianleft" style="width: 50%;height: 80%;border-right: 1px solid #e5e5e5;margin-top: 10px;float: left">
+          <img src="../../../static/mainpng/3522ca9f171f5bc9cd2400a2534b40b.png" alt="" style="width: 60px;height: 60px;margin-top: 10px;margin-left: 20px;float: left">
+          <div class="dianbiao" style="width: 180px;height: 100%;float: left;margin-left: 30px">
+            <span style="font-size: 15px;display: block;margin-top: 10px;color: #909399">总读数:<span>{{eleallnum}}</span></span>
+            <br>
+            <span style="font-size: 18px;color: #909399">今日用量:<span>{{todayelenum}}</span></span>
+          </div>
+        </div>
+        <div class="shuidianleft" style="width: 50%;height: 80%;margin-top: 10px;float: left">
+          <img src="../../../static/mainpng/shuibiao.png" alt="" style="width: 60px;height: 60px;margin-top: 10px;margin-left: 20px;float: left">
+          <div class="dianbiao" style="width: 180px;height: 100%;float: left;margin-left: 30px">
+            <span style="font-size: 15px;display: block;margin-top: 10px;color: #909399">现读数:<span>{{waterallnum}}</span></span>
+            <br>
+            <span style="font-size: 18px;color: #909399">今日用量:<span>{{todaywaternum}}</span></span>
+          </div>
+        </div>
+      </div>
+      <div v-for="item in this.tajidatabox">
+        <div class="tajitp" style="width: 220px;height: 230px;float: left;position: relative">
+        <img src="../../../static/mainpng/taji.png" alt="" style="width:100%;height: 100%">
+        <span style="position: absolute;left: 100px;top: 10px;">{{item.dabi}}°</span>
+        <span style="position: absolute;left: 136px;top: 50px;">{{item.fudu}}m</span>
+        <span style="position: absolute;left: 30px;top: 118px;">{{item.height1}}m</span>
+        <span style="position: absolute;left: 180px;top: 150px;">{{item.height2}}m</span>
+      </div>
+        <div class="tajiright" style="width:410px;height:230px;float: left;">
+          <div class="tajirighttop" style="width: 100%;height: 30px;background-color: #1abc9c;">
+            <span style="line-height: 30px;color: #ffffff;font-weight: 800;margin-left: 10px;">塔机数据</span>
+          </div>
+          <div class="tajibox" style="width: 100%;height: 25px;margin-top: 10px;">
+            <div class="tajismallbox" style="width: 60px;border: 1px solid #1abc9c;;height: 100%;text-align: center;line-height: 25px;font-size: 14px;color: #1abc9c;font-weight: 800;">塔机1</div>
+          </div>
+          <!--塔机角度 转角-->
+          <div class="tajidata">
+            <div class="tajijiaodu" style="width: 100%;height: 50px;margin-top: 5px;">
+              <div class="tajijiaoduleft">
+                <img src="../../../static/mainpng/jiaodu.png" alt="" style="float:left;width: 40px;height: 40px;margin-left: 40px;margin-top: 5px">
+                <span style="float: left;font-size: 15px;margin-top: 5px;margin-left: 10px;">大臂斜角</span>
+                <span style="display: block;margin-top: 25px;margin-left: 90px;">{{item.dabi}}</span>
+              </div>
+              <div class="tajijiaoduleft">
+                <img src="../../../static/mainpng/fengli.png" alt="" style="float:left;width: 40px;height: 40px;margin-left: 40px;margin-top: 5px">
+                <span style="float: left;font-size: 15px;margin-top: 5px;margin-left: 10px;">风速</span>
+                <span style="display: block;margin-top: 25px;margin-left: 90px;">{{item.fengsu}}</span>
+              </div>
+            </div>
+            <div class="tajijiaodu" style="width: 100%;height: 50px;margin-top: 5px;">
+              <div class="tajijiaoduleft">
+                <img src="../../../static/mainpng/huizhuan.png" alt="" style="float:left;width: 40px;height: 40px;margin-left: 40px;margin-top: 5px">
+                <span style="float: left;font-size: 15px;margin-top: 5px;margin-left: 10px;">回转</span>
+                <span style="display: block;margin-top: 25px;margin-left: 90px;">{{item.huizhuan}}</span>
+              </div>
+              <div class="tajijiaoduleft">
+                <img src="../../../static/mainpng/fudu.png" alt="" style="float:left;width: 40px;height: 40px;margin-left: 40px;margin-top: 5px">
+                <span style="float: left;font-size: 15px;margin-top: 5px;margin-left: 10px;">幅度</span>
+                <span style="display: block;margin-top: 25px;margin-left: 90px;">{{item.fudu}}</span>
+              </div>
+            </div>
+            <div class="tajijiaodu" style="width: 100%;height: 50px;margin-top: 5px;">
+              <div class="tajijiaoduleft">
+                <img src="../../../static/mainpng/huizhuan.png" alt="" style="float:left;width: 40px;height: 40px;margin-left: 40px;margin-top: 5px">
+                <span style="float: left;font-size: 15px;margin-top: 5px;margin-left: 10px;">力矩</span>
+                <span style="display: block;margin-top: 25px;margin-left: 90px;">{{item.liju}}</span>
+              </div>
+              <div class="tajijiaoduleft">
+                <img src="../../../static/mainpng/zhongliang.png" alt="" style="float:left;width: 40px;height: 40px;margin-left: 40px;margin-top: 5px">
+                <span style="float: left;font-size: 15px;margin-top: 5px;margin-left: 10px;">重量</span>
+                <span style="display: block;margin-top: 25px;margin-left: 90px;">{{item.zhong}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--进出车辆-->
+    <div class="inoutcar">
+      <div class="newtask_top">
+        <span>进出场车辆</span>
+        <i class="el-icon-arrow-right"></i>
+      </div>
+      <div class="carsmall" style="width: 100%;height: 100px;margin-top: 10px;" v-for="item in this.carbox">
+        <div class="carsmallleft" style="float:left;width: 40%;height: 100%;">
+          <img :src=item.pic alt="" style="width: 90%;height: 90%;margin: 5%;">
+        </div>
+        <div class="carsmallright" style="float: right;width: 60%;height: 100%;">
+            <h1 style="margin-top: 15px;float: left;margin-left: 20px;margin-right:50px;color: #0a131c">{{item.lisence}}</h1>
+            <h2 style="display: block;float:left;font-size:13px;margin-left: 20px;color: #0a131c;margin-top: 25px;">进场时间:{{item.created_time}}</h2>
+        </div>
+      </div>
     </div>
     <div class="yizheng-logo">
       <img src="/static/yizheng-logo.png"/><!--易正科技图标LOGO-->
@@ -153,12 +324,32 @@
         client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
         timerReconnectMqtt: null,
         isConnectMqtt: null, //是否已经连接
-        // handleId: "handleA",
+        noise:"",//噪声
+        pm25:"",//pm2.5
+        wind:"",//风速
+        shiduh:"",//湿度
+        temp:"",//温度
+        powder:"",//粉尘
+        eleallnum:"",//电表总度数
+        todayelenum:"",//今日走电
+        waterallnum:"",//水表总度数
+        todaywaternum:"",//今日水表走水
+        carbox:[],//进出车辆表
+        postdata:[],//数据筛选
+        tajidevice_id:"",//塔机id
+        tajidatabox:[{//塔机具体参数盒子
+          height1:"",
+          height2:"",
+          fudu:"",
+          dabi:"",
+          fengsu:"",
+          huizhuan:"",
+          liju:"",
+          zhong:""
+        }],
+        listbox:[],
+        taskbox:[],
         loadingFull: null,
-        // draggableValue: {
-        //   handle: undefined
-        // },
-        // showMeetingDialog: false,
         dialogTableVisible: false,
         dialogCJHYVisible: false,
         dialogHuiyiFullCalendar: false,
@@ -189,13 +380,19 @@
     },
     watch: {
       project_id(curVal, oldVal) {
+        console.log("触发")
+        console.log('curVal',curVal,oldVal)
+        this.jiekoufnc()
         if (oldVal === null && curVal !== null) {
+          console.log("-----11111")
           this.mqttConnect()
         }
         if (oldVal !== null) {
+          console.log("-----2222")
           this.unsubscribe()
         }
         if (curVal !== null) {
+          console.log("-----3333")
           this.subscribe()
         }
       },
@@ -215,19 +412,191 @@
       }
     },
     mounted() {
-      // this.draggableValue.handle = this.$refs[this.handleId];
-
-      // $("#aaaa").html('哈哈哈')
-      // toggleClass(document.body, 'custom-theme')
-      console.log("index mount")
-
-
-
+      console.log("index mount",this.project_id)
+      if (this.project_id !== null) {
+        this.jiekoufnc()
+      }
+      else {
+        console.log("没得project_id")
+      }
     },
     destroyed() {
       // window.removeEventListener('hashchange', this.afterQRScan)
     },
     methods: {
+      jiekoufnc(){
+        this.initDevlist()
+        this.waterelefnc()
+        this.inoutcarquery()
+        this.smalltaskfnc()
+        this.gettajifnc()
+        this.gettajidatafnc()
+      },
+      initDevlist() {//环境检测
+        console.log("数据",this.project_id)
+          const param = {
+            method: 'query_env',
+            project_id: this.project_id
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            console.log('环境检测', data)
+            this.noise=data[0].noise
+            this.pm25=data[0].pm2_5
+            this.wind=data[0].wind
+            this.shiduh=data[0].h
+            this.temp=data[0].temp
+            this.powder=data[0].power
+          })
+      },
+      gettajifnc(){
+        const param = {
+            method: 'devlist',
+            project_id: this.project_id,
+            device_type:13
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            console.log('塔机数据', data)
+            this.tajidevice_id=data[0].device_id
+            let hei=JSON.parse(data[0].params_json)
+            this.tajidatabox[0].height1=hei.height
+            console.log("获取塔机参数id",data[0].device_id)
+            this.gettajidatafnc()
+          })
+      },
+      gettajidatafnc(){
+        const param = {
+            method: 'query_crane2',
+            project_id: this.project_id,
+            devid:this.tajidevice_id
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            this.tajidatabox[0].height2=data[0].height
+            this.tajidatabox[0].dabi=data[0].dip_angle
+            this.tajidatabox[0].fengsu=data[0].wind
+            this.tajidatabox[0].huizhuan=data[0].rotate
+            this.tajidatabox[0].fudu=data[0].extent
+            this.tajidatabox[0].liju=data[0].torque_percent
+            this.tajidatabox[0].zhong=data[0].weight
+            console.log('塔机具体数据',data[0])
+          })
+      },
+      waterelefnc(){
+        let time=new Date()
+        let year=time.getFullYear()
+        var month = time.getMonth()+1;//得到月份
+        var date = time.getDate();//得到日期
+        var hour = time.getHours();//得到小时
+        var minu = time.getMinutes();//得到分钟
+        var sec = time.getSeconds();//得到秒 2020-04-02 00:00:00
+        if (month < 10){month = "0" + month;}
+        if (date < 10) {date = "0" + date;}
+        if (hour < 10) {hour = "0" + hour;}
+        if (minu < 10){ minu = "0" + minu;}
+        if (sec < 10) {sec = "0" + sec;}
+        let starttime=year+"-"+month+"-"+date+" "+"00:00:00"
+        let endtime=year+"-"+month+"-"+date+" "+hour+":"+minu+":"+sec
+        const param = {
+            method: 'query_hours',
+            project_id: this.project_id,
+            meter_id: "YD10000DB01",
+            bt:starttime,
+            et:endtime
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            let waterarr=[]
+            console.log('水表电表', data,data.length)
+            this.eleallnum=data[data.length-1].current_data
+            this.waterallnum=data[data.length-1].used
+            this.todayelenum=Math.round(data[data.length-1].current_data-data[0].current_data)
+            for(let i=0;i<data.length;i++){
+              waterarr.push(data[i].used)
+            }
+            let num=0;
+            for(let i=0;i<waterarr.length;i++){
+              num+=arr[i]
+            }
+            this.todaywaternum=Math.round(num)
+          })
+      },
+      inoutcarquery(){
+        console.log("车辆测试")
+        const param = {
+            method: 'query_vehicle_logs',
+            project_id: this.project_id,
+            limit_row:3
+          }
+          this.$store.dispatch('Inoutcarquery', param).then((data) => {
+            this.carbox=data.data
+            console.log('进出车辆日志',this.carbox)
+          })
+      },
+      smalltaskfnc(){
+        this.taskbox=[]
+        const param = {
+            method: 'query_task_all',
+            project_id: this.project_id,
+            limit:3
+          }
+          this.$store.dispatch('Allpersondata', param).then((data) => {
+            this.taskbox=data.data
+            this.taskbox.forEach(item=>{
+              if(item.flowId=="PlanFlow01"){
+                item["first"]="计划"
+              }
+              if(item.flowId=="ProblemFindSolve01"){
+                item["first"]="任务"
+              }
+              if(item.flowId=="Meeting01"){
+                item["first"]="会议"
+              }
+              if(item.flowId=="Documents01"){
+                item["first"]="资料"
+              }
+              if(item.flowId=="Notice01"){
+                item["first"]="通知"
+              }
+              if(item.flowId=="SafetyInspection01"){
+                item["first"]="安全巡检"
+              }
+              item["imgurl"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id='+item.workId+'&w=220'
+            })
+            console.log('任务数据',this.taskbox)
+            this.firstdatascreenfnc()
+          })
+      },
+      firstdatascreenfnc(){
+        this.postdata=[]
+        this.taskbox.forEach(item=>{
+          this.postdata.push(item.workId)
+        })
+        this.secondtaskfnc()
+      },
+      secondtaskfnc(){//任务模块第二数据接口
+        const _param = {
+          method: 'get_nodes_users_list',
+          project_id: this.project_id,
+          work_ids:this.postdata
+        }
+        this.$store.dispatch('Allpersondata', _param).then((data) => {
+          this.listbox=data.data
+          console.log("第二接口数据",this.listbox)
+          let map1= new Map()
+          for(var i in this.listbox){
+            map1.set(i,this.listbox[i])//添加key值
+          }
+           this.taskbox.forEach(item=>{
+             let workId = item.workId
+             item["obj"]=map1.get(workId)
+             if(map1.get(workId).info!=undefined){
+                item["value"]=map1.get(workId).info.priority//任务星级
+                item["status"]=map1.get(workId).info.status//任务状态
+               item["statecolor"]=map1.get(workId).info.status_color//任务颜色
+               item["originator"] = map1.get(workId).Start[0].userName//发起人名字
+              }
+           })
+          console.log("这个是map",this.taskbox)
+        })
+      },
       openFullScreen: function (text) {
         this.loadingFull = this.$loading({
           lock: true,
@@ -298,6 +667,7 @@
 
         const _data = JSON.parse(data)
         console.log('mqttUserCount-mqttUserCount', _data)
+        this.subscribe()
         this.count_data = _data
         if (this.$refs.count_info !== undefined) {
           this.$refs.count_info.updateData(_data)
@@ -367,6 +737,7 @@
           this.client.subscribe(this.topicUserInfo); //订阅主题
           this.client.subscribe(this.topicCount); //订阅主题
           console.log("订阅成功！")
+
         }
       },
       unsubscribe() {

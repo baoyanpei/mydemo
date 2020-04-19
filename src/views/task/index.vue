@@ -11,6 +11,7 @@
       width="40%"
     @open="openeldialog" @close="closedialog">
       <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
+        <iframe :src="iframeurl" v-show="iframeshow"  frameborder="0" style="padding-top:20px;position: absolute;background-color: #ffffff;top: -65px;right: -420px;width: 400px;height: 400px;"></iframe>
         <div class="ding" v-show="dingshow" style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -270px;width: 250px;height: 400px;">
           <el-cascader :props="props" :options="grouparr" :show-all-levels="false" @change="handleChange" style="display: block;margin: auto;"></el-cascader>
           <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
@@ -185,15 +186,21 @@
       </el-tab-pane>
     </el-tabs>
   </div>
+  <div class="rili">
+    <full-calendar :config="config" :events="events"></full-calendar>
+  </div>
 </div>
 </template>
 
 <script>
+  import 'fullcalendar/dist/locale/zh-cn'
   export default {
     name: 'index',
     data() {
       return {
         jinjianshow:false,
+        iframeurl:'',
+        iframeshow:false,
         bannertitle:'任务大厅(0)',
         dialogVisible:false,
         textarea:'',
@@ -228,17 +235,17 @@
             value:[]
             },{
             lx:"basic",
+            id:"questions_photo",
+            lable:"附件",
+            type:"files",
+            value:[]
+            },{
             id:"questions_remark",
+            lx:"basic",
             lable:"问题描述",
             type:"multi_text",
             value:"",
-            voicelst:[]
-            },{
-            id:"questions_type",
-            lx:"basic",
-            lable:"",
-            type:"text",
-            value:""
+            voicelst:""
             }],
           time: "",
           address: "",
@@ -284,7 +291,7 @@
         didian: [],
         leibieoptions:[],
         options: [{ value: '选项1', label: '任务' }, { value: '选项2', label: '通知' }, { value: '选项3', label: '会议' },
-          { value: '选项4', label: '资料' },{ value: '选项5', label: '安全' }],
+          { value: '选项4', label: '资料' },{ value: '选项5', label: '安全' },{ value: '选项6', label: '计划'}],
         value: '',
         options2: [{ value2: '1', label2: '安全' }, { value2: '2', label2: '质量' }, { value2: '3', label2: '技术' },
           { value2: '4', label2: '施工' }, { value2: '5', label2: '资料' }, { value2: '6', label2: '财务' },
@@ -295,7 +302,19 @@
         value3:'',
         options4: [{ value4: '选项1', label: '待办' }, { value4: '选项2', label: '完成' }, { value4: '选项3', label: '我的发布' }],
         value4:'',
-        postdata:[]
+        postdata:[],
+        events: [],
+        config: {
+          buttonText: { today: '今天', month: '月', week: '周', day: '日' },
+          locale: 'zh-cn',
+          editable: false, // 是否允许修改事件
+          selectable: false,
+          eventLimit: 4, // 事件个数
+          allDaySlot: false, // 是否显示allDay
+          defaultView: 'month', // 显示默认视图
+          eventClick: this.eventClick, // 点击事件
+          dayClick: this.dayClick // 点击日程表上面某一天
+        }
       }
     },
     created:function (){
@@ -334,8 +353,8 @@
     },
     methods:{
       openeldialog(){//打开发布任务窗口
-        console.log("我爱中国111")
         console.log("组别",this.projectGroupList)
+        this.getcategory()
         this.gettype()
         this.getmodel()
         // this.getdidian()
@@ -365,7 +384,7 @@
             console.log('要获取到的类型',data.data)
             this.gettypearr=[]
             for (let i=0;i<data.data.length;i++){
-              if(data.data[i].flowId=="ProblemFindSolve02"){
+              if(data.data[i].flowId=="PlanFlow01"){
                 this.gettypearr.push({ label:"计划", value:i,flowid:data.data[i].flowId })
               }
               if(data.data[i].flowId=="ProblemFindSolve01"){
@@ -520,6 +539,7 @@
         this.datalistfrom.title=namebox+this.textarea
         this.datalistfrom.receiver=this.fabu_people
         console.log("发布任务",this.datalistfrom)
+        this.fabusuccessfnc()
         const _param = {
           method: 'start_issue',
           project_id: this.project_id,
@@ -533,7 +553,28 @@
         }
         this.$store.dispatch('GetAllInstList', _param).then((data) => {
           console.log("任务发布成功",data)
+          this.fabusuccessfnc()
         })
+      },
+      fabusuccessfnc(){
+        this.$alert('发布成功', '', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$message({
+              type: 'info',
+              message: `action: ${ action }`
+            });
+          }
+        })
+        this.textarea=""
+        this.gettypearr=null
+        this.leibieoptions=null
+        this.building=null
+        this.didianarr=null
+        this.beizhuinput=""
+        this.fabu_people=[]
+        this.fileList=[]
+        this.zhongyaoxing=null
       },
       grouparrqueren(){
         this.dingshow=false
@@ -594,7 +635,9 @@
       },
       findbim(){
         if(this.bimopen.length!=0){
-          window.open("https://xcx.tddata.net/smz/#/xcx/pvshow?projectid="+this.project_id+"&"+"pvid="+this.bimopen[1]+"&"+"token="+this.bimopen[0])
+          this.iframeshow=!this.iframeshow
+          this.iframeurl="https://xcx.tddata.net/smz/#/xcx/pvshow?projectid="+this.project_id+"&"+"pvid="+this.bimopen[1]+"&"+"token="+this.bimopen[0]
+          // window.open("https://xcx.tddata.net/smz/#/xcx/pvshow?projectid="+this.project_id+"&"+"pvid="+this.bimopen[1]+"&"+"token="+this.bimopen[0])
         }
       },
       pagechange (e) {//每页多少条数据
@@ -661,6 +704,17 @@
         this.boxinfo=[]
         this.boxinfo1=[]
         this.boxinfo=data.data
+        //遍历添加到日历中去
+        this.events=[]
+        for (let i=0;i<this.boxinfo.length;i++){
+          // console.log("日历",this.boxinfo[i].created)
+          this.events.push({
+          title: this.boxinfo[i].title, // 事件内容
+          start: this.boxinfo[i].created, // 事件开始时间
+          end: this.boxinfo[i].created, // 事件结束时间
+          color: 'rgba(9, 9, 9, 0.2)' // 事件的显示颜色
+          })
+        }
         //事件监听flowid,判断任务类型
         this.boxinfo.forEach(item=>{
           if(item.flowId==="Meeting01"){
@@ -674,6 +728,12 @@
           }
           if(item.flowId==="Notice01"){
             item.stateall='通知'
+          }
+          if(item.flowId==="Documents01"){
+            item.stateall='资料'
+          }
+           if(item.flowId==="PlanFlow01"){
+            item.stateall='计划'
           }
         })
         //页面刷新自动去第一页
@@ -799,7 +859,7 @@
 
       queryFun(){
         console.log("查询按钮获取信息",this.value,this.value2,this.value3)//flow_word
-        if(this.value=="任务"){//任务，通知，会议，资料,安全
+        if(this.value=="任务"){//任务，通知，会议，资料,安全,计划
           this.flow_word="ProblemFindSolve01"
         }
         if(this.value=="会议"){
@@ -814,13 +874,16 @@
         if(this.value=="安全"){
           this.flow_word="SafetyInspection01"
         }
+        if(this.value=="计划"){
+          this.flow_word="PlanFlow01"
+        }
         if(this.value3=="进行中"){
           this.qtype_word="inProgress"
         }
         if(this.value3=="已完成"){
           this.qtype_word="hasDone"
         }
-        console.log("this.qtype_word",this.qtype_word)
+        console.log("更改选择条件",this.qtype_word,this.flow_word)
         const _param = {
         method: 'query_task_all_list',
         project_id: this.project_id,
@@ -838,9 +901,6 @@
         this.boxinfo=data.data
         //事件监听flowid,判断任务类型
         this.boxinfo.forEach(item=>{
-          // if(item.questions_type===''){
-          //   console.log('第二列表',item)
-          // }
           if(item.flowId==="Meeting01"){
             item.stateall='会议'
           }
@@ -852,6 +912,12 @@
           }
           if(item.flowId==="Notice01"){
             item.stateall='通知'
+          }
+          if(item.flowId==="Documents01"){
+            item.stateall='资料'
+          }
+          if(item.flowId==="PlanFlow01"){
+            item.stateall='计划'
           }
         })
         //页面刷新自动去第一页
@@ -890,6 +956,12 @@
               if(item.flowId==="Meeting01"){
                 item.stateall='会议'
               }
+              if(item.flowId==="Documents01"){
+                item.stateall='资料'
+              }
+              if(item.flowId==="PlanFlow01"){
+                item.stateall='计划'
+              }
               if(item.flowId==="ProblemFindSolve01"){
                 item.stateall='任务'
               }
@@ -908,11 +980,18 @@
           console.log(111)
         }
       },
-      successupload(response){//图片样式更改
-        console.log("图片信息返回",response.filename)
-        console.log("插入位置",this.datalistfrom.basic[0].value)
+      successupload(response,file, fileList){//图片样式更改
+        console.log("图片信息返回",response)
+        // console.log("文件返回",response.filename)
+        let typestr=file.raw.type.toString()
+        let aaa=typestr.slice(0,5)
+        if(aaa==="image"){
+          this.datalistfrom.basic[0].value.push({localsrc:"",lx:"image", src:response.filename})
+        }else {
+          this.datalistfrom.basic[1].value.push({name:response.url,path:response.filename})
+        }
+        // console.log("插入位置",this.datalistfrom.basic[0].value)
         // this.photosrc.push(response.filename)
-        this.datalistfrom.basic[0].value.push({localsrc:"",lx:"image", src:response.filename})
       },
       handleRemove(file, fileList) {
         console.log(file, fileList);
@@ -937,6 +1016,15 @@
     margin-top: 25px;
     box-shadow:0px 0px 30px #4a4c4b;
     position: relative;
+    float: left;
+  }
+  .rili{
+    width: 750px;
+    padding: 10px;
+    box-shadow:0px 0px 30px #4a4c4b;
+    margin-left: 15px;
+    margin-top: 25px;
+    float: left;
   }
   .Release_task{
     position: absolute;

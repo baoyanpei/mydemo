@@ -21,7 +21,14 @@ export function queryDatumMeter(data) {
     data: data
   })
 }
-
+// 进出车辆日志查询  api:/api/info/gate
+export function inoutcarquery(data) {
+  return request({
+    url:'/api/info/gate',
+    method:'post',
+    data:data,
+  })
+}
 // 历史记录：
 /*
 历史记录：
@@ -85,7 +92,6 @@ export function queryLocationHis(data) {
   })
 }
 
-
 //safety-inspection   批量下载
 export function allbatchdownload(data) {
   return request({
@@ -94,7 +100,6 @@ export function allbatchdownload(data) {
     data:data,
   })
 }
-
 // task/index.vue    接受全部任務列表信息
 export function allpersondata(data) {
   // console.log("allpersondata",data)
