@@ -73,7 +73,14 @@ export default {
         memory: {
           limit: 32 * 1024 // 32 GB
         }
-      }
+      },
+      storage: window.localStorage,
+      storageProgressiveRenderingKey: 'Autodesk.Viewing.Private.GuiViewer3D.SavedSettings.progressiveRendering',
+      isProgressiveRendering: false, // 模型是否重新渲染，闪烁  又叫渐进式显示 设置中有这个选项
+      totalLowFps: 0, // 低速fps累计量
+      FPS_LOW_LEVEL: 8, // 低于祯数 为慢
+      FPS_HIGH_LEVEL: 15, // 高于祯数 为快
+      FPS_LOW_TIMES: 50 // 低速fps累计次数
     }
   },
   computed: {
@@ -211,6 +218,14 @@ export default {
             resolve()
             // console.log("this.viewPointAllList", this.viewPointAllList);
           })
+
+          // 初始化设置 渐进式显示
+          let storageProgressiveRendering = this.storage[this.storageProgressiveRenderingKey]
+          if (storageProgressiveRendering === undefined) {
+            this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering
+          }
+          console.log('this.storage[storageProgressiveRenderingKey]', this.storage[this.storageProgressiveRenderingKey])
+          this.viewer.setProgressiveRendering(this.isProgressiveRendering)
           // viewer.loadModel("https://lmv-models.s3.amazonaws.com/toy_plane/toy_plane.svf", undefined,
           // onLoadSuccess, onLoadError);
           //   for (var i = 0; i < modelURLList.length; i++) {
@@ -246,7 +261,7 @@ export default {
             // unloadModel(model)
 
             // this.saveStatus = JSON.stringify(this.viewer.getState());
-            // this.addCustomToolBar()
+            this.addCustomToolBar()
             // this.addViewpointToolBar()
             resolve(index)
           }, this.onLoadError)
@@ -260,41 +275,46 @@ export default {
         }
       })
     },
-    /*
-    onLoadSuccess(event) {
-      // 加载其他的组合模型
-      let getModels = this.viewer.impl.modelQueue().getModels()
-      this.globalOffset = getModels[0].getData().globalOffset // Get it from first model 
-      console.log('globalOffset', this.globalOffset)
-      for (let i = 1; i < this.urns.length; i++) {
+    addCustomToolBar() {
+      // 截屏
+      let buttonSnapshot = new Autodesk.Viewing.UI.Button('my-snapshot-button')
+      buttonSnapshot.icon.style.backgroundImage = 'url(./static/icon/ico_restoreMarkup.png)' // camera
 
-        let options = {
-          globalOffset: this.globalOffset
+      // 截屏按钮
+      buttonSnapshot.onClick = (e) => {
+        // viewer.setViewCube('front')
+        // this.snaphot('open')
+        this.isProgressiveRendering = !this.isProgressiveRendering
+        this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+        this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering
+
+        if (this.isProgressiveRendering === true) {
+          this.$message({
+            message: '渐进式显示 已经打开！',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '渐进式显示 已经关闭！',
+            type: 'success'
+          })
         }
-        // viewer.loadModel(path, options);
-        this.viewer.loadModel(urns[i], options);
       }
+      buttonSnapshot.addClass('my-snapshot-button')
+      buttonSnapshot.setToolTip('关闭/打开渐进式显示（关闭后拖动和旋转时不闪烁，但可能会影响流畅度）')
 
-      this.viewer.fitToView()
-      this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+      // SubToolbar
+      let subToolbar = new Autodesk.Viewing.UI.ControlGroup('my-custom-view-toolbar')
+      // subToolbar.addControl(buttonShare)
 
-      if (!this.viewer.overlays.hasScene('custom-scene')) {
-        this.viewer.overlays.addScene('custom-scene');
-      }
-      this.initData()
-      this.initMarker()
+      // subToolbar.addControl(buttonRestoreMarker)
 
-      console.log('success')
-
-
-      this.viewer.addEventListener(
-        Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-        this.onSelectionChanged
-      );
-      // addToolbar(toolbarConfig,viewer);
-    },*/
+      subToolbar.addControl(buttonSnapshot)
+      // Add subToolbar to main toolbar
+      this.viewer.toolbar.addControl(subToolbar)
+    },
     onLoadError(event) {
-      console.log('fail');
+      console.log('fail')
     },
     initData() {
       this.datumMeterMap.forEach(datum => {
@@ -303,18 +323,19 @@ export default {
           // $('.divDataTadiao').show()
           this.towerGroup = new THREE.Group()
           this.towerGroup.visible = false
-          this.towerGroup.name = "towerGroup";
+          this.towerGroup.name = 'towerGroup'
           this.towerGroup.scale.set(3, 3, 3)
           let paramsJson = JSON.parse(datum.params_json)
           console.log('paramsJson123', paramsJson)
           this.towerHeight = paramsJson.height
           this.tdData.tdgd = this.towerHeight
-          this.towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z); // 红 绿
+          this.towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z) // 红 绿
           console.log('this.towerGroupthis.towerGroupthis.towerGroup', this.towerGroup)
           // this.towerGroup.position.set(54, 526, -26) // 红 绿
-          modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight + 15, 0, 0, 0); //名称，高度，大臂角度，小车距离，吊钩线长
+          modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
+
           // this.viewer.hide(118)
-          // console.log('viewer', viewer)
+          console.log('viewer123', this.viewer.overlays.impl)
           this.viewer.overlays.impl.addOverlay('custom-scene', this.towerGroup)
         } else if (datum.device_type === 12) { // 升降机
           // $('.divDataShenJiangJi').show()
@@ -362,6 +383,33 @@ export default {
 
       // delegate the event of CAMERA_CHANGE_EVENT
       this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
+
+        const _fps = this.viewer.impl.fps()
+
+        // this.avgFps = (this.avgFps + _fps) / 2
+        // console.log('avgFps', this.avgFps, this.totalLowFps)
+        if (_fps <= this.FPS_LOW_LEVEL) {
+          this.totalLowFps++
+        } else if (_fps >= this.FPS_HIGH_LEVEL) {
+          if (this.totalLowFps > 0) {
+            this.totalLowFps--
+          }
+        }
+        console.log('当前帧数', _fps, '低于', this.FPS_LOW_LEVEL, '帧累计次数:', this.totalLowFps)
+        // let storageData = this.storage["lot3-control-" + this.project_id]
+        // if (this.isProgressiveRendering === false) {
+        if (this.totalLowFps >= this.FPS_LOW_TIMES) {
+          this.totalLowFps = 0
+          // this.totalHighFps = 0
+          this.isProgressiveRendering = true
+          this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+          this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+          console.log('自动打开渐进式显示')
+          this.$message({
+            message: '由于您的模型显示不流畅，已经切换为渐进式显示！',
+            type: 'success'
+          })
+        }
 
         // find out all pushpin markups
         var $eles = $("div[id^='mymk']")
@@ -610,6 +658,12 @@ export default {
         let _dgxc = this.towerHeight - _data.height // 吊钩线长
 
         modifyTower(this.towerGroup, `T${_data.device_id}`, this.towerHeight, _data.rotate, _data.extent, _dgxc)
+        // this.viewer.refresh(true)
+        // 刷新模型
+        if (this.isProgressiveRendering === false) { // 渐进显示关闭状态下
+          this.viewer.impl.invalidate(true, true, true)
+        }
+
         // 名称，高度，大臂角度，小车距离，吊钩线长
         console.log('塔吊_data', _data)
         $("#td_dbjd").html(_data.rotate) // 回转
@@ -639,12 +693,16 @@ export default {
           if (_data.DoorState === '0') {
             doorOpen = false
           }
-          if (elevatorGroup === null) {
+          if (this.elevatorGroup === null) {
             return
           }
           console.log('升降机高度', `E${_data.HxzId}`, _data.Height, _data.Height - (91 / 3))
           // viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
-          modifyElevator(elevatorGroup, `E${_data.HxzId}`, _data.Height - (91 / 3), doorOpen) //名称，高度，门的开启状态
+          modifyElevator(this.levatorGroup, `E${_data.HxzId}`, _data.Height - (91 / 3), doorOpen) // 名称，高度，门的开启状态
+          // 刷新模型
+          if (this.isProgressiveRendering === false) { // 渐进显示关闭状态下
+            this.viewer.impl.invalidate(true, true, true)
+          }
           // viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
           // viewer.impl.invalidate(true);
           // viewer.overlays.impl.sceneUpdated(true)
