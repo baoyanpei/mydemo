@@ -1,6 +1,7 @@
 <style lang="scss">
   @import "./personInfoDialog";
   @import "./info";
+
 </style>
 <template>
     <div class="detailed_information">
@@ -16,6 +17,7 @@
             <!--图片1-->
               <div class="topimgbox">
                 <div v-for="item in this.imgbanner" class="topimgbox_img">
+                  <!--<span>{{item.src}}</span>-->
                   <img :src=item.onlineurl alt="" @click="imgURL(item.onlineurl)">
                 </div>
               </div>
@@ -26,6 +28,12 @@
             </div>
              <!--发起人和发起时间-->
               <span class="faqiname">{{taskInfoDialog.data.originator}}      {{taskInfoDialog.data.created}}</span>
+            <div class="" style="margin-top: 10px;">
+                <div class="audio_div" v-for="item in this.audiobox">
+                  <!--语音文件-->
+                  <audio :src=item.audiourl controls="controls" style="width: 450px"></audio>
+                </div>
+            </div>
             <!--<span>{{taskInfoDialog.data}}</span>-->
             <!--状态-->
               <div class="statebox222">
@@ -38,7 +46,9 @@
               <!--名字合集-->
               <div class="personbox">
                 <div class="person_right">
-                  <div class="person_smallbox" @click="handleNameClick(item)" v-for="item in this.projectPersonList">{{item.name}}</div>
+                  <div class="person_smallbox" @click="handleNameClick(item)" v-for="item in this.allpersonbox">
+                    <span class="fontstyle" :class="{'greenword':item.state==='xxx'}">{{item.name}}</span>
+                  </div>
                 </div>
               </div>
             <!--显示评论-->
@@ -166,6 +176,7 @@
         progress_4:"待完成",
         progress_4_msg:"",
         imgbanner:[],
+        audiobox:[],
         textarea: '',
         textarea1:'',//整改信息评论
         commentshow1:false,//整改信息输入框显示
@@ -198,6 +209,8 @@
         fullscreenLoading: false,
         dialogImageUrl: '',
         fileList: [],
+        allpersonbox:[],
+        browsepersonbox:[],
         dialogVisible: false,
 
       }
@@ -239,7 +252,6 @@
     },
     mounted(){
       if (this.project_id !== null) {
-        // this.getpersonlist()
       }
     },
     methods:{
@@ -260,7 +272,28 @@
         this.commentsbox1=[]
         this.commentsbox2=[]
         this.pinglunarr=[]
+        this.imgbanner=[]
         console.log("this.commentsbox1",this.commentsbox1)
+      },
+      getpersonbrowsefnc(){//访问任务的人员
+        const param = {
+          method: 'get_visit_users',
+          project_id: this.project_id,
+          work_id:this.taskInfoDialog.data.workId
+        }
+        this.$store.dispatch('Allpersondata', param).then((data) => {
+          this.allpersonbox=this.projectPersonList
+          this.browsepersonbox=data.data
+          for(let i=0;i<this.allpersonbox.length;i++){
+            this.browsepersonbox.forEach(item=>{
+              if(item.person_id===this.allpersonbox[i].person_id){
+                this.allpersonbox[i]["state"]="xxx"
+              }
+            })
+          }
+          console.log("人员访问data",this.browsepersonbox)
+          console.log("yongyou",this.allpersonbox)
+        })
       },
       getpersonlist(){//人员列表信息接口
         const param = {
@@ -268,7 +301,7 @@
           project_id: this.project_id
         }
         this.$store.dispatch('QueryProjectPersons', param).then(() => {
-          console.log("人员信息projectPersonList",this.projectPersonList)
+          this.getpersonbrowsefnc()
         }).catch(() => {
 
         })
@@ -307,8 +340,8 @@
         })
       },
        taskspecificinfo(){//任务详细信息
-        console.log("接受回来的数据",this.taskInfoDialog)
-        console.log("11111111111111111",this.taskInfoDialog.data.subjectionId)
+        // console.log("接受回来的数据",this.taskInfoDialog)
+        // console.log("11111111111111111",this.taskInfoDialog.data.subjectionId)
         return new Promise((resolve, reject) => {
           const _param = {
           method: 'get_flow_work',
@@ -325,39 +358,35 @@
           this.btnworkid=data.workId
           this.formdata=data.flowButtons
           // 输入框的显示与不显示判断
-          if(this.person_info.person.name!==""){
-            if(this.taskInfoDialog.data.header===this.person_info.person.name){
-              this.todoinfoshow=true
-            }
-            if(this.taskInfoDialog.data.state==='已完成'||this.formdata[0].buttonName==="质检"){
-              this.todoinfoshow=false
-            }
-          }
-          if(this.taskInfoDialog.subjectionId!=undefined){
+          // if(this.person_info.person.name!==""){
+          //   if(this.taskInfoDialog.data.header===this.person_info.person.name){
+          //     this.todoinfoshow=true
+          //   }
+          //   if(this.taskInfoDialog.data.state==='已完成'||this.formdata[0].buttonName==="质检"){
+          //     this.todoinfoshow=false
+          //   }
+          // }
+          //输入框的显示与否
+          if(data.subjectionId==""){
+            this.claimbtn=false
             this.todoinfoshow=false
-          }
-           // 输入框的显示与不显示判断结束
-          console.log("this.btnsubid",data.subjectionId)
-          console.log("this.fordate",this.formdata)
-          if(this.formdata!==""){
+          }else {
+            this.claimbtn=true
             let num=this.formdata.length
             this.formdata.forEach(item=>{
               item["spannum"]=24/num
-              console.log("formdata",item)
             })
-            this.claimbtn=true
-          }else {
-            this.claimbtn=false
           }
+          // 文章标题图片信息
           this.imgbanner=data.form.basic[0].value
-          if(this.imgbanner.length!=0){
-            this.imgbanner.forEach(item=>{
-              item["onlineurl"]="https://buskey.cn/api/oa/workflow/thumbnail.jpg?f="+item.src+"&w=220"
-            })
-          }
-          if(this.imgbanner.length==0){
-
-          }
+          this.imgbanner.forEach(item=>{
+            item["onlineurl"]="https://buskey.cn/api/oa/workflow/thumbnail.jpg?f="+item.src+"&w=220"
+          })
+          //文章音频信息   audiobox
+          this.audiobox=data.form.basic[1].voicelst
+          this.audiobox.forEach(item=>{
+            item["audiourl"]="https://buskey.cn"+item.src
+          })
           this.TaskdetailsBox=data.form.modify_check
           this.taskinfobox=[]
           console.log("this.TaskdetailsBox",this.TaskdetailsBox)

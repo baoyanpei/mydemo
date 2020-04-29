@@ -83,6 +83,7 @@
       <el-button type="primary" @click="fabufnc()" style="width: 100%;margin-top: 20px;">发布</el-button>
     </el-dialog>
     <el-tabs type="border-card" v-model="activeName" @tab-click="mytask">
+      <!--任务大厅-->
       <el-tab-pane :label="bannertitle" name="first">
         <div class="taskbox1">
           <el-input v-model="chaxuninput" placeholder="请输入姓名，标题搜索" clearable style="width: 420px;margin-left: 20px">
@@ -153,6 +154,7 @@
     </div>
       </el-tab-pane>
 
+      <!--我的任务-->
       <el-tab-pane :label="secondtitle" name="second">
         <div class="taskbox1">
           <div class="details" v-for="(item,index) in boxinfo1" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
@@ -194,6 +196,7 @@
 
 <script>
   import 'fullcalendar/dist/locale/zh-cn'
+  import { getToken } from '@/utils/auth'
   export default {
     name: 'index',
     data() {
@@ -256,7 +259,7 @@
         fabuadress:'',
         secondtitle:"我的任务(0)",
         fullscreenLoading: false,//页面加载
-        activeName:'first',
+        activeName:'second',
         chaxuninput:'',
         personlist:'',
         bimopen:[],
@@ -338,22 +341,25 @@
         console.log('curVal',curVal,oldVal)
         this.currpage = 1
         this.thirdinterface()
-        this.allpersondata()
+        this.mytaskfnc()
+        // this.allpersondata()
         // console.log("this.person_info",this.person_info)
       },
     },
     mounted(){
       if (this.project_id !== null) {
         this.currpage = 1
+        this.mytaskfnc()
         this.getPerson()
         this.thirdinterface()
-        this.allpersondata()
+        // this.allpersondata()
         this.getpersonlist()
       }
     },
     methods:{
       openeldialog(){//打开发布任务窗口
         console.log("组别",this.projectGroupList)
+        // console.log("token=====",getToken())
         this.getcategory()
         this.gettype()
         this.getmodel()
@@ -634,10 +640,10 @@
         }
       },
       findbim(){
+        console.log("this.projectid",this.bimopen)
         if(this.bimopen.length!=0){
           this.iframeshow=!this.iframeshow
-          this.iframeurl="https://xcx.tddata.net/smz/#/xcx/pvshow?projectid="+this.project_id+"&"+"pvid="+this.bimopen[1]+"&"+"token="+this.bimopen[0]
-          // window.open("https://xcx.tddata.net/smz/#/xcx/pvshow?projectid="+this.project_id+"&"+"pvid="+this.bimopen[1]+"&"+"token="+this.bimopen[0])
+          this.iframeurl="https://xcx.tddata.net/smz/#/xcx/pvshow?projectid="+this.project_id+"&"+"pvid="+this.bimopen[1]+"&"+"token="+getToken()
         }
       },
       pagechange (e) {//每页多少条数据
@@ -937,10 +943,8 @@
       releasefnc(){
         this.dialogVisible=true
       },
-      //我的任务
-      mytask(tab, event){
-        if(tab.name=='second'){
-          const _param = {
+      mytaskfnc(){
+        const _param = {
             method: 'get_todo_list',
             project_id: this.project_id,
             qtype:"TodoList,BackLog,MatterRead"
@@ -975,9 +979,13 @@
             //页面刷新自动去第一页
             this.secondpage()
           })
+      },
+      //我的任务
+      mytask(tab, event){
+        if(tab.name=='second'){
+          this.mytaskfnc()
         }else {
           this.allpersondata()
-          console.log(111)
         }
       },
       successupload(response,file, fileList){//图片样式更改

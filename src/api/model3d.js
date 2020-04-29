@@ -1,5 +1,7 @@
 import request from '@/utils/request'
-
+import {
+  getToken
+} from '@/utils/auth'
 /*
 api:/api/bim/web
 method:
@@ -8,7 +10,7 @@ method:
     funcList.append("GetModListByFloorID")  #通过楼层ID获取这个楼层所有构件的列表 参数不全，building_id  为空，请核对后提交
     # funcList.append("GetDefaultListByProID") #通过项目ID获取这个项目默认加载的构件列表
     funcList.append("GetBuildingListByProID")  #通过项目ID获取Building列表，用于构造菜单树
-    funcList.append("GetFloorListByBudID")  #通过BuildingID获取楼层列表，用于构造菜单树 
+    funcList.append("GetFloorListByBudID")  #通过BuildingID获取楼层列表，用于构造菜单树
 
 默认参数 project_id
 model_id,floor_id,building_id
@@ -65,7 +67,6 @@ export function queryModelByID(data) {
 }
 
 export function getItemInfoListByItemIDs(data) {
-  // console.log("api", data)
   return request({
     url: '/api/bim/bcp',
     method: 'post',
