@@ -55,10 +55,10 @@
     <!--最新任务-->
     <div class="newtask">
       <div class="newtask_top">
-        <span>最新任务</span>
-        <i class="el-icon-arrow-right"></i>
+        <span style="font-size: 18px;">&nbsp;&nbsp;最新任务</span>
+        <i class="el-icon-arrow-right" @click="newtaskjumpfnc"></i>
       </div>
-      <div class="taskbottom" style="width: 100%;overflow: hidden">
+      <div class="taskbottom" style="width: 100%;overflow: hidden;border: 1px solid #BABABA">
         <div class="tasksmall" v-for="item in this.taskbox" style="width: 90%;height: 130px;border: 1px solid #e7e7e7;margin:10px auto;">
           <div class="taskbanner" style="height: 20px;border-bottom: 1px solid #e7e7e7">
             <img src="/static/icon/BrowserPreview_tmp%20(2).png" alt="" style="width: 15px;height: 15px;margin-top: 2px;margin-left: 8px;float: left">
@@ -73,8 +73,8 @@
             <div class="taskneileft" style="width: 120px;height: 100%;float: left">
               <img :src=item.imgurl alt="" style="width: 110px;height: 100px;margin-top: 5px;margin-left: 5px">
             </div>
-            <div class="taskright" style="float: left;width: 265px;height: 100%;position: relative;">
-              <span style="margin-top: 5px;display: block">{{item.title}}</span>
+            <div class="taskright" style="float: left;width: 262px;height: 100%;position: relative">
+              <span style="margin-top: 5px;display: block;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;">{{item.title}}</span>
               <span style="display: block;font-size: 12px;color: #a8a8a8;margin-top: 5px">发起人:<span style="color: #000000">{{item.originator}}</span></span>
               <span style="display: block;font-size: 12px;color: #a8a8a8;margin-top: 5px">发起时间:<span style="color: #000000">{{item.created}}</span></span>
               <div class="taskrightbottom" style="position: absolute;bottom: 0;height: 25px;width:100%;">
@@ -88,10 +88,10 @@
       </div>
     </div>
     <!--物联设备-->
-    <div class="equipment">
+    <div class="equipment" style="border: 1px solid #BABABA">
       <div class="newtask_top">
-        <span>物联设备</span>
-        <i class="el-icon-arrow-right"></i>
+        <span style="font-size: 18px" >&nbsp;&nbsp;物联设备</span>
+        <i class="el-icon-arrow-right" @click="newwulianjumpfnc"></i>
       </div>
       <div class="shuidian" style="width: 95%;margin:10px auto;height: 100px;border: 1px solid #e5e5e5;border-radius: 10px;">
         <div class="shuidianleft" style="width: 50%;height: 80%;border-right: 1px solid #e5e5e5;margin-top: 10px;float: left">
@@ -169,10 +169,10 @@
       </div>
     </div>
     <!--进出车辆-->
-    <div class="inoutcar">
+    <div class="inoutcar" style="border: 1px solid #BABABA">
       <div class="newtask_top">
-        <span>进出场车辆</span>
-        <i class="el-icon-arrow-right"></i>
+        <span style="font-size: 18px" >&nbsp;&nbsp;进出场车辆</span>
+        <i class="el-icon-arrow-right" @click="newwulianjumpfnc"></i>
       </div>
       <div class="carsmall" style="width: 100%;height: 100px;margin-top: 10px;" v-for="item in this.carbox">
         <div class="carsmallleft" style="float:left;width: 40%;height: 100%;">
@@ -432,6 +432,12 @@
         this.gettajifnc()
         this.gettajidatafnc()
       },
+      newtaskjumpfnc(){
+        this.$router.replace('/task')
+      },
+      newwulianjumpfnc(){
+        this.$router.replace('/lot5/index')
+      },
       initDevlist() {//环境检测
         console.log("数据",this.project_id)
           const param = {
@@ -513,7 +519,7 @@
             }
             let num=0;
             for(let i=0;i<waterarr.length;i++){
-              num+=arr[i]
+              num+=waterarr[i]
             }
             this.todaywaternum=Math.round(num)
           })

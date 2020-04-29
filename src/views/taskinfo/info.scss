@@ -258,6 +258,10 @@
      padding: 0 15px;
      display: flex;
   }
+  .audio_div{
+    width: 100%;
+    height: 60px;
+  }
   .statebox222 {
     margin-top: 10px;
     width: 100%;
@@ -354,6 +358,12 @@
   .row-bg {
     padding: 10px 0;
     background-color: yellowgreen;
+  }
+  .fontstyle{
+    color: #000;
+  }
+  .greenword{
+    color: #1abc9c;
   }
 
 }

@@ -130,6 +130,7 @@
           link.href=url
           link.setAttribute("download","批量下载.pdf")
           document.body.appendChild(link)
+          console.log("下载按钮",link)
           link.click()
           // var blob=new Blob([data],{type: 'application/pdf'})
           // let reader=new FileReader()
