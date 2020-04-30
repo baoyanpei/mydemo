@@ -39,17 +39,22 @@
     <!--温度测试-->
     <div class="temperature">
       <h1>环境监测</h1>
-      <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 75px 0 20px">
-        <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">温度:<span>{{temp}}℃</span></span>
-        <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">湿度:<span>{{shiduh}}%</span></span>
+      <div class="huanjingbox" v-show="huanjingshow2">
+        暂无环境数据
       </div>
-      <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 85px 0 20px">
-        <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">噪声:<span>{{noise}}db</span></span>
-        <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">风速:<span>{{wind}}级</span></span>
-      </div>
-      <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 20px">
-        <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">扬尘:<span>{{powder}}ug/m3</span></span>
-        <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">PM2.5:<span>{{pm25}}ug/m3</span></span>
+      <div v-show="huanjingshow">
+          <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 75px 0 20px">
+            <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">温度:<span>{{temp}}℃</span></span>
+            <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">湿度:<span>{{shiduh}}%</span></span>
+          </div>
+          <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 85px 0 20px">
+            <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">噪声:<span>{{noise}}db</span></span>
+            <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">风速:<span>{{wind}}级</span></span>
+          </div>
+          <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 20px">
+            <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">扬尘:<span>{{powder}}ug/m3</span></span>
+            <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">PM2.5:<span>{{pm25}}ug/m3</span></span>
+          </div>
       </div>
     </div>
     <!--最新任务-->
@@ -96,38 +101,48 @@
       <div class="shuidian" style="width: 95%;margin:10px auto;height: 100px;border: 1px solid #e5e5e5;border-radius: 10px;">
         <div class="shuidianleft" style="width: 50%;height: 80%;border-right: 1px solid #e5e5e5;margin-top: 10px;float: left">
           <img src="../../../static/mainpng/3522ca9f171f5bc9cd2400a2534b40b.png" alt="" style="width: 60px;height: 60px;margin-top: 10px;margin-left: 20px;float: left">
-          <div class="dianbiao" style="width: 180px;height: 100%;float: left;margin-left: 30px">
+          <div class="dianbiao" style="width: 180px;height: 100%;float: left;margin-left: 30px;" v-show="dianbiaoshow">
             <span style="font-size: 15px;display: block;margin-top: 10px;color: #909399">总读数:<span>{{eleallnum}}</span></span>
             <br>
-            <span style="font-size: 18px;color: #909399">今日用量:<span>{{todayelenum}}</span></span>
+            <span style="font-size: 18px;color: #909399">今日用量:<span>{{todayelenum}}度</span></span>
+          </div>
+          <div class="dianbiaonone" style="float: left;width: 180px;height: 100%;" v-show="dianbiaoshow2">
+            暂无电表信息
           </div>
         </div>
         <div class="shuidianleft" style="width: 50%;height: 80%;margin-top: 10px;float: left">
           <img src="../../../static/mainpng/shuibiao.png" alt="" style="width: 60px;height: 60px;margin-top: 10px;margin-left: 20px;float: left">
-          <div class="dianbiao" style="width: 180px;height: 100%;float: left;margin-left: 30px">
-            <span style="font-size: 15px;display: block;margin-top: 10px;color: #909399">现读数:<span>{{waterallnum}}</span></span>
+          <div class="dianbiao" style="width: 180px;height: 100%;float: left;margin-left: 30px" v-show="shuibiaoshow">
+            <span style="font-size: 15px;display: block;margin-top: 10px;color: #909399">总读数:<span>{{waterallnum}}</span></span>
             <br>
-            <span style="font-size: 18px;color: #909399">今日用量:<span>{{todaywaternum}}</span></span>
+            <span style="font-size: 18px;color: #909399">今日用量:<span>{{todaywaternum}}吨</span></span>
+          </div>
+          <div class="shuibiaonohave" style="float: left;width: 180px;height: 100%;" v-show="shuibiaoshow2">
+            暂无水表信息
           </div>
         </div>
       </div>
       <div v-for="item in this.tajidatabox">
-        <div class="tajitp" style="width: 220px;height: 230px;float: left;position: relative">
+        <div class="tajitp" style="width: 220px;height: 230px;float: left;position: relative" v-show="tajitupianshow">
         <img src="../../../static/mainpng/taji.png" alt="" style="width:100%;height: 100%">
         <span style="position: absolute;left: 100px;top: 10px;">{{item.dabi}}°</span>
         <span style="position: absolute;left: 136px;top: 50px;">{{item.fudu}}m</span>
         <span style="position: absolute;left: 30px;top: 118px;">{{item.height1}}m</span>
         <span style="position: absolute;left: 180px;top: 150px;">{{item.height2}}m</span>
       </div>
+        <div class="tajitupian2" v-show="tajitupianshow2">
+          <img src="../../../static/mainpng/taji.png" alt="" style="width:100%;height: 100%">
+        </div>
         <div class="tajiright" style="width:410px;height:230px;float: left;">
           <div class="tajirighttop" style="width: 100%;height: 30px;background-color: #1abc9c;">
             <span style="line-height: 30px;color: #ffffff;font-weight: 800;margin-left: 10px;">塔机数据</span>
           </div>
           <div class="tajibox" style="width: 100%;height: 25px;margin-top: 10px;">
-            <div class="tajismallbox" style="width: 60px;border: 1px solid #1abc9c;;height: 100%;text-align: center;line-height: 25px;font-size: 14px;color: #1abc9c;font-weight: 800;">塔机1</div>
+            <div class="tajismallbox"  style="width: 60px;border: 1px solid #1abc9c;;height: 100%;text-align: center;line-height: 25px;font-size: 14px;color: #1abc9c;font-weight: 800;">
+              {{item.tajiname}}</div>
           </div>
           <!--塔机角度 转角-->
-          <div class="tajidata">
+          <div class="tajidata" v-show="tajishow">
             <div class="tajijiaodu" style="width: 100%;height: 50px;margin-top: 5px;">
               <div class="tajijiaoduleft">
                 <img src="../../../static/mainpng/jiaodu.png" alt="" style="float:left;width: 40px;height: 40px;margin-left: 40px;margin-top: 5px">
@@ -165,6 +180,10 @@
               </div>
             </div>
           </div>
+          <!--没有塔机数据的时候-->
+          <div class="nohavetajidata" v-show="tajishow2">
+              暂无塔机数据
+          </div>
         </div>
       </div>
     </div>
@@ -174,15 +193,18 @@
         <span style="font-size: 18px" >&nbsp;&nbsp;进出场车辆</span>
         <i class="el-icon-arrow-right" @click="newwulianjumpfnc"></i>
       </div>
-      <div class="carsmall" style="width: 100%;height: 100px;margin-top: 10px;" v-for="item in this.carbox">
-        <div class="carsmallleft" style="float:left;width: 40%;height: 100%;">
-          <img :src=item.pic alt="" style="width: 90%;height: 90%;margin: 5%;">
-        </div>
-        <div class="carsmallright" style="float: right;width: 60%;height: 100%;">
-            <h1 style="margin-top: 15px;float: left;margin-left: 20px;margin-right:50px;color: #0a131c">{{item.lisence}}</h1>
-            <h2 style="display: block;float:left;font-size:13px;margin-left: 20px;color: #0a131c;margin-top: 25px;">进场时间:{{item.created_time}}</h2>
+      <div v-show="asasasas">
+          <div class="carsmall" style="width: 100%;height: 100px;margin-top: 10px" v-for="item in this.carbox">
+          <div class="carsmallleft" style="float:left;width: 40%;height: 100%;">
+            <img :src=item.pic alt="" style="width: 90%;height: 90%;margin: 5%;">
+          </div>
+          <div class="carsmallright" style="float: right;width: 60%;height: 100%;">
+              <h1 style="margin-top: 15px;float: left;margin-left: 20px;margin-right:50px;color: #0a131c">{{item.lisence}}</h1>
+              <h2 style="display: block;float:left;font-size:13px;margin-left: 20px;color: #0a131c;margin-top: 25px;">进场时间:{{item.created_time}}</h2>
+          </div>
         </div>
       </div>
+      <div class="noanzhuang">未安装设备</div>
     </div>
     <div class="yizheng-logo">
       <img src="/static/yizheng-logo.png"/><!--易正科技图标LOGO-->
@@ -324,6 +346,17 @@
         client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
         timerReconnectMqtt: null,
         isConnectMqtt: null, //是否已经连接
+        huanjingshow:true,
+        huanjingshow2:false,
+        tajitupianshow:true,
+        tajitupianshow2:false,
+        dianbiaoshow:true,
+        dianbiaoshow2:false,
+        shuibiaoshow:true,
+        shuibiaoshow2:false,
+        tajishow:true,
+        tajishow2:false,
+        tajinamenum:[],
         noise:"",//噪声
         pm25:"",//pm2.5
         wind:"",//风速
@@ -332,8 +365,8 @@
         powder:"",//粉尘
         eleallnum:"",//电表总度数
         todayelenum:"",//今日走电
-        waterallnum:"",//水表总度数
-        todaywaternum:"",//今日水表走水
+        waterallnum:0,//水表总度数
+        todaywaternum:0,//今日水表走水
         carbox:[],//进出车辆表
         postdata:[],//数据筛选
         tajidevice_id:"",//塔机id
@@ -345,7 +378,8 @@
           fengsu:"",
           huizhuan:"",
           liju:"",
-          zhong:""
+          zhong:"",
+          tajiname:""
         }],
         listbox:[],
         taskbox:[],
@@ -357,6 +391,9 @@
         topicUserInfo: '', //订阅用户信息
         topicCount: '', //订阅统计消息
         reconnectTimes: 0, //重连次数
+        allwaterdevicedid:0,//总水表id
+        alleledevicedid:0,//总电表id
+        asasasas:true,
       }
     },
     computed: {
@@ -384,15 +421,12 @@
         console.log('curVal',curVal,oldVal)
         this.jiekoufnc()
         if (oldVal === null && curVal !== null) {
-          console.log("-----11111")
           this.mqttConnect()
         }
         if (oldVal !== null) {
-          console.log("-----2222")
           this.unsubscribe()
         }
         if (curVal !== null) {
-          console.log("-----3333")
           this.subscribe()
         }
       },
@@ -426,10 +460,11 @@
     methods: {
       jiekoufnc(){
         this.initDevlist()
-        this.waterelefnc()
         this.inoutcarquery()
         this.smalltaskfnc()
         this.gettajifnc()
+        this.huanjingjiancefnc()//总电表
+        this.allwatergetfnc()//总水表
         this.gettajidatafnc()
       },
       newtaskjumpfnc(){
@@ -462,11 +497,142 @@
           }
           this.$store.dispatch('QueryDatumMeter', param).then((data) => {
             console.log('塔机数据', data)
-            this.tajidevice_id=data[0].device_id
-            let hei=JSON.parse(data[0].params_json)
-            this.tajidatabox[0].height1=hei.height
-            console.log("获取塔机参数id",data[0].device_id)
-            this.gettajidatafnc()
+            if(data.length==0){
+              this.tajishow=false
+              this.tajishow2=true
+              this.tajitupianshow=false
+              this.tajitupianshow2=true
+            }else{
+              this.tajishow=true
+              this.tajishow2=false
+              this.tajitupianshow=true
+              this.tajitupianshow2=false
+              this.tajidevice_id=data[0].device_id
+              let hei=JSON.parse(data[0].params_json)
+              this.tajidatabox[0].height1=hei.height
+              this.tajidatabox[0].tajiname="塔机"+1
+              console.log("获取塔机参数id",data[0].device_id)
+              this.gettajidatafnc()
+            }
+          })
+      },
+      huanjingjiancefnc(){
+        const param = {
+            method: 'devlist',
+            project_id: this.project_id,
+            device_type:10
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            console.log('总电表', data[0],data)
+            if(data.length==0){
+              this.dianbiaoshow=false
+              this.dianbiaoshow2=true
+            }else {
+              this.dianbiaoshow=true
+              this.dianbiaoshow2=false
+              this.eleallnum=data[0].total_used
+              this.alleledevicedid=data[0].device_id
+              this.selectnownumfnc()
+            }
+          })
+      },
+      allwatergetfnc(){
+        const param = {
+            method: 'devlist',
+            project_id: this.project_id,
+            device_type:11
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            console.log('总水表', data[0],data)
+            if(data.length==0){
+              this.shuibiaoshow=false
+              this.shuibiaoshow2=true
+            }else {
+              this.shuibiaoshow=true
+              this.shuibiaoshow2=false
+              this.waterallnum=data[0].total_used
+              this.allwaterdevicedid=data[0].device_id
+              this.selectnownumtaterfnc()
+            }
+          })
+      },
+      selectnownumfnc(){
+        let time=new Date()
+        let year=time.getFullYear()
+        var month = time.getMonth()+1;//得到月份
+        var date = time.getDate();//得到日期
+        var hour = time.getHours();//得到小时
+        var minu = time.getMinutes();//得到分钟
+        var sec = time.getSeconds();//得到秒 2020-04-02 00:00:00
+        if (month < 10){month = "0" + month;}
+        if (date < 10) {date = "0" + date;}
+        if (hour < 10) {hour = "0" + hour;}
+        if (minu < 10){ minu = "0" + minu;}
+        if (sec < 10) {sec = "0" + sec;}
+        let starttime=year+"-"+month+"-"+date+" "+"00:00:00"
+        let endtime=year+"-"+month+"-"+date+" "+hour+":"+minu+":"+sec
+        const param = {
+            method: 'query_hours',
+            project_id: this.project_id,
+            meter_id: this.alleledevicedid,
+            bt:starttime,
+            et:endtime
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            console.log('总电表详情',data)
+            if(data.length==0){
+               this.todayelenum=0
+            }else {
+              let newarr=[]
+              for(let i=0;i<data.length;i++){
+                newarr.push(data[i].used)
+              }
+               let num=0;
+              for(let i=0;i<newarr.length;i++){
+                num+=newarr[i]
+              }
+              this.todayelenum=Math.round(num)
+            }
+          })
+      },
+      selectnownumtaterfnc(){
+        console.log("没有执行型芯222222",this.waterallnum)
+        let time=new Date()
+        let year=time.getFullYear()
+        var month = time.getMonth()+1;//得到月份
+        var date = time.getDate();//得到日期
+        var hour = time.getHours();//得到小时
+        var minu = time.getMinutes();//得到分钟
+        var sec = time.getSeconds();//得到秒 2020-04-02 00:00:00
+        if (month < 10){month = "0" + month;}
+        if (date < 10) {date = "0" + date;}
+        if (hour < 10) {hour = "0" + hour;}
+        if (minu < 10){ minu = "0" + minu;}
+        if (sec < 10) {sec = "0" + sec;}
+        let starttime=year+"-"+month+"-"+date+" "+"00:00:00"
+        let endtime=year+"-"+month+"-"+date+" "+hour+":"+minu+":"+sec
+        const param = {
+            method: 'query_hours',
+            project_id: this.project_id,
+            meter_id: this.allwaterdevicedid,
+            bt:starttime,
+            et:endtime
+          }
+          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
+            console.log('总水表详情',data)
+            if(data.length==0){
+              this.todaywaternum=0
+            }else {
+                let newarr=[]
+                for(let i=0;i<data.length;i++){
+                  newarr.push(data[i].used)
+                }
+                 let num=0;
+                for(let i=0;i<newarr.length;i++){
+                  num+=newarr[i]
+                }
+                this.todaywaternum=Math.round(num)
+            }
           })
       },
       gettajidatafnc(){
@@ -486,44 +652,6 @@
             console.log('塔机具体数据',data[0])
           })
       },
-      waterelefnc(){
-        let time=new Date()
-        let year=time.getFullYear()
-        var month = time.getMonth()+1;//得到月份
-        var date = time.getDate();//得到日期
-        var hour = time.getHours();//得到小时
-        var minu = time.getMinutes();//得到分钟
-        var sec = time.getSeconds();//得到秒 2020-04-02 00:00:00
-        if (month < 10){month = "0" + month;}
-        if (date < 10) {date = "0" + date;}
-        if (hour < 10) {hour = "0" + hour;}
-        if (minu < 10){ minu = "0" + minu;}
-        if (sec < 10) {sec = "0" + sec;}
-        let starttime=year+"-"+month+"-"+date+" "+"00:00:00"
-        let endtime=year+"-"+month+"-"+date+" "+hour+":"+minu+":"+sec
-        const param = {
-            method: 'query_hours',
-            project_id: this.project_id,
-            meter_id: "YD10000DB01",
-            bt:starttime,
-            et:endtime
-          }
-          this.$store.dispatch('QueryDatumMeter', param).then((data) => {
-            let waterarr=[]
-            console.log('水表电表', data,data.length)
-            this.eleallnum=data[data.length-1].current_data
-            this.waterallnum=data[data.length-1].used
-            this.todayelenum=Math.round(data[data.length-1].current_data-data[0].current_data)
-            for(let i=0;i<data.length;i++){
-              waterarr.push(data[i].used)
-            }
-            let num=0;
-            for(let i=0;i<waterarr.length;i++){
-              num+=waterarr[i]
-            }
-            this.todaywaternum=Math.round(num)
-          })
-      },
       inoutcarquery(){
         console.log("车辆测试")
         const param = {
@@ -533,7 +661,10 @@
           }
           this.$store.dispatch('Inoutcarquery', param).then((data) => {
             this.carbox=data.data
+            this.asasasas=true
             console.log('进出车辆日志',this.carbox)
+          },()=>{
+            this.asasasas=false
           })
       },
       smalltaskfnc(){
