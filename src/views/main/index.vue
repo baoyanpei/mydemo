@@ -466,12 +466,19 @@
         this.huanjingjiancefnc()//总电表
         this.allwatergetfnc()//总水表
         this.gettajidatafnc()
+        this.oneminshuaxin()
       },
       newtaskjumpfnc(){
         this.$router.replace('/task')
       },
       newwulianjumpfnc(){
         this.$router.replace('/lot5/index')
+      },
+      oneminshuaxin(){
+        let t=setInterval(()=>{
+          this.jiekoufnc()
+          console.log("时间函数测试")
+        },300000)
       },
       initDevlist() {//环境检测
         console.log("数据",this.project_id)
