@@ -1,19 +1,11 @@
 .data-gate {
-  padding: 0px 5px 0px 5px;
-  // margin: 30px 10px 20px 30px;
-  // border-radius: 30px;
-  // background-color: rgba(0, 0, 0, 0.1);
-  // border: 1px solid rgba(0, 0, 0, 0.1);
   float: left;
-  //   height: 17.5rem;
-  width: 280px;
+  width: 270px;
 
 
   .photo {
-    width: 130px;
-    height: 100px;
-    // margin: 10px;
-    // height: 21.5rem;
+    width: 110px;
+    height: 90px;
     border: 1px solid #FFFFFF;
     cursor: pointer;
   }
@@ -57,12 +49,8 @@
   .info-lichang {
     color: #ffcc00;
     font-size: 14px;
-    // line-height: 5rem;
-    // padding-top: 20px;
-    // padding-left: 120px;
     padding-top: 10px;
     text-align: center;
-    // margin-top: -10px;
 
     span {
       color: #FFFFFF;

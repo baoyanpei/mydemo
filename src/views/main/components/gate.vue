@@ -5,13 +5,13 @@
 <template>
   <div class="data-gate">
     <el-row>
-      <el-col :span="12" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
+      <el-col :span="10" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
         <img v-show="persion_data.entry_pic !==''" :src="persion_data.entry_pic" @click="handleNameClick(persion_data)"
           class="photo info-name-link">
         <span v-show="persion_data.entry_pic ===''">&nbsp;</span>
         <div v-if="persion_data.card_type===4" class="person-type-desc">临时人员</div>
       </el-col>
-      <el-col :span="12" style="padding-left:5px;">
+      <el-col :span="11" style="padding-left:5px;">
         <el-row :gutter="24">
           <div class="grid-content info-name">
             <span @click="handleNameClick(persion_data)" class="info-name-link">{{persion_data.name}}</span>&nbsp;
@@ -117,7 +117,7 @@
         topicUserInfo: '', //订阅用户信息
         topicCount: '', //订阅统计消息
         nowInOutTime: '', // 进场/离场 时间
-        onOffValue: 0, // 0 允许进场 1 不开门 
+        onOffValue: 0, // 0 允许进场 1 不开门
         timerDisplayOver: 0,
         errorMessage: '' //错误消息
         // persion_data: persion_data
@@ -193,7 +193,7 @@
         this.errorMessage = ""
         if (this.onOffValue === 1) {
           console.log("this.persion_data", this.persion_data.onoff_msg)
-          // {'查无此卡用户信息':1,'卡需要激活':2, '需要激活':2,'卡已过期':3, '已注销':4,'离职':5}  
+          // {'查无此卡用户信息':1,'卡需要激活':2, '需要激活':2,'卡已过期':3, '已注销':4,'离职':5}
           switch (this.persion_data.onoff_status) {
             case 1:
               this.errorMessage = `查无此卡用户信息`

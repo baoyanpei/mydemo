@@ -64,7 +64,8 @@
         <i class="el-icon-arrow-right" @click="newtaskjumpfnc"></i>
       </div>
       <div class="taskbottom" style="width: 100%;overflow: hidden;border: 1px solid #BABABA">
-        <div class="tasksmall" v-for="item in this.taskbox" style="width: 90%;height: 130px;border: 1px solid #e7e7e7;margin:10px auto;">
+        <div class="tasksmall" v-for="item in this.taskbox" @click="newtaskdetailsfnc(item)"
+             style="width: 90%;height: 130px;border: 1px solid #e7e7e7;margin:10px auto;">
           <div class="taskbanner" style="height: 20px;border-bottom: 1px solid #e7e7e7">
             <img src="/static/icon/BrowserPreview_tmp%20(2).png" alt="" style="width: 15px;height: 15px;margin-top: 2px;margin-left: 8px;float: left">
             <span style="font-size: 13px;display: block;float: left;margin-top: 3px;margin-left: 10px;font-weight: 800">{{item.first}}</span>
@@ -72,7 +73,7 @@
             <span style="font-size: 13px;display: block;float: left;margin-top: 3px;margin-left: 10px;font-weight: 800">{{item.questions_type}}</span>
             <div class="statusbox" style="float: right;width: 40px;height: 14px;font-size: 10px;margin-top: 3px;margin-right: -5px;text-align: center;line-height: 14px;color: #eaeefb"
             :class="{'statered':(item.statecolor==='red'),'stateyellow':(item.statecolor==='yellow'),'stategreen':(item.statecolor==='green'),'stategray':(item.statecolor==='gray')}">
-              {{item.status}}</div>
+              {{item.state}}</div>
           </div>
           <div class="tasknei" style="width: 100%;height: 108px;">
             <div class="taskneileft" style="width: 120px;height: 100%;float: left">
@@ -451,7 +452,6 @@
         this.jiekoufnc()
       }
       else {
-        console.log("没得project_id")
       }
     },
     destroyed() {
@@ -459,14 +459,13 @@
     },
     methods: {
       jiekoufnc(){
-        this.initDevlist()
-        this.inoutcarquery()
-        this.smalltaskfnc()
-        this.gettajifnc()
+        this.initDevlist()//环境数据
+        this.inoutcarquery()//车辆测试
+        this.smalltaskfnc()//图片和任务信息
+        this.gettajifnc()//塔机数据
         this.huanjingjiancefnc()//总电表
         this.allwatergetfnc()//总水表
-        this.gettajidatafnc()
-        this.oneminshuaxin()
+        this.oneminshuaxin()//时间函数
       },
       newtaskjumpfnc(){
         this.$router.replace('/task')
@@ -603,7 +602,6 @@
           })
       },
       selectnownumtaterfnc(){
-        console.log("没有执行型芯222222",this.waterallnum)
         let time=new Date()
         let year=time.getFullYear()
         var month = time.getMonth()+1;//得到月份
@@ -733,7 +731,7 @@
              item["obj"]=map1.get(workId)
              if(map1.get(workId).info!=undefined){
                 item["value"]=map1.get(workId).info.priority//任务星级
-                item["status"]=map1.get(workId).info.status//任务状态
+                item["state"]=map1.get(workId).info.status//任务状态
                item["statecolor"]=map1.get(workId).info.status_color//任务颜色
                item["originator"] = map1.get(workId).Start[0].userName//发起人名字
               }
@@ -755,6 +753,15 @@
       },
       handleDrag() {
         // this.$refs.select.blur()
+      },
+      newtaskdetailsfnc(index){//最新任务点击展示详情
+        console.log("任务详情",index)
+        const param = {
+          show: true,
+          data:index
+        }
+        this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
+        })
       },
       mqttConnect() {
         this.client.connect({
