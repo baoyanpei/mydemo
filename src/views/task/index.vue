@@ -84,7 +84,7 @@
     </el-dialog>
     <el-tabs type="border-card" v-model="activeName" @tab-click="mytask">
       <!--任务大厅-->
-      <el-tab-pane :label="bannertitle" name="first">
+      <el-tab-pane :label="bannertitle" name="first" style="height: 700px; overflow:scroll;">
         <div class="taskbox1">
           <el-input v-model="chaxuninput" placeholder="请输入姓名，标题搜索" clearable style="width: 420px;margin-left: 20px">
             <el-button slot="append" @click="queryFun" style="background-color:#409EFF;width: 100px;color: #fff;">查询</el-button>
@@ -155,7 +155,7 @@
       </el-tab-pane>
 
       <!--我的任务-->
-      <el-tab-pane :label="secondtitle" name="second">
+      <el-tab-pane :label="secondtitle" name="second" style="height: 700px; overflow:scroll;">
         <div class="taskbox1">
           <div class="details" v-for="(item,index) in boxinfo1" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
             <div class="details_top">
@@ -187,6 +187,23 @@
         </div>
       </el-tab-pane>
     </el-tabs>
+  </div>
+  <div class="rilitop">
+    <div class="taskstate" style="background-color: #1abc9c;">
+      <span class="taskstatespan1">5</span>
+      <span class="taskstatespan2">进行中</span>
+      <img src="../../../static/taskindex/进行中.png" alt="">
+    </div>
+    <div class="taskstate" style="background-color: #bc1a1a">
+      <span class="taskstatespan1">2</span>
+      <span class="taskstatespan2">待认领</span>
+      <img src="../../../static/taskindex/待认领.png" alt="" style="width: 55px;height: 60px;margin-top: 20px">
+    </div>
+    <div class="taskstate" style="background-color: #3692ff">
+       <span class="taskstatespan1">2</span>
+      <span class="taskstatespan2">已发布</span>
+      <img src="../../../static/taskindex/发布.png" alt="" style="width: 55px;height: 55px;margin-top: 20px">
+    </div>
   </div>
   <div class="rili">
     <full-calendar :config="config" :events="events"></full-calendar>
@@ -1025,6 +1042,38 @@
     box-shadow:0px 0px 30px #4a4c4b;
     position: relative;
     float: left;
+  }
+  .rilitop{
+    width: 750px;
+    height: 80px;
+    margin-left: 15px;
+    margin-top: 25px;
+    float: left;
+  }
+  .taskstate{
+    width: 160px;
+    height: 100%;
+    border-radius: 15px;
+    margin-right: 15px;
+    float: left;
+  }
+  .taskstate img{
+    float: right;
+    width: 55px;
+    height: 80px;
+    margin-top: 0px;
+  }
+  .taskstatespan1{
+    line-height: 80px;
+    font-size: 40px;
+    margin-left: 20px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .taskstatespan2{
+    line-height: 100px;
+    font-size: 18px;
+    color: #ffffff;
   }
   .rili{
     width: 750px;

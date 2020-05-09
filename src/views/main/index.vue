@@ -59,9 +59,9 @@
     </div>
     <!--最新任务-->
     <div class="newtask">
-      <div class="newtask_top">
+      <div class="newtask_top"  @click="newtaskjumpfnc">
         <span style="font-size: 18px;">&nbsp;&nbsp;最新任务</span>
-        <i class="el-icon-arrow-right" @click="newtaskjumpfnc"></i>
+        <i class="el-icon-arrow-right"></i>
       </div>
       <div class="taskbottom" style="width: 100%;overflow: hidden;border: 1px solid #BABABA">
         <div class="tasksmall" v-for="item in this.taskbox" @click="newtaskdetailsfnc(item)"
@@ -95,9 +95,9 @@
     </div>
     <!--物联设备-->
     <div class="equipment" style="border: 1px solid #BABABA">
-      <div class="newtask_top">
+      <div class="newtask_top"  @click="newwulianjumpfnc">
         <span style="font-size: 18px" >&nbsp;&nbsp;物联设备</span>
-        <i class="el-icon-arrow-right" @click="newwulianjumpfnc"></i>
+        <i class="el-icon-arrow-right"></i>
       </div>
       <div class="shuidian" style="width: 95%;margin:10px auto;height: 100px;border: 1px solid #e5e5e5;border-radius: 10px;">
         <div class="shuidianleft" style="width: 50%;height: 80%;border-right: 1px solid #e5e5e5;margin-top: 10px;float: left">
@@ -190,9 +190,9 @@
     </div>
     <!--进出车辆-->
     <div class="inoutcar" style="border: 1px solid #BABABA">
-      <div class="newtask_top">
+      <div class="newtask_top" @click="newwulianjumpfnc">
         <span style="font-size: 18px" >&nbsp;&nbsp;进出场车辆</span>
-        <i class="el-icon-arrow-right" @click="newwulianjumpfnc"></i>
+        <i class="el-icon-arrow-right" ></i>
       </div>
       <div v-show="asasasas">
           <div class="carsmall" style="width: 100%;height: 100px;margin-top: 10px" v-for="item in this.carbox">
