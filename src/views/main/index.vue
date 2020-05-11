@@ -447,7 +447,7 @@
       }
     },
     mounted() {
-      console.log("index mount",this.project_id)
+      console.log("index----mount",this.project_id)
       if (this.project_id !== null) {
         this.jiekoufnc()
       }
@@ -459,6 +459,7 @@
     },
     methods: {
       jiekoufnc(){
+        console.log("任务开始----------------------------------------------------------------------------------------")
         this.initDevlist()//环境数据
         this.inoutcarquery()//车辆测试
         this.smalltaskfnc()//图片和任务信息
@@ -474,7 +475,7 @@
         this.$router.replace('/lot5/index')
       },
       oneminshuaxin(){
-        let t=setInterval(()=>{
+        setTimeout(()=>{
           this.jiekoufnc()
           console.log("时间函数测试")
         },300000)
