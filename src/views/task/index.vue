@@ -106,7 +106,7 @@
               </el-select>
               </template>
 
-              <span style="margin-left: 35px">状态:</span>
+              <span style="margin-left: 20px">状态:</span>
               <template>
               <el-select v-model="value3" @change="jinjianzhuangtai" placeholder="所有" style="width: 120px" class="btn1">
                 <el-option v-for="item in options3" :key="item.value3" :label="item.label" :value="item.label"></el-option>
@@ -728,7 +728,6 @@
         this.boxinfo1=[]
         this.boxinfo=data.data
         //遍历添加到日历中去
-        this.events=[]
         for (let i=0;i<this.boxinfo.length;i++){
           // console.log("日历",this.boxinfo[i].created)
           this.events.push({
@@ -876,6 +875,8 @@
         }
         this.$store.dispatch('Allinfodictionary', _param).then((data) => {
           this.thirdinfo=data
+          this.activeName="second"
+          this.events=[]
           console.log("第三接口",this.thirdinfo)
         })
       },

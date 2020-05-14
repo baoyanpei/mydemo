@@ -675,13 +675,14 @@
       },
       smalltaskfnc(){
         this.taskbox=[]
-        const param = {
-            method: 'query_task_all',
+        const _param = {
+            method: 'get_todo_list',
             project_id: this.project_id,
-            limit:3
+            qtype:"TodoList,BackLog,MatterRead"
           }
-          this.$store.dispatch('Allpersondata', param).then((data) => {
-            this.taskbox=data.data
+          this.$store.dispatch('GetAllInstList', _param).then((data) => {
+            this.taskbox.push(data[0],data[1],data[2])
+            console.log("我的任务",this.taskbox)
             this.taskbox.forEach(item=>{
               if(item.flowId=="PlanFlow01"){
                 item["first"]="计划"
