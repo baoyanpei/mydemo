@@ -95,6 +95,7 @@
 
       const __PROJECT_ID = this.$route.query.projectid
       const __POINT_VIEW_ID = this.$route.query.pvid
+      const __ERROR_MESSAGE = this.$route.query.errormsg
       this.access_token = this.$route.query.token
       if (__PROJECT_ID === undefined || __PROJECT_ID === '') {
         this.tip_message = '缺少参数 projectid'
@@ -104,6 +105,12 @@
         return
       } else if (this.access_token === undefined || this.access_token === '') {
         this.tip_message = '缺少参数 token'
+        return
+      }
+      console.log('__ERROR_MESSAGE', __ERROR_MESSAGE)
+
+      if (__ERROR_MESSAGE !== undefined && __ERROR_MESSAGE !== '') {
+        this.tip_message = __ERROR_MESSAGE + '<br/>' + this.access_token
         return
       }
 

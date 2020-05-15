@@ -97,18 +97,20 @@ service.interceptors.response.use(
             } else if (_data.method === 'set_outsys_info') { // url的访问权限判断
               return res
             } else {
-              Message({
-                message: res.msg + "（1接口status!=success）",
-                type: 'error',
-                duration: 5 * 1000
-              })
+              console.log('接口请求失败1', res.msg)
+              // Message({
+              //   message: res.msg + "（1接口status!=success）",
+              //   type: 'error',
+              //   duration: 5 * 1000
+              // })
             }
           } catch (error) {
-            Message({
-              message: res.msg + "（2接口status!=success）",
-              type: 'error',
-              duration: 5 * 1000
-            })
+            console.log('接口请求失败2', res.msg)
+            // Message({
+            //   message: res.msg + "（2接口status!=success）",
+            //   type: 'error',
+            //   duration: 5 * 1000
+            // })
           }
 
           // Message({
@@ -158,6 +160,12 @@ service.interceptors.response.use(
       const status = error.response.status
       if (status === 401) {
         store.dispatch('LogOut').then(() => {
+          console.log('location', location)
+          if (location.href.indexOf('/xcx/pvshow') >= 0) { // 小程序视点
+            location.href = location.href + '&errormsg=token鉴权失败,请试试重新打开'
+          } else if (location.href.indexOf('/xcx/model') >= 0) { // 小程序bim模型
+            location.href = location.href + '&errormsg=token鉴权失败,请试试重新打开'
+          }
           location.reload() // In order to re-instantiate the vue-router object to avoid bugs
         })
       }
