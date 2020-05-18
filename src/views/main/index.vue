@@ -82,7 +82,7 @@
             <div class="taskright" style="float: left;width: 262px;height: 100%;position: relative">
               <span style="margin-top: 5px;display: block;overflow: hidden;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;">{{item.title}}</span>
               <span style="display: block;font-size: 12px;color: #a8a8a8;margin-top: 5px">发起人:<span style="color: #000000">{{item.originator}}</span></span>
-              <span style="display: block;font-size: 12px;color: #a8a8a8;margin-top: 5px">发起时间:<span style="color: #000000">{{item.created}}</span></span>
+              <span style="display: block;font-size: 12px;color: #a8a8a8;margin-top: 5px">发起时间:<span style="color: #000000">{{item.sendTime}}</span></span>
               <div class="taskrightbottom" style="position: absolute;bottom: 0;height: 25px;width:100%;">
                   <div class="logobox">{{item.first}}</div>
                   <div class="logobox">{{item.questions_type}}</div>

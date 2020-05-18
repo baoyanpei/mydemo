@@ -27,7 +27,7 @@
               <span class="titleword">{{taskInfoDialog.data.title}}</span><br>
             </div>
              <!--发起人和发起时间-->
-              <span class="faqiname">{{taskInfoDialog.data.originator}}      {{taskInfoDialog.data.created}}</span>
+              <span class="faqiname">{{taskInfoDialog.data.originator}}      {{taskInfoDialog.data.created}}{{taskInfoDialog.data.sendTime}}</span>
             <div class="" style="margin-top: 10px;">
                 <div class="audio_div" v-for="item in this.audiobox">
                   <!--语音文件-->

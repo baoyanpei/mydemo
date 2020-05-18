@@ -212,7 +212,7 @@
           <el-table-column property="group_name_level[1]" align="center" sortable label="班组" width="90"
             header-align="center">
           </el-table-column>
-          <el-table-column property="project_pos_name" align="center" sortable label="工种" width="70"
+          <el-table-column property="project_pos_name" align="center" sortable label="职位" width="70"
             header-align="center">
           </el-table-column>
           <el-table-column property="education" align="center" sortable label="学历" width="70" header-align="center">

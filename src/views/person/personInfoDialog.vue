@@ -18,7 +18,7 @@
               <el-col :span="6">
                 部门：{{bumen}}
               </el-col>
-              <el-col :span="5" class="fatherchange">
+              <el-col :span="4" class="fatherchange">
                 <!--<div style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"-->
                 <!--@click="changegroup">更换组别</div>-->
                 <el-popover placement="right" width="400" trigger="click">
@@ -30,8 +30,27 @@
                     slot="reference" @click="changegroup">更换组别</div>
                 </el-popover>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="6">
                 班组：{{zhuanye}}
+              </el-col>
+              <el-col :span="4">
+                职位：{{positionwei}}
+              </el-col>
+              <el-col :span="4" class="fatherchange">
+                <el-popover placement="right" width="400" trigger="click">
+                  <el-select v-model="zhiyevalue" clearable placeholder="请选择">
+                    <el-option
+                      v-for="item in zhiye"
+                      :key="item.id"
+                      :label="item.posi_name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                  <el-button type="primary" style="float: right;" @click="zhiyesubmit">确认</el-button>
+                  <div
+                    style="width: 100%;height: 100%;background-color: #1abc9c;color: #fff;text-align: center;border-radius: 7px"
+                    slot="reference" @click="changegroup">更换职位</div>
+                </el-popover>
               </el-col>
             </el-row>
             <el-row :gutter="24">
@@ -89,7 +108,7 @@
                 <span v-if="parseFloat(personLastHealthDayInfo.temp)>=37.3"
                   class="redFont">{{personLastHealthDayInfo.temp}}°C</span>
                 <span v-if="parseFloat(personLastHealthDayInfo.temp)<37.3">{{personLastHealthDayInfo.temp}}°C</span>
-                
+
                 <span v-if="personLastHealthDayInfo.give_out_heat===1" class="redFont">当前有发热，</span>
                 <span v-if="personLastHealthDayInfo.give_out_heat===0">当前无发热，</span>
                 <span v-if="personLastHealthDayInfo.cough===1" class="redFont">有干咳等症状；</span>
@@ -269,6 +288,7 @@
         leave_time: '',
         bumen: '',
         zhuanye: '',
+        positionwei:'',
         idcarda: '',
         idcardb: '',
         idcard_no: '',
@@ -289,6 +309,8 @@
         newsongroup: [],
         optionmodel: '',
         optionGroups: [],
+        zhiye:[],
+        zhiyevalue:'',
         change_personid: 0,
         personHealthInfo: null, //健康信息
         personLastHealthDayInfo: null // 最新的一条健康日志
@@ -405,6 +427,23 @@
         this.$store.dispatch('PersonGroupChange', param).then(() => {}).catch(() => {
 
         })
+        this.getProjectPersonInfo()
+      },
+      zhiyesubmit(){
+        this.$alert('<span>更换职位成功</span>', '更换职位提示', {
+          dangerouslyUseHTMLString: true
+        });
+        const param = {
+          method: 'set_person_props',
+          project_id: this.project_id,
+          person_id: this.change_personid,
+          group_id: this.optionmodel[1],
+          pos_id:this.zhiyevalue
+        }
+        this.$store.dispatch('PersonGroupChange', param).then(() => {}).catch(() => {
+
+        })
+        this.getProjectPersonInfo()
       },
       transStatus(status) {
         let _text = ''
@@ -435,7 +474,17 @@
       },
       // 打开窗口
       openPersonInfoDialogHandle() {
-        // console.log("----22222---")
+        this.aaaaaaaaaa()
+      },
+      aaaaaaaaaa(){
+        const param = {
+          method: 'query_pos',
+          project_id: this.project_id,
+        }
+        this.$store.dispatch('QueryProjectPerson', param).then((data) => {
+          console.log("查看个人",data)
+          this.zhiye=data
+        })
       },
       closePersonInfoDialogHandle() {
         $("#person-health-fullcalender").fullCalendar('destroy'); //销毁日历
@@ -506,6 +555,7 @@
           this.idcard_no = _personInfo.idcard_no
           this.bumen = _personInfo.group_name_level[0]
           this.zhuanye = _personInfo.group_name_level[1]
+          this.positionwei=_personInfo.project_pos_name
           if (_personInfo.entry_pic !== undefined && _personInfo.entry_pic !== '') {
             this.entry_pic = _personInfo.entry_pic
           } else {

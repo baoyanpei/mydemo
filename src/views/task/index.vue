@@ -176,7 +176,7 @@
                 <!--qualiter   质检人-->
                  <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838" @click="handleNameClick(item.person_id3)">{{item.qualiter}}</span></span>
               </div>
-              <span class="created_time">发布时间:<span style="color: #383838">{{item.created}}</span></span>
+              <span class="created_time">发布时间:<span style="color: #383838">{{item.sendTime}}</span></span>
               <div class="imgbox_right_bottom">
                 <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检','ziliao':item.stateall==='资料'}">{{item.stateall}}</div>
                 <div class="logobox" v-show=item.xian3>{{item.questions_type}}</div>
