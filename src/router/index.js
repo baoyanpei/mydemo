@@ -304,6 +304,24 @@ export const constantRouterMap = [{
     }]
   },
   {
+    path: '/cesiumSelect',
+    name: 'cesiumSelect',
+    component: Layout,
+    redirect: '/cesiumSelect/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/cesiumSelect/index'),
+      name: 'cesium-select-index',
+      meta: {
+        title: '选择倾斜摄影',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
     path: '/xcx',
     name: 'xcx',
     component: Layout3,
