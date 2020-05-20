@@ -7,6 +7,7 @@ import {
   removeBimItem,
   //   uploadBimItem,
   getProjectItems,
+  getProjectFiles,
   getItemInfoListByProID,
   getOutsysInfo,
   setOutsysInfo
@@ -192,6 +193,19 @@ const bim = {
     }, param) {
       return new Promise((resolve, reject) => {
         getProjectItems(param).then(response => {
+          const _data = response.data
+          // commit('SET_PROJECT_GATE_PERSON', _data)
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    GetProjectFiles({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        getProjectFiles(param).then(response => {
           const _data = response.data
           // commit('SET_PROJECT_GATE_PERSON', _data)
           resolve(_data)
