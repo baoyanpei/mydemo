@@ -1,5 +1,8 @@
 <style lang="scss">
   @import "./xcx";
+  @import "./main";
+  @import "../../script/Bentley/Bentley.css";
+  @import "../../script/Cesium/Widgets/widgets.css";
 
 </style>
 <template>
@@ -25,7 +28,7 @@
         project_id: '',
         itemIDList: [],
         itemInfoList: [],
-        
+
 
       }
     },
