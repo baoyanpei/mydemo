@@ -7,8 +7,8 @@
 </style>
 <template>
   <div class="cesium-display-xcx" style="margin: 0px;">
+    <div id="cesiumDiv" v-show="tip_message===''" class="viewer-local"></div>
     <div v-if="tip_message!==''" class="not-allow-now" v-html="tip_message"></div>
-    <div id="viewer-local"></div>
   </div>
 </template>
 
@@ -17,6 +17,7 @@
     setToken
   } from '@/utils/auth'
   import loadJs from '@/utils/loadJs.js'
+  var App;
   export default {
     directives: {},
     name: 'cesium-display-xcx',
@@ -94,6 +95,26 @@
         await this.getItemInfoListByItemIDs(this.itemIDList)
 
         await loadJs(`./static/libs/App_CCWebViewer2/scripts/Cesium/Cesium.js`)
+        App = require('@/script/App/App.js');
+
+        let _urlList = this.getModelUrl()
+        console.log('_urlList', _urlList)
+        if (_urlList.length !== 0) {
+          var _config = {
+            "units": "metric",
+            // "url": "/static/Scene/Production.json",
+            "url": _urlList[0],
+            "name": ""
+          }
+
+          App.main.run('cesiumDiv', _config, this.callback);
+        }
+      },
+      callback(userError) {
+        if (userError !== undefined) {
+          this.tip_message = "模型加载出错：" + userError
+        }
+        console.log('11122233', userError)
       },
       getItemInfoListByItemIDs(item_ids) {
         // console.log('this.project_id', this.project_id)
@@ -114,6 +135,13 @@
             resolve()
           })
         })
+      },
+      getModelUrl() {
+        let _urlList = []
+        this.itemInfoList.forEach(itemInfo => {
+          _urlList.push(itemInfo.url)
+        });
+        return _urlList
       },
     }
   }

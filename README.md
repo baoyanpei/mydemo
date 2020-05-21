@@ -101,3 +101,21 @@ projectid：项目id
 items：模型的itemid，多个用|分割，如1335|1336|1337
 token：用户登录后的token
 ```
+
+
+#### 在webpack打包的时候，可以在js文件中混用require和export。但是不能混用import 以及module.exports。
+
+```txt
+因为webpack 2中不允许混用import和module.exports,
+
+但是在经过我试验之后，发现不起作用，再去百度，发现一个解决办法：
+
+执行npm：
+
+    npm install babel-plugin-transform-es2015-modules-commonjs
+
+然后在 babelrc文件中配置
+
+{ “plugins”: [“transform-es2015-modules-commonjs”] }
+
+```

@@ -1,22 +1,24 @@
 .cesium-display-xcx {
-    //   height: calc(100vh - 48px);
-  
-    //   .sfx-canvas {
-    //     top: -48px !important;
-    //   }
-  
-    //   .errInfo {
-    //     line-height: 600px;
-    //     font-size: 40px;
-    //     text-align: center;
-    //   }
-  
-    .not-allow-now {
-      // line-height: calc(100vh);
-      text-align: center;
-      font-size: 26px;
-      padding: 50px;
-    }
-  
+  //   height: calc(100vh - 48px);
+
+  //   .sfx-canvas {
+  //     top: -48px !important;
+  //   }
+
+  //   .errInfo {
+  //     line-height: 600px;
+  //     font-size: 40px;
+  //     text-align: center;
+  //   }
+  .cesium-widget-credits {
+    display: none;
   }
-  
+
+  .not-allow-now {
+    // line-height: calc(100vh);
+    text-align: center;
+    font-size: 26px;
+    padding: 50px;
+  }
+
+}
