@@ -13,6 +13,7 @@
   import {
     setToken
   } from '@/utils/auth'
+  import loadJs from '@/utils/loadJs.js'
   export default {
     directives: {},
     name: 'cesium-display-xcx',
@@ -88,6 +89,8 @@
       async init() {
         await this.loginByXcxToken()
         await this.getItemInfoListByItemIDs(this.itemIDList)
+
+        await loadJs(`./static/libs/App_CCWebViewer2/scripts/Cesium/Cesium.js`)
       },
       getItemInfoListByItemIDs(item_ids) {
         // console.log('this.project_id', this.project_id)

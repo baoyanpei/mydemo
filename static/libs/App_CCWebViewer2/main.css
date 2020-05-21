@@ -1,0 +1,33 @@
+
+@font-face {
+  font-family: 'Reality-Data-Web-Viewer-Icons';
+  src:  url('resources/Reality-Data-Web-Viewer-Icons.eot');
+  src:  url('resources/Reality-Data-Web-Viewer-Icons.eot?#iefix') format('embedded-opentype'),
+    url('resources/Reality-Data-Web-Viewer-Icons.ttf') format('truetype'),
+    url('resources/Reality-Data-Web-Viewer-Icons.woff') format('woff'),
+    url('resources/Reality-Data-Web-Viewer-Icons.svg?#Reality-Data-Web-Viewer-Icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.rd-icon-measure-position, .rd-icon-measure-distance, .rd-icon-measure-area {
+  
+  font-family: 'Reality-Data-Web-Viewer-Icons' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.rd-icon-measure-position:before {
+  content: "\e900";
+}
+.rd-icon-measure-distance:before {
+  content: "\e901";
+}
+.rd-icon-measure-area:before {
+  content: "\e902";
+}
