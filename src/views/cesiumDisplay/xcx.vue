@@ -8,7 +8,7 @@
 <template>
   <div class="cesium-display-xcx" style="margin: 0px;">
     <div id="cesiumDiv" v-show="tip_message===''" class="viewer-local"></div>
-    <div v-if="tip_message!==''" class="not-allow-now" v-html="tip_message"></div>
+    <div v-if="tip_message!==''" class="tip_message" v-html="tip_message"></div>
   </div>
 </template>
 
@@ -91,15 +91,15 @@
         })
       },
       async init() {
+        this.tip_message = "正在读取模型数据..."
         await this.loginByXcxToken()
-        await this.getItemInfoListByItemIDs(this.itemIDList)
-
-        await loadJs(`./static/libs/App_CCWebViewer2/scripts/Cesium/Cesium.js`)
-        App = require('@/script/App/App.js');
-
+        await this.getProjectFiles(this.itemIDList)
         let _urlList = this.getModelUrl()
         console.log('_urlList', _urlList)
         if (_urlList.length !== 0) {
+          this.tip_message = '正在加载模型底层程序...'
+          await loadJs(`./static/libs/App_CCWebViewer2/scripts/Cesium/Cesium.js`)
+          App = require('@/script/App/App.js');
           var _config = {
             "units": "metric",
             // "url": "/static/Scene/Production.json",
@@ -108,6 +108,9 @@
           }
 
           App.main.run('cesiumDiv', _config, this.callback);
+          this.tip_message = ""
+        } else {
+          this.tip_message = '分享的模型已不存在或ID不正确'
         }
       },
       callback(userError) {
@@ -116,7 +119,7 @@
         }
         console.log('11122233', userError)
       },
-      getItemInfoListByItemIDs(item_ids) {
+      getProjectFiles(item_ids) {
         // console.log('this.project_id', this.project_id)
         return new Promise((resolve, reject) => {
           const param = {

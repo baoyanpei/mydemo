@@ -1,23 +1,21 @@
 .cesium-display-xcx {
-  //   height: calc(100vh - 48px);
+  .viewer-local {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: absolute;
+  }
 
-  //   .sfx-canvas {
-  //     top: -48px !important;
-  //   }
-
-  //   .errInfo {
-  //     line-height: 600px;
-  //     font-size: 40px;
-  //     text-align: center;
-  //   }
   .cesium-widget-credits {
     display: none;
   }
 
-  .not-allow-now {
+  .tip_message {
     // line-height: calc(100vh);
     text-align: center;
-    font-size: 26px;
+    font-size: 24px;
     padding: 50px;
   }
 
