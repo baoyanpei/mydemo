@@ -21,7 +21,7 @@ function hasPermission(roles, permissionRoles) {
 }
 
 // 跳转白名单
-const whiteList = ['login', 'wxbindtip', 'authredirect', 'xcx-pointview-show', 'xcx-model-display'] // no redirect whitelist //'/tongxunlu/index'
+const whiteList = ['login', 'wxbindtip', 'authredirect', 'xcx-pointview-show', 'xcx-model-display', 'xcx-cesium-display'] // no redirect whitelist //'/tongxunlu/index'
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar

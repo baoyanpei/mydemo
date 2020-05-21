@@ -349,6 +349,18 @@ export const constantRouterMap = [{
           // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
         }
       },
+      {
+        path: 'cesium',
+        component: () => import('@/views/cesiumDisplay/xcx'),
+        name: 'xcx-cesium-display',
+        meta: {
+          title: '倾斜摄影查看(小程序)',
+          icon: 'building',
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+        }
+      },
     ]
   },
 
