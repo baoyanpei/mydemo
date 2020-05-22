@@ -322,6 +322,42 @@ export const constantRouterMap = [{
     }]
   },
   {
+    path: '/cadSelect',
+    name: 'cadSelect',
+    component: Layout,
+    redirect: '/cadSelect/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/cadSelect/index'),
+      name: 'cad-select-index',
+      meta: {
+        title: '选择CAD',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
+    path: '/sketchupSelect',
+    name: 'sketchupSelect',
+    component: Layout,
+    redirect: '/sketchupSelect/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/sketchupSelect/index'),
+      name: 'sketchup-select-index',
+      meta: {
+        title: '选择sketchup',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
     path: '/xcx',
     name: 'xcx',
     component: Layout3,
