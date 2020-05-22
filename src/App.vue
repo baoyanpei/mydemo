@@ -217,7 +217,7 @@
       '$route'(to, from) {
         console.log("totototo", to)
         if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && to.name !==
-          "xcx-model-display" && to.name !== "xcx-cesium-display" && to.name !== "xcx-cad-display" && this.personInfo ===
+          "xcx-model-display" && to.name !== "xcx-cesium-display" && to.name !== "xcx-cad-display" && to.name !== "xcx-sketchup-display" && this.personInfo ===
           null) {
           this.getPerson()
         }

@@ -409,6 +409,18 @@ export const constantRouterMap = [{
           // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
         }
       },
+      {
+        path: 'sketchup',
+        component: () => import('@/views/sketchupDisplay/xcx'),
+        name: 'xcx-sketchup-display',
+        meta: {
+          title: 'sketchup查看(小程序)',
+          icon: 'building',
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+        }
+      },
     ]
   },
 
