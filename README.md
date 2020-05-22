@@ -80,29 +80,6 @@ import VueClipboard from 'vue-clipboard2'
 Vue.use(VueClipboard)
 ```
 
-#### 小程序中需要调用的视点展示页面
-
-```txt
-调用地址
-https://xcx.tddata.net/smz/#/xcx/pvshow?projectid=10000&pvid=39&token=123
-参数说明：
-projectid：项目id
-pvid：视点id（PointViewID）
-token：用户登录后的token
-```
-
-#### 小程序中需要调用的模型展示页面
-
-```txt
-调用地址
-https://xcx.tddata.net/smz/#/xcx/model?projectid=10000&items=1337|1335|1336&token=123
-参数说明：
-projectid：项目id
-items：模型的itemid，多个用|分割，如1335|1336|1337
-token：用户登录后的token
-```
-
-
 #### 在webpack打包的时候，可以在js文件中混用require和export。但是不能混用import 以及module.exports。
 
 ```txt
@@ -117,5 +94,64 @@ token：用户登录后的token
 然后在 babelrc文件中配置
 
 { “plugins”: [“transform-es2015-modules-commonjs”] }
+
+```
+
+## 用于小程序中调用的页面（实名制平台）
+
+
+### 视点的调用
+```
+调用地址
+https://xcx.tddata.net/smz/#/xcx/pvshow?projectid=10000&pvid=39&token=123
+参数说明：
+projectid：项目id
+pvid：视点id（PointViewID）
+token：用户登录后的token
+
+```
+
+### rvt模型的调用
+```
+调用地址
+https://xcx.tddata.net/smz/#/xcx/model?projectid=10000&items=1337|1335|1336&token=123
+
+参数说明：
+projectid：项目id
+items：模型的itemid，多个用|分割，如1335|1336|1337
+token：用户登录后的token
+
+```
+
+### cad模型的调用
+```
+调用地址
+https://xcx.tddata.net/smz/#/xcx/cad?projectid=10000&items=1360&token=123
+参数说明：
+projectid：项目id
+items：CAD的id，目前只允许单个，不能为多个
+token：用户登录后的token
+
+```
+
+### 倾斜摄影模型的调用
+```
+调用地址
+https://xcx.tddata.net/smz/#/xcx/cesium?projectid=10024&items=200320&token=123
+参数说明：
+projectid：项目id
+items：倾斜摄影的id，目前只允许单个，不能为多个
+token：用户登录后的token
+
+```
+
+### sketch模型的调用
+```
+调用地址
+https://xcx.tddata.net/smz/#/xcx/sketchup?projectid=10001&items=200337&token=123
+参数说明：
+projectid：项目id
+items：sketch模型的id，目前只允许单个，不能为多个
+token：用户登录后的token
 
 ```
