@@ -397,6 +397,18 @@ export const constantRouterMap = [{
           // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
         }
       },
+      {
+        path: 'cad',
+        component: () => import('@/views/cadDisplay/xcx'),
+        name: 'xcx-cad-display',
+        meta: {
+          title: 'CAD查看(小程序)',
+          icon: 'building',
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+        }
+      },
     ]
   },
 
