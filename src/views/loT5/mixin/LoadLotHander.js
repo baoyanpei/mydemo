@@ -1,4 +1,5 @@
 import moment from 'moment'
+import loadJs from '@/utils/loadJs.js'
 import {
   getToken
 } from '@/utils/auth'
@@ -104,9 +105,12 @@ export default {
   created() {
 
   },
-  mounted() {
+  async mounted() {
     console.log('lot5-index-mounted')
     // this.init()
+    await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
+    console.log('./static/libs/viewer3D/viewer3D.min.js')
+    require('@/script/Viewing.Extension.MeshSelection')
 
   },
   destroyed() {},

@@ -4,8 +4,8 @@
 </style>
 <template>
   <div class="pointview-xcx-show" style="margin: 0px;">
-    <div v-if="tip_message!==''" class="not-allow-now" v-html="tip_message"></div>
-    <div id="viewer-local"></div>
+    <div v-if="tip_message!==''" class="tip_message" v-html="tip_message"></div>
+    <div id="viewer-local" v-show="tip_message===''"  class="viewer-local"></div>
     <div style="width:100vw; height:100vh;display:none;top:0px;left:0px;">
       <canvas id="snapshot" style="position:absolute;"></canvas>
     </div>
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+  import loadJs from '@/utils/loadJs.js'
   import {
     setToken
   } from '@/utils/auth'
@@ -92,6 +93,7 @@
     mounted() {
 
       console.log('this.$route', this.$route.query)
+      
 
       const __PROJECT_ID = this.$route.query.projectid
       const __POINT_VIEW_ID = this.$route.query.pvid
@@ -161,6 +163,9 @@
       },
       async init() {
         await this.loginByXcxToken()
+
+        
+        this.tip_message = "正在读取模型数据..."
         await this.getViewpointsById()
         if (this.ViewPointInfo === null) {
           this.tip_message =
@@ -177,6 +182,10 @@
             `没有符合的模型文件<br/>projectid:${this.project_id}<br/>projectid:${this.point_view_id}<br/>token:${this.access_token}`
           return
         }
+        this.tip_message = '正在加载模型底层程序...'
+        await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
+        console.log('./static/libs/viewer3D/viewer3D.min.js')
+        this.tip_message = ""
         let _urlList = this.getModelUrl()
         // console.log('_urlList', _urlList)
         if (_urlList.length !== 0) {
