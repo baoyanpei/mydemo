@@ -23,15 +23,15 @@ define("PropertyVisibilityList", [], function () {
         r.className = "bim-toggle-list", this.element = r, this.styler = e;
         var i = this,
             o = document.createElement("div");
-        o.textContent = "All", o.setAttribute("title", "Enable all"), o.className = "bim-toggle-entry", o.onclick = function () {
+        o.textContent = "全部", o.setAttribute("title", "Enable all"), o.className = "bim-toggle-entry", o.onclick = function () {
             i.setAll(!0)
         }, r.appendChild(o);
         var a = document.createElement("div");
-        a.textContent = "None", a.setAttribute("title", "Disable all"), a.className = "bim-toggle-entry", a.onclick = function () {
+        a.textContent = "清除", a.setAttribute("title", "Disable all"), a.className = "bim-toggle-entry", a.onclick = function () {
             i.setAll(!1)
         }, r.appendChild(a);
         var s = document.createElement("div");
-        s.textContent = "Invert", s.setAttribute("title", "Invert the sets of enabled and disabled items"), s.className = "bim-toggle-entry-ruled", s.onclick = function () {
+        s.textContent = "颠倒", s.setAttribute("title", "Invert the sets of enabled and disabled items"), s.className = "bim-toggle-entry-ruled", s.onclick = function () {
             i.invert()
         }, r.appendChild(s);
         for (var u in n) this.entries[u] = new t(e, u, n[u], r);

@@ -221,14 +221,14 @@ define("Viewer", ["../Bim/Element", "./PropertyVisibilityList", "./ViewList", ".
         var e = document.createElement("div");
         e.className = "bim-view-rotation-list";
         for (var t = [
-                [r.Top, "bim-icon-viewtop", "Top"],
-                [r.Bottom, "bim-icon-viewbottom", "Bottom"],
-                [r.Front, "bim-icon-viewfront", "Front"],
-                [r.Back, "bim-icon-viewback", "Back"],
-                [r.Left, "bim-icon-viewleft", "Left"],
-                [r.Right, "bim-icon-viewright", "Right"],
-                [r.Iso, "bim-icon-viewisoleft", "Isometric"],
-                [r.RightIso, "bim-icon-viewisoright", "Right Isometric"]
+                [r.Top, "bim-icon-viewtop", "上面"],
+                [r.Bottom, "bim-icon-viewbottom", "下面"],
+                [r.Front, "bim-icon-viewfront", "前面"],
+                [r.Back, "bim-icon-viewback", "后面"],
+                [r.Left, "bim-icon-viewleft", "左面"],
+                [r.Right, "bim-icon-viewright", "右面"],
+                [r.Iso, "bim-icon-viewisoleft", "正45°"],
+                [r.RightIso, "bim-icon-viewisoright", "右45°"]
             ], n = 0; n < t.length; n++) {
             var i = this.createViewRotationEntry(t[n][0], t[n][1], t[n][2]);
             e.appendChild(i)

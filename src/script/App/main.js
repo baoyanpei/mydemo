@@ -15,33 +15,33 @@ define("scripts/App/main", ["../Bentley/Util/requestJson", "./ToolId", "./ToolFa
     r = Cesium.defaultValue(r, {});
     var i = Cesium.defaultValue(r.server, !1),
       a = (Cesium.defaultValue(r.debug, !1), e.createToolbar());
-    new o.ToolbarButton(a, "Views", "bim-icon-savedview", e.createViewSelectionWidget())
-    new o.ToolbarButton(a, "Models", "bim-icon-model", e.createModelToggleWidget())
-    new o.ToolbarButton(a, "Categories", "bim-icon-categories", e.createCategoryToggleWidget())
-    new o.ToolbarButton(a, "View Rotation", "bim-icon-gyroscope", e.createViewRotationWidget())
-    new o.ToolbarButton(a, "Settings", "bim-icon-settings", e.createSettingsWidget())
-    new o.ToolbarButton(a, "Get link", "bim-icon-link", e.createViewLinkWidget()), i && e.createElementPropertiesWidget(e)
+    new o.ToolbarButton(a, "视图", "bim-icon-savedview", e.createViewSelectionWidget())
+    new o.ToolbarButton(a, "模型", "bim-icon-model", e.createModelToggleWidget())
+    new o.ToolbarButton(a, "类别", "bim-icon-categories", e.createCategoryToggleWidget())
+    new o.ToolbarButton(a, "旋转视图", "bim-icon-gyroscope", e.createViewRotationWidget())
+    new o.ToolbarButton(a, "设置", "bim-icon-settings", e.createSettingsWidget())
+    new o.ToolbarButton(a, "链接", "bim-icon-link", e.createViewLinkWidget()), i && e.createElementPropertiesWidget(e)
     var s = e.viewport;
-    a.addActionButton(new o.ToolAction("Fit View", "bim-icon-fitview", s, t.FitView, function () {
+    a.addActionButton(new o.ToolAction("回到中心", "bim-icon-fitview", s, t.FitView, function () {
       return new o.FitViewTool(s, !0)
-    })), a.addActionButton(new o.ToolAction("Window Area", "bim-icon-windowarea", s, t.WindowArea));
-    var h = new o.ToolAction("Rotate", "bim-icon-gyroscope", s, t.Rotate);
-    a.addActionButton(h), a.addActionButton(new o.ToolAction("Pan", "bim-icon-pan", s, t.Pan)), a.addActionButton(new o.ToolAction("Walk", "bim-icon-walk", s, t.Walk)), a.addActionButton(new o.ViewHistoryAction(s, !0)), a.addActionButton(new o.ViewHistoryAction(s, !1));
+    })), a.addActionButton(new o.ToolAction("窗口工具", "bim-icon-windowarea", s, t.WindowArea));
+    var h = new o.ToolAction("旋转工具", "bim-icon-gyroscope", s, t.Rotate);
+    a.addActionButton(h), a.addActionButton(new o.ToolAction("移动工具", "bim-icon-pan", s, t.Pan)), a.addActionButton(new o.ToolAction("第一人称", "bim-icon-walk", s, t.Walk)), a.addActionButton(new o.ViewHistoryAction(s, !0)), a.addActionButton(new o.ViewHistoryAction(s, !1));
     var p = !0;
     if (p) {
       var m, d, v = e.cesiumWidget.clock;
       n.isGeoreferenced ? Cesium.defined(r.units) && "imperial" == r.units ? (m = f.formatLengthFeet, d = f.formatAreaSqFeet) : (m = f.formatLengthMeters, d = f.formatAreaSqMeters) : (m = f.formatLengthNoUnit, d = f.formatAreaNoUnit);
-      var g = new o.ToolAction("Measure position", "rd-icon-measure-position", s, t.MeasurePosition, function () {
+      var g = new o.ToolAction("位置测量", "rd-icon-measure-position", s, t.MeasurePosition, function () {
           return new u(s, n, v, {
             formatLength: m
           })
         }),
-        y = new o.ToolAction("Measure distance", "rd-icon-measure-distance", s, t.MeasureDistance, function () {
+        y = new o.ToolAction("距离测量", "rd-icon-measure-distance", s, t.MeasureDistance, function () {
           return new c(s, n, v, {
             formatLength: m
           })
         }),
-        w = new o.ToolAction("Measure area", "rd-icon-measure-area", s, t.MeasureArea, function () {
+        w = new o.ToolAction("区域测量", "rd-icon-measure-area", s, t.MeasureArea, function () {
           return new l(s, n, v, {
             formatLength: m,
             formatArea: d
@@ -193,7 +193,7 @@ define("scripts/App/main", ["../Bentley/Util/requestJson", "./ToolId", "./ToolFa
             focusDistance: c,
             lensAngle: .8,
             modelSelector: "1",
-            name: "Default view",
+            name: "默认视图",
             origin: {
               x: y.x,
               y: y.y,

@@ -62,18 +62,18 @@ define("SettingsWidget", ["../Tools/ViewToolSettings"], function (e) {
         var s = document.createElement("div");
         s.className = "bim-groupbox-header", s.setAttribute("data-bind", "click: toggleGeneral, attr: {title: generalTitle}");
         var u = document.createElement("span");
-        u.className = "bim-expand-collapse-icon", s.appendChild(u), s.appendChild(document.createTextNode("View")), a.appendChild(s);
+        u.className = "bim-expand-collapse-icon", s.appendChild(u), s.appendChild(document.createTextNode("视图")), a.appendChild(s);
         var c = document.createElement("div");
         c.className = "bim-groupbox-content",
             a.appendChild(c);
         var l = document.createElement("div");
         c.appendChild(l);
         var f = document.createElement("input");
-        if (f.type = "checkbox", f.setAttribute("data-bind", "checked: shadows, click: showShadows"), l.appendChild(f), l.appendChild(document.createTextNode("Shadows")), e.viewport.bim.displayInPlace) {
+        if (f.type = "checkbox", f.setAttribute("data-bind", "checked: shadows, click: showShadows"), l.appendChild(f), l.appendChild(document.createTextNode("光照")), e.viewport.bim.displayInPlace) {
             var h = document.createElement("div");
             c.appendChild(h);
             var p = document.createElement("input");
-            if (p.type = "checkbox", p.setAttribute("data-bind", "checked: globe, click: showGlobe"), h.appendChild(p), h.appendChild(document.createTextNode("Globe")), e.viewport.isGlobeDefined || (h.className = "bim-hidden"), e.viewport.isGlobeVisibleChanged.addEventListener(function (e) {
+            if (p.type = "checkbox", p.setAttribute("data-bind", "checked: globe, click: showGlobe"), h.appendChild(p), h.appendChild(document.createTextNode("地球")), e.viewport.isGlobeDefined || (h.className = "bim-hidden"), e.viewport.isGlobeVisibleChanged.addEventListener(function (e) {
                     i.globe = e.isGlobeVisible;
                     var t = e.isGlobeDefined ? void 0 : "bim-hidden";
                     h.className = t
@@ -87,7 +87,7 @@ define("SettingsWidget", ["../Tools/ViewToolSettings"], function (e) {
         var v = document.createElement("div");
         c.appendChild(v);
         var g = document.createElement("input");
-        g.type = "checkbox", g.setAttribute("data-bind", "checked: camera, click: toggleCamera"), v.appendChild(g), v.appendChild(document.createTextNode("Camera")), e.viewport.viewActivated.addEventListener(function (e) {
+        g.type = "checkbox", g.setAttribute("data-bind", "checked: camera, click: toggleCamera"), v.appendChild(g), v.appendChild(document.createTextNode("照相机")), e.viewport.viewActivated.addEventListener(function (e) {
             i.camera = e.isCameraOn, v.className = e.view.supportsCamera ? void 0 : "bim-hidden"
         });
         var y = document.createElement("div");
@@ -95,41 +95,41 @@ define("SettingsWidget", ["../Tools/ViewToolSettings"], function (e) {
         var w = document.createElement("div");
         w.className = "bim-groupbox-header", w.setAttribute("data-bind", "click: toggleRenderingQuality, attr: {title: renderingQualityTitle}");
         var x = document.createElement("span");
-        x.className = "bim-expand-collapse-icon", w.appendChild(x), w.appendChild(document.createTextNode("Rendering Quality")), y.appendChild(w);
+        x.className = "bim-expand-collapse-icon", w.appendChild(x), w.appendChild(document.createTextNode("渲染质量")), y.appendChild(w);
         var b = document.createElement("div");
-        b.className = "bim-groupbox-content", y.appendChild(b), b.appendChild(n("maximumSSE", i.maximumSSE, "Quality", 64 * i.maximumSSE, "Performance", 1));
+        b.className = "bim-groupbox-content", y.appendChild(b), b.appendChild(n("maximumSSE", i.maximumSSE, "质量", 64 * i.maximumSSE, "效率", 1));
         var C = document.createElement("div");
         C.className = "bim-groupbox", C.setAttribute("data-bind", 'css: {"bim-settings-show" : animationVisible, "bim-settings-hide" : !animationVisible}'), o.appendChild(C);
         var M = document.createElement("div");
         M.className = "bim-groupbox-header", M.setAttribute("data-bind", "click: toggleAnimation, attr: {title: animationTitle}");
         var T = document.createElement("span");
-        T.className = "bim-expand-collapse-icon", M.appendChild(T), M.appendChild(document.createTextNode("Animation Duration")), C.appendChild(M);
+        T.className = "bim-expand-collapse-icon", M.appendChild(T), M.appendChild(document.createTextNode("动画持续时间")), C.appendChild(M);
         var N = document.createElement("div");
-        N.className = "bim-groupbox-content", C.appendChild(N), N.appendChild(n("animationTime", 0, "Shorter", 5, "Longer", .05));
+        N.className = "bim-groupbox-content", C.appendChild(N), N.appendChild(n("animationTime", 0, "短", 5, "长", .05));
         var E = document.createElement("div");
         E.className = "bim-groupbox", E.setAttribute("data-bind", 'css: {"bim-settings-show" : advancedVisible, "bim-settings-hide" : !advancedVisible}'), o.appendChild(E);
         var A = document.createElement("div");
         A.className = "bim-groupbox-header", A.setAttribute("data-bind", "click: toggleAdvanced, attr: {title: advancedTitle}");
         var S = document.createElement("span");
-        S.className = "bim-expand-collapse-icon", A.appendChild(S), A.appendChild(document.createTextNode("Advanced")), E.appendChild(A);
+        S.className = "bim-expand-collapse-icon", A.appendChild(S), A.appendChild(document.createTextNode("高级设置")), E.appendChild(A);
         var P = document.createElement("div");
         P.className = "bim-groupbox-content", E.appendChild(P);
         var O = document.createElement("div");
         P.appendChild(O);
         var _ = document.createElement("input");
-        _.type = "checkbox", _.setAttribute("data-bind", "checked: boundingVolumes, click: showBoundingVolumes"), O.appendChild(_), O.appendChild(document.createTextNode("Bounding volumes"));
+        _.type = "checkbox", _.setAttribute("data-bind", "checked: boundingVolumes, click: showBoundingVolumes"), O.appendChild(_), O.appendChild(document.createTextNode("边界卷"));
         var I = document.createElement("div");
         P.appendChild(I);
         var B = document.createElement("input");
-        B.type = "checkbox", B.setAttribute("data-bind", "checked: freezeFrame, click: debugFreezeFrame"), I.appendChild(B), I.appendChild(document.createTextNode("Freeze LOD"));
+        B.type = "checkbox", B.setAttribute("data-bind", "checked: freezeFrame, click: debugFreezeFrame"), I.appendChild(B), I.appendChild(document.createTextNode("冻结"));
         var k = document.createElement("div");
         P.appendChild(k);
         var V = document.createElement("input");
-        V.type = "checkbox", V.setAttribute("data-bind", "checked: inspectorVisible, click: toggleInspector"), k.appendChild(V), k.appendChild(document.createTextNode("Inspect"));
+        V.type = "checkbox", V.setAttribute("data-bind", "checked: inspectorVisible, click: toggleInspector"), k.appendChild(V), k.appendChild(document.createTextNode("控制台"));
         var z = document.createElement("div");
         P.appendChild(z);
         var F = document.createElement("input");
-        F.type = "checkbox", F.setAttribute("data-bind", "checked: performance, click: showPerformance"), z.appendChild(F), z.appendChild(document.createTextNode("Track FPS")), P.appendChild(r), Cesium.knockout.applyBindings(i, this._element)
+        F.type = "checkbox", F.setAttribute("data-bind", "checked: performance, click: showPerformance"), z.appendChild(F), z.appendChild(document.createTextNode("fps显示")), P.appendChild(r), Cesium.knockout.applyBindings(i, this._element)
     }
     return t.prototype.turnCameraOn = function () {
         var t = e.walkCameraAngle * (Math.PI / 180),

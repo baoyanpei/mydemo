@@ -81433,7 +81433,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             l(e && n.enabled)
           }
         }), this.tooltip = void 0, o.defineProperty(this, "tooltip", function () {
-          return this.isFullscreenEnabled ? i() ? "Exit full screen" : "Full screen" : "Full screen unavailable"
+          return this.isFullscreenEnabled ? i() ? "退出全屏" : "全屏" : "不允许全屏"
         }), this._command = a(function () {
           n.fullscreen ? n.exitFullscreen() : n.requestFullscreen(r._fullscreenElement)
         }, o.getObservable(this, "isFullscreenEnabled")), this._fullscreenElement = e(s(t), document.body), this._callback = function () {
