@@ -5,7 +5,33 @@
 <template>
   <div id="model-lot-setting" class="model-lot-setting" style="margin: 0px;">
     <div id="viewer-local"></div>
+    <div v-if="isShowViewPointArea" class="viewPointShowArea">
+      <div class="viewPointTitle">
+        <div class="title">
+          <span>物联网设备管理</span>
+        </div>
+        <el-button type="danger" class="btn-close-view-point" @click="exitEditModeHandle" size="small"
+          style="width:130px;">
+          <font-awesome-icon icon="times-circle" style="font-size: 12px;" />&nbsp;&nbsp;&nbsp;&nbsp;关&nbsp;&nbsp;&nbsp;闭
+        </el-button>
+      </div>
+    </div>
+    <div v-if="isShowToolbarMarker" class="toolbar-marker">
+      <el-button class="marker-button" title="新增">
+        <font-awesome-icon :icon="['far','plus-square']" @click="showSaveViewsPointHandle(1)" />
+      </el-button>
+      <el-button class="marker-button" title="保存">
+        <font-awesome-icon v-if="isSaveViewValid === true" :icon="['far','save']"
+          @click="showSaveViewsPointHandle(0)" />
+        <font-awesome-icon v-if="isSaveViewValid === false" style="color:grey;" :icon="['far','save']" />
+      </el-button>
+      <hr />
+      <el-button class="marker-button" title="构件库">
+        <font-awesome-icon icon="layer-group" @click="openComponentLibraryDialogHandle" />
+      </el-button>
 
+
+    </div>
     <!--物联网设备列表dialog-->
     <LotListDialog></LotListDialog>
   </div>
@@ -66,7 +92,10 @@
           // consolidationMemoryLimit: 15000 * 1024 * 1024 // 150MB - Optional, defaults to 100MB
         },
         // MarkupsCore: null,
-
+        isSaveViewValid: false, // 保存视点的按钮是否有效
+        ControlLotManager: null,
+        isShowViewPointArea: false,
+        isShowToolbarMarker: false,
         saveStatus: null,
         selectedDbId: [], // 选择的构件id
         loadedModels: [],
@@ -98,6 +127,7 @@
           // if (newVal.type === 1) {
           //   this.refreshDisplay(newVal)
           // }
+          this.AddComponentData(newVal)
 
         },
         deep: true
@@ -110,8 +140,8 @@
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
       this.project_id = parseInt(__PROJECT_ID)
       this.init()
-      this.openComponentLibraryDialogHandle()
-      this.openLotListDialogHandle()
+      // this.openComponentLibraryDialogHandle()
+      // this.openLotListDialogHandle()
     },
     beforeDestroy() {},
     destroyed() {},
@@ -281,6 +311,7 @@
               }
               this.saveStatus = JSON.stringify(this.viewer.getState());
 
+              this.addLotToolBar()
             }
             resolve(index)
           }, this.onLoadError);
@@ -335,7 +366,7 @@
         //   })
       },
       openComponentLibraryDialogHandle() {
-        // 打开视角管理窗口
+        // 打开构件列表窗口
         const param = {
           show: true,
         }
@@ -343,12 +374,65 @@
         this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
       },
       openLotListDialogHandle() {
-        // 打开视角管理窗口
+        // 打开物联网管理窗口
         const param = {
           show: true,
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotListDialog', param).then(() => {}).catch(() => {})
+      },
+      AddComponentData(item) {
+
+        let url = item.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/')
+        console.log('url', url)
+        this.loadModel(url, item, 99)
+      },
+      addLotToolBar() {
+
+        // 标注功能 - 普通标注视点
+        let buttonEnterLotMode = new Autodesk.Viewing.UI.Button('enter-add-lot-button')
+        buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
+
+        buttonEnterLotMode.onClick = (e) => {
+          this.enterEditModeHandle()
+        }
+        buttonEnterLotMode.addClass('enter-add-lot-button')
+        buttonEnterLotMode.setToolTip('添加物联网设备')
+
+
+        // 标注功能 - 标定项目位置标准视点
+        let buttonLotListDialog = new Autodesk.Viewing.UI.Button('lot-list-dialog-button')
+        buttonLotListDialog.addClass('lot-list-dialog-button')
+        buttonLotListDialog.setToolTip('物联网设备列表')
+        buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
+        buttonLotListDialog.onClick = (e) => {
+          this.openLotListDialogHandle()
+        }
+        // SubToolbar
+        this.ControlLotManager = new Autodesk.Viewing.UI.ControlGroup('my-view-point-toolbar')
+        this.ControlLotManager.addControl(buttonEnterLotMode)
+        this.ControlLotManager.addControl(buttonLotListDialog)
+
+        // Add subToolbar to main toolbar
+        this.viewer.toolbar.addControl(this.ControlLotManager)
+
+      },
+      enterEditModeHandle() { // 进入编辑模式
+        this.viewer.toolbar.removeControl(this.ControlLotManager)
+        this.isShowViewPointArea = true
+        this.isShowToolbarMarker = true
+        this.$store.dispatch('SetViewPointEditMode', {
+          isEditMode: true
+        }).then(() => {})
+      },
+      exitEditModeHandle() { // 退出编辑模式
+        this.viewer.toolbar.addControl(this.ControlLotManager)
+        this.isShowViewPointArea = false
+        this.isShowToolbarMarker = false
+        this.$store.dispatch('SetViewPointEditMode', {
+          isEditMode: false
+        }).then(() => {})
+
       },
     }
   }
