@@ -147,7 +147,7 @@ define("scripts/App/main", ["../Bentley/Util/requestJson", "./ToolId", "./ToolFa
       };
       return extents, r.bimDescription = {
         categories: {
-          1: "Uncategorized"
+          1: "未分类"
         },
         categorySelectors: {
           1: ["1"]
