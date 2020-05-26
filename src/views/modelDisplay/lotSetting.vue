@@ -12,7 +12,6 @@
 </template>
 
 <script>
-
   // 构件库列表
   import LotListDialog from '@/views/modelDisplay/lotListDialog'
 
@@ -85,12 +84,24 @@
       personInfo() {
         return this.$store.state.person.personInfo
       },
+      ComponentDataAdd() {
+        return this.$store.state.componentLibrary.ComponentDataAdd
+      }
     },
     created() {
 
     },
     watch: {
+      ComponentDataAdd: {
+        handler: function (newVal, oldVal) {
+          console.log('ComponentDataAdd ', newVal)
+          // if (newVal.type === 1) {
+          //   this.refreshDisplay(newVal)
+          // }
 
+        },
+        deep: true
+      }
     },
     async mounted() {
 
@@ -214,12 +225,12 @@
           Autodesk.Viewing.Initializer(this.options, async () => {
             this.element = document.getElementById('viewer-local');
             this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
-            
+
             this.viewer.addEventListener(
               Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
               this.onLoadedEvent
             );
-            
+
 
             var startedCode = this.viewer.start();
             if (startedCode > 0) {
@@ -269,7 +280,7 @@
                 this.viewer.overlays.addScene('custom-scene-1');
               }
               this.saveStatus = JSON.stringify(this.viewer.getState());
-              
+
             }
             resolve(index)
           }, this.onLoadError);
@@ -280,8 +291,8 @@
 
       initEvent() {
         this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
-          
-          
+
+
         })
       },
       onLoadError(event) {

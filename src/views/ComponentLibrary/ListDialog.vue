@@ -21,7 +21,7 @@
           <el-col :span="12" style="padding-left:5px;">
             <el-row :gutter="24">
               <div class="grid-content info-title">
-                <span class="info-title-link" >{{item.name}}</span>
+                <span class="info-title-link">{{item.name}}</span>
               </div>
             </el-row>
 
@@ -126,7 +126,15 @@
       },
       addCompnentHander(item) {
         console.log('addCompnentHander', item)
-        
+        let param = item
+        this.$store.dispatch('SetComponentDataAdd', param).then((result) => {
+          // this.$message({
+          //   message: '视点保存成功！',
+          //   type: 'success'
+          // })
+          // this.loadingSaveViewPoint = false
+          // this.closeSaveDialogHandle()
+        })
 
       }
     }
