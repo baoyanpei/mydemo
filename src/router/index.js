@@ -129,6 +129,16 @@ export const constantRouterMap = [{
         }
       },
       {
+        path: 'carstatistical',
+        component: () => import('@/views/carstatistical/index'),
+        name: 'carstatistical',
+        meta: {
+          title: 'carstatistical',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
         path: 'tjfx',
         component: () => import('@/views/tjfx/index'),
         name: 'tjfx',

@@ -5,7 +5,9 @@
     <title>Title</title>
 </head>
 <body>
-<input type="button" value="点击" onclick="aaa()">
+<!--<img src="http://w.yidebim.com:8899/veh_pic/10004//%E7%94%98E12972_6386_20200414221951.jpg" id="testImg" alt="" style="width: 500px;height: 300px;">-->
+     <img src="http://w.yidebim.com:8899/veh_pic/10004//%E7%94%98E12972_6386_20200414221951.jpg" alt="" style="width: 500px;height: 300px;">
+      <input type="button" value="点击" onclick="tpdolownd()">
 </body>
 </html>
 <script>
@@ -27,6 +29,18 @@
     console.log(starttime)
     console.log(endtime)
   }
+function tpdolownd(){
+          let url="http://w.yidebim.com:8899/veh_pic/10004//%E7%94%98E12972_6386_20200414221951.jpg"
+          let link = document.createElement('a')
+          link.href=url
+          link.setAttribute("download","照片.jpg")
+          document.body.appendChild(link)
+          link.click()
+}
+
+  let xxx="111"
+  let bbb="222"
+  console.log(xxx==bbb)
   // console.log(year,month,date)
   // console.log(hour,minu,sec)
 </script>

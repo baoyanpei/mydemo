@@ -206,7 +206,7 @@
     </div>
   </div>
   <div class="rili">
-    <full-calendar :config="config" :events="events"></full-calendar>
+    <full-calendar :config="config" @event-selected="eventClick()" :events="events"></full-calendar>
   </div>
 </div>
 </template>
@@ -380,10 +380,23 @@
         this.getcategory()
         this.gettype()
         this.getmodel()
+        this.getpersonlist()
         // this.getdidian()
       },
       closedialog(){
         this.dingshow=false
+        this.textarea=""
+        this.gettypearr=null
+        this.leibieoptions=null
+        this.building=null
+        this.didianarr=null
+        this.beizhuinput=""
+        this.fabu_people=[]
+        this.fileList=[]
+        this.zhongyaoxing=null
+      },
+      eventClick(event){
+        console.log("日历点击成功",event)
       },
       jinjianclick(){//精简条件显示开关
         this.jinjianshow=!this.jinjianshow
@@ -471,9 +484,10 @@
               }
             }
             this.building=aaa
+             console.log("建筑列表",this.building)
           })
       },
-      getdidian(){
+      getdidian(){//地点     建筑---地点
         return new Promise((resolve, reject) => {
           const param = {
             method:'GetViewpointsByFileId',
@@ -668,7 +682,7 @@
       // console.log(this.currpage)
       this.allpersondata()
         // this.secondpage()
-    },
+      },
       startchange(index){//改变星级
         console.log("改变星级别",index)
         this.fabustartvalue=index
@@ -719,24 +733,16 @@
         page:this.currpage
       }
       this.$store.dispatch('Allpersondata', _param).then((data) => {
-        // console.log("第一接口返回成功")
+        console.log("第一接口返回成功",data)
         console.log('第一接口数据Allpersondata',data.data)
+        console.log("++++",this.events)
         this.getpersonlist()
         this.infonum=data.count
         this.bannertitle="任务大厅("+data.count+")"
         this.boxinfo=[]
         this.boxinfo1=[]
         this.boxinfo=data.data
-        //遍历添加到日历中去
-        for (let i=0;i<this.boxinfo.length;i++){
-          // console.log("日历",this.boxinfo[i].created)
-          this.events.push({
-          title: this.boxinfo[i].title, // 事件内容
-          start: this.boxinfo[i].created, // 事件开始时间
-          end: this.boxinfo[i].created, // 事件结束时间
-          color: 'rgba(9, 9, 9, 0.2)' // 事件的显示颜色
-          })
-        }
+        this.events=[]
         //事件监听flowid,判断任务类型
         this.boxinfo.forEach(item=>{
           if(item.flowId==="Meeting01"){
@@ -761,7 +767,13 @@
         //页面刷新自动去第一页
         this.secondpage()
       })
+      // console.log("this.boxinfo0000000000000000000000",this.boxinfo1)
+      // this.tasktallrili()
     },
+      tasktallrili(){
+        console.log("任务大厅日历",this.events)
+        console.log("任务大厅",this.boxinfo)
+      },
       handleNameClick(row) {//人物名字
         console.log("人物列表",this.projectPersonList)
         this.projectPersonList.forEach(item=>{
@@ -793,7 +805,6 @@
       this.$store.dispatch('Allpersondata', _param).then((data) => {
          // console.log("第二接口返回成功",data.data)
         this.listbox=data.data
-        // console.log("第二接口数据",this.listbox)
         let mar1=[]
         let map1= new Map()
         for(var i in this.listbox){
@@ -850,9 +861,7 @@
           if(this.thirdinfo[item.flowId2]!=""){
            let _config = this.thirdinfo[item.flowId2]
             let _node = _config[item.getinfo]
-            // console.log('this.thirdinfo',_config,_node)
             if (_node !== undefined){
-              // console.log('--->',_node)
               item.state = _node.status
               item["statecolor"]=_node.color
             }else{
@@ -861,10 +870,82 @@
             }
             loading.close();
           }
-                                //配置结束
-          // console.log(item)
           box.push(item)
         })
+        console.log("11111111111111",this.boxinfo)
+        console.log("22222222222222",this.boxinfo1)
+        if(this.boxinfo.length==20){
+            for (let i=0;i<this.boxinfo.length;i++){//我的任务日历渲染
+          if(this.boxinfo[i].statecolor=="red"){
+            this.events.push({
+            title: this.boxinfo[i].title, // 事件内容
+            start: this.boxinfo[i].created, // 事件开始时间
+            end: this.boxinfo[i].created, // 事件结束时间
+            color: '#FF0000', // 事件的显示颜色
+              workid:12312312312312
+            })
+          }
+          if(this.boxinfo[i].statecolor=="yellow"){
+            this.events.push({
+            title: this.boxinfo[i].title, // 事件内容
+            start: this.boxinfo[i].created, // 事件开始时间
+            end: this.boxinfo[i].created, // 事件结束时间
+            color: '#9ACD32' // 事件的显示颜色
+            })
+          }
+          if(this.boxinfo[i].statecolor=="green"){
+            this.events.push({
+            title: this.boxinfo[i].title, // 事件内容
+            start: this.boxinfo[i].created, // 事件开始时间
+            end: this.boxinfo[i].created, // 事件结束时间
+            color: '#008000' // 事件的显示颜色
+            })
+          }
+          if(this.boxinfo[i].statecolor=="gray"){
+            this.events.push({
+            title: this.boxinfo[i].title, // 事件内容
+            start: this.boxinfo[i].created, // 事件开始时间
+            end: this.boxinfo[i].created, // 事件结束时间
+            color: '#BABABA' // 事件的显示颜色
+            })
+          }
+        }
+        }else {
+            for (let i=0;i<this.boxinfo.length;i++){//我的任务日历渲染
+            if(this.boxinfo[i].statecolor=="red"){
+              this.events.push({
+              title: this.boxinfo[i].title, // 事件内容
+              start: this.boxinfo[i].sendTime, // 事件开始时间
+              end: this.boxinfo[i].sendTime, // 事件结束时间
+              color: '#FF0000' // 事件的显示颜色
+              })
+            }
+            if(this.boxinfo[i].statecolor=="yellow"){
+              this.events.push({
+              title: this.boxinfo[i].title, // 事件内容
+              start: this.boxinfo[i].sendTime, // 事件开始时间
+              end: this.boxinfo[i].sendTime, // 事件结束时间
+              color: '#9ACD32' // 事件的显示颜色
+              })
+            }
+            if(this.boxinfo[i].statecolor=="green"){
+              this.events.push({
+              title: this.boxinfo[i].title, // 事件内容
+              start: this.boxinfo[i].sendTime, // 事件开始时间
+              end: this.boxinfo[i].sendTime, // 事件结束时间
+              color: '#008000' // 事件的显示颜色
+              })
+            }
+            if(this.boxinfo[i].statecolor=="gray"){
+              this.events.push({
+              title: this.boxinfo[i].title, // 事件内容
+              start: this.boxinfo[i].sendTime, // 事件开始时间
+              end: this.boxinfo[i].sendTime, // 事件结束时间
+              color: '#BABABA' // 事件的显示颜色
+              })
+            }
+          }
+        }
         this.boxinfo1 = box
       })
       },
@@ -876,7 +957,6 @@
         this.$store.dispatch('Allinfodictionary', _param).then((data) => {
           this.thirdinfo=data
           this.activeName="second"
-          this.events=[]
           console.log("第三接口",this.thirdinfo)
         })
       },
@@ -973,6 +1053,10 @@
              this.boxinfo=[]
             this.boxinfo1=[]
             this.boxinfo=data
+            this.events=[]
+            // console.log("日历提取父容器",this.boxinfo)
+            //我的任务日历
+            // console.log("我的任务日历",this.events)
             //事件监听flowid,判断任务类型
             this.boxinfo.forEach(item=>{
               if(item.flowId==="Meeting01"){

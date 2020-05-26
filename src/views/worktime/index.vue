@@ -61,9 +61,6 @@
   import {
     getGroupFromGroupsByGroupID
   } from '@/utils/project'
-  import {
-    Loading
-  } from 'element-ui';
   export default {
     components: {
       TJFXMenu
