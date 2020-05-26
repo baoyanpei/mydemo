@@ -73,6 +73,8 @@
     <!--位置视点截图保存dialog-->
     <PositionPictureSaveDialog></PositionPictureSaveDialog>
 
+    <!--构件库列表dialog-->
+    <ComponentLibraryListDialog></ComponentLibraryListDialog>
   </div>
 </template>
 
@@ -147,6 +149,9 @@
   // 交通dialog
   import useTrafficDialog from './views/components/useTrafficDialog'
 
+  // 构件库列表
+  import ComponentLibraryListDialog from './views/ComponentLibrary/ListDialog'
+
   export default {
     name: 'App',
     components: {
@@ -178,7 +183,8 @@
       worldCitysDialog,
       useTrafficDialog,
       PositonPVManageDialog,
-      PositionPictureSaveDialog
+      PositionPictureSaveDialog,
+      ComponentLibraryListDialog
     },
     directives: {
       elDragDialog

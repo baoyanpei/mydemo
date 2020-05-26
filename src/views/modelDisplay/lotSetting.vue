@@ -91,7 +91,7 @@
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
       this.project_id = parseInt(__PROJECT_ID)
       this.init()
-
+      this.openComponentLibraryDialogHandle()
     },
     beforeDestroy() {},
     destroyed() {},
@@ -314,7 +314,14 @@
 
         //   })
       },
-
+      openComponentLibraryDialogHandle() {
+        // 打开视角管理窗口
+        const param = {
+          show: true,
+        }
+        // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+        this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
+      },
       
 
       
