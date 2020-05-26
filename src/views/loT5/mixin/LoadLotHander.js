@@ -1,4 +1,5 @@
 import moment from 'moment'
+import loadJs from '@/utils/loadJs.js'
 import {
   getToken
 } from '@/utils/auth'
@@ -29,6 +30,7 @@ export default {
       noModelTip: '',
       // datumMeterMap: new Map(),
       towerHeight: 0, // 塔吊高度 28米
+      hideDbid: 0, // 需要替换的原始塔吊的id，0为不替换
       showTadiaoInfo: true,
       showShenjiangjiInfo: true,
       showWeatherInfo: true,
@@ -104,9 +106,12 @@ export default {
   created() {
 
   },
-  mounted() {
+  async mounted() {
     console.log('lot5-index-mounted')
     // this.init()
+    await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
+    console.log('./static/libs/viewer3D/viewer3D.min.js')
+    require('@/script/Viewing.Extension.MeshSelection')
 
   },
   destroyed() {},
@@ -255,8 +260,8 @@ export default {
               // this.viewer.fitToView()
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255)
             }
-
-            this.viewer.setGroundShadow(false)
+            this.viewer.setGhosting(0)
+            // this.viewer.setGroundShadow(0)
             this.viewer.setReverseZoomDirection(true) // true 滚动向前为放大
             // unloadModel(model)
 
@@ -325,17 +330,27 @@ export default {
           this.towerGroup.visible = false
           this.towerGroup.name = 'towerGroup'
           this.towerGroup.scale.set(3, 3, 3)
-          let paramsJson = JSON.parse(datum.params_json)
-          console.log('paramsJson123', paramsJson)
-          this.towerHeight = paramsJson.height
-          this.tdData.tdgd = this.towerHeight
-          this.towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z) // 红 绿
-          console.log('this.towerGroupthis.towerGroupthis.towerGroup', this.towerGroup)
-          // this.towerGroup.position.set(54, 526, -26) // 红 绿
-          modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
+          console.log('datum.params_json', datum.params_json)
+
+          if (datum.params_json !== '' && datum.params_json != null) {
+            let paramsJson = JSON.parse(datum.params_json)
+            console.log('paramsJson123', paramsJson)
+            console.log('hide_dbid', paramsJson.hide_dbid)
+            if (paramsJson.hide_dbid !== undefined) {
+              this.hideDbid = paramsJson.hide_dbid
+            }
+
+            this.towerHeight = paramsJson.height
+            this.tdData.tdgd = this.towerHeight
+            this.towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z) // 红 绿
+            console.log('this.towerGroupthis.towerGroupthis.towerGroup', this.towerGroup)
+            // this.towerGroup.position.set(54, 526, -26) // 红 绿
+            modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
+          }
 
           // this.viewer.hide(118)
           console.log('viewer123', this.viewer.overlays.impl)
+          console.log('viewer234', this.viewer)
           this.viewer.overlays.impl.addOverlay('custom-scene', this.towerGroup)
         } else if (datum.device_type === 12) { // 升降机
           // $('.divDataShenJiangJi').show()
@@ -352,7 +367,7 @@ export default {
           this.viewer.overlays.impl.addOverlay('custom-scene', this.elevatorGroup)
           // viewer.impl.scene.add(elevatorGroup);
 
-          modifyElevator(this.elevatorGroup, `E${datum.device_id}`, -91 / 3, false) //名称，高度，门的开启状态
+          modifyElevator(this.elevatorGroup, `E${datum.device_id}`, -91 / 3, false) // 名称，高度，门的开启状态
           // this.viewer.hide(118)
         } else if (datum.device_type === 100) { // 升降机轨道
           this.sectionGroup = new THREE.Group()
@@ -379,7 +394,7 @@ export default {
       // delegate the mouse click event
 
       // 在场景中通过点击添加圆圈标记
-      // $(this.viewer.container).bind('click', this.onMouseClick)
+      $(this.viewer.container).bind('click', this.onMouseClick)
 
       // delegate the event of CAMERA_CHANGE_EVENT
       this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
@@ -609,8 +624,8 @@ export default {
           y: hitTest.intersectPoint.y,
           z: hitTest.intersectPoint.z
         }
-        this.drawPushpin(_position)
-        console.log('_position', _position)
+        // this.drawPushpin(_position)
+        console.log('点击位置的坐标', _position)
       }
     },
     mqttWeather(data) {
@@ -670,14 +685,20 @@ export default {
         $("#td_xcjl").html(_data.extent) // 幅度
         $("#td_dggd").html(_data.height) // 吊钩高度
         $("#td_sbsj").html(moment(_data.created_time).format('HH:mm:ss')) // moment(_data.RTime).format('HH:mm:ss')
-        if (this.projID === 10004 || this.projID === 10018) {
+        // if (this.projID === 10004 || this.projID === 10018 || this.projID === 10019) {
+        if (this.towerHeight > 0) {
           if (this.towerGroup !== null && this.towerGroup.visible !== undefined && this.towerGroup.visible === false) {
             console.log('this.towerGroup.visible', this.towerGroup.visible)
             this.towerGroup.visible = true
             // console.log("isNodeVisible", this.viewer.isNodeVisible(118))
-            this.hideNode(118) // 隐藏一个塔吊
+            if (this.hideDbid > 0) {
+              this.hideNode(this.hideDbid) // 隐藏一个塔吊
+            }
+
           }
         }
+
+        // }
       }
     },
     mqttShenJiangJi(cmd, data) { // 升降机
@@ -752,7 +773,7 @@ export default {
       this.viewer.getProperties(_dbIds[0],
         (elements) => {
           let dbid = elements.dbId;
-          console.log('dbid', dbid)
+          console.log('被点击的构件的dbid：', dbid, elements)
         })
     },
     initPerson(obj) {

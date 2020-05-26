@@ -19,6 +19,7 @@ import bindBim from './modules/bindBim' // 绑定BIM
 import health from './modules/health' // 健康信息
 import tools from './modules/tools' // tools
 import getters from './getters'
+import componentLibrary from './modules/componentLibrary'
 
 Vue.use(Vuex)
 
@@ -41,7 +42,8 @@ const store = new Vuex.Store({
     viewPoint,
     bindBim,
     health,
-    tools
+    tools,
+    componentLibrary
   },
   getters
 })

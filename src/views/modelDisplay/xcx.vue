@@ -4,19 +4,16 @@
 </style>
 <template>
   <div class="model-display-xcx" style="margin: 0px;">
-    <div v-if="tip_message!==''" class="not-allow-now" v-html="tip_message"></div>
-    <div id="viewer-local"></div>
+    <div id="viewer-local" v-show="tip_message===''" class="viewer-local"></div>
+    <div v-if="tip_message!==''" class="tip_message" v-html="tip_message"></div>
   </div>
 </template>
 
 <script>
-  // let element = null; // document.getElementById('viewer-local');
-  // let viewer = null; //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+  import loadJs from '@/utils/loadJs.js'
   import {
     setToken
   } from '@/utils/auth'
-  //   import Cookies from 'js-cookie'
-  //   let Base64 = require('js-base64').Base64
   export default {
     directives: {},
     name: 'point-view-xcx-show',
@@ -108,7 +105,7 @@
 
     },
     mounted() {
-
+      
       console.log('this.$route', this.$route.query)
 
       const __PROJECT_ID = this.$route.query.projectid
@@ -163,14 +160,18 @@
         await this.loginByXcxToken()
 
 
-
-        // let itemIDList = [1335, 1336]
+        this.tip_message = "正在读取模型数据..."
         await this.getItemInfoListByItemIDs(this.itemIDList.join(','))
         if (this.itemInfoList.length === 0) {
           this.tip_message =
             `没有查询到相关模型数据，请核对参数<br/>projectid:${this.project_id}<br/>items:${this.itemIDList.join('|')}<br/>token:${this.access_token}`
           return
         }
+        
+        this.tip_message = '正在加载模型底层程序...'
+        await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
+        console.log('./static/libs/viewer3D/viewer3D.min.js')
+        this.tip_message = ""
         let _urlList = this.getModelUrl()
         // console.log('_urlList', _urlList)
         if (_urlList.length !== 0) {

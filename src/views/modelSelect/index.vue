@@ -66,11 +66,15 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="oper" label="操作" width="150" align="center">
+            <el-table-column prop="oper" label="操作" width="250" align="center">
               <template slot-scope="scope">
                 <el-button type="primary" size="mini"
                   v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
                   @click="handleEdit(scope.row)">查看模型
+                </el-button>
+                <el-button type="primary" size="mini"
+                  v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
+                  @click="handleLotSetting(scope.row)">物联设备配置
                 </el-button>
                 <!-- <el-button title="上传"
                   v-if="scope.row.name !== '' && scope.row.menuType ==='item' && scope.row.isShowUploadItem === true"
@@ -429,6 +433,28 @@
         }).then(() => {
           this.$router.push({
             path: '/modelDisplay',
+            // query: {
+            //   'queryData': 131
+            // }
+          })
+        }).catch(() => {})
+
+      },
+      handleLotSetting(row) {
+        console.log('rowrowrow', row)
+        let _item = {
+          ITEM_ID: row.id,
+          FILE_ID: row.file_id,
+        }
+        console.log('_item', _item);
+        Cookies.set('MODEL_DISPLAY_DATA', JSON.stringify({
+          'item_list': [_item]
+        }))
+        this.$store.dispatch('SetModelDisplayData', {
+          'item_list': [_item]
+        }).then(() => {
+          this.$router.push({
+            path: '/modelLotSetting',
             // query: {
             //   'queryData': 131
             // }

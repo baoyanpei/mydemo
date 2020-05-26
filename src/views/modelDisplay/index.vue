@@ -128,6 +128,7 @@
 <script>
   // let element = null; // document.getElementById('viewer-local');
   // let viewer = null; //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
+  import loadJs from '@/utils/loadJs.js'
   import markupTools from './components/markupTools'
   import Cookies from 'js-cookie'
   import lodash from 'lodash'
@@ -303,7 +304,10 @@
       }
 
     },
-    mounted() {
+    async mounted() {
+
+      await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
+      console.log('./static/libs/viewer3D/viewer3D.min.js')
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
       this.project_id = parseInt(__PROJECT_ID)
       this.init()

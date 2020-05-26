@@ -73,6 +73,8 @@
     <!--位置视点截图保存dialog-->
     <PositionPictureSaveDialog></PositionPictureSaveDialog>
 
+    <!--构件库列表dialog-->
+    <ComponentLibraryListDialog></ComponentLibraryListDialog>
   </div>
 </template>
 
@@ -147,6 +149,9 @@
   // 交通dialog
   import useTrafficDialog from './views/components/useTrafficDialog'
 
+  // 构件库列表
+  import ComponentLibraryListDialog from './views/ComponentLibrary/ListDialog'
+
   export default {
     name: 'App',
     components: {
@@ -178,7 +183,8 @@
       worldCitysDialog,
       useTrafficDialog,
       PositonPVManageDialog,
-      PositionPictureSaveDialog
+      PositionPictureSaveDialog,
+      ComponentLibraryListDialog
     },
     directives: {
       elDragDialog
@@ -217,7 +223,7 @@
       '$route'(to, from) {
         console.log("totototo", to)
         if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && to.name !==
-          "xcx-model-display" && this.personInfo ===
+          "xcx-model-display" && to.name !== "xcx-cesium-display" && to.name !== "xcx-cad-display" && to.name !== "xcx-sketchup-display" && this.personInfo ===
           null) {
           this.getPerson()
         }

@@ -1,0 +1,91 @@
+<!-- Copyright: (c) 2017 Bentley Systems, Incorporated. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Use correct character set. -->
+<meta charset="utf-8">
+<!-- Tell IE to use the latest, best version. -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+<title>ContextCapture Web Viewer 2.0 - Bentley Systems</title>
+<script>
+// Callback to signal that Cesium is loaded
+var isCesiumLoaded;
+function onCesiumLoaded() {
+    isCesiumLoaded = true;
+}
+</script>
+<script async src="scripts/Cesium/Cesium.js" onload="onCesiumLoaded()"></script>
+<script src="scripts/require.js"></script>
+<style>
+@import url(scripts/Cesium/Widgets/widgets.css);
+@import url(scripts/Bentley/Bentley.css);
+@import url(main.css);
+
+html, body, #cesiumDiv, #startupDiv {
+width: 100%;
+height: 100%;
+margin: 0;
+padding: 0;
+overflow: hidden;
+position: absolute;
+}
+</style>
+</head>
+<body>
+<div id="cesiumDiv"></div>
+<div id="startupDiv">
+    <div id="content" style="position: relative; top: 50%; transform: translateY(-50%)">
+        <p id="message" style="text-align:center; font-family:'Open Sans',sans-serif">Please be patient while ContextCapture Web Viewer 2.0 is being loaded.</p>
+        <img id="loading" src="resources/loading.gif" style="display:block; margin-left:auto; margin-right:auto">
+        <img src="resources/logoBentley.png" style="display:block; margin-left:auto; margin-right:auto">
+    </div>
+</div>
+<script>
+
+var cesiumDiv = document.getElementById('cesiumDiv');
+cesiumDiv.style.display = 'none';
+var startupDiv = document.getElementById('startupDiv');
+
+// Check every 50 ms whether Cesium is loaded or not
+function waitUntilCesiumLoaded(callback) {
+    if (typeof(isCesiumLoaded) == "undefined")
+        window.setTimeout(function() { waitUntilCesiumLoaded(callback); }, 50);
+    else
+        callback();
+}
+
+// Callback to handle errors and success
+var callback = function(userError, detailedError) {
+    if (Cesium.defined(userError)) {
+        var message = userError;
+        if (typeof(detailedError) == 'string') {
+            message = message.concat(': ', detailedError);
+        }
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('message').textContent = message;
+
+    } else {
+        startupDiv.style.display = 'none';
+        cesiumDiv.style.display = 'block';
+    }
+};
+
+// Wait until Cesium is loaded
+waitUntilCesiumLoaded(function() {
+
+    // Make sure that the requirejs config is loaded before using it
+    requirejs(['scripts/index'], function() {
+
+        // Load the main script and run it
+        requirejs(['scripts/App/App'], function(App) {
+
+            App.main.run('cesiumDiv', callback);
+        });
+    });
+});
+
+</script>
+</body>
+</html>

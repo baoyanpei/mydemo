@@ -314,6 +314,78 @@ export const constantRouterMap = [{
     }]
   },
   {
+    path: '/modelLotSetting',
+    name: 'modelLotSetting',
+    component: Layout2,
+    redirect: '/modelLotSetting/index',
+    children: [{
+      path: 'index/:pid?/:flist?', //pid:projectid,flist:floorlist
+      component: () => import('@/views/modelDisplay/lotSetting'),
+      name: 'model-lot-setting',
+      meta: {
+        title: 'BIM模型 物联网设置',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
+    path: '/cesiumSelect',
+    name: 'cesiumSelect',
+    component: Layout,
+    redirect: '/cesiumSelect/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/cesiumSelect/index'),
+      name: 'cesium-select-index',
+      meta: {
+        title: '选择倾斜摄影',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
+    path: '/cadSelect',
+    name: 'cadSelect',
+    component: Layout,
+    redirect: '/cadSelect/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/cadSelect/index'),
+      name: 'cad-select-index',
+      meta: {
+        title: '选择CAD',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
+    path: '/sketchupSelect',
+    name: 'sketchupSelect',
+    component: Layout,
+    redirect: '/sketchupSelect/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/sketchupSelect/index'),
+      name: 'sketchup-select-index',
+      meta: {
+        title: '选择sketchup',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
     path: '/xcx',
     name: 'xcx',
     component: Layout3,
@@ -335,6 +407,42 @@ export const constantRouterMap = [{
         name: 'xcx-model-display',
         meta: {
           title: 'BIM模型查看(小程序)',
+          icon: 'building',
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+        }
+      },
+      {
+        path: 'cesium',
+        component: () => import('@/views/cesiumDisplay/xcx'),
+        name: 'xcx-cesium-display',
+        meta: {
+          title: '倾斜摄影查看(小程序)',
+          icon: 'building',
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+        }
+      },
+      {
+        path: 'cad',
+        component: () => import('@/views/cadDisplay/xcx'),
+        name: 'xcx-cad-display',
+        meta: {
+          title: 'CAD查看(小程序)',
+          icon: 'building',
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          // CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+        }
+      },
+      {
+        path: 'sketchup',
+        component: () => import('@/views/sketchupDisplay/xcx'),
+        name: 'xcx-sketchup-display',
+        meta: {
+          title: 'sketchup查看(小程序)',
           icon: 'building',
           noCache: true,
           requireAuth: false, // 是否需要信息验证

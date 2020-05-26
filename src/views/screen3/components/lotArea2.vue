@@ -19,7 +19,7 @@
 <script>
   import LoadLotMixin from '../../loT5/mixin/LoadLotHander'
 
-  import '../../loT5/Viewing.Extension.MeshSelection'
+  // import '../../loT5/Viewing.Extension.MeshSelection'
 
   import mqttBim from "../../loT5/components/mqttBim"
   import mqttLocation from "../../loT5/components/mqttLocation"

@@ -55,7 +55,7 @@
 <script>
   import LoadLotMixin from './mixin/LoadLotHander'
 
-  import './Viewing.Extension.MeshSelection'
+  // import './Viewing.Extension.MeshSelection'
 
   import mqttBim from "./components/mqttBim"
   import mqttLocation from "./components/mqttLocation"

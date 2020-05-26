@@ -1,0 +1,90 @@
+.project-cad-select-index {
+  // height: calc(100vh - 48px);
+  position: relative;
+  min-width: 1000px;
+
+  .not-bind-bim {
+    font-size: 30px;
+    // line-height: 200px;
+    margin: 150px 0px 0px 0px;
+    text-align: center;
+
+    .btn-bind-bim {
+      margin: 30px 0px 0px 0px;
+    }
+  }
+
+  .el-tree-node__label {
+    font-size: 14px;
+  }
+
+  .el-tree-node__content {
+    height: 28px;
+  }
+
+  .small_cicle {
+    padding: 5px 5px;
+    border-radius: 20px;
+  }
+
+  .btn-blue {
+    background-color: #3a98db;
+    color: white;
+  }
+
+  .el-tree {
+    width: 100%;
+    // overflow-x: scroll;
+    height: calc(100vh - 75px);
+  }
+
+  .el-table {
+    height: calc(100vh - 120px) !important;
+  }
+
+  .el-tree>.el-tree-node {
+    display: inline-block !important;
+  }
+
+  .tree-area {
+    width: 300px;
+
+    // top:48px;
+    background-color: #ffffff;
+    overflow: auto;
+    position: absolute;
+    z-index: 20;
+    float: left;
+    padding: 20px 10px 0px 10px;
+  }
+
+  .list-area {
+    height: calc(100vh - 48px);
+    width: 100%;
+    position: absolute;
+    // padding-left: 300px;
+    z-index: 10;
+    float: left;
+
+    .list-main {
+      // height: 100%;
+      background-color: #ffffff;
+      margin-top: 10px;
+      margin-left: 20px;
+      margin-right: 20px;
+      padding: 20px 20px 10px 20px;
+    }
+
+    .status-display-danger {
+      color: red;
+    }
+
+    .status-display-success {
+      color: #67C23A;
+    }
+
+    .status-display-warning {
+      color: #E6A23C;
+    }
+  }
+}

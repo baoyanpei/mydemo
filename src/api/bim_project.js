@@ -290,3 +290,48 @@ export function setOutsysInfo(data) {
     // baseURL: 'http://admin.yidebim.com1'
   })
 }
+
+
+
+// 4.16 项目模型文件列表
+/*
+
+http://git.buskey.cn/hanxiang/yide-smz/issues/4
+
+对应模型文件列表
+
+api:/api/bim/bcp
+method:"project_files"
+参数：
+project_id 项目id
+file_type: 1:rvt 2:cad,3:sketup 4:倾斜摄影
+可选参数
+file_ids:[] 文件ID 列表
+cid 目录分类id （默认0）根目录
+page:(1）
+limit：1000
+返回：
+{
+    "count": 1,
+    "data": [{
+        "file_size": 217641,
+        "id": 200326,
+        "label": "庆阳倾斜模型202005",
+        "remark": "",
+        "upload_time": "2020-05-09 11:19:24",
+        "url": "/BCP_FILE/10000/200326/Production.json"
+    }],
+    "msg": "",
+    "page": 1,
+    "status": "success"
+}
+*/
+export function getProjectFiles(data) {
+  // console.log("api", data)
+  return request({
+    url: '/api/bim/bcp',
+    method: 'post',
+    data: data,
+    // baseURL: 'http://admin.yidebim.com'
+  })
+}
