@@ -5,10 +5,17 @@
 <template>
   <div id="model-lot-setting" class="model-lot-setting" style="margin: 0px;">
     <div id="viewer-local"></div>
+
+    <!--物联网设备列表dialog-->
+    <LotListDialog></LotListDialog>
   </div>
 </template>
 
 <script>
+
+  // 构件库列表
+  import LotListDialog from '@/views/modelDisplay/lotListDialog'
+
   import loadJs from '@/utils/loadJs.js'
   import Cookies from 'js-cookie'
   import lodash from 'lodash'
@@ -17,6 +24,7 @@
   export default {
     name: 'model-lot-setting',
     components: {
+      LotListDialog
     },
     data() {
       return {
@@ -92,6 +100,7 @@
       this.project_id = parseInt(__PROJECT_ID)
       this.init()
       this.openComponentLibraryDialogHandle()
+      this.openLotListDialogHandle()
     },
     beforeDestroy() {},
     destroyed() {},
@@ -322,9 +331,14 @@
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
       },
-      
-
-      
+      openLotListDialogHandle() {
+        // 打开视角管理窗口
+        const param = {
+          show: true,
+        }
+        // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+        this.$store.dispatch('ShowLotListDialog', param).then(() => {}).catch(() => {})
+      },
     }
   }
 

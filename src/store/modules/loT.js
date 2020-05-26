@@ -7,13 +7,24 @@ const loT = {
       refresh: 0,
       show: false,
       data: {}
-    }
+    },
+    LotListDialog: { // 列表窗口
+      refresh: 0,
+      show: false,
+      data: {}
+    },
   },
   mutations: {
     SET_VEDIO_DIALOG: (state, data) => {
       state.VideoDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.VideoDialog.refresh = genRandom(1, 1000)
+    },
+    SHOW_LOT_LIST_DIALOG: (state, data) => {
+      state.LotListDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.LotListDialog.refresh = genRandom(1, 1000)
+      console.log('----->', state.LotListDialog)
     }
   },
   actions: {
@@ -30,7 +41,17 @@ const loT = {
           resolve()
         }
       })
-    }
+    },
+    ShowLotListDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_LOT_LIST_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
   }
 }
 

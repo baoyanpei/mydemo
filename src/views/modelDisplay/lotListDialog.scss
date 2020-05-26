@@ -1,0 +1,24 @@
+.lot-list-dialog {
+
+  .el-dialog__wrapper {
+    padding-right: calc(70vw) !important;
+    pointer-events: none;
+  }
+
+  .tip-message {
+    text-align: center;
+    // height: calc(100vh - 1px);
+    padding: 50px 20px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .component-library-list {
+
+    overflow: auto;
+    // height: 100%;
+    height: calc(100vh - 240px);
+    background-color: #f2f2f2;
+    padding: 10px 0px 0px 0px;
+  }
+}
