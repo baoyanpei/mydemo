@@ -99,7 +99,9 @@
         loading: false,
         carcolor:[],//汽车颜色
         worktimeForm: {
-          InoutDaterange: [], // 时间范围
+          InoutDaterange: [
+            new Date(), new Date()
+          ], // 时间范围
         },
         optionGroups: [],
         tableData: [{
@@ -127,12 +129,14 @@
       project_id(curVal, oldVal) {
         if (curVal !== null) {
           this.inoutcarquery()
+          this.getcolor()
         }
       },
     },
     mounted() {
       if (this.project_id !== null) {
         this.inoutcarquery()
+        this.getcolor()
       }
     },
     methods:{
@@ -140,7 +144,7 @@
         },
       groupChangeHandle(e) {
       },
-      handleSubmit() {
+      handleSubmit() {//查询按钮
         // console.log(11111111,this.carcolor)
         this.loading = true
         const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
@@ -151,8 +155,33 @@
       handleCurrentChange(val) {
         this.currentRow = val;
       },
+      getcolor(){//获取颜色
+        const param = {
+          method: 'query_vehicle_logs',
+          project_id: this.project_id,
+          limit_row:10000
+        }
+        this.$store.dispatch('Inoutcarquery', param).then((data) => {
+          console.log("获取颜色",data)
+          this.tableData=data.data
+          let arr=[]
+          this.optionGroups=[]
+          for(let i=0;i<this.tableData.length;i++){
+              arr.push(this.tableData[i].lisence_type)
+          }
+          for(let j=0;j<arr.length;j++){
+            if(this.optionGroups.indexOf(arr[j])==-1){
+              this.optionGroups.push(arr[j])
+            }
+          }
+          for(let i=0;i<this.optionGroups.length;i++){
+            this.optionGroups.splice(i,1,{label:this.optionGroups[i],value:i})
+          }
+        })
+      },
       inoutcarquery(sTime, eTime){
-        if(this.carcolor.length!==0){
+        console.log("车辆颜色",this.carcolor.length,sTime)
+        if(this.carcolor.length!==0){//有颜色
           const param = {
             method: 'query_vehicle_logs',
             project_id: this.project_id,
@@ -165,6 +194,9 @@
             this.table2=data.data
             let num=this.carcolor[0]
             let newcararr=[]
+            this.tableData.forEach(item=>{//序号
+                  item["carnum"]=(this.tableData.indexOf(item) + 1)
+                })
             for(let i=0;i<this.tableData.length;i++){
               if(this.tableData[i].lisence_type==this.optionGroups[num].label){
                 newcararr.push(this.tableData[i])
@@ -172,43 +204,31 @@
             }
             this.tableData=newcararr
           })
-        }
-        console.log('执行函数',sTime, eTime)
-        const param = {
-            method: 'query_vehicle_logs',
-            project_id: this.project_id,
-            bt:sTime,
-            et:eTime,
-            limit_row:10000
-          }
-          this.$store.dispatch('Inoutcarquery', param).then((data) => {
-            console.log(data)
-            this.tableData=data.data
-            this.tableData.forEach(item=>{
-              item["carnum"]=(this.tableData.indexOf(item) + 1)
-            })
-            this.table2=data.data
-            let arr=[]
-            this.optionGroups=[]
-            for(let i=0;i<this.tableData.length;i++){
-                arr.push(this.tableData[i].lisence_type)
-            }
-            for(let j=0;j<arr.length;j++){
-              if(this.optionGroups.indexOf(arr[j])==-1){
-                this.optionGroups.push(arr[j])
+        }else {
+            console.log('执行函数',sTime, eTime)
+            const param = {
+                method: 'query_vehicle_logs',
+                project_id: this.project_id,
+                bt:sTime,
+                et:eTime,
+                limit_row:10000
               }
-            }
-            for(let i=0;i<this.optionGroups.length;i++){
-              this.optionGroups.splice(i,1,{label:this.optionGroups[i],value:i})
-            }
-          })
+              this.$store.dispatch('Inoutcarquery', param).then((data) => {
+                console.log(data)
+                this.tableData=data.data
+                this.tableData.forEach(item=>{//序号
+                  item["carnum"]=(this.tableData.indexOf(item) + 1)
+                })
+                this.table2=data.data//备用列表
+              })
+        }
       },
       previewtp(e){//车辆图片预览
         window.open(e.pic)//?t=download
       },
       downloadtp(e) {//车辆图片下载
-        console.log(e)
         let url=e.pic
+        url=url.replace("http://w.yidebim.com:8899/","")
         this.downloadIamge(url, 'pic')
       },
       downloadIamge(imgsrc, name) {//下载图片地址和图片名

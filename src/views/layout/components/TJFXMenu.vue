@@ -10,7 +10,7 @@
           <span slot="title">考勤统计</span>
         </el-menu-item>
         <el-menu-item index="/carstatistical">
-          <font-awesome-icon  icon="chart-line" class="fa-icon"/>
+          <i class="el-icon-truck"></i>
           <span slot="title">车辆进出厂统计</span>
         </el-menu-item>
         <el-menu-item index="/tjfx">

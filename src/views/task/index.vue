@@ -872,8 +872,6 @@
           }
           box.push(item)
         })
-        console.log("11111111111111",this.boxinfo)
-        console.log("22222222222222",this.boxinfo1)
         if(this.boxinfo.length==20){
             for (let i=0;i<this.boxinfo.length;i++){//我的任务日历渲染
           if(this.boxinfo[i].statecolor=="red"){
@@ -882,7 +880,6 @@
             start: this.boxinfo[i].created, // 事件开始时间
             end: this.boxinfo[i].created, // 事件结束时间
             color: '#FF0000', // 事件的显示颜色
-              workid:12312312312312
             })
           }
           if(this.boxinfo[i].statecolor=="yellow"){
