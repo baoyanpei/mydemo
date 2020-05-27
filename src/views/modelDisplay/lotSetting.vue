@@ -18,11 +18,11 @@
     </div>
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
       <el-button class="marker-button" title="新增">
-        <font-awesome-icon :icon="['far','plus-square']" @click="showSaveViewsPointHandle(1)" />
+        <font-awesome-icon :icon="['far','plus-square']" @click="openLotInfoDetailDialogHandle(1)" />
       </el-button>
       <el-button class="marker-button" title="保存">
         <font-awesome-icon v-if="isSaveViewValid === true" :icon="['far','save']"
-          @click="showSaveViewsPointHandle(0)" />
+          @click="openLotInfoDetailDialogHandle(0)" />
         <font-awesome-icon v-if="isSaveViewValid === false" style="color:grey;" :icon="['far','save']" />
       </el-button>
 
@@ -40,6 +40,8 @@
     <LotListDialog></LotListDialog>
     <!--物联网设备位置dialog-->
     <LotPositionDialog></LotPositionDialog>
+    <!--物联网设备信息dialog-->
+    <LotInfoDetailDIalog></LotInfoDetailDIalog>
   </div>
 </template>
 
@@ -48,6 +50,8 @@
   import LotListDialog from '@/views/modelDisplay/lotListDialog'
 
   import LotPositionDialog from '@/views/modelDisplay/lotPositionDialog'
+
+  import LotInfoDetailDIalog from '@/views/modelDisplay/lotInfoDetailDIalog'
 
   import loadJs from '@/utils/loadJs.js'
   import Cookies from 'js-cookie'
@@ -58,7 +62,8 @@
     name: 'model-lot-setting',
     components: {
       LotListDialog,
-      LotPositionDialog
+      LotPositionDialog,
+      LotInfoDetailDIalog
     },
     data() {
       return {
@@ -450,6 +455,14 @@
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotPositionDialog', param).then(() => {}).catch(() => {})
+      },
+      openLotInfoDetailDialogHandle() {
+        // 打开物联网信息编辑窗口
+        const param = {
+          show: true,
+        }
+        // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+        this.$store.dispatch('ShowLotInfoDetailDialog', param).then(() => {}).catch(() => {})
       },
       AddComponentData(item) {
 
