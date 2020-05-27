@@ -11,23 +11,26 @@
       <el-form ref="lotPositionForm" :model="lotPositionForm" label-width="80px" :inline="true">
         <div style="font-size: 20px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;">平移</div>
         <el-form-item label="X轴方向">
-          <el-input-number v-model="lotPositionForm.globalOffset.x" @blur="blurPositionXHandle"></el-input-number>
+          <el-input-number v-model="lotPositionForm.globalOffset.x" @change="lotPositionHandle('position_x')">
+          </el-input-number>
         </el-form-item>
         <el-form-item label="Y轴方向">
-          <el-input-number v-model="lotPositionForm.globalOffset.y" @blur="blurPositionXHandle"></el-input-number>
+          <el-input-number v-model="lotPositionForm.globalOffset.y" @change="lotPositionHandle('position_y')">
+          </el-input-number>
         </el-form-item>
         <el-form-item label="Z轴方向">
-          <el-input-number v-model="lotPositionForm.globalOffset.z" @blur="blurPositionXHandle"></el-input-number>
+          <el-input-number v-model="lotPositionForm.globalOffset.z" @change="lotPositionHandle('position_z')">
+          </el-input-number>
         </el-form-item>
         <div style="font-size: 20px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;">旋转</div>
         <el-form-item label="X轴方向">
-          <el-input-number v-model="lotPositionForm.rotate.x" @blur="blurPositionXHandle"></el-input-number>
+          <el-input-number v-model="lotPositionForm.rotate.x" @change="lotPositionHandle('rotate_x')"></el-input-number>
         </el-form-item>
         <el-form-item label="Y轴方向">
-          <el-input-number v-model="lotPositionForm.rotate.y" @blur="blurPositionXHandle"></el-input-number>
+          <el-input-number v-model="lotPositionForm.rotate.y" @change="lotPositionHandle('rotate_y')"></el-input-number>
         </el-form-item>
         <el-form-item label="Z轴方向">
-          <el-input-number v-model="lotPositionForm.rotate.z" @blur="blurPositionXHandle"></el-input-number>
+          <el-input-number v-model="lotPositionForm.rotate.z" @change="lotPositionHandle('rotate_z')"></el-input-number>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -48,18 +51,18 @@
     data() {
       return {
         loadingFull: false,
-        dialogTitle: '物联网位置设置',
+        dialogTitle: '物联网设备位置设置',
         tipMessage: '',
         lotPositionForm: {
           globalOffset: {
-            x: 10,
-            y: 20,
-            z: 30
+            x: 0,
+            y: 0,
+            z: 0
           },
           rotate: {
-            x: 10,
-            y: 20,
-            z: 30
+            x: 0,
+            y: 0,
+            z: 0
           }
         }
       }
@@ -105,14 +108,22 @@
       openedDialogHandle() {
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
         console.log('this.LotPositionDialog', this.LotPositionDialog)
-
-
+        this.lotPositionForm.globalOffset = this.LotPositionDialog.globalOffset
       },
       closeDialogHandle() {
         this.clearData()
       },
-      blurPositionXHandle() {
-        console.log("lotPositionForm", lotPositionForm.globalOffset)
+      lotPositionHandle(type) {
+        console.log("lotPositionForm", type, this.lotPositionForm.globalOffset.x)
+        
+        let param = {
+          type: type,
+          globalOffset: this.lotPositionForm.globalOffset
+        }
+        console.log('param', param)
+        this.$store.dispatch('SetLotPositionChange', param).then((result) => {
+
+        })
       }
     }
   }

@@ -26,6 +26,12 @@
         <font-awesome-icon v-if="isSaveViewValid === false" style="color:grey;" :icon="['far','save']" />
       </el-button>
 
+      <el-button class="marker-button" title="删除设备模型">
+
+        <font-awesome-icon v-if="newModel !== null" icon="trash-alt" @click="deleteLotDeviceModelHandle(0)" />
+        <font-awesome-icon v-if="newModel === null" icon="trash-alt" style="color:grey;" />
+
+      </el-button>
       <el-button class="marker-button" title="调整位置">
         <font-awesome-icon :icon="['far','plus-square']" @click="openLotPositionDialogHandle()" />
       </el-button>
@@ -70,7 +76,7 @@
 
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
         // stats: new Stats(),
-        globalOffset: null,
+        // globalOffset: null,
         urns: [],
         element: null, //document.getElementById('viewer-local');
         project_id: '',
@@ -120,8 +126,15 @@
         FPS_LOW_LEVEL: 8, // 低于祯数 为慢
         FPS_HIGH_LEVEL: 15, // 高于祯数 为快
         FPS_LOW_TIMES: 50, // 低速fps累计次数
+
+
         newModel: null,
-        globalOffset: {
+        selectedPosition: { // 选择的构件位置
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        globalOffset: { // 
           x: 0,
           y: 0,
           z: 0
@@ -135,6 +148,9 @@
       },
       ComponentDataAdd() {
         return this.$store.state.componentLibrary.ComponentDataAdd
+      },
+      LotPositionChange() {
+        return this.$store.state.loT.LotPositionChange
       }
     },
     created() {
@@ -151,6 +167,20 @@
 
         },
         deep: true
+      },
+      LotPositionChange: {
+        handler: function (newVal, oldVal) {
+          console.log('LotPositionChange111 ', newVal)
+          // if (newVal.type === 1) {
+          //   this.refreshDisplay(newVal)
+          // }
+          let _globalOffset = newVal.globalOffset
+          this.globalOffset = _globalOffset
+          // console.log('_globalOffset', _globalOffset)
+          this.MoveModel(this.newModel, this.globalOffset.x, this.globalOffset.y, this.globalOffset.z)
+
+        },
+        deep: true
       }
     },
     async mounted() {
@@ -160,8 +190,7 @@
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
       this.project_id = parseInt(__PROJECT_ID)
       this.init()
-      // this.openComponentLibraryDialogHandle()
-      // this.openLotListDialogHandle()
+
     },
     beforeDestroy() {},
     destroyed() {},
@@ -355,32 +384,39 @@
         let _selections = event.selections
         console.log('_selections', _selections)
         // this.selectedDbId = _dbIds
+        this.selectedPosition = {
+          x: 0,
+          y: 0,
+          z: 0
+        }
         this.selectedDbId = []
-        _selections.forEach(selection => {
-          let _dbIdArray = selection.dbIdArray
-          _dbIdArray.forEach(dbId => {
-            console.log('dbId', dbId)
-            selection.model.getProperties(dbId,
-              (elements) => {
-                var dbid = elements.dbId;
-                this.selectedDbId.push(dbid)
-                console.log('elements', elements)
-                let average = this.getFragXYZ(selection.model, dbid)
-                console.log('average', average)
-                this.globalOffset = {
-                  x: average.x,
-                  y: average.y,
-                  z: average.z,
-                }
-                console.log('this.globalOffset', this.globalOffset)
-                // let min = this.getFragXYZ(dbid)
-                // this.drawViewPointLabel(min, 'aaa', 'asd', 'dasd')
+        console.log('_selections.length', _selections.length)
+        if (_selections.length > 0) {
+          _selections.forEach(selection => {
+            let _dbIdArray = selection.dbIdArray
+            _dbIdArray.forEach(dbId => {
+              console.log('dbId', dbId)
+              selection.model.getProperties(dbId,
+                (elements) => {
+                  var dbid = elements.dbId;
+                  this.selectedDbId.push(dbid)
+                  console.log('elements', elements)
+                  let average = this.getFragXYZ(selection.model, dbid)
+                  console.log('average', average)
+                  this.selectedPosition = {
+                    x: parseInt(average.x),
+                    y: parseInt(average.y),
+                    z: parseInt(average.z)
+                  }
+                  console.log('this.selectedPosition', this.selectedPosition)
+                  // let min = this.getFragXYZ(dbid)
+                  // this.drawViewPointLabel(min, 'aaa', 'asd', 'dasd')
+                })
+            })
 
-
-              })
           })
-
-        })
+        }
+        // console.log('this.selectedPosition', this.selectedPosition)
         // Asyncronous method that gets object properties
         // 异步获取模型的属性
         // this.viewer.getProperties(_dbIds[0],
@@ -433,12 +469,32 @@
         return average
       },
       openComponentLibraryDialogHandle() {
+
         // 打开构件列表窗口
-        const param = {
-          show: true,
-        }
-        // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-        this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
+        // const param = {
+        //   show: true,
+        // }
+        // this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
+
+
+        // 模拟添加一个构件
+        const modelOpts = {
+          placementTransform: new THREE.Matrix4(),
+          globalOffset: {
+            x: 0,
+            y: 0,
+            z: 0
+          }
+        };
+
+        this.viewer.loadModel('BCP_FILE/20011/200356/svf/3d.svf', modelOpts, (model) => {
+          this.newModel = model
+          console.log('modelmodelmodel', model)
+
+          this.globalOffset = this.selectedPosition
+          this.MoveModel(this.newModel, this.globalOffset.x, this.globalOffset.y, this.globalOffset.z)
+        }, this.onLoadError);
+
       },
       openLotListDialogHandle() {
         // 打开物联网管理窗口
@@ -449,9 +505,12 @@
         this.$store.dispatch('ShowLotListDialog', param).then(() => {}).catch(() => {})
       },
       openLotPositionDialogHandle() {
-        // 打开物联网管理窗口
+
+        console.log('this.globalOffset', this.globalOffset)
+        // 打开物联网位置
         const param = {
           show: true,
+          globalOffset: this.globalOffset
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotPositionDialog', param).then(() => {}).catch(() => {})
@@ -463,6 +522,14 @@
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotInfoDetailDialog', param).then(() => {}).catch(() => {})
+      },
+      deleteLotDeviceModelHandle() {
+        console.log('deleteLotDeviceModelHandle');
+        if (this.newModel !== null) {
+          this.viewer.unloadModel(this.newModel)
+          this.newModel = null
+        }
+
       },
       AddComponentData(item) {
 
@@ -544,6 +611,28 @@
           isEditMode: false
         }).then(() => {})
 
+      },
+      MoveModel(model, x, y, z) {
+        const thisModel = model; //viewer.getAggregateSelection()[0].model
+        const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
+        console.log('fragCount', fragCount)
+        for (let fragId = 0; fragId < fragCount; ++fragId) {
+          const fragProxy = this.viewer.impl.getFragmentProxy(thisModel, fragId);
+          fragProxy.getAnimTransform();
+          // const position = new THREE.Vector3(
+          //   fragProxy.position.x + x,
+          //   fragProxy.position.y + y,
+          //   fragProxy.position.z + z
+          // );
+          const position = new THREE.Vector3(
+            x,
+            y,
+            z
+          );
+          fragProxy.position = position;
+          fragProxy.updateAnimTransform();
+        }
+        this.viewer.impl.sceneUpdated(true);
       },
     }
   }

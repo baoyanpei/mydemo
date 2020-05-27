@@ -23,6 +23,10 @@ const loT = {
       show: false,
       data: {}
     },
+    LotPositionChange: {
+      refresh: 0,
+      data: {}
+    }
   },
   mutations: {
     SET_VEDIO_DIALOG: (state, data) => {
@@ -47,6 +51,12 @@ const loT = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotInfoDetailDialog.refresh = genRandom(1, 1000)
       console.log('----->', state.LotInfoDetailDialog)
+    },
+    LOT_POSITION_CHANGE: (state, data) => {
+      state.LotPositionChange = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.LotPositionChange.refresh = genRandom(1, 1000)
+      console.log('----->', state.LotPositionChange)
     },
   },
   actions: {
@@ -91,6 +101,14 @@ const loT = {
         commit('SHOW_LOT_INFO_DETAIL_DIALOG', {
           ...param
         })
+        resolve()
+      })
+    },
+    SetLotPositionChange({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('LOT_POSITION_CHANGE', param)
         resolve()
       })
     },
