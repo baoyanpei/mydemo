@@ -13,6 +13,11 @@ const loT = {
       show: false,
       data: {}
     },
+    LotPositionDialog: { // 物联网设备位置设置
+      refresh: 0,
+      show: false,
+      data: {}
+    },
   },
   mutations: {
     SET_VEDIO_DIALOG: (state, data) => {
@@ -25,7 +30,13 @@ const loT = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotListDialog.refresh = genRandom(1, 1000)
       console.log('----->', state.LotListDialog)
-    }
+    },
+    SHOW_LOT_POSITION_DIALOG: (state, data) => {
+      state.LotPositionDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.LotPositionDialog.refresh = genRandom(1, 1000)
+      console.log('----->', state.LotPositionDialog)
+    },
   },
   actions: {
     SetVideoDialog({
@@ -47,6 +58,16 @@ const loT = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SHOW_LOT_LIST_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
+    ShowLotPositionDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_LOT_POSITION_DIALOG', {
           ...param
         })
         resolve()

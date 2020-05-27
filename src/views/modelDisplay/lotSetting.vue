@@ -25,6 +25,10 @@
           @click="showSaveViewsPointHandle(0)" />
         <font-awesome-icon v-if="isSaveViewValid === false" style="color:grey;" :icon="['far','save']" />
       </el-button>
+
+      <el-button class="marker-button" title="调整位置">
+        <font-awesome-icon :icon="['far','plus-square']" @click="openLotPositionDialogHandle()" />
+      </el-button>
       <hr />
       <el-button class="marker-button" title="构件库">
         <font-awesome-icon icon="layer-group" @click="openComponentLibraryDialogHandle" />
@@ -34,12 +38,16 @@
     </div>
     <!--物联网设备列表dialog-->
     <LotListDialog></LotListDialog>
+    <!--物联网设备位置dialog-->
+    <LotPositionDialog></LotPositionDialog>
   </div>
 </template>
 
 <script>
   // 构件库列表
   import LotListDialog from '@/views/modelDisplay/lotListDialog'
+
+  import LotPositionDialog from '@/views/modelDisplay/lotPositionDialog'
 
   import loadJs from '@/utils/loadJs.js'
   import Cookies from 'js-cookie'
@@ -49,7 +57,8 @@
   export default {
     name: 'model-lot-setting',
     components: {
-      LotListDialog
+      LotListDialog,
+      LotPositionDialog
     },
     data() {
       return {
@@ -106,6 +115,12 @@
         FPS_LOW_LEVEL: 8, // 低于祯数 为慢
         FPS_HIGH_LEVEL: 15, // 高于祯数 为快
         FPS_LOW_TIMES: 50, // 低速fps累计次数
+        newModel: null,
+        globalOffset: {
+          x: 0,
+          y: 0,
+          z: 0
+        }
         // totalHighFps: 0 // 高速fps累计量
       }
     },
@@ -345,6 +360,14 @@
                 var dbid = elements.dbId;
                 this.selectedDbId.push(dbid)
                 console.log('elements', elements)
+                let average = this.getFragXYZ(selection.model, dbid)
+                console.log('average', average)
+                this.globalOffset = {
+                  x: average.x,
+                  y: average.y,
+                  z: average.z,
+                }
+                console.log('this.globalOffset', this.globalOffset)
                 // let min = this.getFragXYZ(dbid)
                 // this.drawViewPointLabel(min, 'aaa', 'asd', 'dasd')
 
@@ -365,6 +388,45 @@
 
         //   })
       },
+      getFragXYZ(model, dbid) {
+        // View里如何获取模型的坐标信息
+        var bounds = new THREE.Box3();
+        var box = new THREE.Box3();
+        // console.log('this.viewer', this.viewer)
+        var instanceTree = model.getData().instanceTree;
+        var fragList = model.getFragmentList();
+        // var instanceTree = this.viewer.impl.model.getData().instanceTree;
+        // var fragList = this.viewer.impl.model.getFragmentList();
+
+        instanceTree.enumNodeFragments(dbid, (fragId) => {
+          // console.log('fragId:' + fragId);
+
+          //某几何单元的全局坐标系包围盒
+          fragList.getWorldBounds(fragId, box)
+          //合并计算最终整个构件包围盒
+          bounds.union(box);
+
+          //某几何单元的全局坐标系变换矩阵
+          //从中读取平移或旋转数值
+          //由于构件的几何单元应该都是同步变换，所以这些矩阵初始值应该是一样的
+          var fm = new THREE.Matrix4();
+          fragList.getWorldMatrix(fragId, fm);
+          // console.log('frag matrix:' + JSON.stringify(fm));
+        }, true)
+
+        // var tree = this.viewer.impl.model.getData().instanceTree;
+        var tree = model.getData().instanceTree;
+        var tmpBox = new Float32Array(6);
+        tree.getNodeBox(dbid, tmpBox);
+        var min = new THREE.Vector3(tmpBox[0], tmpBox[1], tmpBox[2]);
+        var max = new THREE.Vector3(tmpBox[3], tmpBox[4], tmpBox[5]);
+
+        var average = new THREE.Vector3((tmpBox[3] + tmpBox[0]) / 2, (tmpBox[4] + tmpBox[1]) / 2, (tmpBox[5] + tmpBox[
+          2]) / 2);
+        // var max = new THREE.Vector3(tmpBox[3], tmpBox[4], tmpBox[5]);
+        // console.log('min,max', min, max, average)
+        return average
+      },
       openComponentLibraryDialogHandle() {
         // 打开构件列表窗口
         const param = {
@@ -380,6 +442,14 @@
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotListDialog', param).then(() => {}).catch(() => {})
+      },
+      openLotPositionDialogHandle() {
+        // 打开物联网管理窗口
+        const param = {
+          show: true,
+        }
+        // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+        this.$store.dispatch('ShowLotPositionDialog', param).then(() => {}).catch(() => {})
       },
       AddComponentData(item) {
 
@@ -407,6 +477,10 @@
         buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
         buttonLotListDialog.onClick = (e) => {
           this.openLotListDialogHandle()
+          // console.log('this.newModel', this.newModel)
+          // this.newModel.myData.globalOffset.x = 10000
+          // this.newModel.update()
+          // this.viewer.impl.invalidate(true, true, true)
         }
         // SubToolbar
         this.ControlLotManager = new Autodesk.Viewing.UI.ControlGroup('my-view-point-toolbar')
@@ -424,6 +498,30 @@
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: true
         }).then(() => {})
+
+        /*
+        console.log('this.viewer.model', this.viewer.model.getData())
+        console.log('this.viewer', this.viewer)
+        // this.viewer.model.globalOffset.x = 1000
+        let _model = this.viewer.model
+        // this.viewer.unloadModel(this.viewer.model)
+        // this.viewer.viewerImpl.addModel(_model)
+        if (this.newModel !== null) {
+          this.viewer.unloadModel(this.newModel)
+        }
+        this.globalOffset.x = -this.globalOffset.x
+        this.globalOffset.y = -this.globalOffset.y
+        this.globalOffset.z = -this.globalOffset.z
+        const modelOpts = {
+          placementTransform: new THREE.Matrix4(),
+          globalOffset: this.globalOffset
+
+        };
+        this.viewer.loadModel('BCP_FILE/20011/200356/svf/3d.svf', modelOpts, (model) => {
+          this.newModel = model
+          console.log('modelmodelmodel', model)
+        }, this.onLoadError);
+        */
       },
       exitEditModeHandle() { // 退出编辑模式
         this.viewer.toolbar.addControl(this.ControlLotManager)

@@ -107,16 +107,18 @@ export default {
 
   },
   async mounted() {
-    console.log('lot5-index-mounted')
-    // this.init()
-    await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
-    console.log('./static/libs/viewer3D/viewer3D.min.js')
-    require('@/script/Viewing.Extension.MeshSelection')
+
 
   },
   destroyed() {},
   methods: {
     async init(projectId) {
+      console.log('lot5-index-mounted')
+      // this.init()
+      await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
+      console.log('./static/libs/viewer3D/viewer3D.min.js')
+      require('@/script/Viewing.Extension.MeshSelection')
+
       console.log('this.useFrom', this.useFrom)
       console.log('lot5-init-init')
       this.projID = projectId
