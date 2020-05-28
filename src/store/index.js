@@ -20,6 +20,7 @@ import health from './modules/health' // 健康信息
 import tools from './modules/tools' // tools
 import getters from './getters'
 import componentLibrary from './modules/componentLibrary'
+import device from './modules/device' // 物联网设备
 
 Vue.use(Vuex)
 
@@ -43,7 +44,8 @@ const store = new Vuex.Store({
     bindBim,
     health,
     tools,
-    componentLibrary
+    componentLibrary,
+    device
   },
   getters
 })
