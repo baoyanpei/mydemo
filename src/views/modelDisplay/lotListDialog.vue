@@ -78,13 +78,13 @@
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
         console.log('this.LotListDialog', this.LotListDialog)
 
-        this.getFamilyList()
+        this.getDeviceConfigList()
       },
       closeDialogHandle() {
         this.clearData()
       },
 
-      getFamilyList() {
+      getDeviceConfigList() {
         return new Promise((resolve, reject) => {
           this.buildList = []
           const param = {

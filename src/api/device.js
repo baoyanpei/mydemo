@@ -1,5 +1,25 @@
 import request from '@/utils/request'
 
+
+// 设备类型列表
+
+/*
+api:/api/bim/bcp
+
+设备类型列表
+method：device_type
+*/
+
+export function getDeviceType(data) {
+  return request({
+    url: '/api/bim/bcp',
+    method: 'post',
+    data: data
+    // baseURL: 'http://admin.yidebim.com'
+  })
+}
+
+
 // 设备配置表列表
 
 /*

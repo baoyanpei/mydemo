@@ -1,4 +1,5 @@
 import {
+  getDeviceType,
   getDeviceConfig,
 } from '@/api/device'
 
@@ -11,6 +12,19 @@ const device = {
 
   },
   actions: {
+    GetDeviceType({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        getDeviceType(param).then(response => {
+          const _data = response.data
+          // commit('SET_PROJECT_GATE_PERSON', _data)
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
     GetDeviceConfig({
       commit
     }, param) {

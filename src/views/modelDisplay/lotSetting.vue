@@ -128,6 +128,7 @@
         FPS_LOW_TIMES: 50, // 低速fps累计次数
 
 
+        currentDeviceOpType: 0, // 当前设备模型的编辑模式 0:新增模式 1:编辑模式
         currentDeviceModel: null, // 当前正在操作的设备模型
         selectedPosition: { // 选择的构件位置
           x: 0,
@@ -517,8 +518,6 @@
         this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
 
 
-        // 模拟添加一个构件
-        // this.addLotModelToView()
 
       },
       openLotListDialogHandle() {
@@ -545,19 +544,23 @@
         // 打开物联网信息编辑窗口
         const param = {
           show: true,
+          buildItem:this.itemInfoList[0],
+          deviceModel: this.currentDeviceModel, // 当前的模型
+          devicePosition: this.currentDevicePosition,
+          deviceRotate: this.currentDeviceRotate
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotInfoDetailDialog', param).then(() => {}).catch(() => {})
       },
       AddComponentData(item) {
 
-        
-        this.addLotModelToView(item.file.replace('/BCP_FILE/','BCP_FILE/'))
+
+        this.addLotModelToView(item)
       },
       // 添加一个设备模型到viewer
-      addLotModelToView(url) {
+      addLotModelToView(item) {
 
-
+        let _url = item.file.replace('/BCP_FILE/', 'BCP_FILE/')
         if (this.currentDeviceModel !== null) {
           this.$message({
             message: "编辑模式下已经有设备存在，要新增设备必须要先删除设备！",
@@ -574,10 +577,10 @@
           }
         };
 
-        this.viewer.loadModel(url, modelOpts, (model) => {
+        this.viewer.loadModel(_url, modelOpts, (model) => {
           this.currentDeviceModel = model
           console.log('modelmodelmodel', model)
-
+          this.currentDeviceModel.infoData = item
           this.currentDevicePosition.x = this.selectedPosition.x
           this.currentDevicePosition.y = this.selectedPosition.y
           this.currentDevicePosition.z = this.selectedPosition.z
@@ -621,7 +624,7 @@
         buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
 
         buttonEnterLotMode.onClick = (e) => {
-          this.enterEditModeHandle()
+          this.enterEditModeHandle(0) // 新增物联网模型
         }
         buttonEnterLotMode.addClass('enter-add-lot-button')
         buttonEnterLotMode.setToolTip('添加物联网设备')
@@ -645,7 +648,8 @@
         this.viewer.toolbar.addControl(this.ControlLotManager)
 
       },
-      enterEditModeHandle() { // 进入编辑模式
+      enterEditModeHandle(DeviceOpType) { // 进入编辑模式
+        this.currentDeviceOpType = DeviceOpType
         this.viewer.toolbar.removeControl(this.ControlLotManager)
         this.isShowViewPointArea = true
         this.isShowToolbarMarker = true
