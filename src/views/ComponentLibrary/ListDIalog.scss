@@ -4,6 +4,7 @@
     padding-left: calc(100vw - 500px) !important;
     pointer-events: none;
   }
+
   .tip-message {
     text-align: center;
     // height: calc(100vh - 1px);
@@ -19,5 +20,42 @@
     height: calc(100vh - 240px);
     background-color: #f2f2f2;
     padding: 10px 0px 0px 0px;
+
+    .library-item{
+      margin: 10px 0px;
+    }
+
+    .photo {
+      width: 60px;
+      height: 65px;
+      cursor: pointer;
+    }
+
+    .info-title {
+      font-weight: 600;
+      font-size: 14px;
+
+      .info-title-link {
+        cursor: pointer;
+      }
+
+      .info-title-link:hover {
+        // font-style: italic;
+        text-decoration: underline
+      }
+    }
+
+    .view-point-delete {
+      height: 60px;
+      width: 100%;
+
+      text-align: center;
+      line-height: 60px;
+
+      .icon-red-pointer {
+        color: red;
+        cursor: pointer;
+      }
+    }
   }
 }

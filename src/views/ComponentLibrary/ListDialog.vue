@@ -11,13 +11,13 @@
 
       <div class="component-library-list">
         <div v-show="tipMessage!==''" class="tip-message">{{tipMessage}}</div>
-        <el-row v-for="(item,index) in componentList" :key="index">
-          <!-- <el-col :span="8" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
-            <img :src="item.pictureLiteSrc" class="photo info-name-link" @click='getViewPointsDataHandle(item)'>
-            <div :class="[item.className]" v-viewer="viewOptions">
+        <el-row v-for="(item,index) in componentList" :key="index" class="library-item">
+          <el-col :span="8" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
+            <img :src="item.img" class="photo info-name-link">
+            <div :class="[item.className]">
               <img :src="item.pictureFullSrc" :key="item.pictureFullSrc" v-show="false">
             </div>
-          </el-col> -->
+          </el-col>
           <el-col :span="12" style="padding-left:5px;">
             <el-row :gutter="24">
               <div class="grid-content info-title">
@@ -100,33 +100,35 @@
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
         console.log('this.ComponentLibraryListDialog', this.ComponentLibraryListDialog)
 
-        this.getProjectItemsAll()
+        this.getFamilyList()
       },
       closeDialogHandle() {
         this.clearData()
       },
-      getProjectItemsAll() {
+      getFamilyList() {
         return new Promise((resolve, reject) => {
+          this.buildList = []
           const param = {
-            method: 'project_items',
-            project_id: 10000,
+            method: 'family_query',
+            project_id: this.project_id,
             // access_token: this.access_token
           }
-          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
-            console.log('getProjectItemsAll11111 - _itemList', _itemList)
+          this.$store.dispatch('GetFamilyQuery', param).then((_itemList) => {
+            console.log('GetFamilyQuery - _itemList', _itemList)
             this.componentList = _itemList
-            // _buildList.forEach(async build => {
-            //   build['from'] = 1 // 来自玮哥接口
-            //   this.buildMap.set(build.id, build)
-            // });
-            resolve(_itemList)
+
+            resolve()
           })
 
         })
       },
       addCompnentHander(item) {
         console.log('addCompnentHander', item)
-        let param = item
+        let param = {
+          item: item
+        }
+        // const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+        // param.refresh1 = genRandom(1, 1000)
         this.$store.dispatch('SetComponentDataAdd', param).then((result) => {
           // this.$message({
           //   message: '视点保存成功！',

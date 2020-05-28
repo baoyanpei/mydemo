@@ -10,7 +10,8 @@ import {
   getProjectFiles,
   getItemInfoListByProID,
   getOutsysInfo,
-  setOutsysInfo
+  setOutsysInfo,
+  getFamilyQuery
 } from '@/api/bim_project'
 
 const bim = {
@@ -244,6 +245,19 @@ const bim = {
       return new Promise((resolve, reject) => {
         setOutsysInfo(param).then(response => {
           const _data = response
+          // commit('SET_PROJECT_GATE_PERSON', _data)
+          resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    GetFamilyQuery({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        getFamilyQuery(param).then(response => {
+          const _data = response.data
           // commit('SET_PROJECT_GATE_PERSON', _data)
           resolve(_data)
         }).catch(error => {

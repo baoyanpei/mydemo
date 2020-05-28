@@ -335,3 +335,24 @@ export function getProjectFiles(data) {
     // baseURL: 'http://admin.yidebim.com'
   })
 }
+
+// 镞模型查询（目前全部数据）
+/*
+
+api:/api/bim/bcp
+
+镞模型查询（目前全部数据）
+method:family_query 
+参数：
+project_id
+
+*/
+
+export function getFamilyQuery(data) {
+  return request({
+    url: '/api/bim/bcp',
+    method: 'post',
+    data: data
+    // baseURL: 'http://admin.yidebim.com'
+  })
+}

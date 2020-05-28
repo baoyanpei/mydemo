@@ -140,7 +140,7 @@
           z: 0
         },
         currentDeviceRotate: {
-          x: 10,
+          x: 0,
           y: 0,
           z: 0
         }
@@ -168,7 +168,7 @@
           // if (newVal.type === 1) {
           //   this.refreshDisplay(newVal)
           // }
-          this.AddComponentData(newVal)
+          this.AddComponentData(newVal.item)
 
         },
         deep: true
@@ -511,14 +511,14 @@
       openComponentLibraryDialogHandle() {
 
         // 打开构件列表窗口
-        // const param = {
-        //   show: true,
-        // }
-        // this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
 
 
         // 模拟添加一个构件
-        this.addLotModelToView()
+        // this.addLotModelToView()
 
       },
       openLotListDialogHandle() {
@@ -549,8 +549,13 @@
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotInfoDetailDialog', param).then(() => {}).catch(() => {})
       },
+      AddComponentData(item) {
+
+        
+        this.addLotModelToView(item.file.replace('/BCP_FILE/','BCP_FILE/'))
+      },
       // 添加一个设备模型到viewer
-      addLotModelToView() {
+      addLotModelToView(url) {
 
 
         if (this.currentDeviceModel !== null) {
@@ -569,7 +574,7 @@
           }
         };
 
-        this.viewer.loadModel('BCP_FILE/20011/200356/svf/3d.svf', modelOpts, (model) => {
+        this.viewer.loadModel(url, modelOpts, (model) => {
           this.currentDeviceModel = model
           console.log('modelmodelmodel', model)
 
@@ -608,12 +613,7 @@
 
 
       },
-      AddComponentData(item) {
 
-        let url = item.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/')
-        console.log('url', url)
-        this.loadModel(url, item, 99)
-      },
       addLotToolBar() {
 
         // 标注功能 - 普通标注视点
