@@ -28,12 +28,14 @@
 
       <el-button class="marker-button" title="删除设备模型">
 
-        <font-awesome-icon v-if="newModel !== null" icon="trash-alt" @click="deleteLotDeviceModelHandle(0)" />
-        <font-awesome-icon v-if="newModel === null" icon="trash-alt" style="color:grey;" />
+        <font-awesome-icon v-if="currentDeviceModel !== null" icon="trash-alt" @click="deleteLotDeviceModelHandle(0)" />
+        <font-awesome-icon v-if="currentDeviceModel === null" icon="trash-alt" style="color:grey;" />
 
       </el-button>
       <el-button class="marker-button" title="调整位置">
-        <font-awesome-icon :icon="['far','plus-square']" @click="openLotPositionDialogHandle()" />
+        <font-awesome-icon v-if="currentDeviceModel !== null" :icon="['far','plus-square']"
+          @click="openLotPositionDialogHandle()" />
+        <font-awesome-icon v-if="currentDeviceModel === null" :icon="['far','plus-square']" style="color:grey;" />
       </el-button>
       <hr />
       <el-button class="marker-button" title="构件库">
@@ -75,8 +77,6 @@
       return {
 
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
-        // stats: new Stats(),
-        // globalOffset: null,
         urns: [],
         element: null, //document.getElementById('viewer-local');
         project_id: '',
@@ -128,14 +128,19 @@
         FPS_LOW_TIMES: 50, // 低速fps累计次数
 
 
-        newModel: null,
+        currentDeviceModel: null, // 当前正在操作的设备模型
         selectedPosition: { // 选择的构件位置
           x: 0,
           y: 0,
           z: 0
         },
-        globalOffset: { // 
+        currentDevicePosition: { // 
           x: 0,
+          y: 0,
+          z: 0
+        },
+        currentDeviceRotate: {
+          x: 10,
           y: 0,
           z: 0
         }
@@ -175,9 +180,44 @@
           //   this.refreshDisplay(newVal)
           // }
           let _globalOffset = newVal.globalOffset
-          this.globalOffset = _globalOffset
+          this.currentDevicePosition = _globalOffset
+
           // console.log('_globalOffset', _globalOffset)
-          this.MoveModel(this.newModel, this.globalOffset.x, this.globalOffset.y, this.globalOffset.z)
+
+          const _type = newVal.type
+          console.log('11222 ->', newVal.rotate.x, this.currentDeviceRotate.x, this.currentDeviceRotate)
+
+
+
+          // console.log('_rotate_x', _rotate_x)
+          switch (_type) {
+            case "rotate_x":
+              let _rotate_x = newVal.rotate.x - this.currentDeviceRotate.x
+              console.log('_rotate_x', _rotate_x)
+              this.RotateModel(this.currentDeviceModel, 1, 0, 0, _rotate_x)
+              // this.currentDeviceRotate.x = newVal.rotate.x
+              break;
+            case "rotate_y":
+              let _rotate_y = newVal.rotate.y - this.currentDeviceRotate.y
+              this.RotateModel(this.currentDeviceModel, 0, 1, 0, _rotate_y)
+              // this.currentDeviceRotate.y = newVal.rotate.y
+              break;
+            case "rotate_z":
+              let _rotate_z = newVal.rotate.z - this.currentDeviceRotate.z
+              this.RotateModel(this.currentDeviceModel, 0, 0, 1, _rotate_z)
+              // this.currentDeviceRotate.z = newVal.rotate.z
+              break;
+            default:
+              this.MoveModel(this.currentDeviceModel, this.currentDevicePosition.x, this.currentDevicePosition.y, this
+                .currentDevicePosition.z)
+              break;
+
+
+          }
+          this.currentDeviceRotate.x = newVal.rotate.x
+          this.currentDeviceRotate.y = newVal.rotate.y
+          this.currentDeviceRotate.z = newVal.rotate.z
+          console.log('this.currentDeviceRotate.currentDeviceRotate', this.currentDeviceRotate)
 
         },
         deep: true
@@ -478,22 +518,7 @@
 
 
         // 模拟添加一个构件
-        const modelOpts = {
-          placementTransform: new THREE.Matrix4(),
-          globalOffset: {
-            x: 0,
-            y: 0,
-            z: 0
-          }
-        };
-
-        this.viewer.loadModel('BCP_FILE/20011/200356/svf/3d.svf', modelOpts, (model) => {
-          this.newModel = model
-          console.log('modelmodelmodel', model)
-
-          this.globalOffset = this.selectedPosition
-          this.MoveModel(this.newModel, this.globalOffset.x, this.globalOffset.y, this.globalOffset.z)
-        }, this.onLoadError);
+        this.addLotModelToView()
 
       },
       openLotListDialogHandle() {
@@ -506,11 +531,12 @@
       },
       openLotPositionDialogHandle() {
 
-        console.log('this.globalOffset', this.globalOffset)
+        console.log('this.currentDevicePosition', this.currentDevicePosition)
         // 打开物联网位置
         const param = {
           show: true,
-          globalOffset: this.globalOffset
+          position: this.currentDevicePosition,
+          rotate: this.currentDeviceRotate
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotPositionDialog', param).then(() => {}).catch(() => {})
@@ -523,12 +549,63 @@
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotInfoDetailDialog', param).then(() => {}).catch(() => {})
       },
+      // 添加一个设备模型到viewer
+      addLotModelToView() {
+
+
+        if (this.currentDeviceModel !== null) {
+          this.$message({
+            message: "编辑模式下已经有设备存在，要新增设备必须要先删除设备！",
+            type: 'error'
+          })
+          return;
+        }
+        const modelOpts = {
+          placementTransform: new THREE.Matrix4(),
+          globalOffset: {
+            x: 0,
+            y: 0,
+            z: 0
+          }
+        };
+
+        this.viewer.loadModel('BCP_FILE/20011/200356/svf/3d.svf', modelOpts, (model) => {
+          this.currentDeviceModel = model
+          console.log('modelmodelmodel', model)
+
+          this.currentDevicePosition.x = this.selectedPosition.x
+          this.currentDevicePosition.y = this.selectedPosition.y
+          this.currentDevicePosition.z = this.selectedPosition.z
+          this.MoveModel(this.currentDeviceModel, this.currentDevicePosition.x, this.currentDevicePosition.y, this
+            .currentDevicePosition.z)
+          const _x = this.currentDeviceRotate.x;
+          const _y = this.currentDeviceRotate.y;
+          const _z = this.currentDeviceRotate.z;
+          this.RotateModel(this.currentDeviceModel, 1, 0, 0, _x)
+          this.RotateModel(this.currentDeviceModel, 0, 1, 0, _y)
+          this.RotateModel(this.currentDeviceModel, 0, 0, 1, _z)
+        }, this.onLoadError);
+      },
       deleteLotDeviceModelHandle() {
         console.log('deleteLotDeviceModelHandle');
-        if (this.newModel !== null) {
-          this.viewer.unloadModel(this.newModel)
-          this.newModel = null
+        if (this.currentDeviceModel !== null) {
+
+          this.$confirm('是否确定删除此设备的模型?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'info',
+            // center: true
+          }).then(() => {
+            this.viewer.unloadModel(this.currentDeviceModel)
+            this.currentDeviceModel = null
+          }).catch(() => {
+
+          });
+
+
         }
+
+
 
       },
       AddComponentData(item) {
@@ -557,10 +634,7 @@
         buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
         buttonLotListDialog.onClick = (e) => {
           this.openLotListDialogHandle()
-          // console.log('this.newModel', this.newModel)
-          // this.newModel.myData.globalOffset.x = 10000
-          // this.newModel.update()
-          // this.viewer.impl.invalidate(true, true, true)
+
         }
         // SubToolbar
         this.ControlLotManager = new Autodesk.Viewing.UI.ControlGroup('my-view-point-toolbar')
@@ -579,29 +653,7 @@
           isEditMode: true
         }).then(() => {})
 
-        /*
-        console.log('this.viewer.model', this.viewer.model.getData())
-        console.log('this.viewer', this.viewer)
-        // this.viewer.model.globalOffset.x = 1000
-        let _model = this.viewer.model
-        // this.viewer.unloadModel(this.viewer.model)
-        // this.viewer.viewerImpl.addModel(_model)
-        if (this.newModel !== null) {
-          this.viewer.unloadModel(this.newModel)
-        }
-        this.globalOffset.x = -this.globalOffset.x
-        this.globalOffset.y = -this.globalOffset.y
-        this.globalOffset.z = -this.globalOffset.z
-        const modelOpts = {
-          placementTransform: new THREE.Matrix4(),
-          globalOffset: this.globalOffset
 
-        };
-        this.viewer.loadModel('BCP_FILE/20011/200356/svf/3d.svf', modelOpts, (model) => {
-          this.newModel = model
-          console.log('modelmodelmodel', model)
-        }, this.onLoadError);
-        */
       },
       exitEditModeHandle() { // 退出编辑模式
         this.viewer.toolbar.addControl(this.ControlLotManager)
@@ -615,7 +667,6 @@
       MoveModel(model, x, y, z) {
         const thisModel = model; //viewer.getAggregateSelection()[0].model
         const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
-        console.log('fragCount', fragCount)
         for (let fragId = 0; fragId < fragCount; ++fragId) {
           const fragProxy = this.viewer.impl.getFragmentProxy(thisModel, fragId);
           fragProxy.getAnimTransform();
@@ -634,6 +685,66 @@
         }
         this.viewer.impl.sceneUpdated(true);
       },
+      geWorldBoundingBox(fragIds, fragList) {
+        var fragbBox = new THREE.Box3()
+        var nodebBox = new THREE.Box3()
+        fragIds.forEach((fragId) => {
+          fragList.getWorldBounds(fragId, fragbBox)
+          nodebBox.union(fragbBox)
+        })
+        return nodebBox
+      },
+      rotateFragments(model, fragIdsArray, axis, angle, center) {
+        console.log('angle', angle, axis)
+        var quaternion = new THREE.Quaternion()
+        quaternion.setFromAxisAngle(axis, angle)
+        fragIdsArray.forEach((fragId, idx) => {
+          var fragProxy = this.viewer.impl.getFragmentProxy(
+            model, fragId)
+          fragProxy.getAnimTransform()
+          var position = new THREE.Vector3(
+            fragProxy.position.x - center.x,
+            fragProxy.position.y - center.y,
+            fragProxy.position.z - center.z)
+          position.applyQuaternion(quaternion)
+          position.add(center)
+          fragProxy.position = position
+          fragProxy.quaternion.multiplyQuaternions(
+            quaternion, fragProxy.quaternion)
+          if (idx === 0) {
+            var euler = new THREE.Euler()
+            euler.setFromQuaternion(
+              fragProxy.quaternion, 0)
+            // this.emit('transform.rotate', {
+            //     rotation: euler,
+            //     model
+            // })
+          }
+          fragProxy.updateAnimTransform()
+        })
+        this.viewer.impl.sceneUpdated(true);
+      },
+      RotateModel(model, axisX, axisY, axisZ, angle) {
+        const thisModel = model //viewer.getAggregateSelection()[0].model
+        const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
+        let fragIdsArray = []
+        for (var fragId = 0; fragId < fragCount; ++fragId) {
+          fragIdsArray.push(fragId)
+        }
+        var bBox = this.geWorldBoundingBox(fragIdsArray, thisModel.getFragmentList())
+        var center = new THREE.Vector3(
+          (bBox.min.x + bBox.max.x) / 2,
+          (bBox.min.y + bBox.max.y) / 2,
+          (bBox.min.z + bBox.max.z) / 2)
+
+        // var size = Math.max(
+        //     bBox.max.x - bBox.min.x,
+        //     bBox.max.y - bBox.min.y,
+        //     bBox.max.z - bBox.min.z) * 0.8
+
+        var axis = new THREE.Vector3(axisX, axisY, axisZ)
+        this.rotateFragments(thisModel, fragIdsArray, axis, angle * Math.PI / 180, center)
+      }
     }
   }
 

@@ -108,17 +108,21 @@
       openedDialogHandle() {
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
         console.log('this.LotPositionDialog', this.LotPositionDialog)
-        this.lotPositionForm.globalOffset = this.LotPositionDialog.globalOffset
+        this.lotPositionForm.globalOffset = this.LotPositionDialog.position
+        this.lotPositionForm.rotate.x = this.LotPositionDialog.rotate.x
+        this.lotPositionForm.rotate.y = this.LotPositionDialog.rotate.y
+        this.lotPositionForm.rotate.z = this.LotPositionDialog.rotate.z
       },
       closeDialogHandle() {
         this.clearData()
       },
       lotPositionHandle(type) {
         console.log("lotPositionForm", type, this.lotPositionForm.globalOffset.x)
-        
+
         let param = {
           type: type,
-          globalOffset: this.lotPositionForm.globalOffset
+          globalOffset: this.lotPositionForm.globalOffset,
+          rotate: this.lotPositionForm.rotate
         }
         console.log('param', param)
         this.$store.dispatch('SetLotPositionChange', param).then((result) => {
