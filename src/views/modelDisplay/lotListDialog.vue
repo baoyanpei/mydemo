@@ -9,9 +9,23 @@
       :close-on-press-escape="true" :visible.sync="LotListDialog.show" @opened="openedDialogHandle"
       @close="closeDialogHandle" :title="dialogTitle" v-el-drag-dialog>
 
-      <div class="component-library-list">
+      <div class="device_list">
         <div v-show="tipMessage!==''" class="tip-message">{{tipMessage}}</div>
+        <el-row v-for="(item,index) in deviceList" :key="index" class="library-item">
+          <el-col :span="16" style="padding-left:5px;">
+            <el-row :gutter="24">
+              <div class="grid-content info-title">
+                <span class="info-title-link">{{item.device_name}}</span>
+              </div>
+            </el-row>
 
+          </el-col>
+          <el-col :span="8">
+            <div class="view-point-button">
+              <el-button size="mini" round type="primary">编辑</el-button>
+            </div>
+          </el-col>
+        </el-row>
       </div>
 
     </el-dialog>
@@ -34,6 +48,9 @@
         loadingFull: false,
         dialogTitle: '物联网设备库',
         tipMessage: '',
+        buildItem: null, // 建筑模型信息
+        deviceList: []
+
       }
     },
     computed: {
@@ -74,11 +91,12 @@
       clearData() {
 
       },
-      openedDialogHandle() {
+      async openedDialogHandle() {
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
+        this.buildItem = this.LotListDialog.buildItem
         console.log('this.LotListDialog', this.LotListDialog)
 
-        this.getDeviceConfigList()
+        this.deviceList = await this.getDeviceConfigList()
       },
       closeDialogHandle() {
         this.clearData()
@@ -90,12 +108,12 @@
           const param = {
             method: 'device_config',
             project_id: this.project_id,
-            // access_token: this.access_token
+            // buliding_id: this.buildItem.item_id
           }
           this.$store.dispatch('GetDeviceConfig', param).then((_itemList) => {
             console.log('GetDeviceConfig - _itemList', _itemList)
 
-            resolve()
+            resolve(_itemList)
           })
 
         })

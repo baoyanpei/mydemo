@@ -1,7 +1,7 @@
 .lot-list-dialog {
 
   .el-dialog__wrapper {
-    padding-right: calc(70vw) !important;
+    padding-left: calc(100vw - 500px) !important;
     pointer-events: none;
   }
 
@@ -13,12 +13,44 @@
     font-weight: 600;
   }
 
-  .component-library-list {
-
+  .device_list {
     overflow: auto;
-    // height: 100%;
     height: calc(100vh - 240px);
     background-color: #f2f2f2;
-    padding: 10px 0px 0px 0px;
+    .library-item {
+      margin: 10px 10px;
+      border-bottom: solid 1px #FFFFFF;
+      line-height: 40px;
+    }
+
+    .photo {
+      width: 60px;
+      height: 65px;
+      cursor: pointer;
+    }
+
+    .info-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-left: 10px;
+
+      .info-title-link {
+        cursor: pointer;
+      }
+
+      .info-title-link:hover {
+        // font-style: italic;
+        text-decoration: underline
+      }
+    }
+
+    .view-point-button {
+      width: 100%;
+      text-align: center;
+      .icon-red-pointer {
+        color: red;
+        cursor: pointer;
+      }
+    }
   }
 }

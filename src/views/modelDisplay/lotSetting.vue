@@ -518,6 +518,7 @@
         // 打开物联网管理窗口
         const param = {
           show: true,
+          buildItem:this.itemInfoList[0]
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotListDialog', param).then(() => {}).catch(() => {})
