@@ -245,8 +245,10 @@
         this.$refs.lotInfoDetailForm.validate(valid => {
           console.log('valid', valid)
           if (valid) {
+            this.loading = true
             console.log('this.lotInfoDetailForm', this.lotInfoDetailForm)
             let param = {
+              method: 'device_config_update',
               project_id: this.project_id,
               id: this.lotInfoDetailForm.deviceId,
               mqtt_url: this.lotInfoDetailForm.mqttParam,
@@ -262,11 +264,21 @@
               let _familyLocation = {
                 position: this.devicePosition,
                 rotate: this.deviceRotate
-
               }
               param['family_location'] = JSON.stringify(_familyLocation)
 
+
+
             }
+            this.$store.dispatch('UpdateDeviceConfig', param).then((personList) => {
+              this.$message({
+                message: '保存成功',
+                type: 'success'
+              })
+              this.loading = false
+              // this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
+              // this.handleCloseDialog()
+            })
             console.log('paramparam', param)
           }
         })

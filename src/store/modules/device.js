@@ -1,6 +1,7 @@
 import {
   getDeviceType,
   getDeviceConfig,
+  updateDeviceConfig
 } from '@/api/device'
 
 const device = {
@@ -33,6 +34,17 @@ const device = {
           const _data = response.data
           // commit('SET_PROJECT_GATE_PERSON', _data)
           resolve(_data)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    UpdateDeviceConfig({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        updateDeviceConfig(param).then(response => {
+          resolve(response.data)
         }).catch(error => {
           reject(error)
         })
