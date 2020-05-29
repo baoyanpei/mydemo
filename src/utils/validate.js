@@ -46,3 +46,22 @@ export function validateMobileNumber(str) {
   const reg = /^[1][3,4,5,6,7,8,9][0-9]{9}$/
   return reg.test(str)
 }
+
+
+/* 是否为JSON */
+export function isJSON(str) {
+  if (typeof str == 'string') {
+    try {
+      var obj = JSON.parse(str);
+      if (typeof obj == 'object' && obj) {
+        return true;
+      } else {
+        return false;
+      }
+
+    } catch (e) {
+      console.log('error：' + str + '!!!' + e);
+      return false;
+    }
+  }
+}

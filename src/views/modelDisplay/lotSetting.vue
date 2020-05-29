@@ -17,15 +17,9 @@
       </div>
     </div>
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
-      <el-button class="marker-button" title="新增">
-        <font-awesome-icon :icon="['far','plus-square']" @click="openLotInfoDetailDialogHandle(1)" />
-      </el-button>
       <el-button class="marker-button" title="保存">
-        <font-awesome-icon v-if="isSaveViewValid === true" :icon="['far','save']"
-          @click="openLotInfoDetailDialogHandle(0)" />
-        <font-awesome-icon v-if="isSaveViewValid === false" style="color:grey;" :icon="['far','save']" />
+        <font-awesome-icon :icon="['far','save']" @click="openLotInfoDetailDialogHandle()" />
       </el-button>
-
       <el-button class="marker-button" title="删除设备模型">
 
         <font-awesome-icon v-if="currentDeviceModel !== null" icon="trash-alt" @click="deleteLotDeviceModelHandle(0)" />

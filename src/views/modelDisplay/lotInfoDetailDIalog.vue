@@ -8,15 +8,17 @@
     <el-dialog :modal="false" width="600px" top="10vh" left="100" :lock-scroll="true" :close-on-click-modal="false"
       :close-on-press-escape="true" :visible.sync="LotInfoDetailDialog.show" @opened="openedDialogHandle"
       @close="closeDialogHandle" :title="dialogTitle" v-el-drag-dialog>
-      <el-form ref="lotInfoDetailForm" label-width="120px" :inline="false">
-        <el-form-item label="设备类型">
-          <el-select v-model="deviceType" @change="deviceTypeChangeHandle" placeholder="请选择设备类型" size="mini">
+      <el-form ref="lotInfoDetailForm" :model="lotInfoDetailForm" label-width="120px" :inline="false">
+        <el-form-item prop="deviceType" label="设备类型" :rules="ruleDeviceType">
+          <el-select v-model="lotInfoDetailForm.deviceType" name="deviceType" @change="deviceTypeChangeHandle"
+            placeholder="请选择设备类型" size="mini">
             <el-option v-for="item in deviceTypeList" :key="item.id" :label="`${item.name}`" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="设备">
-          <el-select v-model="deviceId" @change="deviceChangeHandle" placeholder="请选择设备" size="mini">
+        <el-form-item prop="deviceId" label="物联网设备" :rules="ruleDeviceId">
+          <el-select v-model="lotInfoDetailForm.deviceId" name="deviceId" @change="deviceChangeHandle"
+            placeholder="请选择设备" size="mini">
             <el-option v-for="item in deviceList" :key="item.id" :label="`${item.device_name}`" :value="item.id">
             </el-option>
           </el-select>
@@ -26,14 +28,14 @@
           <span v-if="deviceModelData !== null">{{deviceModelData.infoData.name}}</span>
         </el-form-item>
         <el-form-item label="mqtt地址">
-          <el-input type="input" v-model="mqttParam"></el-input>
+          <el-input type="input" v-model="lotInfoDetailForm.mqttParam"></el-input>
         </el-form-item>
-        <el-form-item label="其他参数">
-          <el-input type="textarea" v-model="params_json" :rows="6"></el-input>
+        <el-form-item prop="params_json" label="其他参数" :rules="ruleParamsJson">
+          <el-input type="textarea" v-model="lotInfoDetailForm.params_json" name="params_json" :rows="6"></el-input>
         </el-form-item>
 
       </el-form>
-      <hr class="hr1" style="margin-bottom: 20px;"/>
+      <hr class="hr1" style="margin-bottom: 20px;" />
       <div style="text-align: right;">
         <el-button :loading="loading" @click.native.prevent="closeDialogHandle">取消
         </el-button>
@@ -47,6 +49,9 @@
 
 <script>
   let Base64 = require('js-base64').Base64
+  import {
+    isJSON
+  } from '@/utils/validate'
 
   import {
     Loading
@@ -56,16 +61,62 @@
     components: {},
     directives: {},
     data() {
+      const validateDeviceType = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请选择设备类型'))
+        } else {
+          callback()
+        }
+      }
+      const validateDeviceId = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请选择物联网设备'))
+        } else {
+          callback()
+        }
+      }
+
+      const validateParamsJson = (rule, value, callback) => {
+        if (value !== '' && !isJSON(value)) {
+          callback(new Error('参数必须为JSON格式'))
+        } else {
+          callback()
+        }
+      }
+
       return {
+        tipMessage: '',
         loading: false,
         dialogTitle: '物联网设备信息设置',
-        tipMessage: '',
-        params_json: '',
-        mqttParam: '',
-        deviceType: '',
-        deviceId: '',
-        deviceData: '',
-        deviceModelData: null,
+
+        ruleDeviceType: [{
+          required: true,
+          trigger: 'blur',
+          validator: validateDeviceType
+        }],
+        ruleDeviceId: [{
+          required: true,
+          trigger: 'blur',
+          validator: validateDeviceId
+        }],
+        ruleParamsJson: [{
+          // required: true,
+          trigger: 'blur',
+          validator: validateParamsJson
+        }],
+        lotInfoDetailForm: {
+          deviceType: '',
+          deviceId: '',
+          params_json: '',
+          mqttParam: '',
+        },
+
+
+        buildItem: null,
+        deviceData: null, // 设备的数据
+        deviceModelData: null, // 设备的模型
+        devicePosition: null, // 模型的位置
+        deviceRotate: null, // 模型的旋转
         deviceTypeList: [],
         deviceList: [],
 
@@ -96,32 +147,34 @@
     created: function () {
 
     },
-    mounted() {
-      // const __PROJECT_ID = Cookies.get("PROJECT_ID")
-      // this.project_id = parseInt(__PROJECT_ID)
-
-    },
-    watch: {
-
-
-    },
+    mounted() {},
+    watch: {},
     methods: {
       clearData() {
-        this.params_json = ''
-        this.mqttParam = ''
-        this.deviceType = ''
-        this.deviceId = ''
-        this.deviceData = ''
+        this.buildItem = null
+        this.deviceData = null
         this.deviceModelData = null
+        this.devicePosition = null // 模型的位置
+        this.deviceRotate = null // 模型的旋转
         this.deviceTypeList = []
         this.deviceList = []
+
+        this.lotInfoDetailForm = {
+          deviceType: '',
+          deviceId: '',
+          params_json: '',
+          mqttParam: '',
+        }
+        this.$refs.lotInfoDetailForm.resetFields();
       },
       async openedDialogHandle() {
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
         console.log('this.LotInfoDetailDialog', this.LotInfoDetailDialog)
+        this.buildItem = this.LotInfoDetailDialog.buildItem
         this.deviceModelData = this.LotInfoDetailDialog.deviceModel
+        this.devicePosition = this.LotInfoDetailDialog.devicePosition // 模型的位置
+        this.deviceRotate = this.LotInfoDetailDialog.deviceRotate // 模型的旋转
         this.deviceTypeList = await this.getDeviceTypeList()
-        // this.getDeviceConfigList()
       },
       closeDialogHandle() {
         this.clearData()
@@ -168,6 +221,7 @@
       },
       async deviceTypeChangeHandle(deviceType) {
         console.log('deviceType', deviceType)
+        this.lotInfoDetailForm.deviceId = ''
         this.deviceList = await this.getDeviceConfigList(deviceType)
       },
       deviceChangeHandle(id) {
@@ -179,14 +233,43 @@
           }
         })
         this.mqttParam = this.deviceData.mqttParam
-        this.params_json = JSON.stringify(this.deviceData.params_json)
-        if (this.params_json === '{}') {
-          this.params_json = ''
+        this.lotInfoDetailForm.params_json = JSON.stringify(this.deviceData.params_json)
+        if (this.lotInfoDetailForm.params_json === '{}') {
+          this.lotInfoDetailForm.params_json = ''
         }
+        this.lotInfoDetailForm.mqttParam = this.deviceData.mqtt_url
         console.log('this.deviceData', this.deviceData)
       },
       handleSubmit() {
+        console.log('handleSubmit')
+        this.$refs.lotInfoDetailForm.validate(valid => {
+          console.log('valid', valid)
+          if (valid) {
+            console.log('this.lotInfoDetailForm', this.lotInfoDetailForm)
+            let param = {
+              project_id: this.project_id,
+              id: this.lotInfoDetailForm.deviceId,
+              mqtt_url: this.lotInfoDetailForm.mqttParam,
+              params_json: this.lotInfoDetailForm.params_json,
+              buliding_id: '',
+              family_id: '',
+              family_location: ''
+            }
 
+            if (this.deviceModelData !== null) {
+              param['buliding_id'] = this.buildItem.item_id
+              param['family_id'] = this.deviceModelData.infoData.id
+              let _familyLocation = {
+                position: this.devicePosition,
+                rotate: this.deviceRotate
+
+              }
+              param['family_location'] = JSON.stringify(_familyLocation)
+
+            }
+            console.log('paramparam', param)
+          }
+        })
       }
     }
   }
