@@ -32,6 +32,10 @@
         <font-awesome-icon v-if="currentDeviceModel === null" :icon="['far','plus-square']" style="color:grey;" />
       </el-button>
       <hr />
+      <el-button class="marker-button" title="查找构件">
+        <font-awesome-icon v-if="currentDeviceModel !== null" :icon="['far','plus-square']" @click="FindModel()" />
+        <font-awesome-icon v-if="currentDeviceModel === null" :icon="['far','plus-square']" style="color:grey;" />
+      </el-button>
       <el-button class="marker-button" title="构件库">
         <font-awesome-icon icon="layer-group" @click="openComponentLibraryDialogHandle" />
       </el-button>
@@ -121,9 +125,12 @@
         FPS_HIGH_LEVEL: 15, // 高于祯数 为快
         FPS_LOW_TIMES: 50, // 低速fps累计次数
 
-
-        currentDeviceOpType: 0, // 当前设备模型的编辑模式 0:新增模式 1:编辑模式
+        FamilyListMap: [], // 模型库数据
+        LotDeviceList: [], // 已经绑定的物联网设备列表
+        LotDeviceModelMap: null, // 物联网模型列表
+        // currentDeviceOpType: 0, // 当前设备模型的编辑模式 0:新增模式 1:编辑模式
         currentDeviceModel: null, // 当前正在操作的设备模型
+        currentDeviceData: null, // 当前正在操作的设备数据
         selectedPosition: { // 选择的构件位置
           x: 0,
           y: 0,
@@ -151,7 +158,10 @@
       },
       LotPositionChange() {
         return this.$store.state.loT.LotPositionChange
-      }
+      },
+      LotDeviceEditChange() {
+        return this.$store.state.loT.LotDeviceEditChange
+      },
     },
     created() {
 
@@ -171,36 +181,23 @@
       LotPositionChange: {
         handler: function (newVal, oldVal) {
           console.log('LotPositionChange111 ', newVal)
-          // if (newVal.type === 1) {
-          //   this.refreshDisplay(newVal)
-          // }
           let _globalOffset = newVal.globalOffset
           this.currentDevicePosition = _globalOffset
 
-          // console.log('_globalOffset', _globalOffset)
-
           const _type = newVal.type
-          console.log('11222 ->', newVal.rotate.x, this.currentDeviceRotate.x, this.currentDeviceRotate)
-
-
-
           // console.log('_rotate_x', _rotate_x)
           switch (_type) {
             case "rotate_x":
               let _rotate_x = newVal.rotate.x - this.currentDeviceRotate.x
-              console.log('_rotate_x', _rotate_x)
               this.RotateModel(this.currentDeviceModel, 1, 0, 0, _rotate_x)
-              // this.currentDeviceRotate.x = newVal.rotate.x
               break;
             case "rotate_y":
               let _rotate_y = newVal.rotate.y - this.currentDeviceRotate.y
               this.RotateModel(this.currentDeviceModel, 0, 1, 0, _rotate_y)
-              // this.currentDeviceRotate.y = newVal.rotate.y
               break;
             case "rotate_z":
               let _rotate_z = newVal.rotate.z - this.currentDeviceRotate.z
               this.RotateModel(this.currentDeviceModel, 0, 0, 1, _rotate_z)
-              // this.currentDeviceRotate.z = newVal.rotate.z
               break;
             default:
               this.MoveModel(this.currentDeviceModel, this.currentDevicePosition.x, this.currentDevicePosition.y, this
@@ -216,7 +213,37 @@
 
         },
         deep: true
-      }
+      },
+      LotDeviceEditChange: {
+        handler: function (newVal, oldVal) {
+          console.log('LotDeviceEditChange ', newVal)
+
+          this.enterEditModeHandle()
+          let _device = newVal.device;
+
+          let _modelData = this.LotDeviceModelMap.get(_device.id);
+          console.log('this.LotDeviceModelMap', _device.id, this.LotDeviceModelMap)
+          console.log('LotDeviceEditChange - _modelData ', _modelData)
+
+
+          let _family_location = _device.family_location
+          const familyLocation = JSON.parse(_family_location);
+          this.currentDeviceModel = _modelData.model
+          this.currentDeviceData = _device
+          console.log('familyLocationfamilyLocation', familyLocation)
+          // // this.currentDeviceModel.infoData = item
+          this.currentDevicePosition.x = familyLocation.position.x
+          this.currentDevicePosition.y = familyLocation.position.y
+          this.currentDevicePosition.z = familyLocation.position.z
+
+          this.currentDeviceRotate.x = familyLocation.rotate.x
+          this.currentDeviceRotate.y = familyLocation.rotate.y
+          this.currentDeviceRotate.z = familyLocation.rotate.z
+
+
+        },
+        deep: true
+      },
     },
     async mounted() {
 
@@ -252,8 +279,94 @@
         // console.log('itemIDList', itemIDList, itemIDList.join(','))
         await this.getItemInfoListByItemIDs(itemIDList.join(','))
         await this.getUrlAndInitView()
+        this.FamilyListMap = await this.getFamilyList()
+        console.log('FamilyListMap', this.FamilyListMap)
+        this.LotDeviceList = await this.getDeviceConfigList()
+        console.log('LotDeviceList', this.LotDeviceList)
 
+        this.setLotDeviceModelList()
+      },
+      getFamilyList() {
+        return new Promise((resolve, reject) => {
+          this.buildList = []
+          const param = {
+            method: 'family_query',
+            project_id: this.project_id,
+            // access_token: this.access_token
+          }
+          this.$store.dispatch('GetFamilyQuery', param).then((_itemList) => {
+            console.log('GetFamilyQuery - _itemList', _itemList)
+            let _mapData = new Map()
+            _itemList.forEach(itemInfo => {
+              _mapData.set(itemInfo.id, itemInfo)
+            })
 
+            resolve(_mapData)
+          })
+
+        })
+      },
+      getDeviceConfigList() {
+        return new Promise((resolve, reject) => {
+          this.buildList = []
+          const param = {
+            method: 'device_config',
+            project_id: this.project_id,
+            // buliding_id: this.buildItem.item_id
+          }
+          this.$store.dispatch('GetDeviceConfig', param).then((_itemList) => {
+            console.log('GetDeviceConfig - _itemList', _itemList)
+
+            resolve(_itemList)
+          })
+
+        })
+      },
+      setLotDeviceModelList() {
+        this.LotDeviceModelMap = new Map()
+        this.LotDeviceList.forEach(itemInfo => {
+          if (itemInfo.family_id > 0) {
+            console.log('itemInfoitemInfo121113', itemInfo)
+            let _familyModel = this.FamilyListMap.get(itemInfo.family_id)
+            let _family_location = itemInfo.family_location
+            const familyLocation = JSON.parse(_family_location);
+            console.log('_model_model', _familyModel, _family_location, familyLocation)
+
+            let _url = _familyModel.file.replace('/BCP_FILE/', 'BCP_FILE/')
+
+            const modelOpts = {
+              placementTransform: new THREE.Matrix4(),
+              globalOffset: {
+                x: 0,
+                y: 0,
+                z: 0
+              }
+            };
+
+            this.viewer.loadModel(_url, modelOpts, (model) => {
+              model.infoData = _familyModel
+              this.LotDeviceModelMap.set(itemInfo.id, {
+                deviceData: itemInfo,
+                model: model
+              })
+              console.log('---->',familyLocation.position.x,familyLocation.position.y,familyLocation.position.z)
+              const _x = familyLocation.rotate.x;
+              const _y = familyLocation.rotate.y;
+              const _z = familyLocation.rotate.z;
+              this.RotateModel(model, 1, 0, 0, _x)
+              this.RotateModel(model, 0, 1, 0, _y)
+              this.RotateModel(model, 0, 0, 1, _z)
+              this.MoveModel(model,
+                familyLocation.position.x,
+                familyLocation.position.y,
+                familyLocation.position.z)
+                
+              
+              console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
+            }, this.onLoadError);
+          }
+
+        })
       },
       initProgressiveRendering() {
         // 初始化设置 渐进式显示
@@ -518,7 +631,7 @@
         // 打开物联网管理窗口
         const param = {
           show: true,
-          buildItem:this.itemInfoList[0]
+          buildItem: this.itemInfoList[0]
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotListDialog', param).then(() => {}).catch(() => {})
@@ -539,8 +652,9 @@
         // 打开物联网信息编辑窗口
         const param = {
           show: true,
-          buildItem:this.itemInfoList[0],
+          buildItem: this.itemInfoList[0],
           deviceModel: this.currentDeviceModel, // 当前的模型
+          deviceEditData: this.currentDeviceData, // 当前设备的数据
           devicePosition: this.currentDevicePosition,
           deviceRotate: this.currentDeviceRotate
         }
@@ -579,14 +693,18 @@
           this.currentDevicePosition.x = this.selectedPosition.x
           this.currentDevicePosition.y = this.selectedPosition.y
           this.currentDevicePosition.z = this.selectedPosition.z
-          this.MoveModel(this.currentDeviceModel, this.currentDevicePosition.x, this.currentDevicePosition.y, this
-            .currentDevicePosition.z)
+          this.MoveModel(
+            this.currentDeviceModel,
+            this.currentDevicePosition.x,
+            this.currentDevicePosition.y,
+            this.currentDevicePosition.z)
           const _x = this.currentDeviceRotate.x;
           const _y = this.currentDeviceRotate.y;
           const _z = this.currentDeviceRotate.z;
           this.RotateModel(this.currentDeviceModel, 1, 0, 0, _x)
           this.RotateModel(this.currentDeviceModel, 0, 1, 0, _y)
           this.RotateModel(this.currentDeviceModel, 0, 0, 1, _z)
+
         }, this.onLoadError);
       },
       deleteLotDeviceModelHandle() {
@@ -619,7 +737,7 @@
         buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
 
         buttonEnterLotMode.onClick = (e) => {
-          this.enterEditModeHandle(0) // 新增物联网模型
+          this.LotDeviceNewModel(); // 新增物联网模型
         }
         buttonEnterLotMode.addClass('enter-add-lot-button')
         buttonEnterLotMode.setToolTip('添加物联网设备')
@@ -643,8 +761,11 @@
         this.viewer.toolbar.addControl(this.ControlLotManager)
 
       },
-      enterEditModeHandle(DeviceOpType) { // 进入编辑模式
-        this.currentDeviceOpType = DeviceOpType
+      LotDeviceNewModel() {
+        this.enterEditModeHandle()
+      },
+      enterEditModeHandle() { // 进入编辑模式
+        // this.currentDeviceOpType = DeviceOpType
         this.viewer.toolbar.removeControl(this.ControlLotManager)
         this.isShowViewPointArea = true
         this.isShowToolbarMarker = true
@@ -654,14 +775,58 @@
 
 
       },
-      exitEditModeHandle() { // 退出编辑模式
+      async exitEditModeHandle() { // 退出编辑模式
         this.viewer.toolbar.addControl(this.ControlLotManager)
         this.isShowViewPointArea = false
         this.isShowToolbarMarker = false
+        console.log('this.currentDeviceModel', this.currentDeviceModel)
+        // this.viewer.unloadModel(this.currentDeviceModel)
+        this.currentDeviceModel = null // 当前正在操作的设备模型
+        this.currentDeviceData = null // 当前正在操作的设备数据
+        this.selectedPosition = { // 选择的构件位置
+          x: 0,
+          y: 0,
+          z: 0
+        }
+        this.currentDevicePosition = { // 
+          x: 0,
+          y: 0,
+          z: 0
+        }
+        this.currentDeviceRotate = {
+          x: 0,
+          y: 0,
+          z: 0
+        }
+
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: false
         }).then(() => {})
 
+
+        var scene = this.viewer.impl.modelQueue();
+        var models = scene.getModels();
+        console.log('this.models', models)
+        let _modelMap = new Map()
+
+
+        models.forEach((model) => {
+          console.log('model.infoData', model.infoData)
+          console.log('modelmodel', model)
+          let _umodel = model
+          if (_umodel.infoData !== undefined) {
+            _modelMap.set(model.id, model)
+            // this.viewer.unloadModel(_umodel)
+          }
+        });
+        console.log('_modelMap', _modelMap)
+        _modelMap.forEach((value, key, map) => {
+          //value和key就是map的key，value，map是map本身
+          console.log('valuevaluevalue', value)
+          this.viewer.unloadModel(value)
+        });
+        this.LotDeviceList = await this.getDeviceConfigList()
+        this.setLotDeviceModelList()
       },
       MoveModel(model, x, y, z) {
         const thisModel = model; //viewer.getAggregateSelection()[0].model
@@ -743,6 +908,9 @@
 
         var axis = new THREE.Vector3(axisX, axisY, axisZ)
         this.rotateFragments(thisModel, fragIdsArray, axis, angle * Math.PI / 180, center)
+      },
+      FindModel() {
+        this.viewer.fitToView([1], this.currentDeviceModel)
       }
     }
   }

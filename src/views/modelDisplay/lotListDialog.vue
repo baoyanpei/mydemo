@@ -22,7 +22,7 @@
           </el-col>
           <el-col :span="8">
             <div class="view-point-button">
-              <el-button size="mini" round type="primary">编辑</el-button>
+              <el-button size="mini" round type="primary" @click="editDeviceHandle(item)">编辑</el-button>
             </div>
           </el-col>
         </el-row>
@@ -108,7 +108,7 @@
           const param = {
             method: 'device_config',
             project_id: this.project_id,
-            // buliding_id: this.buildItem.item_id
+            buliding_id: this.buildItem.item_id
           }
           this.$store.dispatch('GetDeviceConfig', param).then((_itemList) => {
             console.log('GetDeviceConfig - _itemList', _itemList)
@@ -118,6 +118,22 @@
 
         })
       },
+      editDeviceHandle(item) {
+        console.log('item', item)
+        let param = {
+          device: item
+        }
+        console.log('param', param)
+        this.$store.dispatch('SetLotDeviceEditChange', param).then((result) => {
+          this.closeDialog()
+        })
+
+      },
+      closeDialog() {
+        this.$store.dispatch('ShowLotListDialog', {
+          show: false
+        }).then(() => {}).catch(() => {})
+      }
     }
   }
 

@@ -26,6 +26,10 @@ const loT = {
     LotPositionChange: {
       refresh: 0,
       data: {}
+    },
+    LotDeviceEditChange: { // 在建筑模型的物联网设备列表中选择了设备
+      refresh: 0,
+      data: {}
     }
   },
   mutations: {
@@ -58,6 +62,14 @@ const loT = {
       state.LotPositionChange.refresh = genRandom(1, 1000)
       console.log('----->', state.LotPositionChange)
     },
+    LOT_DEVICE_EDIT_CHANGE: (state, data) => {
+      state.LotDeviceEditChange = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.LotDeviceEditChange.refresh = genRandom(1, 1000)
+      console.log('----->', state.LotDeviceEditChange)
+    },
+
+
   },
   actions: {
     SetVideoDialog({
@@ -112,6 +124,16 @@ const loT = {
         resolve()
       })
     },
+    SetLotDeviceEditChange({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('LOT_DEVICE_EDIT_CHANGE', param)
+        resolve()
+      })
+    },
+
+    
   }
 }
 

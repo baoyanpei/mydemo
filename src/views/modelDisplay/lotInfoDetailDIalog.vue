@@ -5,20 +5,20 @@
 <template>
 
   <div id="lot-info-detail-dialog" class="lot-info-detail-dialog">
-    <el-dialog :modal="false" width="600px" top="10vh" left="100" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="false" width="600px" top="10vh" :lock-scroll="true" :close-on-click-modal="false"
       :close-on-press-escape="true" :visible.sync="LotInfoDetailDialog.show" @opened="openedDialogHandle"
       @close="closeDialogHandle" :title="dialogTitle" v-el-drag-dialog>
       <el-form ref="lotInfoDetailForm" :model="lotInfoDetailForm" label-width="120px" :inline="false">
         <el-form-item prop="deviceType" label="设备类型" :rules="ruleDeviceType">
-          <el-select v-model="lotInfoDetailForm.deviceType" name="deviceType" @change="deviceTypeChangeHandle"
-            placeholder="请选择设备类型" size="mini">
+          <el-select v-model="lotInfoDetailForm.deviceType" name="deviceType" :disabled="deviceTypeDisabled"
+            @change="deviceTypeChangeHandle" placeholder="请选择设备类型" size="mini">
             <el-option v-for="item in deviceTypeList" :key="item.id" :label="`${item.name}`" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item prop="deviceId" label="物联网设备" :rules="ruleDeviceId">
-          <el-select v-model="lotInfoDetailForm.deviceId" name="deviceId" @change="deviceChangeHandle"
-            placeholder="请选择设备" size="mini">
+          <el-select v-model="lotInfoDetailForm.deviceId" name="deviceId" :disabled="deviceDisabled"
+            @change="deviceChangeHandle" placeholder="请选择设备" size="mini">
             <el-option v-for="item in deviceList" :key="item.id" :label="`${item.device_name}`" :value="item.id">
             </el-option>
           </el-select>
@@ -88,7 +88,8 @@
         tipMessage: '',
         loading: false,
         dialogTitle: '物联网设备信息设置',
-
+        deviceTypeDisabled: false,
+        deviceDisabled: false,
         ruleDeviceType: [{
           required: true,
           trigger: 'blur',
@@ -113,7 +114,7 @@
 
 
         buildItem: null,
-        deviceData: null, // 设备的数据
+        deviceEditData: null, // 设备的数据
         deviceModelData: null, // 设备的模型
         devicePosition: null, // 模型的位置
         deviceRotate: null, // 模型的旋转
@@ -151,8 +152,12 @@
     watch: {},
     methods: {
       clearData() {
+        this.tipMessage = ''
+        this.loading = false
+        this.deviceTypeDisabled = false
+        this.deviceDisabled = false
         this.buildItem = null
-        this.deviceData = null
+        this.deviceEditData = null
         this.deviceModelData = null
         this.devicePosition = null // 模型的位置
         this.deviceRotate = null // 模型的旋转
@@ -172,9 +177,18 @@
         console.log('this.LotInfoDetailDialog', this.LotInfoDetailDialog)
         this.buildItem = this.LotInfoDetailDialog.buildItem
         this.deviceModelData = this.LotInfoDetailDialog.deviceModel
+        this.deviceEditData = this.LotInfoDetailDialog.deviceEditData
         this.devicePosition = this.LotInfoDetailDialog.devicePosition // 模型的位置
         this.deviceRotate = this.LotInfoDetailDialog.deviceRotate // 模型的旋转
         this.deviceTypeList = await this.getDeviceTypeList()
+        if (this.deviceEditData !== null) {
+          this.deviceTypeDisabled = true
+          this.deviceDisabled = true
+          let _dType = this.deviceEditData.device_type
+          this.lotInfoDetailForm.deviceType = _dType
+          this.deviceTypeChangeHandle(_dType)
+          this.lotInfoDetailForm.deviceId = this.deviceEditData.id
+        }
       },
       closeDialogHandle() {
         this.clearData()
@@ -213,8 +227,17 @@
           }
           this.$store.dispatch('GetDeviceConfig', param).then((_itemList) => {
             console.log('GetDeviceConfig - _itemList', _itemList)
-
-            resolve(_itemList)
+            let _deviceList = []
+            if (this.deviceEditData === null) {
+              _itemList.forEach(_item => {
+                if (_item.family_id === 0) {
+                  _deviceList.push(_item)
+                }
+              })
+            } else {
+              _deviceList = _itemList
+            }
+            resolve(_deviceList)
           })
 
         })
@@ -226,19 +249,18 @@
       },
       deviceChangeHandle(id) {
         console.log('deviceId', id)
-
+        let _deviceData = null
         this.deviceList.forEach(_device => {
           if (_device.id === id) {
-            this.deviceData = _device
+            _deviceData = _device
           }
         })
-        this.mqttParam = this.deviceData.mqttParam
-        this.lotInfoDetailForm.params_json = JSON.stringify(this.deviceData.params_json)
+        this.lotInfoDetailForm.params_json = JSON.stringify(_deviceData.params_json)
         if (this.lotInfoDetailForm.params_json === '{}') {
           this.lotInfoDetailForm.params_json = ''
         }
-        this.lotInfoDetailForm.mqttParam = this.deviceData.mqtt_url
-        console.log('this.deviceData', this.deviceData)
+        this.lotInfoDetailForm.mqttParam = _deviceData.mqtt_url
+        console.log('_deviceData', _deviceData)
       },
       handleSubmit() {
         console.log('handleSubmit')
@@ -276,8 +298,6 @@
                 type: 'success'
               })
               this.loading = false
-              // this.$store.dispatch('SetPersonListChanged', {}).then(() => {})
-              // this.handleCloseDialog()
             })
             console.log('paramparam', param)
           }
