@@ -11,7 +11,7 @@
 
       <div class="device_list">
         <div v-show="tipMessage!==''" class="tip-message">{{tipMessage}}</div>
-        <el-row v-for="(item,index) in deviceList" :key="index" class="library-item">
+        <el-row v-show="tipMessage===''" v-for="(item,index) in deviceList" :key="index" class="library-item">
           <el-col :span="14" style="padding-left:5px;">
             <el-row :gutter="24">
               <div class="grid-content info-title">
@@ -22,8 +22,8 @@
           </el-col>
           <el-col :span="10">
             <div class="view-point-button">
-              <el-button size="mini"  type="primary" @click="findDeviceHandle(item)">查找</el-button>
-              <el-button size="mini"  type="primary" @click="editDeviceHandle(item)">编辑</el-button>
+              <el-button size="mini" type="primary" @click="findDeviceHandle(item)">查找</el-button>
+              <el-button size="mini" type="primary" @click="editDeviceHandle(item)">编辑</el-button>
             </div>
           </el-col>
         </el-row>
@@ -90,14 +90,21 @@
     },
     methods: {
       clearData() {
-
+        this.tipMessage = ""
+        this.deviceList = []
+        this.buildItem = null
       },
       async openedDialogHandle() {
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
         this.buildItem = this.LotListDialog.buildItem
         console.log('this.LotListDialog', this.LotListDialog)
-
+        this.tipMessage = "正在查询..."
         this.deviceList = await this.getDeviceConfigList()
+        if (this.deviceList.length === 0) {
+          this.tipMessage = "当前建筑中没有绑定物联网设备模型"
+          return
+        }
+        this.tipMessage = ""
       },
       closeDialogHandle() {
         this.clearData()
@@ -141,7 +148,7 @@
         })
 
 
-        
+
       },
       closeDialog() {
         this.$store.dispatch('ShowLotListDialog', {

@@ -343,7 +343,7 @@
           const param = {
             method: 'device_config',
             project_id: this.project_id,
-            // buliding_id: this.buildItem.item_id
+            buliding_id: this.itemInfoList[0].item_id
           }
           this.$store.dispatch('GetDeviceConfig', param).then((_itemList) => {
             console.log('GetDeviceConfig - _itemList', _itemList)

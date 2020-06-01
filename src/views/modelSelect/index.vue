@@ -74,7 +74,7 @@
                 </el-button>
                 <el-button type="primary" size="mini"
                   v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
-                  @click="handleLotSetting(scope.row)">物联设备配置
+                  @click="handleLotSetting(scope.row)">物联设备模型配置
                 </el-button>
                 <!-- <el-button title="上传"
                   v-if="scope.row.name !== '' && scope.row.menuType ==='item' && scope.row.isShowUploadItem === true"
