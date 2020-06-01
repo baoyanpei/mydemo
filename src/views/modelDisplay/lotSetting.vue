@@ -8,7 +8,9 @@
     <div v-if="isShowViewPointArea" class="viewPointShowArea">
       <div class="viewPointTitle">
         <div class="title">
-          <span>物联网设备管理</span>
+          <span>物联网设备管理</span> -
+          <span v-if="currentEditModelName.name === ''">新增设备模型</span>
+          <span v-if="currentEditModelName.name !== ''">{{currentEditModelName.name}}</span>
         </div>
         <el-button type="danger" class="btn-close-view-point" @click="exitEditModeHandle" size="small"
           style="width:130px;">
@@ -131,6 +133,9 @@
         // currentDeviceOpType: 0, // 当前设备模型的编辑模式 0:新增模式 1:编辑模式
         currentDeviceModel: null, // 当前正在操作的设备模型
         currentDeviceData: null, // 当前正在操作的设备数据
+        currentEditModelName: {
+          name: ''
+        }, // 当前编辑的模型信息，用于顶部title显示
         selectedPosition: { // 选择的构件位置
           x: 0,
           y: 0,
@@ -165,6 +170,9 @@
       LotDeviceFindChange() {
         return this.$store.state.loT.LotDeviceFindChange
       },
+      LotInfoDetailSavedChange() {
+        return this.$store.state.loT.LotInfoDetailSavedChange
+      }
     },
     created() {
 
@@ -237,7 +245,7 @@
 
           this.enterEditModeHandle()
           let _device = newVal.device;
-
+          this.currentEditModelName.name = _device.device_name
           let _modelData = this.LotDeviceModelMap.get(_device.id);
           console.log('this.LotDeviceModelMap', _device.id, this.LotDeviceModelMap)
           console.log('LotDeviceEditChange - _modelData ', _modelData)
@@ -258,6 +266,13 @@
           this.currentDeviceRotate.z = familyLocation.rotate.z
 
 
+        },
+        deep: true
+      },
+      LotInfoDetailSavedChange: {
+        handler: function (newVal, oldVal) {
+          console.log('LotInfoDetailSavedChange ', newVal)
+          this.currentEditModelName.name = newVal.device_name
         },
         deep: true
       },
@@ -781,6 +796,9 @@
       },
       LotDeviceNewModel() {
         this.enterEditModeHandle()
+        this.$store.dispatch('ShowLotListDialog', {
+          show: false
+        }).then(() => {}).catch(() => {})
       },
       enterEditModeHandle() { // 进入编辑模式
         // this.currentDeviceOpType = DeviceOpType
@@ -794,6 +812,16 @@
 
       },
       async exitEditModeHandle() { // 退出编辑模式
+
+        
+        this.$store.dispatch('ShowComponentLibraryListDialog', {
+          show: false,
+        }).then(() => {}).catch(() => {})
+
+        this.$store.dispatch('ShowLotPositionDialog', {
+          show: false,
+        }).then(() => {}).catch(() => {})
+
         this.viewer.toolbar.addControl(this.ControlLotManager)
         this.isShowViewPointArea = false
         this.isShowToolbarMarker = false
@@ -801,6 +829,7 @@
         // this.viewer.unloadModel(this.currentDeviceModel)
         this.currentDeviceModel = null // 当前正在操作的设备模型
         this.currentDeviceData = null // 当前正在操作的设备数据
+        this.currentEditModelName.name = ''
         this.selectedPosition = { // 选择的构件位置
           x: 0,
           y: 0,

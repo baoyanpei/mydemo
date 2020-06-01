@@ -114,6 +114,7 @@
 
 
         buildItem: null,
+        deviceName: '',
         deviceEditData: null, // 设备的数据
         deviceModelData: null, // 设备的模型
         devicePosition: null, // 模型的位置
@@ -157,6 +158,7 @@
         this.deviceTypeDisabled = false
         this.deviceDisabled = false
         this.buildItem = null
+        this.deviceName = ''
         this.deviceEditData = null
         this.deviceModelData = null
         this.devicePosition = null // 模型的位置
@@ -184,10 +186,14 @@
         if (this.deviceEditData !== null) {
           this.deviceTypeDisabled = true
           this.deviceDisabled = true
+          this.deviceName = this.deviceEditData.device_name
           let _dType = this.deviceEditData.device_type
           this.lotInfoDetailForm.deviceType = _dType
           this.deviceTypeChangeHandle(_dType)
           this.lotInfoDetailForm.deviceId = this.deviceEditData.id
+          this.lotInfoDetailForm.params_json = this.deviceEditData.params_json
+          this.lotInfoDetailForm.mqttParam = this.deviceEditData.mqtt_url
+
         }
       },
       closeDialogHandle() {
@@ -247,6 +253,7 @@
         this.lotInfoDetailForm.deviceId = ''
         this.deviceList = await this.getDeviceConfigList(deviceType)
       },
+      // 手工选择物联网设备下拉
       deviceChangeHandle(id) {
         console.log('deviceId', id)
         let _deviceData = null
@@ -255,12 +262,14 @@
             _deviceData = _device
           }
         })
-        this.lotInfoDetailForm.params_json = JSON.stringify(_deviceData.params_json)
+        console.log('_deviceData.params_json', _deviceData.params_json)
+        this.lotInfoDetailForm.params_json = _deviceData.params_json
         if (this.lotInfoDetailForm.params_json === '{}') {
           this.lotInfoDetailForm.params_json = ''
         }
         this.lotInfoDetailForm.mqttParam = _deviceData.mqtt_url
         console.log('_deviceData', _deviceData)
+        this.deviceName = _deviceData.device_name
       },
       handleSubmit() {
         console.log('handleSubmit')
@@ -288,19 +297,25 @@
                 rotate: this.deviceRotate
               }
               param['family_location'] = JSON.stringify(_familyLocation)
-
-
-
             }
             this.$store.dispatch('UpdateDeviceConfig', param).then((personList) => {
               this.$message({
                 message: '保存成功',
                 type: 'success'
               })
+              this.SetLotInfoDetailSavedChange()
               this.loading = false
             })
             console.log('paramparam', param)
           }
+        })
+      },
+      SetLotInfoDetailSavedChange() {
+        let param = {
+          device_name: this.deviceName
+        }
+        this.$store.dispatch('SetLotInfoDetailSavedChange', param).then((personList) => {
+
         })
       }
     }

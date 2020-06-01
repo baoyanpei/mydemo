@@ -34,6 +34,10 @@ const loT = {
     LotDeviceFindChange: { // 在建筑模型的物联网设备列表中查询设备
       refresh: 0,
       data: {}
+    },
+    LotInfoDetailSavedChange: { // 物联网信息保存完成
+      refresh: 0,
+      data: {}
     }
   },
   mutations: {
@@ -72,6 +76,13 @@ const loT = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotDeviceFindChange.refresh = genRandom(1, 1000)
     },
+    LOT_LOT_DETAIL_SAVED_CHANGE: (state, data) => {
+      state.LotInfoDetailSavedChange = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.LotInfoDetailSavedChange.refresh = genRandom(1, 1000)
+    },
+
+    
     
 
   },
@@ -144,6 +155,15 @@ const loT = {
         resolve()
       })
     },
+    SetLotInfoDetailSavedChange({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('LOT_LOT_DETAIL_SAVED_CHANGE', param)
+        resolve()
+      })
+    },
+    
 
     
     
