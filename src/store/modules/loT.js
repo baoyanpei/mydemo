@@ -30,6 +30,10 @@ const loT = {
     LotDeviceEditChange: { // 在建筑模型的物联网设备列表中选择了设备
       refresh: 0,
       data: {}
+    },
+    LotDeviceFindChange: { // 在建筑模型的物联网设备列表中查询设备
+      refresh: 0,
+      data: {}
     }
   },
   mutations: {
@@ -42,33 +46,33 @@ const loT = {
       state.LotListDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotListDialog.refresh = genRandom(1, 1000)
-      console.log('----->', state.LotListDialog)
     },
     SHOW_LOT_POSITION_DIALOG: (state, data) => {
       state.LotPositionDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotPositionDialog.refresh = genRandom(1, 1000)
-      console.log('----->', state.LotPositionDialog)
     },
     SHOW_LOT_INFO_DETAIL_DIALOG: (state, data) => {
       state.LotInfoDetailDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotInfoDetailDialog.refresh = genRandom(1, 1000)
-      console.log('----->', state.LotInfoDetailDialog)
     },
     LOT_POSITION_CHANGE: (state, data) => {
       state.LotPositionChange = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotPositionChange.refresh = genRandom(1, 1000)
-      console.log('----->', state.LotPositionChange)
     },
     LOT_DEVICE_EDIT_CHANGE: (state, data) => {
       state.LotDeviceEditChange = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotDeviceEditChange.refresh = genRandom(1, 1000)
-      console.log('----->', state.LotDeviceEditChange)
     },
-
+    LOT_DEVICE_FIND_CHANGE: (state, data) => {
+      state.LotDeviceFindChange = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.LotDeviceFindChange.refresh = genRandom(1, 1000)
+    },
+    
 
   },
   actions: {
@@ -132,7 +136,16 @@ const loT = {
         resolve()
       })
     },
+    SetLotDeviceFindChange({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('LOT_DEVICE_FIND_CHANGE', param)
+        resolve()
+      })
+    },
 
+    
     
   }
 }

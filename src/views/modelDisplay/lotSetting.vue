@@ -162,6 +162,9 @@
       LotDeviceEditChange() {
         return this.$store.state.loT.LotDeviceEditChange
       },
+      LotDeviceFindChange() {
+        return this.$store.state.loT.LotDeviceFindChange
+      },
     },
     created() {
 
@@ -210,6 +213,20 @@
           this.currentDeviceRotate.y = newVal.rotate.y
           this.currentDeviceRotate.z = newVal.rotate.z
           console.log('this.currentDeviceRotate.currentDeviceRotate', this.currentDeviceRotate)
+
+        },
+        deep: true
+      },
+      LotDeviceFindChange: {
+        handler: function (newVal, oldVal) {
+          console.log('LotDeviceFindChange ', newVal)
+          let _device = newVal.device;
+          let _modelData = this.LotDeviceModelMap.get(_device.id);
+          // console.log('this.LotDeviceModelMap', _device.id, this.LotDeviceModelMap)
+          // console.log('LotDeviceFindChange - _modelData ', _modelData)
+          this.viewer.fitToView([1], _modelData.model)
+
+
 
         },
         deep: true
@@ -349,7 +366,8 @@
                 deviceData: itemInfo,
                 model: model
               })
-              console.log('---->',familyLocation.position.x,familyLocation.position.y,familyLocation.position.z)
+              console.log('---->', familyLocation.position.x, familyLocation.position.y, familyLocation.position
+                .z)
               const _x = familyLocation.rotate.x;
               const _y = familyLocation.rotate.y;
               const _z = familyLocation.rotate.z;
@@ -360,8 +378,8 @@
                 familyLocation.position.x,
                 familyLocation.position.y,
                 familyLocation.position.z)
-                
-              
+
+
               console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
             }, this.onLoadError);
           }
