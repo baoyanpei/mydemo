@@ -5,14 +5,14 @@
 <template>
 
   <div id="component-library-list-dialog" class="component-library-list-dialog">
-    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="false" width="400px" top="10vh" :lock-scroll="true" :close-on-click-modal="false"
       :close-on-press-escape="true" :visible.sync="ComponentLibraryListDialog.show" @opened="openedDialogHandle"
       @close="closeDialogHandle" :title="dialogTitle" v-el-drag-dialog>
 
       <div class="component-library-list">
         <div v-show="tipMessage!==''" class="tip-message">{{tipMessage}}</div>
         <el-row v-for="(item,index) in componentList" :key="index" class="library-item">
-          <el-col :span="8" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
+          <el-col :span="6" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
             <img :src="item.img" class="photo info-name-link">
             <div :class="[item.className]">
               <img :src="item.pictureFullSrc" :key="item.pictureFullSrc" v-show="false">
@@ -26,10 +26,10 @@
             </el-row>
 
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <div class="view-point-delete">
-              <i class="el-icon-plus " style="color: red; cursor: pointer;font-size: 16px;"
-                @click="addCompnentHander(item)"></i>
+              
+                <el-button size="mini"  type="primary" @click="addCompnentHander(item)">添加</el-button>
             </div>
           </el-col>
         </el-row>

@@ -22,8 +22,8 @@
           </el-col>
           <el-col :span="10">
             <div class="view-point-button">
-              <el-button size="mini" round type="primary" @click="findDeviceHandle(item)">查找</el-button>
-              <el-button size="mini" round type="primary" @click="editDeviceHandle(item)">编辑</el-button>
+              <el-button size="mini"  type="primary" @click="findDeviceHandle(item)">查找</el-button>
+              <el-button size="mini"  type="primary" @click="editDeviceHandle(item)">编辑</el-button>
             </div>
           </el-col>
         </el-row>

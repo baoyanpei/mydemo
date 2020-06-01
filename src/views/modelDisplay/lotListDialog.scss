@@ -1,6 +1,6 @@
 .lot-list-dialog {
   .el-dialog__body {
-    padding: 10px 10px;
+    padding: 10px 5px;
     color: #606266;
     font-size: 14px;
     word-break: break-all;
@@ -23,7 +23,7 @@
     overflow: auto;
     height: calc(100vh - 240px);
     // background-color: #f2f2f2;
-    border: 1px solid #eeeeee;
+    // border: 1px solid #eeeeee;
 
     .library-item {
       margin: 5px 5px;
@@ -36,7 +36,7 @@
     .photo {
       width: 60px;
       height: 65px;
-      cursor: pointer;
+      // cursor: pointer;
     }
 
     .info-title {
@@ -44,14 +44,14 @@
       font-size: 14px;
       margin-left: 15px;
 
-      .info-title-link {
-        cursor: pointer;
-      }
+      // .info-title-link {
+      //   cursor: pointer;
+      // }
 
-      .info-title-link:hover {
-        // font-style: italic;
-        text-decoration: underline
-      }
+      // .info-title-link:hover {
+      //   // font-style: italic;
+      //   text-decoration: underline
+      // }
     }
 
     .view-point-button {

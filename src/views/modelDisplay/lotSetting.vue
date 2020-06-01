@@ -29,14 +29,13 @@
 
       </el-button>
       <el-button class="marker-button" title="调整位置">
-        <font-awesome-icon v-if="currentDeviceModel !== null" :icon="['far','plus-square']"
-          @click="openLotPositionDialogHandle()" />
-        <font-awesome-icon v-if="currentDeviceModel === null" :icon="['far','plus-square']" style="color:grey;" />
+        <font-awesome-icon v-if="currentDeviceModel !== null" icon="arrows-alt" @click="openLotPositionDialogHandle()" />
+        <font-awesome-icon v-if="currentDeviceModel === null" icon="arrows-alt" style="color:grey;" disabled/>
       </el-button>
       <hr />
-      <el-button class="marker-button" title="查找构件">
-        <font-awesome-icon v-if="currentDeviceModel !== null" :icon="['far','plus-square']" @click="FindModel()" />
-        <font-awesome-icon v-if="currentDeviceModel === null" :icon="['far','plus-square']" style="color:grey;" />
+      <el-button class="marker-button" title="定位构件">
+        <font-awesome-icon v-if="currentDeviceModel !== null" icon="search-location" @click="FindModel()" />
+        <font-awesome-icon v-if="currentDeviceModel === null" icon="search-location" style="color:grey;" />
       </el-button>
       <el-button class="marker-button" title="构件库">
         <font-awesome-icon icon="layer-group" @click="openComponentLibraryDialogHandle" />
