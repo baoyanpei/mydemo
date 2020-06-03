@@ -78,7 +78,7 @@
 
       const validateParamsJson = (rule, value, callback) => {
         if (value !== '' && !isJSON(value)) {
-          callback(new Error('参数必须为JSON格式'))
+          callback(new Error('参数必须为JSON格式,key必须用双印号，如：{"aaaa": 1}'))
         } else {
           callback()
         }
@@ -191,7 +191,15 @@
           this.lotInfoDetailForm.deviceType = _dType
           this.deviceTypeChangeHandle(_dType)
           this.lotInfoDetailForm.deviceId = this.deviceEditData.id
-          this.lotInfoDetailForm.params_json = this.deviceEditData.params_json
+          if (this.deviceEditData.params_json !== '') {
+            this.lotInfoDetailForm.params_json = JSON.stringify(this.deviceEditData.params_json)
+            if (this.lotInfoDetailForm.params_json === '{}') {
+              this.lotInfoDetailForm.params_json = ''
+            }
+          }
+
+
+
           this.lotInfoDetailForm.mqttParam = this.deviceEditData.mqtt_url
 
         }
@@ -262,11 +270,14 @@
             _deviceData = _device
           }
         })
-        console.log('_deviceData.params_json', _deviceData.params_json)
-        this.lotInfoDetailForm.params_json = _deviceData.params_json
-        if (this.lotInfoDetailForm.params_json === '{}') {
-          this.lotInfoDetailForm.params_json = ''
+
+        if (_deviceData.params_json !== '') {
+          this.lotInfoDetailForm.params_json = JSON.stringify(_deviceData.params_json)
+          if (this.lotInfoDetailForm.params_json === '{}') {
+            this.lotInfoDetailForm.params_json = ''
+          }
         }
+
         this.lotInfoDetailForm.mqttParam = _deviceData.mqtt_url
         console.log('_deviceData', _deviceData)
         this.deviceName = _deviceData.device_name
@@ -278,12 +289,17 @@
           if (valid) {
             this.loading = true
             console.log('this.lotInfoDetailForm', this.lotInfoDetailForm)
+
+            let _paramsJson = this.lotInfoDetailForm.params_json
+            if (_paramsJson !== '') {
+              _paramsJson = JSON.parse(this.lotInfoDetailForm.params_json)
+            }
             let param = {
               method: 'device_config_update',
               project_id: this.project_id,
               id: this.lotInfoDetailForm.deviceId,
               mqtt_url: this.lotInfoDetailForm.mqttParam,
-              params_json: this.lotInfoDetailForm.params_json,
+              params_json: _paramsJson,
               buliding_id: '',
               family_id: '',
               family_location: ''
