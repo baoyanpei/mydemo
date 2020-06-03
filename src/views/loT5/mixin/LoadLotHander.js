@@ -67,6 +67,7 @@ export default {
           // "Autodesk.Section"
           // "Autodesk.Viewing.MarkupsCore",
           // "Autodesk.Viewing.AxisHelper"
+          // "Viewing.Extension.MeshSelection"
         ],
         disabledExtensions: {
           measure: false,
@@ -117,7 +118,9 @@ export default {
       // this.init()
       await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
       console.log('./static/libs/viewer3D/viewer3D.min.js')
-      require('@/script/Viewing.Extension.MeshSelection')
+      console.log('requirerequirerequirerequirerequire')
+      // await require('@/script/Viewing.Extension.MeshSelection')
+      await loadJs(`./static/libs/viewer3D/extensions/Viewing.Extension.MeshSelection.js`)
 
       console.log('this.useFrom', this.useFrom)
       console.log('lot5-init-init')
@@ -462,6 +465,7 @@ export default {
     },
     initExtPerson() {
       return new Promise((resolve, reject) => {
+        console.log('MeshSelectionMeshSelectionMeshSelection')
         this.viewer.loadExtension('Viewing.Extension.MeshSelection').then(
           (externalExtension) => {
             this.externalExtensionPerson = externalExtension
