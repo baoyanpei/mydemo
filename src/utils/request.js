@@ -10,7 +10,7 @@ import {
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
-  timeout: 5000// request timeout
+  timeout: 50000// request timeout
 })
 // const _source = 3
 // const _userid = 'admin_web'
