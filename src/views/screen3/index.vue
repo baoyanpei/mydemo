@@ -10,7 +10,7 @@
         <div class="header">
           <div class="project—name">{{project_name}}</div>
           <div class="now-time">{{todayDate}}</div>
-          <div class="title-bg"><img src="/static/screen/red/title.png" /></div>
+          <div class="title-bg"><img src="/static/screen/red/title1.png" /></div>
         </div>
       </el-row>
     </div>
