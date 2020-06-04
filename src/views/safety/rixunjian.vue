@@ -21,8 +21,12 @@
         <div class="box">
       <div class="banner">
           <el-input v-model="input" placeholder="请输入内容" class="input1" style="width: 300px;"></el-input>
-        <el-date-picker v-model="value1" type="datetimerange" range-separator="至" start-placeholder="开始日期"
-          end-placeholder="结束日期">
+        <!--<el-date-picker v-model="value1" type="datetimerange" range-separator="至" start-placeholder="开始日期"-->
+          <!--end-placeholder="结束日期">-->
+        <!--</el-date-picker>-->
+        <el-date-picker type="daterange" @change="" v-model="value1"
+          name="InoutDaterange" :editable="false" :clearable="false" range-separator="至" start-placeholder="开始日期"
+          end-placeholder="结束日期" size="mini">
         </el-date-picker>
         <el-button type="success" style="background-color: #1abc9c;margin-left: 30px;" @click="findfnc">查找</el-button>
       </div>
@@ -126,6 +130,21 @@
         console.log("you")
         this.getform()
       }
+      const monthDay = moment().add('month', 0).format('YYYY-MM') + '-10'
+      // 是否在某月某天之前
+      const isBefore = moment().isBefore(monthDay);
+      // console.log('isBefore', isBefore)
+      let _FirstDay = moment()
+      let _LastDay = moment()
+      if (isBefore) {
+        // 上个月的第一天
+        _FirstDay = moment().add('month', -1).format('YYYY-MM') + '-01'
+        // 上个月的最后一天
+        _LastDay = moment(_FirstDay).add('month', 1).add('days', -1).format('YYYY-MM-DD')
+      } else {
+        _FirstDay = moment().add('month', 0).format('YYYY-MM') + '-01'
+      }
+      this.value1 = [_FirstDay, _LastDay]
     },
     methods: {
       handleSelectionChange(val) {//空白格选中未选中

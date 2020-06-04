@@ -139,7 +139,7 @@
             <span style="line-height: 30px;color: #ffffff;font-weight: 800;margin-left: 10px;">塔机数据</span>
           </div>
           <div class="tajibox" style="width: 100%;height: 25px;margin-top: 10px;">
-            <div class="tajismallbox"  style="width: 60px;border: 1px solid #1abc9c;;height: 100%;text-align: center;line-height: 25px;font-size: 14px;color: #1abc9c;font-weight: 800;">
+            <div class="tajismallbox" v-show="tajismallboxshow" style="width: 60px;border: 1px solid #1abc9c;;height: 100%;text-align: center;line-height: 25px;font-size: 14px;color: #1abc9c;font-weight: 800;">
               {{item.tajiname}}</div>
           </div>
           <!--塔机角度 转角-->
@@ -383,6 +383,7 @@
           tajiname:""
         }],
         listbox:[],
+        tajismallboxshow:true,
         taskbox:[],
         loadingFull: null,
         dialogTableVisible: false,
@@ -472,7 +473,7 @@
         this.$router.replace('/task')
       },
       newwulianjumpfnc(){
-        this.$router.replace('/lot5/index')
+        this.$router.replace('/carstatistical')
       },
       oneminshuaxin(){
         setTimeout(()=>{
@@ -507,11 +508,13 @@
             if(data.length==0){
               this.tajishow=false
               this.tajishow2=true
+              this.tajismallboxshow=false
               this.tajitupianshow=false
               this.tajitupianshow2=true
             }else{
               this.tajishow=true
               this.tajishow2=false
+              this.tajismallboxshow=true
               this.tajitupianshow=true
               this.tajitupianshow2=false
               this.tajidevice_id=data[0].device_id

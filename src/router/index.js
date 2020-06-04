@@ -40,14 +40,12 @@ export const constantRouterMap = [{
   {
     path: '/screen/:project_id?',
     name: 'screen',
-    component: Layout,
     component: () => import('@/views/screen2/indexRed'),
     hidden: true
   },
   {
     path: '/screen3/:project_id?',
     name: 'screen3',
-    component: Layout,
     component: () => import('@/views/screen3/index'),
     hidden: true
   },
@@ -120,7 +118,7 @@ export const constantRouterMap = [{
       },
       {
         path: 'safety-inspection',
-        component: () => import('@/views/safety/electricbox'),
+        component: () => import('@/views/safety/rixunjian'),
         name: 'safety-inspection',
         meta: {
           title: 'safety-inspection',

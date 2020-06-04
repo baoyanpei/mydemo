@@ -47,7 +47,7 @@
               <div class="personbox">
                 <div class="person_right">
                   <div class="person_smallbox" @click="handleNameClick(item)" v-for="item in this.allpersonbox">
-                    <span class="fontstyle" :class="{'greenword':item.state==='xxx'}">{{item.name}}</span>
+                    <span class="fontstyle" :class="{'greenword':item.state==='xxx'}">{{item.userName}}</span>
                   </div>
                 </div>
               </div>
@@ -210,6 +210,8 @@
         dialogImageUrl: '',
         fileList: [],
         allpersonbox:[],
+        alltaskpersonbox:[],
+        personrow:0,
         browsepersonbox:[],
         dialogVisible: false,
 
@@ -257,6 +259,7 @@
     methods:{
       openPersonFacePercentDetailDialogHandle(){//打开窗口
         this.getpersonlist()
+        this.getalltaskperson()
         this.getpersonprogress()
         let p = new Promise((resolve,reject) => {
             this.selectcomment()//显示评论
@@ -275,6 +278,18 @@
         this.imgbanner=[]
         console.log("this.commentsbox1",this.commentsbox1)
       },
+      getalltaskperson(){
+        const param = {
+          method: 'get_flow_users',
+          project_id: this.project_id,
+          work_id:this.taskInfoDialog.data.workId,
+        }
+        this.$store.dispatch('Allpersondata', param).then((data) => {
+          console.log("所有人员列表信息-------",data.data)
+          this.alltaskpersonbox=[]
+          this.alltaskpersonbox=data.data
+        })
+      },
       getpersonbrowsefnc(){//访问任务的人员
         const param = {
           method: 'get_visit_users',
@@ -282,16 +297,16 @@
           work_id:this.taskInfoDialog.data.workId
         }
         this.$store.dispatch('Allpersondata', param).then((data) => {
-          this.allpersonbox=this.projectPersonList
+          this.allpersonbox=this.alltaskpersonbox
           this.browsepersonbox=data.data
+          console.log("人员访问data",this.browsepersonbox)
           for(let i=0;i<this.allpersonbox.length;i++){
             this.browsepersonbox.forEach(item=>{
-              if(item.person_id===this.allpersonbox[i].person_id){
+              if(item.person_id===this.allpersonbox[i].userId){
                 this.allpersonbox[i]["state"]="xxx"
               }
             })
           }
-          console.log("人员访问data",this.browsepersonbox)
           console.log("yongyou",this.allpersonbox)
         })
       },
@@ -573,15 +588,21 @@
           });
         }
       },
-      handleNameClick(row) {//人物名字
-        console.log("人物名字",row)
-        const param = {
-          show: true,
-          ...row
-        }
-        this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
+      handleNameClick(e) {//人物名字
+        console.log("人物名字",e)
+        for(let i=0;i<this.projectPersonList.length;i++){
+          if(e.userId==this.projectPersonList[i].person_id){
+            // this.personrow==this.projectPersonList[i]
+            const param = {
+              show: true,
+              ...this.projectPersonList[i]
+            }
+            this.$store.dispatch('SetPersonInfoDialog', param).then(() => {}).catch(() => {
 
-        })
+            })
+          }
+        }
+        console.log("sdasd",this.personrow)
       },
       imgURL(index){
         window.open(index)

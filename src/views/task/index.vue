@@ -48,7 +48,7 @@
           :on-exceed="handleExceed"
           :file-list="fileList"
         style="width: 500px;">
-          <el-button size="small" type="primary">点击上传</el-button>
+          <el-button size="small" type="primary" @click="clickupload(2)">点击上传</el-button>
           <div slot="tip" class="el-upload__tip" style="display: none;">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
       </div>
@@ -412,6 +412,9 @@
       },
       jinjianzhuangtai(){
         this.queryFun()
+      },
+      clickupload(e){
+        console.log("上传-------",e)
       },
       gettype() {//类型
         return new Promise((resolve, reject) => {
@@ -1094,8 +1097,6 @@
         }else {
           this.datalistfrom.basic[1].value.push({name:response.url,path:response.filename})
         }
-        // console.log("插入位置",this.datalistfrom.basic[0].value)
-        // this.photosrc.push(response.filename)
       },
       handleRemove(file, fileList) {
         console.log(file, fileList);
