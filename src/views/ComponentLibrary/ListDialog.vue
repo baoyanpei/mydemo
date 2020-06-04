@@ -28,8 +28,8 @@
           </el-col>
           <el-col :span="6">
             <div class="view-point-delete">
-              
-                <el-button size="mini"  type="primary" @click="addCompnentHander(item)">添加</el-button>
+
+              <el-button size="mini" type="primary" @click="addCompnentHander(item)">添加</el-button>
             </div>
           </el-col>
         </el-row>
@@ -116,7 +116,15 @@
           this.$store.dispatch('GetFamilyQuery', param).then((_itemList) => {
             console.log('GetFamilyQuery - _itemList', _itemList)
             this.componentList = _itemList
-
+            // this.componentList.push({
+            //   file: "",
+            //   id: 999901,
+            //   img: "static/images/device/taji.jpg",
+            //   name: "塔机",
+            //   parent_id: 0,
+            //   type_id: 999901,
+            //   type_name: "塔机"
+            // })
             resolve()
           })
 
