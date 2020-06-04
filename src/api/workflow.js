@@ -33,3 +33,11 @@ export function queryTaskAll(data) {
     // baseURL: 'http://w.yidebim.com:3004'
   })
 }
+
+export function getdist(data) {
+  return request({
+    url: '/api/oa/device',
+    method: 'post',
+    data: data,
+  })
+}

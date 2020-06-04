@@ -206,7 +206,7 @@
     </div>
   </div>
   <div class="rili">
-    <full-calendar :config="config" @event-selected="eventClick()" :events="events"></full-calendar>
+    <full-calendar :config="config" @event-selected="eventClick()" @dateClick="nowdayfnc()" :events="events"></full-calendar>
   </div>
 </div>
 </template>
@@ -397,6 +397,9 @@
       },
       eventClick(event){
         console.log("日历点击成功",event)
+      },
+      nowdayfnc(data){
+        console.log("当天",data)
       },
       jinjianclick(){//精简条件显示开关
         this.jinjianshow=!this.jinjianshow
@@ -767,13 +770,7 @@
         //页面刷新自动去第一页
         this.secondpage()
       })
-      // console.log("this.boxinfo0000000000000000000000",this.boxinfo1)
-      // this.tasktallrili()
     },
-      tasktallrili(){
-        console.log("任务大厅日历",this.events)
-        console.log("任务大厅",this.boxinfo)
-      },
       handleNameClick(row) {//人物名字
         console.log("人物列表",this.projectPersonList)
         this.projectPersonList.forEach(item=>{

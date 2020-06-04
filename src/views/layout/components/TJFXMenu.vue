@@ -11,7 +11,7 @@
         </el-menu-item>
         <el-menu-item index="/carstatistical">
           <i class="el-icon-truck"></i>
-          <span slot="title">车辆进出厂统计</span>
+          <span slot="title">车辆进出场统计</span>
         </el-menu-item>
         <el-menu-item index="/tjfx">
           <font-awesome-icon icon="chart-line" class="fa-icon"/>

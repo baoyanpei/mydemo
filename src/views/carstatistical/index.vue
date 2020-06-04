@@ -25,8 +25,8 @@
             <el-form-item>
               <el-button type="success" :loading="loading" icon="el-icon-search"
                 @click.native.prevent="handleSubmit()" size="mini">查询</el-button>
-              <!--<el-button type="success" :loading="loading" icon="el-icon-download"-->
-                <!--@click.native.prevent="handleSubmit(true)" size="mini">导出Excel</el-button>-->
+              <el-button type="success" :loading="loading" icon="el-icon-download"
+                @click.native.prevent="tabeldownload()" size="mini">导出Excel</el-button>
             </el-form-item>
           </el-form>
           <hr class="hr1" />
@@ -57,12 +57,12 @@
             <el-table-column
               property="created_time"
               fixed="left"
-              label="进厂时间"
+              label="进场时间"
               width="180">
             </el-table-column>
              <el-table-column
               fixed="left"
-              label="进厂照片"
+              label="进场照片"
               width="220">
               <template slot-scope="scope">
                 <el-button type="primary" icon="el-icon-camera-solid" @click="previewtp(scope.row)">预览</el-button>
@@ -100,10 +100,11 @@
         carcolor:[],//汽车颜色
         worktimeForm: {
           InoutDaterange: [
-            new Date(), new Date()
           ], // 时间范围
         },
-        optionGroups: [],
+        optionGroups: [{value:1,label:"蓝"},{value:2,label:"黄"},{value:3,label:"白"},{value:4,label:"黑"},{value:5,label:"绿"}],
+        lisecolor:"",
+        tabelurlstring:"",
         tableData: [{
           lisence: '',
           lisence_type:'',
@@ -129,20 +130,41 @@
       project_id(curVal, oldVal) {
         if (curVal !== null) {
           this.inoutcarquery()
-          this.getcolor()
+          this.tabelurlfnc()
         }
       },
     },
     mounted() {
       if (this.project_id !== null) {
         this.inoutcarquery()
-        this.getcolor()
+        this.tabelurlfnc()
       }
+       // 每月的某一天，如每月10日
+      const monthDay = moment().add('month', 0).format('YYYY-MM') + '-10'
+      // 是否在某月某天之前
+      const isBefore = moment().isBefore(monthDay);
+      // console.log('isBefore', isBefore)
+      let _FirstDay = moment()
+      let _LastDay = moment()
+      if (isBefore) {
+        // 上个月的第一天
+        _FirstDay = moment().add('month', -1).format('YYYY-MM') + '-01'
+        // 上个月的最后一天
+        _LastDay = moment(_FirstDay).add('month', 1).add('days', -1).format('YYYY-MM-DD')
+      } else {
+        _FirstDay = moment().add('month', 0).format('YYYY-MM') + '-01'
+      }
+      this.worktimeForm.InoutDaterange = [_FirstDay, _LastDay]
     },
     methods:{
-      dateChangeHandle() {
+      dateChangeHandle(e) {
+        console.log(e)
         },
       groupChangeHandle(e) {
+        console.log(e)
+        let num=e[0]
+        this.lisecolor=this.optionGroups[num-1].label
+        console.log("yanse",this.lisecolor)
       },
       handleSubmit() {//查询按钮
         // console.log(11111111,this.carcolor)
@@ -150,78 +172,51 @@
         const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
         const eTime = moment(this.worktimeForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
         this.inoutcarquery(sTime, eTime)
+        this.tabelurlfnc(sTime, eTime)
         this.loading = false
       },
       handleCurrentChange(val) {
         this.currentRow = val;
       },
-      getcolor(){//获取颜色
-        const param = {
-          method: 'query_vehicle_logs',
-          project_id: this.project_id,
-          limit_row:10000
-        }
-        this.$store.dispatch('Inoutcarquery', param).then((data) => {
-          console.log("获取颜色",data)
-          this.tableData=data.data
-          let arr=[]
-          this.optionGroups=[]
-          for(let i=0;i<this.tableData.length;i++){
-              arr.push(this.tableData[i].lisence_type)
-          }
-          for(let j=0;j<arr.length;j++){
-            if(this.optionGroups.indexOf(arr[j])==-1){
-              this.optionGroups.push(arr[j])
-            }
-          }
-          for(let i=0;i<this.optionGroups.length;i++){
-            this.optionGroups.splice(i,1,{label:this.optionGroups[i],value:i})
-          }
-        })
-      },
-      inoutcarquery(sTime, eTime){
-        console.log("车辆颜色",this.carcolor.length,sTime)
-        if(this.carcolor.length!==0){//有颜色
+      inoutcarquery(sTime, eTime){//表格数据  tabelurlfnc
+        console.log("车辆颜色",sTime,this.lisecolor)
           const param = {
             method: 'query_vehicle_logs',
             project_id: this.project_id,
             bt:sTime,
             et:eTime,
-            limit_row:10000
+            lisence_type:this.lisecolor,
+            limit_row:10000,
           }
           this.$store.dispatch('Inoutcarquery', param).then((data) => {
+            console.log("车辆数组",data)
             this.tableData=data.data
             this.table2=data.data
-            let num=this.carcolor[0]
-            let newcararr=[]
             this.tableData.forEach(item=>{//序号
-                  item["carnum"]=(this.tableData.indexOf(item) + 1)
-                })
-            for(let i=0;i<this.tableData.length;i++){
-              if(this.tableData[i].lisence_type==this.optionGroups[num].label){
-                newcararr.push(this.tableData[i])
-              }
-            }
-            this.tableData=newcararr
+                item["carnum"]=(this.tableData.indexOf(item) + 1)
+            })
           })
-        }else {
-            console.log('执行函数',sTime, eTime)
-            const param = {
-                method: 'query_vehicle_logs',
-                project_id: this.project_id,
-                bt:sTime,
-                et:eTime,
-                limit_row:10000
-              }
-              this.$store.dispatch('Inoutcarquery', param).then((data) => {
-                console.log(data)
-                this.tableData=data.data
-                this.tableData.forEach(item=>{//序号
-                  item["carnum"]=(this.tableData.indexOf(item) + 1)
-                })
-                this.table2=data.data//备用列表
-              })
-        }
+      },
+      tabelurlfnc(sTime, eTime){//表格地址
+        const param = {
+            method: 'query_vehicle_logs',
+            project_id: this.project_id,
+            bt:sTime,
+            et:eTime,
+            lisence_type:this.lisecolor,
+            limit_row:10000,
+            t:"download"
+          }
+          this.$store.dispatch('Inoutcarquery', param).then((data) => {
+            console.log("车辆数组222",data.url)
+            this.tabelurlstring=data.url
+            // this.tabelurlstring="http://admin.yidebim.com"+data.url
+          })
+      },
+      tabeldownload(){
+        // window.open(this.tabelurlstring)
+        console.log("表格下载地址",this.tabelurlstring)
+        this.downloadIamge(this.tabelurlstring, '表格')
       },
       previewtp(e){//车辆图片预览
         window.open(e.pic)//?t=download

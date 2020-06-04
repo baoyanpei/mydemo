@@ -1,37 +1,47 @@
 <style lang="scss">
   @import "./index";
+</style>
+<style>
   .unqualifiedred{
-
+    color: #fff;
+    background-color: red;
+    text-align: center;
+  }
+  .unqualifiedred_div{
+    text-align: center;
   }
 </style>
 <template>
-  <div class="fafety-index" style="background-color: #2cbcfb">
-    <div class="box">
+    <div style="padding-top: 20px">
+      <el-row :gutter="10">
+      <el-col :span="4">
+        <TJFXMenu></TJFXMenu>
+      </el-col>
+      <el-col :span="20">
+        <div class="box">
       <div class="banner">
-        <div class="inp">
-          <el-input v-model="input" placeholder="请输入内容" class="input1"></el-input>
-        </div>
+          <el-input v-model="input" placeholder="请输入内容" class="input1" style="width: 300px;"></el-input>
         <el-date-picker v-model="value1" type="datetimerange" range-separator="至" start-placeholder="开始日期"
           end-placeholder="结束日期">
         </el-date-picker>
         <el-button type="success" style="background-color: #1abc9c;margin-left: 30px;" @click="findfnc">查找</el-button>
       </div>
-      <el-button type="success" style="background-color: #1abc9c;margin-left: 30px;" @click="batchonload">批量下载打印</el-button>
+      <el-button type="success" style="background-color: #1abc9c;margin-top: 15px" @click="batchonload">批量下载打印</el-button>
 
       <el-table :data="tableData" :header-cell-style="headClass" ref = "multipleTable "
-        style="width: 98%;margin:20px auto;border-collapse:collapse;" @selection-change="handleSelectionChange">
+        style="width: 100%;margin:20px auto;border-collapse:collapse;" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55">
         </el-table-column>
         <!--prop="index"-->
-        <el-table-column prop="id" label="序号" width="50">
+        <el-table-column prop="id" label="序号" width="60">
         </el-table-column>
         <el-table-column prop="title" label="名称" width="180">
         </el-table-column>
         <el-table-column label="巡检人员" prop="check_person" width="80">
         </el-table-column>
-        <el-table-column label="检查时间" prop="check_day" width="160">
+        <el-table-column label="检查时间" prop="check_day" width="130">
         </el-table-column>
-        <el-table-column label="施工部位" width="190">
+        <el-table-column label="施工部位" width="150">
           <template slot-scope="scope">
             <span class="check_location_span" :title=scope.row.check_location>{{scope.row.check_location}}</span>
           </template>
@@ -39,21 +49,23 @@
         <el-table-column label="巡检记录" style="text-align: center;">
           <el-table-column prop="count.all" label="巡检事项" width="80">
           </el-table-column>
-          <el-table-column prop="count.1" label="合格" width="80">
+          <el-table-column prop="count.1" label="合格" width="50">
           </el-table-column>
-          <el-table-column prop="count.-1" label="不合格" style="background-color: pink" width="80">
+
+          <el-table-column prop="count.-1" label="不合格" style="background-color: pink" width="70">
             <template slot-scope="scope" style="width: 100%;height: 100%;">
               <div class="unqualifiedred_div" :class="{'unqualifiedred':scope.row.unqualified>0}">
                 {{scope.row.unqualified}}</div>
             </template>
           </el-table-column>
+
         </el-table-column>
-        <el-table-column label="备注" width="195">
+        <el-table-column label="备注" width="140">
           <template slot-scope="scope">
             <span class="check_location_span" :title=scope.row.remark>{{scope.row.remark}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="120">
+        <el-table-column prop="status" label="状态" width="80">
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -71,12 +83,19 @@
         style="text-align: center;display: block;margin-bottom: 20px">
       </el-pagination>
     </div>
-  </div>
-
+      </el-col>
+    </el-row>
+    </div>
 </template>
-<!--//http://admin.yidebim.com-->
+
 <script>
+  import moment from 'moment'
+  import TJFXMenu from "../layout/components/XUGLMenu.vue"
+  import { async } from 'q'
   export default {
+    components: {
+      TJFXMenu
+    },
     name: 'index',
     data() {
       return {
@@ -128,34 +147,6 @@
         this.$store.dispatch('Allbatchdownload', param).then((data) => {
           console.log("批量下载成功返回11",data)
           window.open("http://admin.yidebim.com" + data.url + "?t=download")
-          // "http://admin.yidebim.com" + val.url + "?t=download"
-
-
-          // let url=window.URL.createObjectURL(new Blob([data]))
-          // let link = document.createElement('a')
-          // link.href=url
-          // link.setAttribute("download","批量下载.pdf")
-          // document.body.appendChild(link)
-          // console.log("下载按钮",link)
-          // link.click()
-
-
-
-          // var blob=new Blob([data],{type: 'application/pdf'})
-          // let reader=new FileReader()
-          // reader.readAsDataURL(blob);
-          // reader.onload = function (e) {
-          //     if('download'in document.createElement("a")){
-          //       const link = document.createElement('a')
-          //       link.href = URL.createObjectURL(blob)
-          //       link.download = '批量下载.pdf';
-          //       document.body.appendChild(link)
-          //       window.open(link.href)
-          //       link.click()//执行下载
-          //       URL.revokeObjectURL(link.href) //释放url
-          //       document.body.removeChild(link)//释放标签
-          //   }
-          // }
         }).catch(() => {
         })
       },
@@ -219,7 +210,4 @@
       }
     }
   }
-
 </script>
-
-

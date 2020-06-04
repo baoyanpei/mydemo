@@ -1,23 +1,5 @@
 module.exports = {
   proxyList: {
-    // '/api/bcp/web': {
-    //   // 测试环境
-    //   target: 'http://admin.man.yidebim.com/', // 接口域名
-    //   changeOrigin: true, //是否跨域
-    //   pathRewrite: {
-    //     '/api/bcp/web': '/api/bcp/web'
-    //     //需要rewrite重写的,
-    //   }
-    // },
-    // '/api/bcp/pm': {
-    //   // 测试环境
-    //   target: 'http://admin.man.yidebim.com/', // 接口域名
-    //   changeOrigin: true, //是否跨域
-    //   pathRewrite: {
-    //     '/api/bcp/pm': '/api/bcp/pm'
-    //     //需要rewrite重写的,
-    //   }
-    // },
     '/api': {
       // 测试环境
       target: 'http://admin.man.yidebim.com/', // 接口域名

@@ -120,10 +120,40 @@ export const constantRouterMap = [{
       },
       {
         path: 'safety-inspection',
-        component: () => import('@/views/safety/index'),
+        component: () => import('@/views/safety/electricbox'),
         name: 'safety-inspection',
         meta: {
           title: 'safety-inspection',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
+        path: 'xjgl',
+        component: () => import('@/views/safety/index'),
+        name: 'xjgl',
+        meta: {
+          title: 'xjgl',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
+        path: 'elebox',
+        component: () => import('@/views/safety/electricbox'),
+        name: 'elebox',
+        meta: {
+          title: 'elebox',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
+        path: 'rixunjian',
+        component: () => import('@/views/safety/rixunjian'),
+        name: 'rixunjian',
+        meta: {
+          title: 'rixunjian',
           icon: 'dashboard',
           noCache: true
         }

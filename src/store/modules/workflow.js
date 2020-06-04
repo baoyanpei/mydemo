@@ -1,6 +1,7 @@
 import {
   getAllInstList,
-  queryTaskAll
+  queryTaskAll,
+  getdist
 } from '@/api/workflow'
 
 const workflow = {
@@ -24,6 +25,17 @@ const workflow = {
           reject(error)
         })
       })
+    },
+    GetDist({//配电箱巡检获取设备
+        commit
+      }, param) {
+        return new Promise((resolve, reject) => {
+          getdist(param).then(response => {
+            resolve(response.data)
+          }).catch(error => {
+            reject(error)
+          })
+        })
     },
     // 获取任务列表
     QueryTaskAll({

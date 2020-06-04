@@ -38,7 +38,6 @@ export function inoutcarquery(data) {
         meter_id:
         month:201912月份
         return {"status":"success","msg":'',"data":[]}
-
 */
 export function queryDatumMeterDays(data) {
   // console.log("api", data)
