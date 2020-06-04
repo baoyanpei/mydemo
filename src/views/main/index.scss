@@ -8,8 +8,12 @@
   background-position: 50%;
   .yizheng-logo{
     position: fixed;
+    height: 28px;
     bottom: 10px;
     right: 30px;
+    img{
+      height: 100%;
+    }
 
   }
   .HuiyiDialog {

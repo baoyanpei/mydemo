@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <img src="/static/login/logo3.png" class="logo1" />
+    <img src="/static/login/logo5.png" class="logo1" />
     <!-- <img src="/static/login/logo4.png" class="logo2" /> -->
     <el-form ref="loginForm" :model="loginForm" class="login-form" auto-complete="on" label-position="left"
       :validate-on-rule-change="true">
@@ -10,7 +10,7 @@
 
       <div class="loginFormQrcode" v-show="loginType==='qrcode'">
         <!-- <img src="/static/login/title1.png" style="height:26px;" /> -->
-        <div class="title_name">易正建造信息管控平台</div>
+        <div class="title_name">甘肃建投建造信息管控平台</div>
         <div id="qrcode_container"></div>
         <div class="qrcode_question">
           <router-link to="wxbindtip" replace style="color:#00b7d3">还未绑定手机号码？</router-link>
@@ -19,7 +19,7 @@
       <div class="loginFormContent" v-show="loginType==='mobile'">
         <div class="title-container">
           <!-- <img src="/static/login/title1.png" style="height:26px;" /> -->
-          <div class="title_name">易正建造信息管控平台</div>
+          <div class="title_name">甘肃建投建造信息管控平台</div>
         </div>
         <div style="padding:0px 35px 0px 35px">
           <el-form-item prop="username" :rules="ruleUsername">

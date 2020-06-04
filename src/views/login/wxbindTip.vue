@@ -1,7 +1,7 @@
 <template>
   <div class="login-tip-container">
     <a href="/#/login">
-      <img src="/static/login/logo3.png" class="logo1" />
+      <img src="/static/login/logo5.png" class="logo1" />
     </a>
     <!-- <img src="/static/login/logo4.png" class="logo2" /> -->
     <div class="wx-bind-border">

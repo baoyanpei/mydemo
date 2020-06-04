@@ -208,7 +208,7 @@
       <div class="noanzhuang">未安装设备</div>
     </div>
     <div class="yizheng-logo">
-      <img src="/static/yizheng-logo.png"/><!--易正科技图标LOGO-->
+      <img src="/static/gsjt-logo.png"/><!--甘肃建投图标LOGO-->
     </div>
     <div class="bim-toolbar"><!--底部图标按钮-->
       <!--v-draggable-->
