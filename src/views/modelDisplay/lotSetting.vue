@@ -544,7 +544,7 @@
             this.loadedModels.push(model)
             if (index === 0) {
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-              this.viewer.setGroundShadow(false)
+              this.viewer.setGroundShadow(true)
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
               if (!this.viewer.overlays.hasScene('custom-scene-1')) {
                 this.viewer.overlays.addScene('custom-scene-1');
