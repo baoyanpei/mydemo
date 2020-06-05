@@ -1,6 +1,21 @@
 <style lang="scss">
   @import "./index";
 </style>
+<style>
+  .colorreddiv{
+    width: 100%;
+    height: 100%;
+  }
+  .unqualifiedred{
+    color: #fff;
+    background-color: red;
+    text-align: center;
+  }
+  .active {
+    background: #1ABC9C;
+    color: #ffffff;
+  }
+</style>
 <template>
     <div style="padding-top: 20px">
       <el-row :gutter="10">
@@ -26,7 +41,7 @@
           </el-form>
           <hr class="hr1" />
           <div class="eleboxsmall">
-            <div class="small" v-for="item in this.equipmentbox"><span @click="changeidfnc(item.device_id)">{{item.device_name}}</span></div>
+            <div class="small" @click="clickcategory(item.index)" :class="{active:categoryIndex==item.index}" v-for="item in this.equipmentbox"><span @click="changeidfnc(item.device_id)">{{item.device_name}}</span></div>
           </div>
           <div class="eleboxsmall2" style="width: 100%;height: 30px;margin-top: 10px;">
             <div class="small2" style="background-color:#1ABC9C;width: 100px;height: 100%;color: #ffffff;text-align: center;line-height: 30px;">下载列表</div>
@@ -48,10 +63,13 @@
               </el-table-column>
               <el-table-column prop="passed" label="合格" width="100">
               </el-table-column>
-              <el-table-column prop="nopassed" label="不合格" style="background-color: pink" width="100">
+              <el-table-column prop="" label="不合格" style="background-color: pink" width="100">
+                <template slot-scope="scope">
+                  <div class="colorreddiv" :title=scope.row.nopassed :class="{'unqualifiedred':scope.row.nopassed>0}">{{scope.row.nopassed}}</div>
+              </template>
               </el-table-column>
             </el-table-column>
-            <el-table-column prop="status" label="状态" width="150" align='center'>
+            <el-table-column prop="statespan" label="状态" width="150" align='center'>
             </el-table-column>
             <el-table-column label="操作" width="180">
               <template slot-scope="scope">
@@ -88,7 +106,8 @@
         equipmentbox:[],
         firstid:"",
         staarttime:"",
-        endtime:""
+        endtime:"",
+        categoryIndex:0
       }
     },
     computed: {
@@ -142,6 +161,9 @@
         }
         this.$store.dispatch('GetDist', param).then((data) => {
           console.log("配电箱设备",data)
+          for(let i=0;i<data.length;i++){
+            data[i]["index"]=data.indexOf(data[i])
+          }
           this.firstid=data[0].device_id
           for(let i=0;i<data.length;i++){
             this.equipmentbox.push(data[i])
@@ -167,6 +189,17 @@
             item["nopassed"]=item.count-item.passed
             item["eleid"]=data.indexOf(item)+1
           })
+          for(let i=0;i<data.length;i++){
+            if(data[i].status==1){
+              data[i]["statespan"]="已完成"
+            }
+            if(data[i].status==0){
+              data[i]["statespan"]="处理中"
+            }
+            if(data[i].status==-1){
+              data[i]["statespan"]="未处理"
+            }
+          }
           this.tableData=data
           console.log("配电箱列表信息",this.tableData)
         }).catch(() => {
@@ -183,6 +216,10 @@
         this.firstid=this.input
         console.log("111111",this.staarttime,this.endtime)
         this.gettablefnc()
+      },
+      clickcategory(index){ // 这里我们传入一个当前值
+    　　this.categoryIndex = index
+        console.log("index")
       }
     }
   }

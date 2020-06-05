@@ -68,10 +68,11 @@
   }
 }
 .small{
-    background-color:#1ABC9C;
+    background-color:#ffffff;
+  border: 1px solid #1ABC9C;
     width: 120px;
     height: 30px;
-    color: #ffffff;
+    color: #1ABC9C;
     text-align: center;
     float: left;
     margin-bottom: 10px;
@@ -84,4 +85,9 @@
 }
 .el-table td, .el-table th {
       text-align: center;
+  }
+.unqualifiedred{
+    color: #fff;
+    background-color: red;
+    text-align: center;
   }
