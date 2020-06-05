@@ -44,6 +44,10 @@ const loT = {
       show: false,
       data: {}
     },
+    LotPVModelListChange: { // 在建筑模型的物联网设备列表发生变化
+      refresh: 0,
+      data: {}
+    },
   },
   mutations: {
     SET_VEDIO_DIALOG: (state, data) => {
@@ -91,6 +95,14 @@ const loT = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotPVModelListSettingDialog.refresh = genRandom(1, 1000)
     },
+    LOT_PV_MODEL_LIST_CHANGE: (state, data) => {
+      state.LotPVModelListChange = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.LotPVModelListChange.refresh = genRandom(1, 1000)
+    },
+
+
+    
     
     
 
@@ -182,7 +194,17 @@ const loT = {
         resolve()
       })
     },
+    SetLotPVModelListChange({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('LOT_PV_MODEL_LIST_CHANGE', param)
+        resolve()
+      })
+    },
 
+
+    
     
     
   }

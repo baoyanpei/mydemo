@@ -113,6 +113,14 @@
       handleSubmit() {
         console.log('handleSubmit')
         console.log('this.selectedItemList', this.selectedItemList)
+
+        let param = {
+          SelectedItemList: this.selectedItemList
+        }
+        console.log('param', param)
+        this.$store.dispatch('SetLotPVModelListChange', param).then((result) => {
+
+        })
       },
       getProjectItemsAll() {
         return new Promise((resolve, reject) => {

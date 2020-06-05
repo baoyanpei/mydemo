@@ -106,7 +106,7 @@
         currentEditModelName: {
           name: ''
         }, // 当前编辑的模型信息，用于顶部title显示
-
+        currentItemIDList = []
         // totalHighFps: 0 // 高速fps累计量
       }
     },
@@ -114,13 +114,22 @@
       personInfo() {
         return this.$store.state.person.personInfo
       },
+      LotPVModelListChange() {
+        return this.$store.state.loT.LotPVModelListChange
+      },
 
     },
     created() {
 
     },
     watch: {
-
+      LotPVModelListChange: {
+        handler: function (newVal, oldVal) {
+          console.log('LotPVModelListChange ', newVal)
+          this.currentItemIDList = newVal
+        },
+        deep: true
+      },
 
     },
     async mounted() {
