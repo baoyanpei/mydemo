@@ -739,6 +739,11 @@
                 item["state"]=map1.get(workId).info.status//任务状态
                item["statecolor"]=map1.get(workId).info.status_color//任务颜色
                item["originator"] = map1.get(workId).Start[0].userName//发起人名字
+               if(item.obj.Node2!=undefined){
+                  item["firstname"]=item.obj.Start[0].userName
+                  item["header"]=item.obj.Node2[0].userName//负责人
+                  item["person_id2"]=item.obj.Node2[0].userId//负责人ID
+                }
               }
            })
           console.log("这个是map",this.taskbox)

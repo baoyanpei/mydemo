@@ -823,7 +823,6 @@
           item["imgurl"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id='+item.workId+'&w=220'
           item["getinfo"]=map1.get(workId).info.flowNode[0]//获取到显示任务类型的配置数据
           item["originator"] = map1.get(workId).Start[0].userName//获取懂啊key值对应的数据   info.priority
-          // console.log(item.getinfo)
           if(item.questions_type!=""){
             item["xian3"]=true
           }

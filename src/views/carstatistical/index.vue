@@ -210,13 +210,12 @@
           this.$store.dispatch('Inoutcarquery', param).then((data) => {
             console.log("车辆数组222",data.url)
             this.tabelurlstring=data.url
-            // this.tabelurlstring="http://admin.yidebim.com"+data.url
           })
       },
       tabeldownload(){
         // window.open(this.tabelurlstring)
         console.log("表格下载地址",this.tabelurlstring)
-        this.downloadIamge(this.tabelurlstring, '表格')
+        window.open(this.tabelurlstring)
       },
       previewtp(e){//车辆图片预览
         window.open(e.pic)//?t=download

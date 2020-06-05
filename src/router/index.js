@@ -147,16 +147,6 @@ export const constantRouterMap = [{
         }
       },
       {
-        path: 'rixunjian',
-        component: () => import('@/views/safety/rixunjian'),
-        name: 'rixunjian',
-        meta: {
-          title: 'rixunjian',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
         path: 'carstatistical',
         component: () => import('@/views/carstatistical/index'),
         name: 'carstatistical',

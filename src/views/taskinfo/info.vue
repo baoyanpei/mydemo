@@ -355,8 +355,6 @@
         })
       },
        taskspecificinfo(){//任务详细信息
-        // console.log("接受回来的数据",this.taskInfoDialog)
-        // console.log("11111111111111111",this.taskInfoDialog.data.subjectionId)
         return new Promise((resolve, reject) => {
           const _param = {
           method: 'get_flow_work',
@@ -413,6 +411,7 @@
             this.taskinfobox[_index].push(this.TaskdetailsBox[i])
           }
           console.log("整改质检信息填充",this.taskinfobox)
+          console.log("_______",this.taskInfoDialog.data)
           this.taskinfobox.forEach(item=>{
             if(item.length==6){
               item["qualityshow"]=true
@@ -477,7 +476,6 @@
             // console.log("objjjjjjjjjjj",obj)
           })
         })
-           console.log("taskinfobox",this.taskinfobox)
           resolve()
        })
       },
