@@ -20,11 +20,12 @@
       <hr />
       
       <el-button class="marker-button" title="建筑模型设置">
-        <font-awesome-icon icon="layer-group" />
+        <font-awesome-icon icon="layer-group" @click="openLotPVModelListSettingDialogHandle"/>
       </el-button>
 
 
     </div>
+    <lotPVModelListSettingDialog></lotPVModelListSettingDialog>
   </div>
 </template>
 
@@ -36,9 +37,13 @@
   import lodash from 'lodash'
   let Base64 = require('js-base64').Base64
 
+  import lotPVModelListSettingDialog from '@/views/modelDisplay/lotPVModelListSettingDialog'
+
   export default {
     name: 'lot-pv-setting',
-    components: {},
+    components: {
+      lotPVModelListSettingDialog
+    },
     data() {
       return {
 
@@ -162,9 +167,12 @@
       onLoadedEvent(event) {
         console.log('ononLoadedEvent---123', event)
       },
-      async exitEditModeHandle() { // 退出编辑模式
-
-
+      openLotPVModelListSettingDialogHandle(){
+        // 打开构件列表窗口
+        const param = {
+          show: true,
+        }
+        this.$store.dispatch('ShowLotPVModelListSettingDialog', param).then(() => {}).catch(() => {})
       }
     }
   }
