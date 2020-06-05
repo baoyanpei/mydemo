@@ -350,6 +350,24 @@ export const constantRouterMap = [{
     }]
   },
   {
+    path: '/lotPVSetting',
+    name: 'lotPVSetting',
+    component: Layout2,
+    redirect: '/lotPVSetting/index',
+    children: [{
+      path: 'index/:pid?/:flist?', //pid:projectid,flist:floorlist
+      component: () => import('@/views/modelDisplay/lotPVSetting'),
+      name: 'model-lot-setting',
+      meta: {
+        title: '物联网用的模型视点设置',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
     path: '/cesiumSelect',
     name: 'cesiumSelect',
     component: Layout,
