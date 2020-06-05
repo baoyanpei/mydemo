@@ -8,7 +8,7 @@
     <div v-if="isShowViewPointArea" class="viewPointShowArea">
       <div class="viewPointTitle">
         <div class="title">
-          <span>物联网场景管理</span> 
+          <span>物联网场景管理</span>
         </div>
       </div>
     </div>
@@ -16,11 +16,11 @@
       <el-button class="marker-button" title="保存">
         <font-awesome-icon :icon="['far','save']" />
       </el-button>
-      
+
       <hr />
-      
+
       <el-button class="marker-button" title="建筑模型设置">
-        <font-awesome-icon icon="layer-group" @click="openLotPVModelListSettingDialogHandle"/>
+        <font-awesome-icon icon="layer-group" @click="openLotPVModelListSettingDialogHandle" />
       </el-button>
 
 
@@ -53,8 +53,7 @@
         project_id: '',
         modelData: null,
         itemList: [],
-        itemCurrentFileIdList: [], //当前显示模型的FILE
-        itemCurrentItemIdList: [],
+        itemsAllMap: new Map(),
         itemInfoList: [],
         config: {
           extensions: [
@@ -106,7 +105,8 @@
         currentEditModelName: {
           name: ''
         }, // 当前编辑的模型信息，用于顶部title显示
-        currentItemIDList = []
+        currentItemIDList: [],
+        currentItemList: []
         // totalHighFps: 0 // 高速fps累计量
       }
     },
@@ -127,6 +127,16 @@
         handler: function (newVal, oldVal) {
           console.log('LotPVModelListChange ', newVal)
           this.currentItemIDList = newVal
+
+          this.currentItemList.forEach(item => {
+            this.viewer.unloadModel(this.viewer.model)
+          })
+
+          this.getCurrentItemData(this.currentItemIDList.SelectedItemList)
+          console.log('currentItemList', this.currentItemList)
+
+          this.loadManyModel()
+
         },
         deep: true
       },
@@ -145,8 +155,54 @@
     destroyed() {},
     methods: {
       async init() {
-
+        await this.getProjectItemsAll()
         await this.init3DView()
+
+      },
+      async loadManyModel() {
+        let _result = this.getModelUrl()
+        console.log('getModelUrl - result', _result)
+
+        let modelURLList = _result['urlList']
+        let _Plist = []
+        for (var i = 0; i < modelURLList.length; i++) {
+          let p = await this.loadModel(modelURLList[i], this.currentItemList[i], i)
+          _Plist.push(p)
+
+        }
+
+        Promise.all(_Plist).then(result => {
+          // resolve()
+        })
+      },
+      getProjectItemsAll() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'project_items',
+            project_id: this.project_id,
+            // access_token: this.access_token
+          }
+          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
+            console.log('getProjectItemsAll - _itemList', _itemList)
+            _itemList.forEach(item => {
+              this.itemsAllMap.set(item.id, item)
+            });
+
+            resolve()
+
+          })
+
+        })
+      },
+      getCurrentItemData(itemIdList) {
+        console.log('getCurrentItemData', itemIdList)
+        this.currentItemList = []
+        itemIdList.forEach(_id => {
+          console.log('_id', _id)
+          let _item = this.itemsAllMap.get(_id)
+          // itemsAllMap.set(item.id, item)
+          this.currentItemList.push(_item)
+        });
 
       },
       init3DView(modelURLList, itemInfoList) {
@@ -166,8 +222,8 @@
               return;
             }
             this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-            this.viewer.setGroundShadow(true)
-            this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
+            // this.viewer.setGroundShadow(true)
+            // this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
 
           });
 
@@ -176,7 +232,52 @@
       onLoadedEvent(event) {
         console.log('ononLoadedEvent---123', event)
       },
-      openLotPVModelListSettingDialogHandle(){
+      getModelUrl() {
+        let result = null
+        let _urlList = []
+        // let _itemInfoList = []
+        this.currentItemList.forEach(itemInfo => {
+          // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
+          _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
+        });
+        result = {
+          'urlList': _urlList,
+        }
+        return result
+      },
+      loadModel(modelURL, itemInfo, index) {
+        return new Promise((resolve, reject) => {
+          const modelOpts = {
+            placementTransform: new THREE.Matrix4(),
+            globalOffset: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          };
+          this.viewer.loadModel(modelURL, modelOpts, (model) => {
+            model['item_id'] = itemInfo.item_id
+            // this.loadedModels.push(model)
+            if (index === 0) {
+              this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+              this.viewer.setGroundShadow(true)
+              this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
+              this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+              // if (!this.viewer.overlays.hasScene('custom-scene-1')) {
+              //   this.viewer.overlays.addScene('custom-scene-1');
+              // }
+              // this.saveStatus = JSON.stringify(this.viewer.getState());
+              // this.addCustomToolBar()
+              // this.addViewpointToolBar()
+              // this.showAllViewpointToolBar()
+            }
+            resolve(index)
+          }, this.onLoadError);
+
+
+        })
+      },
+      openLotPVModelListSettingDialogHandle() {
         // 打开构件列表窗口
         const param = {
           show: true,

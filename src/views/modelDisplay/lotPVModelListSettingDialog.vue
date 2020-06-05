@@ -11,7 +11,7 @@
       <el-transfer v-model="selectedItemList" :props="{
       key: 'value',
       label: 'desc'
-    }" :titles="['所有建筑模型', '需要的建筑模型']" :data="allItemList">
+    }" :titles="['所有建筑模型', '需要的建筑模型']" :data="allItemList" :right-default-checked="rightDefaultChecked">
       </el-transfer>
       <hr class="hr1" style="margin-bottom: 20px;" />
       <div style="text-align: right;">
@@ -36,22 +36,12 @@
     components: {},
     directives: {},
     data() {
-      // const generateData = _ => {
-      //   const data = [];
-      //   for (let i = 1; i <= 15; i++) {
-      //     data.push({
-      //       value: i,
-      //       desc: `备选项 ${ i }`,
-      //       disabled: i % 4 === 0
-      //     });
-      //   }
-      //   return data;
-      // };
       return {
         loading: false,
         dialogTitle: '物联网建筑模型选择',
-        allItemList: [], //generateData(),
-        selectedItemList: []
+        allItemList: [],
+        selectedItemList: [],
+        rightDefaultChecked: []
       }
     },
     computed: {
@@ -80,8 +70,8 @@
 
     },
     mounted() {
-      // const __PROJECT_ID = Cookies.get("PROJECT_ID")
-      // this.project_id = parseInt(__PROJECT_ID)
+      const __PROJECT_ID = Cookies.get("PROJECT_ID")
+      this.project_id = parseInt(__PROJECT_ID)
 
     },
     watch: {
@@ -92,7 +82,7 @@
       clearData() {
         this.allItemList = []
         this.loading = false
-        this.selectedItemList = []
+        // this.selectedItemList = []
       },
       async openedDialogHandle() {
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
@@ -113,13 +103,14 @@
       handleSubmit() {
         console.log('handleSubmit')
         console.log('this.selectedItemList', this.selectedItemList)
-
+        console.log('this.allItemList', this.allItemList)
+        this.rightDefaultChecked = this.selectedItemList
         let param = {
           SelectedItemList: this.selectedItemList
         }
         console.log('param', param)
         this.$store.dispatch('SetLotPVModelListChange', param).then((result) => {
-
+          this.closeDialogHandle()
         })
       },
       getProjectItemsAll() {
