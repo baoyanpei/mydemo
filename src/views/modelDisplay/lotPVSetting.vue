@@ -14,7 +14,7 @@
     </div>
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
       <el-button class="marker-button" title="保存">
-        <font-awesome-icon :icon="['far','save']" />
+        <font-awesome-icon :icon="['far','save']" @click="saveViewPointHandle" />
       </el-button>
 
       <hr />
@@ -86,6 +86,7 @@
         isShowViewPointArea: true,
         isShowToolbarMarker: true,
         saveStatus: null,
+        viewPointCurrentData: null, //当前的视点数据
         selectedDbId: [], // 选择的构件id
         loadedModels: [],
         storage: window.localStorage,
@@ -106,7 +107,8 @@
           name: ''
         }, // 当前编辑的模型信息，用于顶部title显示
         currentItemIDList: [],
-        currentItemList: []
+        currentItemList: [],
+        cameraInfo: null, //实时的视点
         // totalHighFps: 0 // 高速fps累计量
       }
     },
@@ -126,13 +128,13 @@
       LotPVModelListChange: {
         handler: function (newVal, oldVal) {
           console.log('LotPVModelListChange ', newVal)
-          this.currentItemIDList = newVal
+          let _selectedItemList = newVal.SelectedItemList
+          console.log('_selectedItemList ', _selectedItemList)
 
-          this.currentItemList.forEach(item => {
-            this.viewer.unloadModel(this.viewer.model)
-          })
-
-          this.getCurrentItemData(this.currentItemIDList.SelectedItemList)
+          //清除数据
+          this.clearData()
+          this.cameraInfo = this.viewer.getState()
+          this.getCurrentItemData(_selectedItemList)
           console.log('currentItemList', this.currentItemList)
 
           this.loadManyModel()
@@ -157,22 +159,63 @@
       async init() {
         await this.getProjectItemsAll()
         await this.init3DView()
+        // 恢复视点的模型
+        this.viewPointCurrentData = await this.getViewPointsByType()
+        console.log('this.viewPointCurrentData', this.viewPointCurrentData)
+        this.loadViewPointModel()
+
+        // 
+
+
 
       },
-      async loadManyModel() {
-        let _result = this.getModelUrl()
-        console.log('getModelUrl - result', _result)
-
-        let modelURLList = _result['urlList']
-        let _Plist = []
-        for (var i = 0; i < modelURLList.length; i++) {
-          let p = await this.loadModel(modelURLList[i], this.currentItemList[i], i)
-          _Plist.push(p)
-
+      clearData() {
+        this.currentItemList.forEach(item => {
+          this.viewer.unloadModel(this.viewer.model)
+        })
+      },
+      async loadViewPointModel() {
+        if (this.viewPointCurrentData !== null) {
+          let _item_ids = this.viewPointCurrentData.item_ids
+          if (_item_ids !== null && _item_ids !== '') {
+            let _itemIdlist = JSON.parse(_item_ids)
+            if (_itemIdlist.length > 0) {
+              this.getCurrentItemData(_itemIdlist)
+              await this.loadManyModel()
+            }
+          }
         }
+      },
+      restoreState() {
+        if (this.cameraInfo === null) {
+          this.cameraInfo = this.viewer.getState()
+          if (this.viewPointCurrentData !== null) {
+            let _cameraInfo = JSON.parse(Base64.decode(this.viewPointCurrentData.camera_info))
+            if (_cameraInfo !== null && _cameraInfo !== '') {
+              this.cameraInfo = _cameraInfo
+            }
+          }
+        } 
 
-        Promise.all(_Plist).then(result => {
-          // resolve()
+        this.viewer.restoreState(this.cameraInfo); //it fails to restore state
+      },
+      getViewPointsByType() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'GetViewPoints',
+            type: 4, // 物联网的展示页面的视点类型
+            project_id: this.project_id
+          }
+          this.$store.dispatch('GetViewPoints', param).then((_viewPointList) => {
+            console.log('GetViewPoints', _viewPointList)
+            let _viewPoint = null
+            if (_viewPointList.length > 0) {
+              _viewPoint = _viewPointList[0]
+            }
+
+            resolve(_viewPoint)
+          })
+
         })
       },
       getProjectItemsAll() {
@@ -195,17 +238,15 @@
         })
       },
       getCurrentItemData(itemIdList) {
-        console.log('getCurrentItemData', itemIdList)
         this.currentItemList = []
+        this.currentItemIDList = []
         itemIdList.forEach(_id => {
-          console.log('_id', _id)
           let _item = this.itemsAllMap.get(_id)
-          // itemsAllMap.set(item.id, item)
           this.currentItemList.push(_item)
+          this.currentItemIDList.push(_item.id)
         });
-
       },
-      init3DView(modelURLList, itemInfoList) {
+      init3DView() {
         return new Promise((resolve, reject) => {
           // this.urns = modelURLList
           Autodesk.Viewing.Initializer(this.options, async () => {
@@ -222,22 +263,39 @@
               return;
             }
             this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-            // this.viewer.setGroundShadow(true)
-            // this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
+
+            resolve()
 
           });
 
         })
       },
-      onLoadedEvent(event) {
-        console.log('ononLoadedEvent---123', event)
+      async loadManyModel() {
+        return new Promise(async (resolve, reject) => {
+          let _result = this.getModelUrl()
+          console.log('getModelUrl - result', _result)
+          let modelURLList = _result['urlList']
+
+          if (modelURLList.length === 0) {
+            resolve()
+          } else {
+            let _Plist = []
+            for (var i = 0; i < modelURLList.length; i++) {
+              let p = await this.loadModel(modelURLList[i], this.currentItemList[i], i)
+              _Plist.push(p)
+            }
+            Promise.all(_Plist).then(result => {
+              resolve()
+            })
+          }
+
+        })
+
       },
       getModelUrl() {
         let result = null
         let _urlList = []
-        // let _itemInfoList = []
         this.currentItemList.forEach(itemInfo => {
-          // _urlList.push(itemInfo.url.replace('/www/bim_proj/', process.env.BASE_DOMAIN_BIM))
           _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
         });
         result = {
@@ -245,6 +303,10 @@
         }
         return result
       },
+      onLoadedEvent(event) {
+        console.log('ononLoadedEvent---123', event)
+      },
+
       loadModel(modelURL, itemInfo, index) {
         return new Promise((resolve, reject) => {
           const modelOpts = {
@@ -255,7 +317,7 @@
               z: 0
             }
           };
-          this.viewer.loadModel(modelURL, modelOpts, (model) => {
+          this.viewer.loadModel(modelURL, modelOpts, async (model) => {
             model['item_id'] = itemInfo.item_id
             // this.loadedModels.push(model)
             if (index === 0) {
@@ -263,6 +325,8 @@
               this.viewer.setGroundShadow(true)
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
               this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+
+              await this.restoreState()
               // if (!this.viewer.overlays.hasScene('custom-scene-1')) {
               //   this.viewer.overlays.addScene('custom-scene-1');
               // }
@@ -281,8 +345,55 @@
         // 打开构件列表窗口
         const param = {
           show: true,
+          item_id_list: this.currentItemIDList
         }
         this.$store.dispatch('ShowLotPVModelListSettingDialog', param).then(() => {}).catch(() => {})
+      },
+      saveViewPointHandle() {
+        // if (this.currentItemList.length === 0) {
+        //   this.$message({
+        //     message: '请添加要显示的模型',
+        //     type: 'error'
+        //   })
+        //   return
+        // }
+        // 视点数据
+        let saveStatus = JSON.stringify(this.viewer.getState());
+        // let _item_ids = []
+        // if (this.currentItemIDList.length>0){
+
+        // }
+        const param = {
+          "method": "SaveViewPoint",
+          // "editType": 4, // 物联网视点
+          "type": 4, // 物联网视点
+          "project_id": this.project_id,
+          "name": "",
+          "desc": "",
+          // "file_ids": this.itemCurrentFileIdList.join(','),
+          "item_ids": this.currentItemIDList.join(','),
+          "camera_info": Base64.encode(saveStatus),
+          // "picture_info": markupsBase64,
+          // "svg_info": Base64.encode(markupsExtData),
+          "creator": this.personInfo.person.id,
+          // "itemInfoList": this.currentItemList,
+          // "ViewPointCurrentData": this.ViewPointCurrentData
+        }
+        if (this.viewPointCurrentData !== null) {
+          param['id'] = this.viewPointCurrentData.id
+        }
+        console.log('param', param)
+        this.$store.dispatch('SaveViewPoint', param).then(async (result) => {
+          console.log('result', result)
+          if (result.status === "success") {
+            this.viewPointCurrentData = await this.getViewPointsByType()
+            this.$message({
+              message: '物联网视点保存成功！',
+              type: 'success'
+            })
+
+          }
+        })
       }
     }
   }

@@ -25,7 +25,7 @@ method:SaveViewPoint
 返回：
 {"id":5,"msg":"","status":"success"}
 
-type字段：1-基于项目的公共位置视点；2-普通视点
+type字段：1-基于项目的公共位置视点；2-普通视点；3- 任务视点；4-物联网设备视点
 */
 export function saveViewPoint(data) {
   // console.log("api", data)

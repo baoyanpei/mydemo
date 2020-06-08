@@ -11,7 +11,7 @@
       <el-transfer v-model="selectedItemList" :props="{
       key: 'value',
       label: 'desc'
-    }" :titles="['所有建筑模型', '需要的建筑模型']" :data="allItemList" :right-default-checked="rightDefaultChecked">
+    }" :titles="['所有建筑模型', '需要的建筑模型']" :data="allItemList">
       </el-transfer>
       <hr class="hr1" style="margin-bottom: 20px;" />
       <div style="text-align: right;">
@@ -40,8 +40,7 @@
         loading: false,
         dialogTitle: '物联网建筑模型选择',
         allItemList: [],
-        selectedItemList: [],
-        rightDefaultChecked: []
+        selectedItemList: []
       }
     },
     computed: {
@@ -82,12 +81,14 @@
       clearData() {
         this.allItemList = []
         this.loading = false
-        // this.selectedItemList = []
+        this.selectedItemList = []
       },
       async openedDialogHandle() {
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
         console.log('this.LotPVModelListSettingDialog', this.LotPVModelListSettingDialog)
+
         this.allItemList = await this.getProjectItemsAll()
+        this.selectedItemList = this.LotPVModelListSettingDialog.item_id_list
 
       },
       closeDialogHandle() {
@@ -104,7 +105,14 @@
         console.log('handleSubmit')
         console.log('this.selectedItemList', this.selectedItemList)
         console.log('this.allItemList', this.allItemList)
-        this.rightDefaultChecked = this.selectedItemList
+
+        if (this.selectedItemList.length === 0) {
+          this.$message({
+            message: '请至少选择一个建筑模型',
+            type: 'error'
+          })
+          return
+        }
         let param = {
           SelectedItemList: this.selectedItemList
         }
