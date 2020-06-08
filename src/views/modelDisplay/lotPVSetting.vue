@@ -14,9 +14,13 @@
     </div>
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
       <el-button class="marker-button" title="保存">
-        <font-awesome-icon :icon="['far','save']" @click="saveViewPointHandle" />
+        <font-awesome-icon v-if="currentItemList.length >0" :icon="['far','save']" @click="saveViewPointHandle" />
+        <font-awesome-icon v-if="currentItemList.length === 0" :icon="['far','save']" style="color:grey;" />
       </el-button>
-
+      <el-button class="marker-button" title="删除">
+        <font-awesome-icon v-if="viewPointCurrentData !== null" icon="trash-alt" @click="deleteLotViewPointHandle()" />
+        <font-awesome-icon v-if="viewPointCurrentData === null" icon="trash-alt" style="color:grey;" />
+      </el-button>
       <hr />
 
       <el-button class="marker-button" title="建筑模型设置">
@@ -109,6 +113,7 @@
         currentItemIDList: [],
         currentItemList: [],
         cameraInfo: null, //实时的视点
+        allItemList: [] // 所有的模型列表
         // totalHighFps: 0 // 高速fps累计量
       }
     },
@@ -131,9 +136,12 @@
           let _selectedItemList = newVal.SelectedItemList
           console.log('_selectedItemList ', _selectedItemList)
 
+
+          if (this.currentItemList.length > 0) {
+            this.cameraInfo = this.viewer.getState()
+          }
           //清除数据
           this.clearData()
-          this.cameraInfo = this.viewer.getState()
           this.getCurrentItemData(_selectedItemList)
           console.log('currentItemList', this.currentItemList)
 
@@ -157,8 +165,9 @@
     destroyed() {},
     methods: {
       async init() {
-        await this.getProjectItemsAll()
+        this.allItemList = await this.getProjectItemsAll()
         await this.init3DView()
+
         // 恢复视点的模型
         this.viewPointCurrentData = await this.getViewPointsByType()
         console.log('this.viewPointCurrentData', this.viewPointCurrentData)
@@ -188,16 +197,19 @@
       },
       restoreState() {
         if (this.cameraInfo === null) {
-          this.cameraInfo = this.viewer.getState()
+          // this.cameraInfo = this.viewer.getState()
           if (this.viewPointCurrentData !== null) {
             let _cameraInfo = JSON.parse(Base64.decode(this.viewPointCurrentData.camera_info))
             if (_cameraInfo !== null && _cameraInfo !== '') {
               this.cameraInfo = _cameraInfo
             }
           }
-        } 
+        }
+        if (this.cameraInfo !== null) {
+          console.log('restoreStaterestoreStaterestoreStaterestoreState', this.cameraInfo)
+          this.viewer.restoreState(this.cameraInfo); //it fails to restore state
+        }
 
-        this.viewer.restoreState(this.cameraInfo); //it fails to restore state
       },
       getViewPointsByType() {
         return new Promise((resolve, reject) => {
@@ -231,7 +243,7 @@
               this.itemsAllMap.set(item.id, item)
             });
 
-            resolve()
+            resolve(_itemList)
 
           })
 
@@ -263,6 +275,7 @@
               return;
             }
             this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+            this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {})
 
             resolve()
 
@@ -326,7 +339,7 @@
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
               this.viewer.setProgressiveRendering(this.isProgressiveRendering)
 
-              await this.restoreState()
+              this.restoreState()
               // if (!this.viewer.overlays.hasScene('custom-scene-1')) {
               //   this.viewer.overlays.addScene('custom-scene-1');
               // }
@@ -345,18 +358,19 @@
         // 打开构件列表窗口
         const param = {
           show: true,
-          item_id_list: this.currentItemIDList
+          item_id_list: this.currentItemIDList,
+          all_item_ist: this.allItemList
         }
         this.$store.dispatch('ShowLotPVModelListSettingDialog', param).then(() => {}).catch(() => {})
       },
       saveViewPointHandle() {
-        // if (this.currentItemList.length === 0) {
-        //   this.$message({
-        //     message: '请添加要显示的模型',
-        //     type: 'error'
-        //   })
-        //   return
-        // }
+        if (this.currentItemList.length === 0) {
+          this.$message({
+            message: '请添加要显示的模型',
+            type: 'error'
+          })
+          return
+        }
         // 视点数据
         let saveStatus = JSON.stringify(this.viewer.getState());
         // let _item_ids = []
@@ -393,6 +407,33 @@
             })
 
           }
+        })
+      },
+      deleteLotViewPointHandle() {
+        this.$confirm(`是否要删除物联网建筑配置?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }).then(() => {
+          const param = {
+            method: 'DeleteViewpointById',
+            id: this.viewPointCurrentData.id,
+            project_id: this.project_id
+          }
+          this.$store.dispatch('DeleteViewpointById', param).then((result) => {
+            // console.log('DeleteViewpointById - result', result)
+            // this.getData()
+            this.viewPointCurrentData = null
+            this.clearData()
+            this.getCurrentItemData([])
+            this.$message({
+              message: '物联网建筑配置删除成功！',
+              type: 'success'
+            })
+            // this.viewPointAllList = _viewPointList
+            // resolve()
+          })
         })
       }
     }

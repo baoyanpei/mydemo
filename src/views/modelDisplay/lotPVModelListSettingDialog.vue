@@ -87,7 +87,20 @@
         // this.tipMessage = "正在查询ComponentLibraryListDialog"
         console.log('this.LotPVModelListSettingDialog', this.LotPVModelListSettingDialog)
 
-        this.allItemList = await this.getProjectItemsAll()
+        const _itemList = this.LotPVModelListSettingDialog.all_item_ist //await this.getProjectItemsAll()
+
+
+
+        _itemList.forEach(item => {
+          if (item.process_status === 1 && item.url !== undefined && item.url !== null && item.url !==
+            '') {
+            this.allItemList.push({
+              value: item.id,
+              desc: item.name,
+            })
+          }
+        });
+
         this.selectedItemList = this.LotPVModelListSettingDialog.item_id_list
 
       },
@@ -121,31 +134,31 @@
           this.closeDialogHandle()
         })
       },
-      getProjectItemsAll() {
-        return new Promise((resolve, reject) => {
-          const param = {
-            method: 'project_items',
-            project_id: this.project_id,
-            // access_token: this.access_token
-          }
-          this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
-            console.log('getProjectItemsAll - _itemList', _itemList)
-            let _listData = []
-            _itemList.forEach(item => {
-              if (item.process_status === 1 && item.url !== undefined && item.url !== null && item.url !==
-                '') {
-                _listData.push({
-                  value: item.id,
-                  desc: item.name,
-                })
-              }
-            });
-            console.log('_listData', _listData)
-            resolve(_listData)
-          })
+      // getProjectItemsAll() {
+      //   return new Promise((resolve, reject) => {
+      //     const param = {
+      //       method: 'project_items',
+      //       project_id: this.project_id,
+      //       // access_token: this.access_token
+      //     }
+      //     this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
+      //       console.log('getProjectItemsAll - _itemList', _itemList)
+      //       let _listData = []
+      //       _itemList.forEach(item => {
+      //         if (item.process_status === 1 && item.url !== undefined && item.url !== null && item.url !==
+      //           '') {
+      //           _listData.push({
+      //             value: item.id,
+      //             desc: item.name,
+      //           })
+      //         }
+      //       });
+      //       console.log('_listData', _listData)
+      //       resolve(_listData)
+      //     })
 
-        })
-      },
+      //   })
+      // },
     }
   }
 
