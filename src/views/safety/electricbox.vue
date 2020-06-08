@@ -160,7 +160,9 @@
           device_type:101
         }
         this.$store.dispatch('GetDist', param).then((data) => {
-          console.log("配电箱设备",data)
+          console.log("配电箱设备",this.equipmentbox)
+          this.equipmentbox=[]
+          this.tableData=[]
           for(let i=0;i<data.length;i++){
             data[i]["index"]=data.indexOf(data[i])
           }
