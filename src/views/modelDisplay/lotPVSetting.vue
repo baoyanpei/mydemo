@@ -112,6 +112,7 @@
         }, // 当前编辑的模型信息，用于顶部title显示
         currentItemIDList: [],
         currentItemList: [],
+
         cameraInfo: null, //实时的视点
         allItemList: [] // 所有的模型列表
         // totalHighFps: 0 // 高速fps累计量
@@ -131,7 +132,7 @@
     },
     watch: {
       LotPVModelListChange: {
-        handler: function (newVal, oldVal) {
+        handler: async function (newVal, oldVal) {
           console.log('LotPVModelListChange ', newVal)
           let _selectedItemList = newVal.SelectedItemList
           console.log('_selectedItemList ', _selectedItemList)
@@ -145,7 +146,8 @@
           this.getCurrentItemData(_selectedItemList)
           console.log('currentItemList', this.currentItemList)
 
-          this.loadManyModel()
+          await this.loadManyModel()
+          this.setLotDeviceModelList()
 
         },
         deep: true
@@ -172,7 +174,11 @@
         this.viewPointCurrentData = await this.getViewPointsByType()
         console.log('this.viewPointCurrentData', this.viewPointCurrentData)
         this.loadViewPointModel()
-
+        this.FamilyListMap = await this.getFamilyList()
+        console.log('this.FamilyListMap', this.FamilyListMap)
+        this.allLotDeviceList = await this.getDeviceConfigList()
+        console.log('this.allLotDeviceList', this.allLotDeviceList)
+        this.setLotDeviceModelList()
         // 
 
 
@@ -182,6 +188,13 @@
         this.currentItemList.forEach(item => {
           this.viewer.unloadModel(this.viewer.model)
         })
+        // this.currentItemList = []
+        // this.currentItemIDList = []
+        console.log("-->", this.LotDeviceModelMap);
+        this.LotDeviceModelMap.forEach((value, key) => {
+          this.viewer.unloadModel(this.viewer.model)
+        });
+        // this.LotDeviceModelMap = new map()
       },
       async loadViewPointModel() {
         if (this.viewPointCurrentData !== null) {
@@ -437,7 +450,181 @@
             // resolve()
           })
         })
-      }
+      },
+      getFamilyList() {
+        return new Promise((resolve, reject) => {
+          const param = {
+            method: 'family_query',
+            project_id: this.project_id,
+            // access_token: this.access_token
+          }
+          this.$store.dispatch('GetFamilyQuery', param).then((_itemList) => {
+            console.log('GetFamilyQuery - _itemList', _itemList)
+            let _mapData = new Map()
+            _itemList.forEach(itemInfo => {
+              _mapData.set(itemInfo.id, itemInfo)
+            })
+
+            resolve(_mapData)
+          })
+
+        })
+      },
+      getDeviceConfigList() {
+        return new Promise((resolve, reject) => {
+          this.buildList = []
+          const param = {
+            method: 'device_config',
+            project_id: this.project_id,
+            // buliding_id: this.itemInfoList[0].item_id
+          }
+          this.$store.dispatch('GetDeviceConfig', param).then((_itemList) => {
+            console.log('GetDeviceConfig - _itemList', _itemList)
+
+            resolve(_itemList)
+          })
+
+        })
+      },
+      setLotDeviceModelList() {
+        this.LotDeviceModelMap = new Map()
+
+        this.LotDeviceList = []
+        this.currentItemList.forEach(item => {
+          console.log('item', item)
+          this.allLotDeviceList.forEach(device => {
+            if (item.id === device.buliding_id) {
+              this.LotDeviceList.push(device)
+            }
+          })
+        })
+
+        this.LotDeviceList.forEach(itemInfo => {
+          if (itemInfo.family_id > 0) {
+            console.log('itemInfoitemInfo121113', itemInfo)
+            let _familyModel = this.FamilyListMap.get(itemInfo.family_id)
+            let _family_location = itemInfo.family_location
+            const familyLocation = JSON.parse(_family_location);
+            console.log('_model_model', _familyModel, _family_location, familyLocation)
+
+            let _url = _familyModel.file.replace('/BCP_FILE/', 'BCP_FILE/')
+
+            const modelOpts = {
+              placementTransform: new THREE.Matrix4(),
+              globalOffset: {
+                x: 0,
+                y: 0,
+                z: 0
+              }
+            };
+
+            this.viewer.loadModel(_url, modelOpts, (model) => {
+              model.infoData = _familyModel
+              this.LotDeviceModelMap.set(itemInfo.id, {
+                deviceData: itemInfo,
+                model: model
+              })
+              console.log('---->', familyLocation.position.x, familyLocation.position.y, familyLocation.position
+                .z)
+              const _x = familyLocation.rotate.x;
+              const _y = familyLocation.rotate.y;
+              const _z = familyLocation.rotate.z;
+              this.RotateModel(model, 1, 0, 0, _x)
+              this.RotateModel(model, 0, 1, 0, _y)
+              this.RotateModel(model, 0, 0, 1, _z)
+              this.MoveModel(model,
+                familyLocation.position.x,
+                familyLocation.position.y,
+                familyLocation.position.z)
+
+
+              console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
+            }, this.onLoadError);
+          }
+
+        })
+      },
+      MoveModel(model, x, y, z) {
+        const thisModel = model; //viewer.getAggregateSelection()[0].model
+        const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
+        for (let fragId = 0; fragId < fragCount; ++fragId) {
+          const fragProxy = this.viewer.impl.getFragmentProxy(thisModel, fragId);
+          fragProxy.getAnimTransform();
+          // const position = new THREE.Vector3(
+          //   fragProxy.position.x + x,
+          //   fragProxy.position.y + y,
+          //   fragProxy.position.z + z
+          // );
+          const position = new THREE.Vector3(
+            x,
+            y,
+            z
+          );
+          fragProxy.position = position;
+          fragProxy.updateAnimTransform();
+        }
+        this.viewer.impl.sceneUpdated(true);
+      },
+      geWorldBoundingBox(fragIds, fragList) {
+        var fragbBox = new THREE.Box3()
+        var nodebBox = new THREE.Box3()
+        fragIds.forEach((fragId) => {
+          fragList.getWorldBounds(fragId, fragbBox)
+          nodebBox.union(fragbBox)
+        })
+        return nodebBox
+      },
+      rotateFragments(model, fragIdsArray, axis, angle, center) {
+        console.log('angle', angle, axis)
+        var quaternion = new THREE.Quaternion()
+        quaternion.setFromAxisAngle(axis, angle)
+        fragIdsArray.forEach((fragId, idx) => {
+          var fragProxy = this.viewer.impl.getFragmentProxy(
+            model, fragId)
+          fragProxy.getAnimTransform()
+          var position = new THREE.Vector3(
+            fragProxy.position.x - center.x,
+            fragProxy.position.y - center.y,
+            fragProxy.position.z - center.z)
+          position.applyQuaternion(quaternion)
+          position.add(center)
+          fragProxy.position = position
+          fragProxy.quaternion.multiplyQuaternions(
+            quaternion, fragProxy.quaternion)
+          if (idx === 0) {
+            var euler = new THREE.Euler()
+            euler.setFromQuaternion(
+              fragProxy.quaternion, 0)
+            // this.emit('transform.rotate', {
+            //     rotation: euler,
+            //     model
+            // })
+          }
+          fragProxy.updateAnimTransform()
+        })
+        this.viewer.impl.sceneUpdated(true);
+      },
+      RotateModel(model, axisX, axisY, axisZ, angle) {
+        const thisModel = model //viewer.getAggregateSelection()[0].model
+        const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
+        let fragIdsArray = []
+        for (var fragId = 0; fragId < fragCount; ++fragId) {
+          fragIdsArray.push(fragId)
+        }
+        var bBox = this.geWorldBoundingBox(fragIdsArray, thisModel.getFragmentList())
+        var center = new THREE.Vector3(
+          (bBox.min.x + bBox.max.x) / 2,
+          (bBox.min.y + bBox.max.y) / 2,
+          (bBox.min.z + bBox.max.z) / 2)
+
+        // var size = Math.max(
+        //     bBox.max.x - bBox.min.x,
+        //     bBox.max.y - bBox.min.y,
+        //     bBox.max.z - bBox.min.z) * 0.8
+
+        var axis = new THREE.Vector3(axisX, axisY, axisZ)
+        this.rotateFragments(thisModel, fragIdsArray, axis, angle * Math.PI / 180, center)
+      },
     }
   }
 
