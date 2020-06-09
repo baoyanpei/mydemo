@@ -298,6 +298,7 @@
               _Plist.push(p)
             }
             Promise.all(_Plist).then(result => {
+              this.restoreState()
               resolve()
             })
           }
@@ -339,7 +340,7 @@
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
               this.viewer.setProgressiveRendering(this.isProgressiveRendering)
 
-              this.restoreState()
+              // this.restoreState()
               // if (!this.viewer.overlays.hasScene('custom-scene-1')) {
               //   this.viewer.overlays.addScene('custom-scene-1');
               // }
@@ -348,6 +349,7 @@
               // this.addViewpointToolBar()
               // this.showAllViewpointToolBar()
             }
+            // this.restoreState()
             resolve(index)
           }, this.onLoadError);
 
