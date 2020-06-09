@@ -1,4 +1,17 @@
 .lot-pv-setting {
+
+  .tip_message {
+    text-align: center;
+    font-size: 32px;
+    padding: 50px;
+    float: left;
+    width: 100%;
+    margin-top: 50px;
+    z-index: 101;
+    position: absolute;
+    color: #eeeeee;
+    font-weight: 600;
+  }
   .viewPointShowArea {
     /*视点展示区域*/
     position: absolute;

@@ -5,6 +5,7 @@
 <template>
   <div id="lot-pv-setting" class="lot-pv-setting" style="margin: 0px;">
     <div id="viewer-local"></div>
+    <div v-if="tip_message!==''" class="tip_message" v-html="tip_message"></div>
     <div v-if="isShowViewPointArea" class="viewPointShowArea">
       <div class="viewPointTitle">
         <div class="title">
@@ -50,7 +51,7 @@
     },
     data() {
       return {
-
+        tip_message: '',
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
         urns: [],
         element: null, //document.getElementById('viewer-local');
@@ -136,7 +137,7 @@
           console.log('LotPVModelListChange ', newVal)
           let _selectedItemList = newVal.SelectedItemList
           console.log('_selectedItemList ', _selectedItemList)
-
+          this.tip_message = ""
 
           if (this.currentItemList.length > 0) {
             this.cameraInfo = this.viewer.getState()
@@ -173,6 +174,11 @@
         // 恢复视点的模型
         this.viewPointCurrentData = await this.getViewPointsByType()
         console.log('this.viewPointCurrentData', this.viewPointCurrentData)
+        if (this.viewPointCurrentData === null) {
+          this.tip_message = "当前项目尚未配置建筑模型"
+        }
+
+
         this.loadViewPointModel()
         this.FamilyListMap = await this.getFamilyList()
         console.log('this.FamilyListMap', this.FamilyListMap)
@@ -446,6 +452,9 @@
               message: '物联网建筑配置删除成功！',
               type: 'success'
             })
+            if (this.viewPointCurrentData === null) {
+              this.tip_message = "当前项目尚未配置建筑模型"
+            }
             // this.viewPointAllList = _viewPointList
             // resolve()
           })
