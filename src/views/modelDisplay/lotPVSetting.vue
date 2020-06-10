@@ -142,13 +142,15 @@
           if (this.currentItemList.length > 0) {
             this.cameraInfo = this.viewer.getState()
           }
+          this.removeAllDeviceLabel()
           //清除数据
           this.clearData()
           this.getCurrentItemData(_selectedItemList)
           console.log('currentItemList', this.currentItemList)
 
           await this.loadManyModel()
-          this.setLotDeviceModelList()
+          await this.setLotDeviceModelList()
+          this.addDeviveLabel()
 
         },
         deep: true
@@ -159,6 +161,8 @@
 
       await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
       console.log('./static/libs/viewer3D/viewer3D.min.js')
+      // await loadJs(`./static/libs/viewers_7.15/extensions/iconExtension.js`)
+      // console.log('./static/libs/viewers_7.15/extensions/iconExtension.js')
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
       this.project_id = parseInt(__PROJECT_ID)
       this.init()
@@ -170,7 +174,11 @@
       async init() {
         this.allItemList = await this.getProjectItemsAll()
         await this.init3DView()
-
+        this.viewer.addEventListener(
+          // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+          Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+          this.onSelectionChanged
+        );
         // 恢复视点的模型
         this.viewPointCurrentData = await this.getViewPointsByType()
         console.log('this.viewPointCurrentData', this.viewPointCurrentData)
@@ -190,6 +198,42 @@
 
 
 
+      },
+      onSelectionChanged(event) {
+        // console.log('this.viewer', this.viewer)
+        // console.log('event1', event)
+        let _selections = event.selections
+        console.log('_selections', _selections)
+        // this.selectedDbId = _dbIds
+        this.selectedDbId = []
+        _selections.forEach(selection => {
+          let _dbIdArray = selection.dbIdArray
+          _dbIdArray.forEach(dbId => {
+            console.log('dbId', dbId)
+            selection.model.getProperties(dbId,
+              (elements) => {
+                var dbid = elements.dbId;
+                this.selectedDbId.push(dbid)
+                console.log('elements', elements)
+                // let min = this.getFragXYZ(dbid)
+                // this.drawViewPointLabel(min, 'aaa', 'asd', 'dasd')
+
+
+              })
+          })
+
+        })
+        // Asyncronous method that gets object properties
+        // 异步获取模型的属性
+        // this.viewer.getProperties(_dbIds[0],
+        //   (elements) => {
+        //     var dbid = elements.dbId;
+        //     console.log('elements', elements)
+        //     // let min = this.getFragXYZ(dbid)
+        //     // this.drawViewPointLabel(min, 'aaa', 'asd', 'dasd')
+
+
+        //   })
       },
       clearData() {
         this.currentItemList.forEach(item => {
@@ -369,6 +413,7 @@
 
       loadModel(modelURL, itemInfo, index) {
         return new Promise((resolve, reject) => {
+          console.log("----------------", index)
           const modelOpts = {
             placementTransform: new THREE.Matrix4(),
             globalOffset: {
@@ -386,16 +431,8 @@
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
               this.viewer.setProgressiveRendering(this.isProgressiveRendering)
 
-              // this.restoreState()
-              // if (!this.viewer.overlays.hasScene('custom-scene-1')) {
-              //   this.viewer.overlays.addScene('custom-scene-1');
-              // }
-              // this.saveStatus = JSON.stringify(this.viewer.getState());
-              // this.addCustomToolBar()
-              // this.addViewpointToolBar()
-              // this.showAllViewpointToolBar()
+              this.addLotToolBar()
             }
-            // this.restoreState()
             resolve(index)
           }, this.onLoadError);
 
@@ -591,41 +628,6 @@
         })
 
       },
-      loadModel(modelURL, itemInfo, index) {
-        return new Promise((resolve, reject) => {
-          const modelOpts = {
-            placementTransform: new THREE.Matrix4(),
-            globalOffset: {
-              x: 0,
-              y: 0,
-              z: 0
-            }
-          };
-          this.viewer.loadModel(modelURL, modelOpts, async (model) => {
-            model['item_id'] = itemInfo.item_id
-            // this.loadedModels.push(model)
-            if (index === 0) {
-              this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-              this.viewer.setGroundShadow(true)
-              this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
-              this.viewer.setProgressiveRendering(this.isProgressiveRendering)
-
-              // this.restoreState()
-              // if (!this.viewer.overlays.hasScene('custom-scene-1')) {
-              //   this.viewer.overlays.addScene('custom-scene-1');
-              // }
-              // this.saveStatus = JSON.stringify(this.viewer.getState());
-              // this.addCustomToolBar()
-              // this.addViewpointToolBar()
-              // this.showAllViewpointToolBar()
-            }
-            // this.restoreState()
-            resolve(index)
-          }, this.onLoadError);
-
-
-        })
-      },
       MoveModel(model, x, y, z) {
         const thisModel = model; //viewer.getAggregateSelection()[0].model
         const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
@@ -723,6 +725,9 @@
         //   (bBox.min.z + bBox.max.z) / 2)
         return model.myData.bbox
       },
+      removeAllDeviceLabel(){
+        $(".mymlLabel").remove()
+      },
       addDeviveLabel() {
 
 
@@ -745,12 +750,20 @@
           this.drawPushpinLot({
             x: _x,
             y: _y,
-            z: _z + _zzz + 3
+            z: _z + _zzz
           }, deviceInfo.id, deviceInfo.device_name, deviceInfo);
         })
 
       },
       drawPushpinLot(pushpinModelPt, id, name, data) {
+
+        // this.viewer.loadExtension('IconMarkupExtension', {
+        //   icons: [{
+        //     dbId: 495,
+        //     label: '300C',
+        //     css: 'fas fa-thermometer'
+        //   }]
+        // });
         // console.log('idididid', id)
         // convert 3D position to 2D screen coordination
         var screenpoint = this.viewer.worldToClient(
@@ -813,7 +826,40 @@
         var storeData = JSON.stringify(pushpinModelPt)
         div.data('3DData', storeData)
       },
-    }
+      
+      addLotToolBar() {
+        console.log('addLotToolBar')
+        // 标注功能 - 普通标注视点
+        let buttonEnterLotMode = new Autodesk.Viewing.UI.Button('enter-add-lot-button')
+        buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
+
+        buttonEnterLotMode.onClick = (e) => {
+          this.LotDeviceNewModel(); // 新增物联网模型
+        }
+        buttonEnterLotMode.addClass('enter-add-lot-button')
+        buttonEnterLotMode.setToolTip('添加物联网设备')
+
+
+        // 标注功能 - 标定项目位置标准视点
+        let buttonLotListDialog = new Autodesk.Viewing.UI.Button('lot-list-dialog-button')
+        buttonLotListDialog.addClass('lot-list-dialog-button')
+        buttonLotListDialog.setToolTip('物联网设备列表')
+        buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
+        buttonLotListDialog.onClick = (e) => {
+          this.openLotListDialogHandle()
+
+        }
+        // SubToolbar
+        this.ControlLotManager = new Autodesk.Viewing.UI.ControlGroup('my-view-point-toolbar')
+        this.ControlLotManager.addControl(buttonEnterLotMode)
+        this.ControlLotManager.addControl(buttonLotListDialog)
+
+        // Add subToolbar to main toolbar
+        this.viewer.toolbar.addControl(this.ControlLotManager)
+
+      },
+    },
+
   }
 
 </script>
