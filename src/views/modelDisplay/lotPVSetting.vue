@@ -119,8 +119,8 @@
         cameraInfo: null, //实时的视点
         allItemList: [], // 所有的模型列表
 
-        isShowDevice: false, // 是否显示设备
-        isShouBiaozhu: false // 是否显示标注
+        isShowDevice: true, // 是否显示设备
+        isShouBiaozhu: true // 是否显示标注
         // totalHighFps: 0 // 高速fps累计量
       }
     },
