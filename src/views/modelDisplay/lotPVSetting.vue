@@ -115,7 +115,10 @@
         currentItemList: [],
 
         cameraInfo: null, //实时的视点
-        allItemList: [] // 所有的模型列表
+        allItemList: [], // 所有的模型列表
+
+        isShowDevice: false, // 是否显示设备
+        isShouBiaozhu: false // 是否显示标注
         // totalHighFps: 0 // 高速fps累计量
       }
     },
@@ -242,9 +245,10 @@
         // this.currentItemList = []
         // this.currentItemIDList = []
         console.log("-->", this.LotDeviceModelMap);
-        this.LotDeviceModelMap.forEach((value, key) => {
-          this.viewer.unloadModel(this.viewer.model)
-        });
+        // this.LotDeviceModelMap.forEach((value, key) => {
+        //   this.viewer.unloadModel(value.model)
+        // });
+        this.removeAllDeviceModel()
         // this.LotDeviceModelMap = new map()
       },
       async loadViewPointModel() {
@@ -559,19 +563,35 @@
 
         })
       },
+      // 清除所有的设备
+      removeAllDeviceModel() {
+        this.LotDeviceModelMap.forEach((value, key) => {
+          console.log(value)
+          this.viewer.unloadModel(value.model)
+          // this.viewer.unloadModel(this.viewer.model)
+        });
+      },
+      // 获取当前建筑已经配置的设备列表
+      getLotDeviceList() {
+        this.LotDeviceList = []
+        this.currentItemList.forEach(item => {
+          console.log('item', item)
+          this.allLotDeviceList.forEach(device => {
+            if (item.id === device.buliding_id) {
+              this.LotDeviceList.push(device)
+            }
+          })
+        })
+      },
       async setLotDeviceModelList() {
         return new Promise(async (resolve, reject) => {
+
+          if (this.isShowDevice === false) {
+            return
+          }
           this.LotDeviceModelMap = new Map()
 
-          this.LotDeviceList = []
-          this.currentItemList.forEach(item => {
-            console.log('item', item)
-            this.allLotDeviceList.forEach(device => {
-              if (item.id === device.buliding_id) {
-                this.LotDeviceList.push(device)
-              }
-            })
-          })
+          this.getLotDeviceList()
 
           let _Plist = []
           for (var i = 0; i < this.LotDeviceList.length; i++) {
@@ -725,12 +745,16 @@
         //   (bBox.min.z + bBox.max.z) / 2)
         return model.myData.bbox
       },
-      removeAllDeviceLabel(){
+      removeAllDeviceLabel() {
         $(".mymlLabel").remove()
       },
       addDeviveLabel() {
 
-
+        if (this.isShouBiaozhu === false) {
+          return
+        }
+        this.removeAllDeviceLabel()
+        this.getLotDeviceList()
         this.LotDeviceList.forEach(deviceInfo => {
           console.log('deviceInfo', deviceInfo)
           let _family_location = deviceInfo.family_location
@@ -739,14 +763,19 @@
           const _x = familyLocation.position.x;
           const _y = familyLocation.position.y;
           const _z = familyLocation.position.z;
+
           console.log('LotDeviceModelMapLotDeviceModelMapLotDeviceModelMap', this.LotDeviceModelMap)
-          let _modelData = this.LotDeviceModelMap.get(deviceInfo.id);
-          console.log('_modelData_modelData_modelData', _modelData)
-          let _model = _modelData.model
-          const _bbox = this.getModelBox(_model)
-          let _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
-          let _xxx = Math.abs(_bbox.max.x - _bbox.min.x)
-          let _yyy = Math.abs(_bbox.max.y - _bbox.min.y)
+          let _zzz = 0
+          if (this.LotDeviceModelMap !== null) {
+            let _modelData = this.LotDeviceModelMap.get(deviceInfo.id);
+            console.log('_modelData_modelData_modelData', _modelData)
+            let _model = _modelData.model
+            const _bbox = this.getModelBox(_model)
+            _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
+          }
+
+          // let _xxx = Math.abs(_bbox.max.x - _bbox.min.x)
+          // let _yyy = Math.abs(_bbox.max.y - _bbox.min.y)
           this.drawPushpinLot({
             x: _x,
             y: _y,
@@ -826,27 +855,57 @@
         var storeData = JSON.stringify(pushpinModelPt)
         div.data('3DData', storeData)
       },
-      
+
       addLotToolBar() {
         console.log('addLotToolBar')
-        // 标注功能 - 普通标注视点
+        // 设备显示开关
         let buttonEnterLotMode = new Autodesk.Viewing.UI.Button('enter-add-lot-button')
-        buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
 
-        buttonEnterLotMode.onClick = (e) => {
-          this.LotDeviceNewModel(); // 新增物联网模型
+
+        if (this.isShowDevice === true) {
+          buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_shebei_b.png)'
+        } else {
+          buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_shebei.png)'
+        }
+        buttonEnterLotMode.onClick = async (e) => {
+
+          this.isShowDevice = !this.isShowDevice
+          if (this.isShowDevice === true) {
+            await this.setLotDeviceModelList()
+            if (this.isShouBiaozhu === true) {
+              this.addDeviveLabel()
+            }
+            buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_shebei_b.png)'
+          } else {
+            this.removeAllDeviceModel()
+            buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_shebei.png)'
+          }
         }
         buttonEnterLotMode.addClass('enter-add-lot-button')
         buttonEnterLotMode.setToolTip('添加物联网设备')
 
 
-        // 标注功能 - 标定项目位置标准视点
+        // 标注显示开关
         let buttonLotListDialog = new Autodesk.Viewing.UI.Button('lot-list-dialog-button')
         buttonLotListDialog.addClass('lot-list-dialog-button')
         buttonLotListDialog.setToolTip('物联网设备列表')
-        buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
+        if (this.isShouBiaozhu === true) {
+          buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu_b.png)'
+        } else {
+          buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu.png)'
+        }
+
         buttonLotListDialog.onClick = (e) => {
-          this.openLotListDialogHandle()
+
+          this.isShouBiaozhu = !this.isShouBiaozhu
+          if (this.isShouBiaozhu === true) {
+            this.addDeviveLabel()
+            buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu_b.png)'
+
+          } else {
+            this.removeAllDeviceLabel()
+            buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu.png)'
+          }
 
         }
         // SubToolbar
