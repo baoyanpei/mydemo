@@ -25,19 +25,23 @@
             <el-button v-if="itemListSelected.length>0" type="primary" size="small" @click="showModels">合并显示选中的模型
             </el-button>
             <el-button v-if="itemListSelected.length===0" size="small" disabled>合并显示选中的模型</el-button>
+            <el-button size="small" type="primary" @click="lotPVSetting">物联网场景设置</el-button>
 
             <!-- <el-button type="primary" size="small" @click="openUploadModelDialogHandle">上传模型</el-button> -->
 
             <el-button-group style="margin-left: 100px;">
+
+
               <!-- <el-button size="small" @click="addBuildingHandle">创建建筑</el-button> -->
               <!-- <el-button size="small">批量删除</el-button> -->
             </el-button-group>
 
           </el-col>
-          <!-- <el-col :span="6">
-              <el-input placeholder="按建筑名搜索" v-model="input" style="float: right;">
-              </el-input>
-            </el-col> -->
+          <el-col :span="6">
+
+            <!-- <el-input placeholder="按建筑名搜索" v-model="input" style="float: right;">
+            </el-input> -->
+          </el-col>
         </el-row>
 
         <el-row :gutter="20" style="border-bottom:0px solid #eeeeee;">
@@ -214,7 +218,7 @@
         window.location.href = "/"
       }
       this.project_id = parseInt(__PROJECT_ID)
-      
+
       this.countTableHeight()
       window.onresize = () => {
         return (() => {
@@ -587,6 +591,14 @@
         })
         this.getItemListSelected()
       },
+      lotPVSetting() {
+        this.$router.push({
+          path: '/lotPVSetting',
+          // query: {
+          //   'queryData': 131
+          // }
+        })
+      }
       // unCheckAll() {
       //   this.isNewBUildingShow = false
       //   this.isSelected = false

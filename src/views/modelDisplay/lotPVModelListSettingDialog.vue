@@ -11,7 +11,7 @@
       <el-transfer v-model="selectedItemList" :props="{
       key: 'value',
       label: 'desc'
-    }" :titles="['所有建筑模型', '需要的建筑模型']" :data="allItemList">
+    }" :titles="['所有建筑模型', '场景中需要的建筑模型']" :data="allItemList">
       </el-transfer>
       <hr class="hr1" style="margin-bottom: 20px;" />
       <div style="text-align: right;">

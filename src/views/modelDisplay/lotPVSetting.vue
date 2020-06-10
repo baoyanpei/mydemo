@@ -565,11 +565,14 @@
       },
       // 清除所有的设备
       removeAllDeviceModel() {
-        this.LotDeviceModelMap.forEach((value, key) => {
-          console.log(value)
-          this.viewer.unloadModel(value.model)
-          // this.viewer.unloadModel(this.viewer.model)
-        });
+        if (this.LotDeviceModelMap !== null) {
+          this.LotDeviceModelMap.forEach((value, key) => {
+            console.log(value)
+            this.viewer.unloadModel(value.model)
+            // this.viewer.unloadModel(this.viewer.model)
+          });
+        }
+
       },
       // 获取当前建筑已经配置的设备列表
       getLotDeviceList() {
@@ -860,7 +863,8 @@
         console.log('addLotToolBar')
         // 设备显示开关
         let buttonEnterLotMode = new Autodesk.Viewing.UI.Button('enter-add-lot-button')
-
+        buttonEnterLotMode.addClass('enter-add-lot-button')
+        buttonEnterLotMode.setToolTip('物联网设备模型显示开关')
 
         if (this.isShowDevice === true) {
           buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_shebei_b.png)'
@@ -881,14 +885,13 @@
             buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_shebei.png)'
           }
         }
-        buttonEnterLotMode.addClass('enter-add-lot-button')
-        buttonEnterLotMode.setToolTip('添加物联网设备')
+
 
 
         // 标注显示开关
         let buttonLotListDialog = new Autodesk.Viewing.UI.Button('lot-list-dialog-button')
         buttonLotListDialog.addClass('lot-list-dialog-button')
-        buttonLotListDialog.setToolTip('物联网设备列表')
+        buttonLotListDialog.setToolTip('物联网设备标签显示开关')
         if (this.isShouBiaozhu === true) {
           buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu_b.png)'
         } else {
