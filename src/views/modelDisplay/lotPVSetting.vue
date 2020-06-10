@@ -4,16 +4,17 @@
 </style>
 <template>
   <div id="lot-pv-setting" class="lot-pv-setting" style="margin: 0px;">
-    <div id="viewer-local"></div>
+    <div id="viewer-local" v-show="tip_message===''"></div>
+    <div v-if="nomodel_message!==''" class="nomodel_message" v-html="nomodel_message"></div>
     <div v-if="tip_message!==''" class="tip_message" v-html="tip_message"></div>
-    <div v-if="isShowViewPointArea" class="viewPointShowArea">
+    <div v-if="tip_message==='' && isShowViewPointArea" class="viewPointShowArea">
       <div class="viewPointTitle">
         <div class="title">
           <span>物联网场景管理</span>
         </div>
       </div>
     </div>
-    <div v-if="isShowToolbarMarker" class="toolbar-marker">
+    <div v-if="tip_message==='' && isShowToolbarMarker" class="toolbar-marker">
       <el-button class="marker-button" title="保存">
         <font-awesome-icon v-if="currentItemList.length >0" :icon="['far','save']" @click="saveViewPointHandle" />
         <font-awesome-icon v-if="currentItemList.length === 0" :icon="['far','save']" style="color:grey;" />
@@ -52,6 +53,7 @@
     data() {
       return {
         tip_message: '',
+        nomodel_message: '',
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
         urns: [],
         element: null, //document.getElementById('viewer-local');
@@ -140,7 +142,7 @@
           console.log('LotPVModelListChange ', newVal)
           let _selectedItemList = newVal.SelectedItemList
           console.log('_selectedItemList ', _selectedItemList)
-          this.tip_message = ""
+          this.nomodel_message = ""
 
           if (this.currentItemList.length > 0) {
             this.cameraInfo = this.viewer.getState()
@@ -161,9 +163,10 @@
 
     },
     async mounted() {
-
+      this.tip_message = '正在加载模型底层程序...'
       await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
       console.log('./static/libs/viewer3D/viewer3D.min.js')
+      this.tip_message = ""
       // await loadJs(`./static/libs/viewers_7.15/extensions/iconExtension.js`)
       // console.log('./static/libs/viewers_7.15/extensions/iconExtension.js')
       const __PROJECT_ID = Cookies.get("PROJECT_ID")
@@ -186,7 +189,7 @@
         this.viewPointCurrentData = await this.getViewPointsByType()
         console.log('this.viewPointCurrentData', this.viewPointCurrentData)
         if (this.viewPointCurrentData === null) {
-          this.tip_message = "当前项目尚未配置建筑模型"
+          this.nomodel_message = "当前项目尚未配置建筑模型"
         }
 
 
@@ -521,7 +524,7 @@
               type: 'success'
             })
             if (this.viewPointCurrentData === null) {
-              this.tip_message = "当前项目尚未配置建筑模型"
+              this.nomodel_message = "当前项目尚未配置建筑模型"
             }
             // this.viewPointAllList = _viewPointList
             // resolve()
