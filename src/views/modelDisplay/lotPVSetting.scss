@@ -12,6 +12,18 @@
     color: #eeeeee;
     font-weight: 600;
   }
+
+  .mymlLabel {
+    background-color: #FFFFFF;
+    color: #000000;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 10px;
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px
+  }
+  
   .viewPointShowArea {
     /*视点展示区域*/
     position: absolute;

@@ -184,8 +184,9 @@
         console.log('this.FamilyListMap', this.FamilyListMap)
         this.allLotDeviceList = await this.getDeviceConfigList()
         console.log('this.allLotDeviceList', this.allLotDeviceList)
-        this.setLotDeviceModelList()
+        await this.setLotDeviceModelList()
         // 
+        this.addDeviveLabel()
 
 
 
@@ -294,7 +295,33 @@
               return;
             }
             this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-            this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {})
+            this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
+
+
+              // find out all pushpin markups
+              var $eles = $("div[id^='mymk']")
+              var DOMeles = $eles.get()
+
+              for (var index in DOMeles) {
+
+                // get each DOM element
+                let DOMEle = DOMeles[index]
+                let divEle = $('#' + DOMEle.id)
+                // get out the 3D coordination
+                let val = divEle.data('3DData')
+                let pushpinModelPt = JSON.parse(val)
+                // get the updated screen point
+                let screenpoint = this.viewer.worldToClient(new THREE.Vector3(
+                  pushpinModelPt.x,
+                  pushpinModelPt.y,
+                  pushpinModelPt.z))
+                // update the SVG position.
+                divEle.css({
+                  'left': screenpoint.x - pushpinModelPt.radius * 2,
+                  'top': screenpoint.y - pushpinModelPt.radius
+                })
+              }
+            })
 
             resolve()
 
@@ -495,61 +522,107 @@
 
         })
       },
-      setLotDeviceModelList() {
-        this.LotDeviceModelMap = new Map()
+      async setLotDeviceModelList() {
+        return new Promise(async (resolve, reject) => {
+          this.LotDeviceModelMap = new Map()
 
-        this.LotDeviceList = []
-        this.currentItemList.forEach(item => {
-          console.log('item', item)
-          this.allLotDeviceList.forEach(device => {
-            if (item.id === device.buliding_id) {
-              this.LotDeviceList.push(device)
-            }
+          this.LotDeviceList = []
+          this.currentItemList.forEach(item => {
+            console.log('item', item)
+            this.allLotDeviceList.forEach(device => {
+              if (item.id === device.buliding_id) {
+                this.LotDeviceList.push(device)
+              }
+            })
+          })
+
+          let _Plist = []
+          for (var i = 0; i < this.LotDeviceList.length; i++) {
+            let p = await this.loadDeviceModel(this.LotDeviceList[i], i)
+            _Plist.push(p)
+          }
+          Promise.all(_Plist).then(result => {
+            resolve()
           })
         })
 
-        this.LotDeviceList.forEach(itemInfo => {
-          if (itemInfo.family_id > 0) {
-            console.log('itemInfoitemInfo121113', itemInfo)
-            let _familyModel = this.FamilyListMap.get(itemInfo.family_id)
-            let _family_location = itemInfo.family_location
-            const familyLocation = JSON.parse(_family_location);
-            console.log('_model_model', _familyModel, _family_location, familyLocation)
+      },
+      loadDeviceModel(itemInfo, index) {
+        return new Promise((resolve, reject) => {
+          let _familyModel = this.FamilyListMap.get(itemInfo.family_id)
+          let _family_location = itemInfo.family_location
+          const familyLocation = JSON.parse(_family_location);
+          console.log('_model_model', _familyModel, _family_location, familyLocation)
 
-            let _url = _familyModel.file.replace('/BCP_FILE/', 'BCP_FILE/')
+          let _url = _familyModel.file.replace('/BCP_FILE/', 'BCP_FILE/')
 
-            const modelOpts = {
-              placementTransform: new THREE.Matrix4(),
-              globalOffset: {
-                x: 0,
-                y: 0,
-                z: 0
-              }
-            };
+          const modelOpts = {
+            placementTransform: new THREE.Matrix4(),
+            globalOffset: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          };
+          this.viewer.loadModel(_url, modelOpts, (model) => {
+            model.infoData = _familyModel
+            this.LotDeviceModelMap.set(itemInfo.id, {
+              deviceData: itemInfo,
+              model: model
+            })
+            console.log('---->', familyLocation.position.x, familyLocation.position.y, familyLocation.position
+              .z)
+            const _x = familyLocation.rotate.x;
+            const _y = familyLocation.rotate.y;
+            const _z = familyLocation.rotate.z;
+            this.RotateModel(model, 1, 0, 0, _x)
+            this.RotateModel(model, 0, 1, 0, _y)
+            this.RotateModel(model, 0, 0, 1, _z)
+            this.MoveModel(model,
+              familyLocation.position.x,
+              familyLocation.position.y,
+              familyLocation.position.z)
 
-            this.viewer.loadModel(_url, modelOpts, (model) => {
-              model.infoData = _familyModel
-              this.LotDeviceModelMap.set(itemInfo.id, {
-                deviceData: itemInfo,
-                model: model
-              })
-              console.log('---->', familyLocation.position.x, familyLocation.position.y, familyLocation.position
-                .z)
-              const _x = familyLocation.rotate.x;
-              const _y = familyLocation.rotate.y;
-              const _z = familyLocation.rotate.z;
-              this.RotateModel(model, 1, 0, 0, _x)
-              this.RotateModel(model, 0, 1, 0, _y)
-              this.RotateModel(model, 0, 0, 1, _z)
-              this.MoveModel(model,
-                familyLocation.position.x,
-                familyLocation.position.y,
-                familyLocation.position.z)
 
+            console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
+            resolve(index)
+          }, this.onLoadError);
 
-              console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
-            }, this.onLoadError);
-          }
+        })
+
+      },
+      loadModel(modelURL, itemInfo, index) {
+        return new Promise((resolve, reject) => {
+          const modelOpts = {
+            placementTransform: new THREE.Matrix4(),
+            globalOffset: {
+              x: 0,
+              y: 0,
+              z: 0
+            }
+          };
+          this.viewer.loadModel(modelURL, modelOpts, async (model) => {
+            model['item_id'] = itemInfo.item_id
+            // this.loadedModels.push(model)
+            if (index === 0) {
+              this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+              this.viewer.setGroundShadow(true)
+              this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
+              this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+
+              // this.restoreState()
+              // if (!this.viewer.overlays.hasScene('custom-scene-1')) {
+              //   this.viewer.overlays.addScene('custom-scene-1');
+              // }
+              // this.saveStatus = JSON.stringify(this.viewer.getState());
+              // this.addCustomToolBar()
+              // this.addViewpointToolBar()
+              // this.showAllViewpointToolBar()
+            }
+            // this.restoreState()
+            resolve(index)
+          }, this.onLoadError);
+
 
         })
       },
@@ -633,6 +706,112 @@
 
         var axis = new THREE.Vector3(axisX, axisY, axisZ)
         this.rotateFragments(thisModel, fragIdsArray, axis, angle * Math.PI / 180, center)
+      },
+      getModelBox(model) {
+        console.log('modelmodelmodelmodel', model)
+        const thisModel = model //viewer.getAggregateSelection()[0].model
+        const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
+        let fragIdsArray = []
+        for (var fragId = 0; fragId < fragCount; ++fragId) {
+          fragIdsArray.push(fragId)
+        }
+        var bBox = this.geWorldBoundingBox(fragIdsArray, thisModel.getFragmentList())
+        console.log('bBox', model.myData.bbox.min.z)
+        // var center = new THREE.Vector3(
+        //   (bBox.min.x + bBox.max.x) / 2,
+        //   (bBox.min.y + bBox.max.y) / 2,
+        //   (bBox.min.z + bBox.max.z) / 2)
+        return model.myData.bbox
+      },
+      addDeviveLabel() {
+
+
+        this.LotDeviceList.forEach(deviceInfo => {
+          console.log('deviceInfo', deviceInfo)
+          let _family_location = deviceInfo.family_location
+          const familyLocation = JSON.parse(_family_location);
+
+          const _x = familyLocation.position.x;
+          const _y = familyLocation.position.y;
+          const _z = familyLocation.position.z;
+          console.log('LotDeviceModelMapLotDeviceModelMapLotDeviceModelMap', this.LotDeviceModelMap)
+          let _modelData = this.LotDeviceModelMap.get(deviceInfo.id);
+          console.log('_modelData_modelData_modelData', _modelData)
+          let _model = _modelData.model
+          const _bbox = this.getModelBox(_model)
+          let _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
+          let _xxx = Math.abs(_bbox.max.x - _bbox.min.x)
+          let _yyy = Math.abs(_bbox.max.y - _bbox.min.y)
+          this.drawPushpinLot({
+            x: _x,
+            y: _y,
+            z: _z + _zzz + 3
+          }, deviceInfo.id, deviceInfo.device_name, deviceInfo);
+        })
+
+      },
+      drawPushpinLot(pushpinModelPt, id, name, data) {
+        // console.log('idididid', id)
+        // convert 3D position to 2D screen coordination
+        var screenpoint = this.viewer.worldToClient(
+          new THREE.Vector3(pushpinModelPt.x,
+            pushpinModelPt.y,
+            pushpinModelPt.z, ));
+        $('#mymk' + randomId).remove()
+        // build the div container
+        var randomId = id; //makeid();
+        var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>';
+        var parent = this.viewer.container
+        $(parent).append(htmlMarker)
+        $('#mymk' + randomId).css({
+          // 'pointer-events': 'none',
+          'width': '80px',
+          // 'height': '16px',
+          'position': 'absolute',
+          'overflow': 'visible',
+        });
+        $('#mymk' + randomId).click(() => {
+          console.log('data', data)
+          if (data.device_type === 16) {
+            let deviceData = data
+            if (deviceData === undefined) {
+              this.$message({
+                message: '此摄像头未配置数据',
+                type: 'error'
+              })
+            } else if (deviceData.video_url === '') {
+              this.$message({
+                message: '此摄像头无法直播',
+                type: 'error'
+              })
+            } else {
+              const param = {
+                show: true,
+                deviceData: deviceData
+              }
+              this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+            }
+          }
+        })
+        // build the svg element and draw a circle
+        // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
+
+        // var snap = Snap($('#mysvg' + randomId)[0]);
+        var rad = 27
+        // set the position of the SVG
+        // adjust to make the circle center is the position of the click point
+        var $container = $('#mymk' + randomId)
+        $container.css({
+          'left': screenpoint.x - rad * 2,
+          'top': screenpoint.y
+        })
+
+        // store 3D point data to the DOM
+        var div = $('#mymk' + randomId)
+        // add radius info with the 3D data
+        pushpinModelPt.radius = rad
+        var storeData = JSON.stringify(pushpinModelPt)
+        div.data('3DData', storeData)
       },
     }
   }
