@@ -1014,15 +1014,15 @@ export default {
       this.addPersonMesh('test', obj, _position)
     },
     bbbb() {
-      viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
-      modifyElevator(elevatorGroup, `E18090302`, -10, false) //名称，高度，门的开启状态
-      viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
-      return
+      // viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
+      // modifyElevator(elevatorGroup, `E18090302`, -10, false) //名称，高度，门的开启状态
+      // viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+      // return
       console.log('bbbb-click')
       let _position = {
-        x: 10,
-        y: 10,
-        z: 120
+        x: -58,
+        y: 199,
+        z: -76
       }
       let obj = {
         mac: '20-5d-47-6e-55-9e'
