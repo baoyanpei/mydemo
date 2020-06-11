@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>QRCanvas Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcanvas@3"></script>
+  <script src="http://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+
+<body>
+
+<div class="bigercode" style="width: 400px;height: 180px;background-color: #0a76a4" ref="box">
+  <img src="http://n.sinaimg.cn/default/1_img/upload/3933d981/698/w899h599/20200610/8a3c-iuvaazn7214522.jpg" alt=""  crossorigin="anonymous" style="width: 150px;height: 150px">
+  <span>sdaasdasdsad</span>
+</div>
+<button onclick="aaa()">按钮</button>
+</body>
+<script>
+const canvas = qrcanvas.qrcanvas({
+ data: 'hello, world'  // 内容
+});
+document.getElementById('qrcode').appendChild(canvas);
+function aaa() {
+  let xx=document.getElementsByClassName("bigercode")[0]
+  html2canvas(xx,{useCORS: true}).then(canvas => {
+    let link = document.createElement("a");
+    link.href = canvas.toDataURL();//下载链接
+    link.setAttribute("download","二维码.png");
+    link.style.display = "none";//a标签隐藏
+    document.body.appendChild(link);
+    link.click();
+  });
+}
+</script>
+</html>

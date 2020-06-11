@@ -11,6 +11,9 @@
         <el-menu-item index="/elebox">
           <span slot="title">配电箱巡检</span>
         </el-menu-item>
+        <el-menu-item index="/ercode">
+          <span slot="title">设备二维码</span>
+        </el-menu-item>
       </el-menu>
     </el-row>
   </div>

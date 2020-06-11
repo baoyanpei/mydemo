@@ -16,7 +16,7 @@
       </span>
       <div class="right-menu">
         <el-button type="primary" style="top:0px;position: relative;" @click="openScreenHandle">
-          <icon name="desktop" scale="1.4" style="line-height: 20px;"></icon> <span>项目看板</span>
+          <icon name="desktop" scale="1.4" style="line-height: 0px;"></icon> <span>项目看板</span>
         </el-button>
         <el-button type="primary" style="top:0px;position: relative;" @click="tongxunluHandle">
           <icon name="users" scale="1.4" style="line-height: 20px;"></icon> <span>通讯录</span>
@@ -144,7 +144,7 @@
       }
     },
     mounted() {
-      console.log("project_idproject_idproject_idproject_idproject_id", this.project_id)
+      // console.log("project_idproject_idproject_idproject_idproject_id", this.project_id)
     },
     methods: {
       toggleSideBar() {

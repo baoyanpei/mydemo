@@ -147,6 +147,16 @@ export const constantRouterMap = [{
         }
       },
       {
+        path: 'ercode',
+        component: () => import('@/views/safety/ercode'),
+        name: 'ercode',
+        meta: {
+          title: 'ercode',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
         path: 'carstatistical',
         component: () => import('@/views/carstatistical/index'),
         name: 'carstatistical',
