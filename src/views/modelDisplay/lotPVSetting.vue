@@ -115,6 +115,7 @@
         }, // 当前编辑的模型信息，用于顶部title显示
         currentItemIDList: [],
         currentItemList: [],
+        currentItemModelList: [],// 当前加载的模型
 
         cameraInfo: null, //实时的视点
         allItemList: [], // 所有的模型列表
@@ -242,9 +243,10 @@
         //   })
       },
       clearData() {
-        this.currentItemList.forEach(item => {
-          this.viewer.unloadModel(this.viewer.model)
+        this.currentItemModelList.forEach(model => {
+          this.viewer.unloadModel(model)
         })
+        this.currentItemModelList = []
         // this.currentItemList = []
         // this.currentItemIDList = []
         console.log("-->", this.LotDeviceModelMap);
@@ -431,6 +433,7 @@
           };
           this.viewer.loadModel(modelURL, modelOpts, async (model) => {
             model['item_id'] = itemInfo.item_id
+            this.currentItemModelList.push(model)
             // this.loadedModels.push(model)
             if (index === 0) {
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
