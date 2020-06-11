@@ -9,10 +9,10 @@
  }
   .batchdown{
     width: 100%;
-    height: 2000px;
+    overflow:hidden;
   }
   .downsmall{
-    width: 50%;
+    width: 100%;
     height: 230px;
     float: left;
     margin-bottom: 20px;
@@ -32,12 +32,14 @@
             </el-form-item>
             <el-form-item prop="GroupList">
               <span>设备类型：</span>
-             <el-cascader :options="options" @change="handleChange" :show-all-levels="false"></el-cascader>
+             <el-cascader v-model="value" :options="options" @change="handleChange" :show-all-levels="false"></el-cascader>
             </el-form-item>
           </el-form>
           <hr class="hr1" />
           <el-table :data="tableData" ref = "multipleTable "
             style="width: 98%;margin:20px auto;border-collapse:collapse;" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="50">
+            </el-table-column>
             <el-table-column prop="eleid" label="序号" width="80">
             </el-table-column>
             <el-table-column prop="device_name" label="名称" width="180">
@@ -56,7 +58,7 @@
             </el-table-column>
           </el-table>
           <!--二维码预览-->
-          <el-dialog title="二维码预览" :visible.sync="dialogVisible" width="40%">
+          <el-dialog title="二维码预览" :visible.sync="dialogVisible" width="50%">
             <div class="bigercode" style=";margin:0 auto;" ref="box">
                 <img :src=imgsrc alt="" crossorigin="anonymous" style="width: 230px;height: 230px;margin-right:10px;float: left">
                 <span class="ercodewpan">{{span1}}</span>
@@ -67,14 +69,17 @@
             <button @click="generatorImage()">下载图片</button>
           </el-dialog>
           <!--批量下载-->
-          <div class="batchdown" v-show="true">
-            <div class="downsmall" v-for="item in this.tableData">
-              <img :src=item.imgsrc alt="" crossorigin="anonymous" style="width: 230px;height: 230px;margin-right:10px;float: left">
-              <span class="ercodewpan">{{item.projectname}}</span>
-              <span class="ercodewpan" style="margin-top: 60px">{{item.device_name}}</span>
-              <span class="ercodewpan" style="margin-top: 60px">{{item.addr}}</span>
-            </div>
-          </div>
+          <el-dialog title="二维码预览" :visible.sync="centerDialogVisible" width="50%">
+            <button @click="getdowntpall()">下载图片</button>
+              <div class="batchdown">
+                <div class="downsmall" v-for="item in this.erval">
+                  <img :src=item.imgsrc alt="" crossorigin="anonymous" style="width: 230px;height: 230px;margin-right:10px;float: left">
+                  <span class="ercodewpan">{{item.projectname}}</span>
+                  <span class="ercodewpan" style="margin-top: 60px">{{item.device_name}}</span>
+                  <span class="ercodewpan" style="margin-top: 60px">{{item.addr}}</span>
+                </div>
+              </div>
+          </el-dialog>
         </div>
       </el-col>
     </el-row>
@@ -94,6 +99,7 @@
         worktimeForm:[],
         value:"",
         dialogVisible: false,
+        centerDialogVisible: false,
         imgsrc:"",
         span1:"",
         span2:"",
@@ -112,7 +118,8 @@
         tableData:[],
         deviceid:'',
         projectname:"",
-        imgUrl1:""
+        imgUrl1:"",
+        erval:[]
       }
     },
     computed: {
@@ -130,27 +137,27 @@
       project_id(curVal, oldVal) {
         if (curVal !== null) {
           this.getshebei()
-          this.options=null
         }
       },
     },
     mounted() {
       if (this.project_id !== null) {
         this.getshebei()
-        this.options=null
       }
 
     },
     methods:{
       handleChange(e){
-        console.log("改变",e)
+        console.log("改变",e,e[0])
         this.deviceid=e[0]
         this.gettable()
       },
-      handleSelectionChange(){
+      handleSelectionChange(val){
+        this.erval=[]
+        this.erval=val
+        console.log("val",val)
       },
       getshebei(){
-        this.options=null
         for(let i=0;i<this.project_option.length;i++){
           if(this.project_id==this.project_option[i].value){
             this.projectname=this.project_option[i].label
@@ -167,7 +174,10 @@
           for(let i=0;i<data.length;i++){
             this.options.push({label:data[i].type_name,value:data[0].device_type})
           }
-          console.log("liebiao",this.options)
+          this.value=this.options[0].label
+          this.deviceid=this.options[0].value
+          console.log("liebiao",this.value)
+          this.gettable()
         }).catch(() => {
         })
       },
@@ -220,7 +230,9 @@
         },3000)
       },
       batchfnc(){
-        this.interval = setTimeout(() => {
+        this.centerDialogVisible=true
+      },
+      getdowntpall(){
           let xx=document.getElementsByClassName("batchdown")[0]
            console.log("xx",xx)
            html2canvas(xx,{useCORS: true}).then(canvas => {
@@ -231,7 +243,6 @@
             document.body.appendChild(link);
             link.click();
           });
-        },3000)
       }
     }
   }

@@ -44,7 +44,7 @@
             <div class="small" @click="clickcategory(item.index)" :class="{active:categoryIndex==item.index}" v-for="item in this.equipmentbox"><span @click="changeidfnc(item.device_id)">{{item.device_name}}</span></div>
           </div>
           <div class="eleboxsmall2" style="width: 100%;height: 30px;margin-top: 10px;">
-            <div class="small2" style="background-color:#1ABC9C;width: 100px;height: 100%;color: #ffffff;text-align: center;line-height: 30px;">下载列表</div>
+            <div class="small2" style="background-color:#1ABC9C;width: 100px;height: 100%;color: #ffffff;text-align: center;line-height: 30px;" @click="downtask()">下载列表</div>
           </div>
           <el-table :data="tableData" :header-cell-style="headClass" ref = "multipleTable "
             style="width: 98%;margin:20px auto;border-collapse:collapse;" @selection-change="handleSelectionChange">
@@ -73,10 +73,12 @@
             </el-table-column>
             <el-table-column label="操作" width="180">
               <template slot-scope="scope">
+                <div v-show=scope.row.stateshow>
                   <el-button type="text" size="small" @click="previewfnc(scope.row)"><i class="el-icon-view">预览</i>
                   </el-button>
                   <el-button type="text" size="small" @click="downloadfnc(scope.row)"><i class="el-icon-download">下载打印</i>
                   </el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -107,7 +109,9 @@
         firstid:"",
         staarttime:"",
         endtime:"",
-        categoryIndex:0
+        categoryIndex:0,
+        ids:[],
+        deviceid:""
       }
     },
     computed: {
@@ -150,8 +154,26 @@
       headClass() {
         return 'text-align: center;'
       },
+      downtask(){
+        const param = {
+          method: 'record_download',
+          project_id: this.project_id,
+          device_id:this.firstid,
+          device_type:101,
+          ids:this.ids
+        }
+        this.$store.dispatch('GetDist2', param).then((data) => {
+          // console.log("下载列表",data)
+          window.open("http://admin.yidebim.com"+data)
+        }).catch(() => {
+        })
+      },
       handleSelectionChange(val) {//空白格选中未选中
-        console.log("val",val)
+        this.ids=[]
+        for(let i=0;i<val.length;i++){
+          this.ids.push(val[i].id)
+        }
+        console.log("val",this.ids)
       },
       getDistribution(){//获取设备名称
         const param = {
@@ -160,7 +182,6 @@
           device_type:101
         }
         this.$store.dispatch('GetDist', param).then((data) => {
-          console.log("配电箱设备",this.equipmentbox)
           this.equipmentbox=[]
           this.tableData=[]
           for(let i=0;i<data.length;i++){
@@ -170,6 +191,7 @@
           for(let i=0;i<data.length;i++){
             this.equipmentbox.push(data[i])
           }
+          console.log("配电箱设备",this.equipmentbox)
           this.gettablefnc()
         }).catch(() => {
         })
@@ -203,13 +225,22 @@
             }
           }
           this.tableData=data
+          this.tableData.forEach(item=>{
+            if(item.statespan == "已完成") {
+              item["stateshow"] = true
+            } else {
+              item["stateshow"] = false
+            }
+          })
           console.log("配电箱列表信息",this.tableData)
         }).catch(() => {
         })
       },
       changeidfnc(e){//点击不同的设备
         console.log("点击",e)
+        this.deviceid=e
         this.firstid=e
+        console.log("------",this.deviceid,this.firstid)
         this.gettablefnc()
       },
       selecttable(){//列表查询
@@ -221,8 +252,15 @@
       },
       clickcategory(index){ // 这里我们传入一个当前值
     　　this.categoryIndex = index
-        console.log("index")
-      }
+        console.log("index",index)
+      },
+      previewfnc(val) { //预览
+        window.open("http://admin.yidebim.com" + val.url)
+        // window.location.href="http://admin.yidebim.com"+val.url
+      },
+      downloadfnc(val) { //下载
+        window.open("http://admin.yidebim.com" + val.url + "?t=download")
+      },
     }
   }
 </script>
