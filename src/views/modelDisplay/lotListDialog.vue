@@ -5,14 +5,14 @@
 <template>
 
   <div id="lot-list-dialog" class="lot-list-dialog">
-    <el-dialog :modal="false" width="400px" top="10vh" left="100" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="false" width="450px" top="10vh" left="100" :lock-scroll="true" :close-on-click-modal="false"
       :close-on-press-escape="true" :visible.sync="LotListDialog.show" @opened="openedDialogHandle"
       @close="closeDialogHandle" :title="dialogTitle" v-el-drag-dialog>
 
       <div class="device_list">
         <div v-show="tipMessage!==''" class="tip-message">{{tipMessage}}</div>
         <el-row v-show="tipMessage===''" v-for="(item,index) in deviceList" :key="index" class="library-item">
-          <el-col :span="14" style="padding-left:5px;">
+          <el-col :span="10" style="padding-left:5px;">
             <el-row :gutter="24">
               <div class="grid-content info-title">
                 <span class="info-title-link">{{item.device_name}}</span>
@@ -20,9 +20,10 @@
             </el-row>
 
           </el-col>
-          <el-col :span="10">
+          <el-col :span="14">
             <div class="view-point-button">
-              <el-button size="mini" type="primary" @click="findDeviceHandle(item)">查找</el-button>
+              <el-button size="mini" type="primary" @click="findDeviceHandle(item,'find')">查找</el-button>
+              <el-button size="mini" type="primary" @click="findDeviceHandle(item,'select')">高亮</el-button>
               <el-button size="mini" type="primary" @click="editDeviceHandle(item)">编辑</el-button>
             </div>
           </el-col>
@@ -137,10 +138,11 @@
         })
 
       },
-      findDeviceHandle(item) {
+      findDeviceHandle(item, type) {
         console.log('item', item)
         let param = {
-          device: item
+          device: item,
+          type: type
         }
         console.log('param', param)
         this.$store.dispatch('SetLotDeviceFindChange', param).then((result) => {

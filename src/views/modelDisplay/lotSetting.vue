@@ -38,6 +38,10 @@
         <font-awesome-icon v-if="currentDeviceModel !== null" icon="search-location" @click="FindModel()" />
         <font-awesome-icon v-if="currentDeviceModel === null" icon="search-location" style="color:grey;" />
       </el-button>
+      <el-button class="marker-button" title="高亮构件">
+        <font-awesome-icon v-if="currentDeviceModel !== null" icon="lightbulb" @click="SelectModel()" />
+        <font-awesome-icon v-if="currentDeviceModel === null" icon="lightbulb" style="color:grey;" />
+      </el-button>
       <el-button class="marker-button" title="构件库">
         <font-awesome-icon icon="layer-group" @click="openComponentLibraryDialogHandle" />
       </el-button>
@@ -239,10 +243,19 @@
         handler: function (newVal, oldVal) {
           console.log('LotDeviceFindChange ', newVal)
           let _device = newVal.device;
+          let _type = newVal.type;
           let _modelData = this.LotDeviceModelMap.get(_device.id);
           // console.log('this.LotDeviceModelMap', _device.id, this.LotDeviceModelMap)
           // console.log('LotDeviceFindChange - _modelData ', _modelData)
-          this.viewer.fitToView([1], _modelData.model)
+          switch (_type) {
+            case "find":
+              this.viewer.fitToView([1], _modelData.model)
+              break;
+            case "select":
+              this.viewer.select([1], _modelData.model, Autodesk.Viewing.SelectionType.OVERLAYED)
+              break;
+          }
+
 
 
 
@@ -762,7 +775,7 @@
         towerGroup.position.set(38, 188, 19) // 红 绿
         console.log('this.towerGroupthis.towerGroupthis.towerGroup', towerGroup)
         modifyTower(towerGroup, `T123`, _towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
-       
+
 
         this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
       },
@@ -983,7 +996,18 @@
         this.rotateFragments(thisModel, fragIdsArray, axis, angle * Math.PI / 180, center)
       },
       FindModel() {
+        // 放大定位
         this.viewer.fitToView([1], this.currentDeviceModel)
+        // console.log('fitToView', this.currentDeviceModel)
+        // let instanceTree = this.currentDeviceModel.getData().instanceTree;
+        // console.log('instanceTree', instanceTree)
+        // let allDbIds = Object.keys(instanceTree.nodeAccess.dbIdToIndex);
+        // console.log('allDbIds', allDbIds)
+        // 选中这个模型
+
+      },
+      SelectModel() {
+        this.viewer.select([1], this.currentDeviceModel, Autodesk.Viewing.SelectionType.OVERLAYED)
       }
     }
   }
