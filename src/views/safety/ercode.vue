@@ -12,7 +12,7 @@
     overflow:hidden;
   }
   .downsmall{
-    width: 100%;
+    width:550px;
     height: 230px;
     float: left;
     margin-bottom: 20px;
@@ -69,7 +69,7 @@
             <button @click="generatorImage()">下载图片</button>
           </el-dialog>
           <!--批量下载-->
-          <el-dialog title="二维码预览" :visible.sync="centerDialogVisible" width="50%">
+          <el-dialog title="二维码预览" :visible.sync="centerDialogVisible" width="1200px">
             <button @click="getdowntpall()">下载图片</button>
               <div class="batchdown">
                 <div class="downsmall" v-for="item in this.erval">
