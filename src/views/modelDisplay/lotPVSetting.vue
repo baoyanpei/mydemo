@@ -115,7 +115,7 @@
         }, // 当前编辑的模型信息，用于顶部title显示
         currentItemIDList: [],
         currentItemList: [],
-        currentItemModelList: [],// 当前加载的模型
+        currentItemModelList: [], // 当前加载的模型
 
         cameraInfo: null, //实时的视点
         allItemList: [], // 所有的模型列表
@@ -281,6 +281,11 @@
         if (this.cameraInfo !== null) {
           console.log('restoreStaterestoreStaterestoreStaterestoreState', this.cameraInfo)
           this.viewer.restoreState(this.cameraInfo); //it fails to restore state
+
+
+          // this.currentItemModelList.forEach(model => {
+          //   this.viewer.impl.visibilityManager.isolate(-1, model);
+          // })
         }
 
       },

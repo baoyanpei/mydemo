@@ -1492,7 +1492,7 @@
             // this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc
             this.viewPointImgTopUrl = this.ViewPointCurrentData.pictureTopSrc
             this.viewPointImgSideUrl = this.ViewPointCurrentData.pictureSideSrc
-            // console.log('camera_info', camera_info)
+            console.log('camera_info', camera_info)
             this.viewer.restoreState(camera_info); //it fails to restore state
             // markupsExt.viewer.impl.invalidate(true);
             // this.isShowToolbarRestore = true
