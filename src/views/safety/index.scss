@@ -70,7 +70,7 @@
 .small{
     background-color:#ffffff;
   border: 1px solid #1ABC9C;
-    width: 120px;
+    width: 130px;
     height: 30px;
     color: #1ABC9C;
     text-align: center;
@@ -78,10 +78,13 @@
     margin-bottom: 10px;
     line-height: 30px;
     margin-left: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+		white-space: nowrap;
   }
 .eleboxsmall{
   width: 100%;
-  height: 120px;
+  overflow: hidden;
 }
 .el-table td, .el-table th {
       text-align: center;

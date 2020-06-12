@@ -41,12 +41,12 @@
           </el-form>
           <hr class="hr1" />
           <div class="eleboxsmall">
-            <div class="small" @click="clickcategory(item.index)" :class="{active:categoryIndex==item.index}" v-for="item in this.equipmentbox"><span @click="changeidfnc(item.device_id)">{{item.device_name}}</span></div>
+            <div class="small" @click="clickcategory(item.index)" :class="{active:categoryIndex==item.index}" v-for="item in this.equipmentbox"><span :title=item.device_name @click="changeidfnc(item.device_id)">{{item.device_name}}</span></div>
           </div>
           <div class="eleboxsmall2" style="width: 100%;height: 30px;margin-top: 10px;">
             <div class="small2" style="background-color:#1ABC9C;width: 100px;height: 100%;color: #ffffff;text-align: center;line-height: 30px;" @click="downtask()">下载列表</div>
           </div>
-          <el-table :data="tableData" :header-cell-style="headClass" ref = "multipleTable "
+          <el-table :data="tableData" :header-cell-style="headClass" ref = "multipleTable " v-loading="loading"
             style="width: 98%;margin:20px auto;border-collapse:collapse;" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50">
             </el-table-column>
@@ -111,7 +111,8 @@
         endtime:"",
         categoryIndex:0,
         ids:[],
-        deviceid:""
+        deviceid:"",
+        loading:true
       }
     },
     computed: {
@@ -207,6 +208,7 @@
 
         }
         this.$store.dispatch('GetDist', param).then((data) => {
+          this.loading=false
           this.tableData=[]
           this.tableData=data
           data.forEach(item=>{
@@ -238,6 +240,7 @@
       },
       changeidfnc(e){//点击不同的设备
         console.log("点击",e)
+        this.loading=true
         this.deviceid=e
         this.firstid=e
         console.log("------",this.deviceid,this.firstid)
