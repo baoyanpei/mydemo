@@ -782,7 +782,7 @@ export default {
           console.log('被点击的构件的dbid：', dbid, elements)
         })
     },
-    initPerson(obj) {
+    initPerson(obj) { // 收到定位数据以后，被调用
       console.log('objobjobj', obj)
       let _position = {
         x: obj.x / 1000 - 62,
@@ -818,11 +818,18 @@ export default {
       mesh.userData = userData
       console.log('mesh.position', mesh.position)
       this.externalExtensionPerson.addPersonToView(mesh)
+
+     
+
       this.drawPushpinPerson({
         x: position.x,
         y: position.y,
         z: position.z
       }, userData.mac, name)
+
+      if (this.isProgressiveRendering === false) { // 渐进显示关闭状态下
+        this.viewer.impl.invalidate(true, true, true)
+      }
     },
     drawPushpinPerson(pushpinModelPt, id, name) {
       // console.log('idididid', id)
