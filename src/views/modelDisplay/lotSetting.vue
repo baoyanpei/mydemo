@@ -191,9 +191,9 @@
           let _item = newVal.item;
 
           switch (_item.type_id) {
-            case 999901:
-              this.addTajiModelToView(_item) // 塔吊的设备模型
-              break;
+            // case 999901:
+            //   this.addTajiModelToView(_item) // 塔吊的设备模型
+            //   break;
             default:
               this.AddComponentData(_item) // rvt 的设备模型
               break;
@@ -763,22 +763,22 @@
 
         }, this.onLoadError);
       },
-      addTajiModelToView(item) {
-        console.log('addTajiModelToView', item)
-        if (!this.viewer.overlays.hasScene('custom-scene')) {
-          this.viewer.overlays.addScene('custom-scene')
-        }
-        let towerGroup = new THREE.Group()
-        towerGroup.name = 'towerGroup'
-        towerGroup.scale.set(3, 3, 3)
-        let _towerHeight = 20
-        towerGroup.position.set(38, 188, 19) // 红 绿
-        console.log('this.towerGroupthis.towerGroupthis.towerGroup', towerGroup)
-        modifyTower(towerGroup, `T123`, _towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
+      // addTajiModelToView(item) {
+      //   console.log('addTajiModelToView', item)
+      //   if (!this.viewer.overlays.hasScene('custom-scene')) {
+      //     this.viewer.overlays.addScene('custom-scene')
+      //   }
+      //   let towerGroup = new THREE.Group()
+      //   towerGroup.name = 'towerGroup'
+      //   towerGroup.scale.set(3, 3, 3)
+      //   let _towerHeight = 20
+      //   towerGroup.position.set(38, 188, 19) // 红 绿
+      //   console.log('this.towerGroupthis.towerGroupthis.towerGroup', towerGroup)
+      //   modifyTower(towerGroup, `T123`, _towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
 
 
-        this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
-      },
+      //   this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
+      // },
       deleteLotDeviceModelHandle() {
         console.log('deleteLotDeviceModelHandle');
         if (this.currentDeviceModel !== null) {
