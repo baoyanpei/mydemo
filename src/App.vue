@@ -49,6 +49,9 @@
     <!--视点保存dialog-->
     <PointViewSaveDialog></PointViewSaveDialog>
 
+    <!--视点二维码dialog-->
+    <XcxQrcodeDialog></XcxQrcodeDialog>
+
     <!--绑定BIM-->
     <bindBimDialog></bindBimDialog>
 
@@ -134,6 +137,10 @@
   // 视点保存dialog
   import PointViewSaveDialog from './views/pointView/saveDialog'
 
+  // 视点二维码dialog
+  import XcxQrcodeDialog from './views/pointView/xcxQrcodeDialog'
+
+
   // 位置视点管理dialog
   import PositonPVManageDialog from './views/pointView/positonPVManageDialog'
 
@@ -179,6 +186,7 @@
       VideoDialog,
       PointViewManageDialog,
       PointViewSaveDialog,
+      XcxQrcodeDialog,
       bindBimDialog,
       worldCitysDialog,
       useTrafficDialog,
@@ -223,7 +231,8 @@
       '$route'(to, from) {
         console.log("totototo", to)
         if (to.name !== "login" && to.name !== "wxbindtip" && to.name !== "xcx-pointview-show" && to.name !==
-          "xcx-model-display" && to.name !== "xcx-cesium-display" && to.name !== "xcx-cad-display" && to.name !== "xcx-sketchup-display" && this.personInfo ===
+          "xcx-model-display" && to.name !== "xcx-cesium-display" && to.name !== "xcx-cad-display" && to.name !==
+          "xcx-sketchup-display" && this.personInfo ===
           null) {
           this.getPerson()
         }

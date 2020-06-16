@@ -42,6 +42,11 @@ const viewPoint = {
     PositionPictureSaveData: { // 位置视点截图
       refresh: 0,
       data: {}
+    },
+    ViewPointQrcodeDialog: { // 视点二维码dialog
+      refresh: 0,
+      show: false,
+      data: {}
     }
   },
   mutations: {
@@ -90,6 +95,13 @@ const viewPoint = {
       state.PositionPictureSaveData.refresh = genRandom(1, 1000)
       // console.log('----->', state.PositionPictureSaveData)
     },
+    SHOW_VIEW_POINT_QRCODE_DIALOG: (state, data) => {
+      state.ViewPointQrcodeDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.ViewPointQrcodeDialog.refresh = genRandom(1, 1000)
+    },
+
+    
 
   },
   actions: {
@@ -108,6 +120,16 @@ const viewPoint = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SHOW_VIEW_POINT_SAVE_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
+    ShowViewPointQrcodeDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_VIEW_POINT_QRCODE_DIALOG', {
           ...param
         })
         resolve()

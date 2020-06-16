@@ -95,10 +95,10 @@
                         </el-col>
                         <el-col :span="5">
                           <div class="view-point-delete">
-                            <font-awesome-icon v-if="item.bgShow === 'bgShowSelected'" icon="share-square" class="el-icon-share"
-                              style="color:#FFFFFF;" @click="shareViewPointHander(item)"/>
-                            <font-awesome-icon v-if="item.bgShow !== 'bgShowSelected'" icon="share-square" class="el-icon-share"
-                              style="color:#2cbc9d;" @click="shareViewPointHander(item)"/>
+                            <font-awesome-icon v-if="item.bgShow === 'bgShowSelected'" icon="share-square"
+                              class="el-icon-share" style="color:#FFFFFF;" @click="shareViewPointHander(item)" />
+                            <font-awesome-icon v-if="item.bgShow !== 'bgShowSelected'" icon="share-square"
+                              class="el-icon-share" style="color:#2cbc9d;" @click="shareViewPointHander(item)" />
 
                             <i class="el-icon-delete " style="color: red; cursor: pointer;font-size: 16px;"
                               @click="deleteViewPointHander(item)"></i>
@@ -605,8 +605,14 @@
         })
 
       },
-      shareViewPointHander(item){
-        console.log('shareViewPointHander', item)
+      shareViewPointHander(item) {
+
+        const param = {
+          show: true,
+          data: item
+        }
+
+        this.$store.dispatch('ShowViewPointQrcodeDialog', param).then(() => {}).catch(() => {})
       }
 
     }
