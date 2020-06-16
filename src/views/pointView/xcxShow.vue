@@ -5,7 +5,7 @@
 <template>
   <div class="pointview-xcx-show" style="margin: 0px;">
     <div v-if="tip_message!==''" class="tip_message" v-html="tip_message"></div>
-    <div id="viewer-local" v-show="tip_message===''"  class="viewer-local"></div>
+    <div id="viewer-local" v-show="tip_message===''" class="viewer-local"></div>
     <div style="width:100vw; height:100vh;display:none;top:0px;left:0px;">
       <canvas id="snapshot" style="position:absolute;"></canvas>
     </div>
@@ -91,14 +91,25 @@
 
     },
     mounted() {
-
+      let __PROJECT_ID = ''
       console.log('this.$route', this.$route.query)
-      
+      const __FROM = this.$route.query.from // 此参数不存在则为url 直接打开 xcx_pv_qrcode：小程序视点的二维码
 
-      const __PROJECT_ID = this.$route.query.projectid
+      console.log('__FROM', __FROM)
+
+      if (__FROM === undefined) { // 小程序直接使用url
+        __PROJECT_ID = this.$route.query.projectid
+        this.access_token = this.$route.query.token
+      } else {
+        // 二维码使用的url
+        __PROJECT_ID = this.$route.query.project_id
+        this.access_token = this.$route.query.access_token
+      }
+
+
       const __POINT_VIEW_ID = this.$route.query.pvid
       const __ERROR_MESSAGE = this.$route.query.errormsg
-      this.access_token = this.$route.query.token
+      
       if (__PROJECT_ID === undefined || __PROJECT_ID === '') {
         this.tip_message = '缺少参数 projectid'
         return
@@ -106,7 +117,7 @@
         this.tip_message = '缺少参数 pvid'
         return
       } else if (this.access_token === undefined || this.access_token === '') {
-        this.tip_message = '缺少参数 token'
+        this.tip_message = '缺少参数 token或access_token'
         return
       }
       console.log('__ERROR_MESSAGE', __ERROR_MESSAGE)
@@ -164,7 +175,7 @@
       async init() {
         await this.loginByXcxToken()
 
-        
+
         this.tip_message = "正在读取模型数据..."
         await this.getViewpointsById()
         if (this.ViewPointInfo === null) {
