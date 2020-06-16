@@ -100,6 +100,11 @@
     background-color: #f2f2f2;
     padding: 10px 0px 0px 0px;
 
+    .el-row {
+      margin-left: 0px !important;
+      margin-right: 0px !important;
+    }
+
     .bgShow {
       background-color: #bbefe5 !important;
     }
@@ -156,6 +161,14 @@
 
       text-align: center;
       line-height: 60px;
+
+      .el-icon-share {
+        font-size: 14px;
+        margin-right: 5px;
+        color: #2cbc9d;
+        font-weight: 100;
+        cursor: pointer;
+      }
 
       .icon-red-pointer {
         color: red;

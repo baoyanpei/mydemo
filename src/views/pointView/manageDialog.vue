@@ -5,7 +5,7 @@
 <template>
 
   <div id="view-point-manage-dialog" class="view-point-manage-dialog">
-    <el-dialog :modal="false" width="300px" top="10vh" :lock-scroll="true" :close-on-click-modal="false"
+    <el-dialog :modal="false" width="380px" top="10vh" :lock-scroll="true" :close-on-click-modal="false"
       :close-on-press-escape="true" :visible.sync="ViewPointManageDialog.show" @opened="openedManageDialogHandle"
       @close="closeManageDialogHandle" :title="dialogTitle" v-el-drag-dialog>
       <el-tabs v-model="activeTabName" @tab-click="tabHandleClick">
@@ -17,7 +17,7 @@
         <div v-show="tipMessage!==''" class="tip-message">{{tipMessage}}</div>
         <div v-if="activeTabName==='2' || activeTabName==='3'">
           <el-row :class="['view-point-item',item.bgShow]" v-for="(item,index) in viewPointDataList" :key="index">
-            <el-col :span="8" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
+            <el-col :span="6" style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
               <img :src="item.pictureLiteSrc" class="photo info-name-link" @click='getViewPointsDataHandle(item)'>
               <!-- <viewer class="imagesPreview" ref="viewer"> -->
               <div :class="[item.className]" v-viewer="viewOptions">
@@ -25,7 +25,7 @@
               </div>
               <!-- </viewer> -->
             </el-col>
-            <el-col :span="12" style="padding-left:5px;">
+            <el-col :span="13" style="padding-left:5px;">
               <el-row :gutter="24">
                 <div class="grid-content info-title">
                   <!-- <el-link @click='getViewPointsDataHandle(item)'>{{item.name}}</el-link> -->
@@ -43,7 +43,7 @@
                 </div>
               </el-row>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <div class="view-point-delete">
                 <i class="el-icon-delete " style="color: red; cursor: pointer;font-size: 16px;"
                   @click="deleteViewPointHander(item)"></i>
@@ -68,7 +68,7 @@
                     <div>
                       <el-row :class="['view-point-item',item.bgShow]" v-for="(item,index) in floor.viewPointList"
                         :key="index">
-                        <el-col :span="8"
+                        <el-col :span="6"
                           style="height:100%;display: table-cell;vertical-align: middle;text-align: center;">
                           <img :src="item.pictureLiteSrc" class="photo info-name-link"
                             @click='getViewPointsDataHandle(item)'>
@@ -76,7 +76,7 @@
                             <img :src="item.pictureFullSrc" :key="item.pictureFullSrc" v-show="false">
                           </div>
                         </el-col>
-                        <el-col :span="12" style="padding-left:5px;">
+                        <el-col :span="13" style="padding-left:5px;">
                           <el-row :gutter="24">
                             <div class="grid-content info-title">
                               <span class="info-title-link" @click='getViewPointsDataHandle(item)'>{{item.name}}</span>
@@ -93,8 +93,13 @@
                             </div>
                           </el-row>
                         </el-col>
-                        <el-col :span="4">
+                        <el-col :span="5">
                           <div class="view-point-delete">
+                            <font-awesome-icon v-if="item.bgShow === 'bgShowSelected'" icon="share-square" class="el-icon-share"
+                              style="color:#FFFFFF;" @click="shareViewPointHander(item)"/>
+                            <font-awesome-icon v-if="item.bgShow !== 'bgShowSelected'" icon="share-square" class="el-icon-share"
+                              style="color:#2cbc9d;" @click="shareViewPointHander(item)"/>
+
                             <i class="el-icon-delete " style="color: red; cursor: pointer;font-size: 16px;"
                               @click="deleteViewPointHander(item)"></i>
                           </div>
@@ -147,7 +152,7 @@
       return {
         loadingFull: false,
         dialogTitle: '视点管理',
-        activeTabName: '',//
+        activeTabName: '', //
         ProjectItemsAll: new Map(),
         access_token: null,
         viewPointDataList: [], // 显示到列表重的数据
@@ -234,9 +239,9 @@
         this.ViewPointManageDialog.itemInfoList.forEach(item => {
           this.CurrentItemIDList.push(item.item_id)
         })
-        if (this.CurrentItemIDList.length > 1){
+        if (this.CurrentItemIDList.length > 1) {
           this.activeTabName = '2'
-        }else{
+        } else {
           this.activeTabName = '1'
         }
 
@@ -599,6 +604,9 @@
           })
         })
 
+      },
+      shareViewPointHander(item){
+        console.log('shareViewPointHander', item)
       }
 
     }
