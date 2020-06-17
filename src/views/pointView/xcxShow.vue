@@ -134,6 +134,11 @@
       // console.log('this', this.project_id, this.point_view_id)
       this.init()
 
+      if (__FROM !== undefined) { // 小程序直接使用url
+        this.setXcxPVQrcodeLogs(__FROM)
+      }
+
+
     },
     beforeDestroy() {},
     destroyed() {},
@@ -149,6 +154,26 @@
             resolve()
             // this.init()
           })
+        })
+      },
+      setXcxPVQrcodeLogs(from) {
+
+        let _desc = {
+          title: '微信扫描视点二维码查看revit模型视点',
+          pvid: this.point_view_id,
+          from: from // xcx_pv_qrcode
+        }
+        let param = {
+          method: 'person_health',
+          project_id: this.project_id,
+          oper_type: 4,
+          source: 3,
+          desc: JSON.stringify(_desc)
+        }
+
+        console.log('param', param)
+        this.$store.dispatch('SetLogs', param).then((result) => {
+
         })
       },
       showAllViewpointToolBar() {

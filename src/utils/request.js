@@ -144,11 +144,13 @@ service.interceptors.response.use(
           location.reload() // In order to re-instantiate the vue-router object to avoid bugs
         })
       }
-      Message({
-        message: error.message,
-        type: 'error',
-        duration: 5 * 1000
-      })
+
+      console.log('接口请求错误', error.message)
+      // Message({
+      //   message: error.message,
+      //   type: 'error',
+      //   duration: 5 * 1000
+      // })
     }
 
     return Promise.reject(error)
