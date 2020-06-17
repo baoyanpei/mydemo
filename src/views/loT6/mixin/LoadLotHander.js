@@ -2,7 +2,7 @@ import moment from 'moment'
 import loadJs from '@/utils/loadJs.js'
 let Base64 = require('js-base64').Base64
 export default {
-  name: 'Lot5-index',
+  name: 'Lot6-index',
   components: {},
   data() {
     return {
@@ -118,6 +118,7 @@ export default {
   destroyed() {},
   methods: {
     async init(projectId) {
+      this.nomodel_message = ''
       this.tip_message = '正在加载模型底层程序...'
       await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
       console.log('./static/libs/viewer3D/viewer3D.min.js')
@@ -131,22 +132,28 @@ export default {
         return
       }
 
+
+      // 恢复视点的模型
+      this.viewPointCurrentData = await this.getViewPointsByType()
+      console.log('this.viewPointCurrentData', this.viewPointCurrentData)
+      if (this.viewPointCurrentData === null) {
+        this.nomodel_message = '当前项目尚未配置物联网建筑模型'
+        return
+      }
+
+
       this.allItemList = await this.getProjectItemsAll()
       await this.init3DView()
+      await this.loadViewPointModel()
+      
       this.viewer.addEventListener(
         // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
         Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
         this.onSelectionChanged
       )
-      // 恢复视点的模型
-      this.viewPointCurrentData = await this.getViewPointsByType()
-      console.log('this.viewPointCurrentData', this.viewPointCurrentData)
-      if (this.viewPointCurrentData === null) {
-        this.nomodel_message = '当前项目尚未配置建筑模型'
-      }
 
 
-      await this.loadViewPointModel()
+
 
       this.FamilyListMap = await this.getFamilyList()
       console.log('this.FamilyListMap', this.FamilyListMap)
@@ -160,6 +167,95 @@ export default {
       this.$refs.mqttLocation.init(this.projID)
       this.$refs.mqttBim.init(this.projID, this.datumMeterMap)
       this.initData()
+      this.initCameraChangeEvent()
+      await this.restoreViewState()
+      // 必须先恢复了视点以后才能初始化渐进式显示
+      // 初始化设置 渐进式显示
+      this.initProgressiveRendering()
+      
+
+
+    },
+    initProgressiveRendering() {
+      // 初始化设置 渐进式显示
+      let storageProgressiveRendering = this.storage[this.storageProgressiveRenderingKey]
+      if (storageProgressiveRendering === undefined) {
+        this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering
+      }
+      console.log('this.storage[storageProgressiveRenderingKey]', this.storage[this.storageProgressiveRenderingKey])
+      this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+    },
+    initCameraChangeEvent() {
+      // console.log('viewer.container', viewer.container)
+      // delegate the mouse click event
+
+      // 在场景中通过点击添加圆圈标记
+      // $(this.viewer.container).bind('click', this.onMouseClick)
+
+      // delegate the event of CAMERA_CHANGE_EVENT
+
+      // this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
+
+      this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
+
+        const _fps = this.viewer.impl.fps()
+
+        // this.avgFps = (this.avgFps + _fps) / 2
+        // console.log('avgFps', this.avgFps, this.totalLowFps)
+        if (_fps <= this.FPS_LOW_LEVEL) {
+          this.totalLowFps++
+        } else if (_fps >= this.FPS_HIGH_LEVEL) {
+          if (this.totalLowFps > 0) {
+            this.totalLowFps--
+          }
+        }
+        console.log('当前帧数', _fps, '低于', this.FPS_LOW_LEVEL, '帧累计次数:', this.totalLowFps)
+        // let storageData = this.storage["lot3-control-" + this.project_id]
+        // if (this.isProgressiveRendering === false) {
+        if (this.totalLowFps >= this.FPS_LOW_TIMES) {
+          this.totalLowFps = 0
+          // this.totalHighFps = 0
+          this.isProgressiveRendering = true
+          this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+          this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+          console.log('自动打开渐进式显示')
+          this.$message({
+            message: '由于您的模型显示不流畅，已经切换为渐进式显示！',
+            type: 'success'
+          })
+        }
+
+        // find out all pushpin markups
+        var $eles = $("div[id^='mymk']")
+        var DOMeles = $eles.get()
+
+        for (var index in DOMeles) {
+
+          // get each DOM element
+          let DOMEle = DOMeles[index]
+          let divEle = $('#' + DOMEle.id)
+          // get out the 3D coordination
+          let val = divEle.data('3DData')
+          let pushpinModelPt = JSON.parse(val)
+          // get the updated screen point
+          let screenpoint = this.viewer.worldToClient(new THREE.Vector3(
+            pushpinModelPt.x,
+            pushpinModelPt.y,
+            pushpinModelPt.z))
+          // update the SVG position.
+          divEle.css({
+            'left': screenpoint.x - pushpinModelPt.radius * 2,
+            'top': screenpoint.y - pushpinModelPt.radius
+          })
+        }
+
+      })
+
+      // drawPushpinLot({
+      //   x: -12.590157398363942,
+      //   y: -256.6158517922297,
+      //   z: -33.46542876355482
+      // }, 'lot5', '摄像头');
 
     },
     onSelectionChanged(event) {
@@ -175,7 +271,7 @@ export default {
           console.log('dbId', dbId)
           selection.model.getProperties(dbId,
             (elements) => {
-              var dbid = elements.dbId;
+              var dbid = elements.dbId
               this.selectedDbId.push(dbid)
               console.log('elements', elements)
               // let min = this.getFragXYZ(dbid)
@@ -320,7 +416,7 @@ export default {
         // this.urns = modelURLList
         Autodesk.Viewing.Initializer(this.options, async () => {
           this.element = document.getElementById('viewer-local');
-          this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config);
+          this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(this.element, this.config)
 
           this.viewer.addEventListener(
             Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
@@ -331,34 +427,8 @@ export default {
             console.error('Failed to create a Viewer: WebGL not supported.');
             return;
           }
-          this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-          this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
-
-
-            // find out all pushpin markups
-            var $eles = $("div[id^='mymk']")
-            var DOMeles = $eles.get()
-
-            for (var index in DOMeles) {
-
-              // get each DOM element
-              let DOMEle = DOMeles[index]
-              let divEle = $('#' + DOMEle.id)
-              // get out the 3D coordination
-              let val = divEle.data('3DData')
-              let pushpinModelPt = JSON.parse(val)
-              // get the updated screen point
-              let screenpoint = this.viewer.worldToClient(new THREE.Vector3(
-                pushpinModelPt.x,
-                pushpinModelPt.y,
-                pushpinModelPt.z))
-              // update the SVG position.
-              divEle.css({
-                'left': screenpoint.x - pushpinModelPt.radius * 2,
-                'top': screenpoint.y - pushpinModelPt.radius
-              })
-            }
-          })
+          
+          
 
           resolve()
 
@@ -385,17 +455,21 @@ export default {
 
       })
     },
-    async loadViewPointModel() {
-      if (this.viewPointCurrentData !== null) {
-        let _item_ids = this.viewPointCurrentData.item_ids
-        if (_item_ids !== null && _item_ids !== '') {
-          let _itemIdlist = JSON.parse(_item_ids)
-          if (_itemIdlist.length > 0) {
-            this.getCurrentItemData(_itemIdlist)
-            await this.loadManyModel()
+    loadViewPointModel() {
+      return new Promise(async (resolve, reject) => {
+        if (this.viewPointCurrentData !== null) {
+          let _item_ids = this.viewPointCurrentData.item_ids
+          if (_item_ids !== null && _item_ids !== '') {
+            let _itemIdlist = JSON.parse(_item_ids)
+            if (_itemIdlist.length > 0) {
+              this.getCurrentItemData(_itemIdlist)
+              await this.loadManyModel()
+            }
           }
         }
-      }
+        resolve()
+      })
+
     },
     getCurrentItemData(itemIdList) {
       this.currentItemList = []
@@ -417,11 +491,11 @@ export default {
         } else {
           let _Plist = []
           for (var i = 0; i < modelURLList.length; i++) {
-            let p = await this.loadModel(modelURLList[i], this.currentItemList[i], i)
+            let p = await this.loadBuildModel(modelURLList[i], this.currentItemList[i], i)
             _Plist.push(p)
           }
           Promise.all(_Plist).then(result => {
-            this.restoreViewState()
+            // this.restoreViewState()
             resolve()
           })
         }
@@ -441,7 +515,7 @@ export default {
     onLoadedEvent(event) {
       //   console.log('ononLoadedEvent---123', event)
     },
-    loadModel(modelURL, itemInfo, index) {
+    loadBuildModel(modelURL, itemInfo, index) {
       return new Promise((resolve, reject) => {
         console.log("----------------", index)
         const modelOpts = {
@@ -457,10 +531,16 @@ export default {
           this.currentItemModelList.push(model)
           // this.loadedModels.push(model)
           if (index === 0) {
-            this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-            this.viewer.setGroundShadow(true)
-            this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
-            this.viewer.setProgressiveRendering(this.isProgressiveRendering)
+            if (this.useFrom === 'screen') {
+              // this.viewer.fitToView()
+              this.viewer.setBackgroundColor(22, 39, 61, 13, 20, 51)
+            } else {
+              // this.viewer.fitToView()
+              this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255)
+            }
+            // this.viewer.setGroundShadow(true)
+            this.viewer.setReverseZoomDirection(true) // true 滚动向前为放大
+            // this.viewer.setProgressiveRendering(this.isProgressiveRendering)
 
             this.addLotToolBar()
             this.addCustomToolBar()
@@ -663,26 +743,28 @@ export default {
       })
     },
     restoreViewState() {
-      if (this.cameraInfo === null) {
-        // this.cameraInfo = this.viewer.getState()
-        if (this.viewPointCurrentData !== null) {
-          let _cameraInfo = JSON.parse(Base64.decode(this.viewPointCurrentData.camera_info))
-          if (_cameraInfo !== null && _cameraInfo !== '') {
-            this.cameraInfo = _cameraInfo
+      return new Promise((resolve, reject) => {
+        if (this.cameraInfo === null) {
+          // this.cameraInfo = this.viewer.getState()
+          if (this.viewPointCurrentData !== null) {
+            let _cameraInfo = JSON.parse(Base64.decode(this.viewPointCurrentData.camera_info))
+            if (_cameraInfo !== null && _cameraInfo !== '') {
+              this.cameraInfo = _cameraInfo
+            }
           }
         }
-      }
-      if (this.cameraInfo !== null) {
-        console.log('restoreStaterestoreStaterestoreStaterestoreState', this.cameraInfo)
-        setTimeout(() => {
-          console.log('this.viewerthis.viewer', this.viewer)
-          this.viewer.restoreState(this.cameraInfo) // it fails to restore state
-        }, 3000)
-        // this.currentItemModelList.forEach(model => {
-        //   this.viewer.impl.visibilityManager.isolate(-1, model);
-        // })
-      }
-
+        if (this.cameraInfo !== null) {
+          
+          setTimeout(() => {
+            console.log('restoreStaterestoreStaterestoreStaterestoreState', this.cameraInfo)
+            this.viewer.restoreState(this.cameraInfo) // it fails to restore state
+            resolve()
+          }, 3000)
+          // this.currentItemModelList.forEach(model => {
+          //   this.viewer.impl.visibilityManager.isolate(-1, model);
+          // })
+        }
+      })
     },
     MoveModel(model, x, y, z) {
       const thisModel = model // viewer.getAggregateSelection()[0].model

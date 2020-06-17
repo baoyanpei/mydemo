@@ -49,6 +49,12 @@ export const constantRouterMap = [{
     component: () => import('@/views/screen3/index'),
     hidden: true
   },
+  {
+    path: '/screen3V3/:project_id?',
+    name: 'screen3V3',
+    component: () => import('@/views/screen3/indexV3'),
+    hidden: true
+  },
   // {
   //   path: '/screen1',
   //   name: 'screen1',

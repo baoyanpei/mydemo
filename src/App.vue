@@ -238,7 +238,8 @@
         }
         console.log("fromfromfrom", from)
         if (from.name === 'lot2-index' || from.name === 'lot3-index' || from.name === 'lot4-index' || from.name ===
-          'lot5-index' || from.name === 'modelDisplay-index' || from.name === 'model-lot-setting') {
+          'lot5-index' || from.name === 'lot6-index' || from.name === 'modelDisplay-index' || from.name ===
+          'model-lot-setting') {
           location.reload()
         }
       }

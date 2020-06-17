@@ -26,6 +26,8 @@
             </el-button>
             <el-button v-if="itemListSelected.length===0" size="small" disabled>合并显示选中的模型</el-button>
             <el-button size="small" type="primary" @click="lotPVSetting">物联网场景设置</el-button>
+            <el-button size="small" type="primary" @click="openLot6IndexHandle">物联设备（新版）</el-button>
+            <el-button size="small" type="primary" @click="openScreenHandle">项目看板（新版）</el-button>
 
             <!-- <el-button type="primary" size="small" @click="openUploadModelDialogHandle">上传模型</el-button> -->
 
@@ -597,6 +599,14 @@
           // query: {
           //   'queryData': 131
           // }
+        })
+      },
+      openScreenHandle() {
+        window.open(`/#/screen3V3?project_id=${this.project_id}`, '_blank');
+      },
+      openLot6IndexHandle() {
+        this.$router.push({
+          path: '/lot6',
         })
       }
       // unCheckAll() {
