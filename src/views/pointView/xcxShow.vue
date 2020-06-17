@@ -79,6 +79,8 @@
         FPS_LOW_LEVEL: 8, // 低于祯数 为慢
         FPS_HIGH_LEVEL: 15, // 高于祯数 为快
         FPS_LOW_TIMES: 30, // 低速fps累计次数
+
+        // objectSetIDs: []
       }
     },
     computed: {
@@ -109,7 +111,7 @@
 
       const __POINT_VIEW_ID = this.$route.query.pvid
       const __ERROR_MESSAGE = this.$route.query.errormsg
-      
+
       if (__PROJECT_ID === undefined || __PROJECT_ID === '') {
         this.tip_message = '缺少参数 projectid'
         return
@@ -219,6 +221,11 @@
               Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
               this.onLoadedEvent
             );
+            // this.viewer.addEventListener(
+            //   // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+            //   Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+            //   this.onSelectionChanged
+            // )
             // this.subscribeToAllEvents()
             var startedCode = this.viewer.start();
             if (startedCode > 0) {
@@ -242,6 +249,14 @@
           });
 
         })
+      },
+      onSelectionChanged(event) {
+        // console.log('this.viewer', this.viewer)
+        // console.log('event1', event)
+        let _selections = event.selections
+        console.log('_selections', _selections)
+
+
       },
       loadModel(modelURL, index) {
         return new Promise((resolve, reject) => {
@@ -419,15 +434,30 @@
         this.viewer.setProgressiveRendering(this.isProgressiveRendering)
 
       },
+      setSelectedObjectColor(cameraInfo) {
+        let _objectSetList = cameraInfo.objectSet
+        if (_objectSetList !== undefined && _objectSetList.length > 0) {
+          _objectSetList.forEach(_objectSet => {
+            let objectSetIDs = _objectSet.id
+            if (objectSetIDs.length > 0) {
+              const buleColor = new THREE.Vector4(0, 0, 255 / 255, 0.6);
+              objectSetIDs.forEach(bdid => {
+                this.viewer.setThemingColor(bdid, buleColor, this.viewer.model, false)
+              })
+            }
+          })
+        }
+      },
       //显示视点
       async ShowViewPoint() {
         console.log('this.ViewPointInfo', this.ViewPointInfo)
         this.ViewPointType = this.ViewPointInfo.type
-        let camera_info = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))
+        let cameraInfo = JSON.parse(Base64.decode(this.ViewPointInfo.camera_info))
         if (this.ViewPointType === 1) {
 
-          console.log('camera_info', camera_info)
-          this.viewer.restoreState(camera_info); //it fails to restore state
+          console.log('cameraInfo', cameraInfo)
+          this.viewer.restoreState(cameraInfo); //it fails to restore state
+
           const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
           // 顶部缩略图
           this.viewPointImgTopUrl = this.ViewPointInfo.top_pic === "" ? "" :
@@ -454,6 +484,9 @@
           }
 
           this.initProgressiveRendering()
+          // this.viewer.disableSelection(true)
+          this.setSelectedObjectColor(cameraInfo)
+
         } else {
           this.viewer.loadExtension('Autodesk.Viewing.MarkupsCore').then((markupsExt) => {
             console.log('ViewPointInfo', this.ViewPointInfo)
@@ -466,17 +499,14 @@
             this.markupsExt.hide()
 
             let _marekup_svg = Base64.decode(this.ViewPointInfo.svg_info)
-            console.log('camera_info', camera_info)
-            this.viewer.restoreState(camera_info); //it fails to restore state
+            console.log('cameraInfo', cameraInfo)
+            this.viewer.restoreState(cameraInfo); //it fails to restore state
             this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
 
 
           })
           this.initProgressiveRendering()
         }
-
-
-
       }
     }
   }
