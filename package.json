@@ -63,6 +63,7 @@
     "nprogress": "0.2.0",
     "paho.mqtt.js": "^2.0.5",
     "qrcanvas": "^3.1.1",
+    "qrcodejs2": "0.0.2",
     "react": "^16.9.0",
     "screenfull": "3.3.2",
     "scss": "^0.2.4",
