@@ -91,7 +91,7 @@ export default {
       viewPointCurrentData: null, // 当前的视点数据
       itemsAllMap: new Map(),
 
-      currentItemIDList: [],
+      // currentItemIDList: [],
       currentItemList: [],
       currentItemModelList: [], // 当前加载的模型
 
@@ -99,7 +99,7 @@ export default {
       allItemList: [], // 所有的模型列表
 
       isShowDevice: true, // 是否显示设备
-      isShouBiaozhu: true // 是否显示标注
+      isShowBiaozhu: false // 是否显示标注
     }
   },
   computed: {
@@ -140,41 +140,44 @@ export default {
         this.nomodel_message = '当前项目尚未配置物联网建筑模型'
         return
       }
-
-
-      this.allItemList = await this.getProjectItemsAll()
       await this.init3DView()
-      await this.loadViewPointModel()
+      // 获取项目所有的建筑
+      this.allItemList = await this.getProjectItemsAll()
 
-      this.viewer.addEventListener(
-        // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-        Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-        this.onSelectionChanged
-      )
-
+      // 获取视点的建筑配置
+      this.currentItemList = await this.loadViewPointData()
+      await this.loadManyModel()
 
 
 
+
+      // 获取族库map
       this.FamilyListMap = await this.getFamilyList()
-      console.log('this.FamilyListMap', this.FamilyListMap)
+      // 获取该项目所有的设备配置
       this.allLotDeviceList = await this.getDeviceConfigList()
-      console.log('this.allLotDeviceList', this.allLotDeviceList)
+      // 获取当前建筑已经配置的设备列表
+      this.getLotDeviceList()
+
+      // 加载设备模型
       await this.setLotDeviceModelList()
+
+      // 加载设备标签
       this.addDeviveLabel()
 
+      // 初始获取电表水表数据
       await this.initDevlist()
       await this.initExtPerson()
       this.$refs.historyLocation.getLocationHisData(this.projID)
       this.$refs.mqttLocation.init(this.projID)
       this.$refs.mqttBim.init(this.projID, this.datumMeterMap)
       this.initData()
+
+      // 初始化镜头的变化事件
       this.initCameraChangeEvent()
       await this.restoreViewState()
       // 必须先恢复了视点以后才能初始化渐进式显示
       // 初始化设置 渐进式显示
       this.initProgressiveRendering()
-
-
 
     },
     initProgressiveRendering() {
@@ -187,16 +190,8 @@ export default {
       this.viewer.setProgressiveRendering(this.isProgressiveRendering)
     },
     initCameraChangeEvent() {
-      // console.log('viewer.container', viewer.container)
-      // delegate the mouse click event
-
       // 在场景中通过点击添加圆圈标记
       // $(this.viewer.container).bind('click', this.onMouseClick)
-
-      // delegate the event of CAMERA_CHANGE_EVENT
-
-      // this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
-
       this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, (rt) => {
 
         const _fps = this.viewer.impl.fps()
@@ -245,7 +240,7 @@ export default {
             pushpinModelPt.y,
             pushpinModelPt.z))
           // update the SVG position.
-          console.log('pushpinModelPt', pushpinModelPt)
+          // console.log('pushpinModelPt', pushpinModelPt)
           divEle.css({
             'left': screenpoint.x - pushpinModelPt.radius,
             'top': screenpoint.y - pushpinModelPt.radius
@@ -352,8 +347,8 @@ export default {
         this.isShowDevice = !this.isShowDevice
         if (this.isShowDevice === true) {
           await this.setLotDeviceModelList()
-          if (this.isShouBiaozhu === true) {
-            this.addDeviveLabel()
+          if (this.isShowBiaozhu === true) {
+            this.showAllDeviceLabel()
           }
           buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_shebei_b.png)'
         } else {
@@ -366,7 +361,7 @@ export default {
       let buttonLotListDialog = new Autodesk.Viewing.UI.Button('lot-list-dialog-button')
       buttonLotListDialog.addClass('lot-list-dialog-button')
       buttonLotListDialog.setToolTip('物联网设备标签显示开关')
-      if (this.isShouBiaozhu === true) {
+      if (this.isShowBiaozhu === true) {
         buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu_b.png)'
       } else {
         buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu.png)'
@@ -374,13 +369,16 @@ export default {
 
       buttonLotListDialog.onClick = (e) => {
 
-        this.isShouBiaozhu = !this.isShouBiaozhu
-        if (this.isShouBiaozhu === true) {
-          this.addDeviveLabel()
+        this.isShowBiaozhu = !this.isShowBiaozhu
+        if (this.isShowBiaozhu === true) {
+          this.showAllPersonLabel()
+          this.showAllDeviceLabel()
           buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu_b.png)'
 
         } else {
-          this.removeAllDeviceLabel()
+          // this.removeAllDeviceLabel()
+          this.hideAllPersonLabel()
+          this.hideAllDeviceLabel()
           buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_biaozhu.png)'
         }
 
@@ -403,7 +401,6 @@ export default {
           // access_token: this.access_token
         }
         this.$store.dispatch('GetProjectItems', param).then((_itemList) => {
-          console.log('getProjectItemsAll - _itemList', _itemList)
           _itemList.forEach(item => {
             this.itemsAllMap.set(item.id, item)
           });
@@ -425,6 +422,12 @@ export default {
             Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
             this.onLoadedEvent
           );
+
+          this.viewer.addEventListener(
+            // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+            Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+            this.onSelectionChanged
+          )
           var startedCode = this.viewer.start();
           if (startedCode > 0) {
             console.error('Failed to create a Viewer: WebGL not supported.');
@@ -458,36 +461,33 @@ export default {
 
       })
     },
-    loadViewPointModel() {
+    loadViewPointData() {
       return new Promise(async (resolve, reject) => {
+        let itemList = []
         if (this.viewPointCurrentData !== null) {
-          let _item_ids = this.viewPointCurrentData.item_ids
-          if (_item_ids !== null && _item_ids !== '') {
-            let _itemIdlist = JSON.parse(_item_ids)
+          let _itemIds = this.viewPointCurrentData.item_ids
+          if (_itemIds !== null && _itemIds !== '') {
+            let _itemIdlist = JSON.parse(_itemIds)
             if (_itemIdlist.length > 0) {
-              this.getCurrentItemData(_itemIdlist)
-              await this.loadManyModel()
+              _itemIdlist.forEach(_id => {
+                let _item = this.itemsAllMap.get(_id)
+                itemList.push(_item)
+              })
             }
           }
         }
-        resolve()
+        resolve(itemList)
       })
 
     },
-    getCurrentItemData(itemIdList) {
-      this.currentItemList = []
-      this.currentItemIDList = []
-      itemIdList.forEach(_id => {
-        let _item = this.itemsAllMap.get(_id)
-        this.currentItemList.push(_item)
-        this.currentItemIDList.push(_item.id)
-      });
-    },
     async loadManyModel() {
       return new Promise(async (resolve, reject) => {
-        let _result = this.getModelUrl()
-        console.log('getModelUrl - result', _result)
-        let modelURLList = _result['urlList']
+        // let _result = this.getModelUrl()
+        let modelURLList = []
+
+        this.currentItemList.forEach(itemInfo => {
+          modelURLList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
+        })
 
         if (modelURLList.length === 0) {
           resolve()
@@ -498,23 +498,22 @@ export default {
             _Plist.push(p)
           }
           Promise.all(_Plist).then(result => {
-            // this.restoreViewState()
             resolve()
           })
         }
       })
     },
-    getModelUrl() {
-      let result = null
-      let _urlList = []
-      this.currentItemList.forEach(itemInfo => {
-        _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
-      });
-      result = {
-        'urlList': _urlList,
-      }
-      return result
-    },
+    // getModelUrl() {
+    //   let result = null
+    //   let _urlList = []
+    //   this.currentItemList.forEach(itemInfo => {
+    //     _urlList.push(itemInfo.url.replace('/www/bim_proj/', '').replace('/BCP_FILE/', 'BCP_FILE/'))
+    //   });
+    //   result = {
+    //     'urlList': _urlList,
+    //   }
+    //   return result
+    // },
     onLoadedEvent(event) {
       //   console.log('ononLoadedEvent---123', event)
     },
@@ -562,17 +561,16 @@ export default {
           // access_token: this.access_token
         }
         this.$store.dispatch('GetFamilyQuery', param).then((_itemList) => {
-          console.log('GetFamilyQuery - _itemList', _itemList)
           let _mapData = new Map()
           _itemList.forEach(itemInfo => {
             _mapData.set(itemInfo.id, itemInfo)
           })
-
           resolve(_mapData)
         })
 
       })
     },
+    // 获取该项目的设备配置
     getDeviceConfigList() {
       return new Promise((resolve, reject) => {
         this.buildList = []
@@ -593,12 +591,11 @@ export default {
       return new Promise(async (resolve, reject) => {
 
         if (this.isShowDevice === false) {
+          resolve()
           return
         }
+
         this.LotDeviceModelMap = new Map()
-
-        this.getLotDeviceList()
-
         let _Plist = []
         for (var i = 0; i < this.LotDeviceList.length; i++) {
           let p = await this.loadDeviceModel(this.LotDeviceList[i], i)
@@ -613,9 +610,8 @@ export default {
     loadDeviceModel(itemInfo, index) {
       return new Promise((resolve, reject) => {
         let _familyModel = this.FamilyListMap.get(itemInfo.family_id)
-        let _family_location = itemInfo.family_location
-        const familyLocation = JSON.parse(_family_location);
-        console.log('_model_model', _familyModel, _family_location, familyLocation)
+        let _familyLocation = itemInfo.family_location
+        const familyLocation = JSON.parse(_familyLocation)
 
         let _url = _familyModel.file.replace('/BCP_FILE/', 'BCP_FILE/')
 
@@ -633,8 +629,7 @@ export default {
             deviceData: itemInfo,
             model: model
           })
-          console.log('---->', familyLocation.position.x, familyLocation.position.y, familyLocation.position
-            .z)
+
           const _x = familyLocation.rotate.x
           const _y = familyLocation.rotate.y
           const _z = familyLocation.rotate.z
@@ -647,7 +642,6 @@ export default {
             familyLocation.position.z)
 
 
-          console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
           resolve(index)
         }, this.onLoadError)
       })
@@ -726,18 +720,15 @@ export default {
     removeAllDeviceModel() {
       if (this.LotDeviceModelMap !== null) {
         this.LotDeviceModelMap.forEach((value, key) => {
-          console.log(value)
           this.viewer.unloadModel(value.model)
           // this.viewer.unloadModel(this.viewer.model)
-        });
+        })
       }
-
     },
     // 获取当前建筑已经配置的设备列表
     getLotDeviceList() {
       this.LotDeviceList = []
       this.currentItemList.forEach(item => {
-        console.log('item', item)
         this.allLotDeviceList.forEach(device => {
           if (item.id === device.buliding_id) {
             this.LotDeviceList.push(device)
@@ -800,7 +791,6 @@ export default {
       return nodebBox
     },
     rotateFragments(model, fragIdsArray, axis, angle, center) {
-      console.log('angle', angle, axis)
       var quaternion = new THREE.Quaternion()
       quaternion.setFromAxisAngle(axis, angle)
       fragIdsArray.forEach((fragId, idx) => {
@@ -852,8 +842,8 @@ export default {
     },
     getModelBox(model) {
       //   console.log('modelmodelmodelmodel', model)
-      const thisModel = model //viewer.getAggregateSelection()[0].model
-      const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
+      const thisModel = model // viewer.getAggregateSelection()[0].model
+      const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length
       let fragIdsArray = []
       for (var fragId = 0; fragId < fragCount; ++fragId) {
         fragIdsArray.push(fragId)
@@ -869,22 +859,28 @@ export default {
     removeAllDeviceLabel() {
       $('.mymlLabel').remove()
     },
+    showAllDeviceLabel() {
+      $('.mymlLabel').show()
+    },
+    hideAllDeviceLabel() {
+      $('.mymlLabel').hide()
+    },
+    showAllPersonLabel() {
+      $('.personLabel').show()
+    },
+    hideAllPersonLabel() {
+      $('.personLabel').hide()
+    },
     addDeviveLabel() {
-      if (this.isShouBiaozhu === false) {
-        return
-      }
-      this.removeAllDeviceLabel()
-      this.getLotDeviceList()
       this.LotDeviceList.forEach(deviceInfo => {
         console.log('deviceInfo', deviceInfo)
-        let _family_location = deviceInfo.family_location
-        const familyLocation = JSON.parse(_family_location)
+        let _familyLocation = deviceInfo.family_location
+        const familyLocation = JSON.parse(_familyLocation)
 
         const _x = familyLocation.position.x
         const _y = familyLocation.position.y
         const _z = familyLocation.position.z
 
-        // console.log('LotDeviceModelMapLotDeviceModelMapLotDeviceModelMap', this.LotDeviceModelMap)
         let _zzz = 0
         if (this.LotDeviceModelMap !== null) {
           let _modelData = this.LotDeviceModelMap.get(deviceInfo.id)
@@ -900,7 +896,7 @@ export default {
           x: _x,
           y: _y,
           z: _z + _zzz
-        }, deviceInfo.id, deviceInfo.device_name, deviceInfo);
+        }, deviceInfo.id, deviceInfo.device_name, deviceInfo)
       })
     },
     drawPushpinLot(pushpinModelPt, id, name, data) {
@@ -925,6 +921,10 @@ export default {
       var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>'
       var parent = this.viewer.container
       $(parent).append(htmlMarker)
+      if (this.isShowBiaozhu === false) {
+        $('#mymk' + randomId).hide()
+      }
+
       $('#mymk' + randomId).css({
         // 'pointer-events': 'none',
         'width': '80px',
