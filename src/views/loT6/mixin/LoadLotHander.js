@@ -218,7 +218,7 @@ export default {
           // this.totalHighFps = 0
           this.isProgressiveRendering = true
           this.viewer.setProgressiveRendering(this.isProgressiveRendering)
-          this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering;
+          this.storage[this.storageProgressiveRenderingKey] = this.isProgressiveRendering
           console.log('自动打开渐进式显示')
           this.$message({
             message: '由于您的模型显示不流畅，已经切换为渐进式显示！',
@@ -227,7 +227,8 @@ export default {
         }
 
         // find out all pushpin markups
-        var $eles = $("div[id^='mymk']")
+        // var $eles = $("div[id^='mymk']"),id^='personLabel'
+        var $eles = $("div[id^='mymk'],div[id^='personLabel']")
         var DOMeles = $eles.get()
 
         for (var index in DOMeles) {
@@ -244,8 +245,9 @@ export default {
             pushpinModelPt.y,
             pushpinModelPt.z))
           // update the SVG position.
+          console.log('pushpinModelPt', pushpinModelPt)
           divEle.css({
-            'left': screenpoint.x - pushpinModelPt.radius * 2,
+            'left': screenpoint.x - pushpinModelPt.radius,
             'top': screenpoint.y - pushpinModelPt.radius
           })
         }
@@ -912,14 +914,15 @@ export default {
       // });
       // console.log('idididid', id)
       // convert 3D position to 2D screen coordination
-      var screenpoint = this.viewer.worldToClient(
+      const screenpoint = this.viewer.worldToClient(
         new THREE.Vector3(pushpinModelPt.x,
           pushpinModelPt.y,
-          pushpinModelPt.z, ));
+          pushpinModelPt.z))
+      const randomId = id // makeid();
       $('#mymk' + randomId).remove()
       // build the div container
-      var randomId = id; //makeid();
-      var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>';
+
+      var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>'
       var parent = this.viewer.container
       $(parent).append(htmlMarker)
       $('#mymk' + randomId).css({
@@ -956,13 +959,13 @@ export default {
       // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
 
       // var snap = Snap($('#mysvg' + randomId)[0]);
-      var rad = 27
+      var rad = 40
       // set the position of the SVG
       // adjust to make the circle center is the position of the click point
       var $container = $('#mymk' + randomId)
       $container.css({
-        'left': screenpoint.x - rad * 2,
-        'top': screenpoint.y
+        'left': screenpoint.x - rad,
+        'top': screenpoint.y - rad
       })
 
       // store 3D point data to the DOM
@@ -1152,7 +1155,7 @@ export default {
     addPersonMesh(name, userData, position) {
       const geometry = new THREE.BoxGeometry(5, 5, 5)
 
-      const color = '#FF0000' //Math.floor(Math.random() * 16777215)
+      const color = '#FF0000' // Math.floor(Math.random() * 16777215)
       const material = new THREE.MeshPhongMaterial({
         specular: new THREE.Color(color),
         side: THREE.DoubleSide,
@@ -1169,18 +1172,17 @@ export default {
 
       const mesh = new THREE.Mesh(geometry, material)
 
-      mesh.position.x = position.x //-71
-      mesh.position.y = position.y //-81
+      mesh.position.x = position.x // -71
+      mesh.position.y = position.y // -81
       mesh.position.z = position.z
       mesh.name = name
       mesh.userData = userData
       console.log('mesh.position', mesh.position)
       this.externalExtensionPerson.addPersonToView(mesh)
 
-
-      // if (name === '') {
-      //   name = userData.mac
-      // }
+      if (name === '') {
+        name = userData.mac
+      }
       this.drawPushpinPerson({
         x: position.x,
         y: position.y,
@@ -1191,6 +1193,7 @@ export default {
         this.viewer.impl.invalidate(true, true, true)
       }
     },
+    // 人员定位的标签
     drawPushpinPerson(pushpinModelPt, id, name) {
       // console.log('idididid', id)
       // convert 3D position to 2D screen coordination
@@ -1201,30 +1204,30 @@ export default {
 
       // build the div container
       var randomId = id // makeid();
-      $('#mymk' + randomId).remove()
-      var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>'
+      $('#personLabel' + randomId).remove()
+      var htmlMarker = '<div id="personLabel' + randomId + '" class="personLabel">' + name + '</div>'
       var parent = this.viewer.container
       $(parent).append(htmlMarker)
-      $('#mymk' + randomId).css({
+      $('#personLabel' + randomId).css({
         'pointer-events': 'none',
-        'width': '50px',
+        'width': '60px',
         'height': '16px',
         'position': 'absolute',
-        'overflow': 'visible',
+        'overflow': 'hidden',
       })
 
       // var snap = Snap($('#mysvg' + randomId)[0]);
-      var rad = 27
+      var rad = 30
       // set the position of the SVG
       // adjust to make the circle center is the position of the click point
-      var $container = $('#mymk' + randomId)
+      var $container = $('#personLabel' + randomId)
       $container.css({
-        'left': screenpoint.x - rad * 2,
+        'left': screenpoint.x - rad,
         'top': screenpoint.y - rad
       })
 
       // store 3D point data to the DOM
-      var div = $('#mymk' + randomId)
+      var div = $('#personLabel' + randomId)
       // add radius info with the 3D data
       pushpinModelPt.radius = rad
       var storeData = JSON.stringify(pushpinModelPt)

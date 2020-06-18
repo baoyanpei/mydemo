@@ -41,6 +41,17 @@
     border-radius: 5px
   }
 
+  .personLabel {
+    background-color: #FFFFFF;
+    color: #000000;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 10px;
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px
+  }
+
   .noModelTip {
     line-height: calc(100vh - 34px);
     text-align: center;
