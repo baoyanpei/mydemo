@@ -99,7 +99,7 @@ export default {
       allItemList: [], // 所有的模型列表
 
       isShowDevice: true, // 是否显示设备
-      isShowBiaozhu: false // 是否显示标注
+      isShowBiaozhu: true // 是否显示标注
     }
   },
   computed: {
