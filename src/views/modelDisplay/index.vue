@@ -173,7 +173,7 @@
     },
     data() {
       return {
-        
+
         viewer: null, //new Autodesk.Viewing.Private.GuiViewer3D(element, config);
         // stats: new Stats(),
         globalOffset: null,
@@ -1486,7 +1486,7 @@
             this.isShowToolbarRestore2 = false
             this.isShowViewPointThumbArea = false
             // this.isShowSaveMarkerArea = false
-
+            console.log('this.ViewPointCurrentData.camera_info', this.ViewPointCurrentData.camera_info)
             let camera_info = JSON.parse(Base64.decode(this.ViewPointCurrentData.camera_info))
             // let picBase64 = picture_info.base64
             // this.viewPointImgUrl = this.ViewPointCurrentData.pictureFullSrc

@@ -280,7 +280,11 @@
         }
         if (this.cameraInfo !== null) {
           console.log('restoreStaterestoreStaterestoreStaterestoreState', this.cameraInfo)
-          this.viewer.restoreState(this.cameraInfo); //it fails to restore state
+          setTimeout(() => {
+            this.viewer.restoreState(this.cameraInfo); //it fails to restore state
+          }, 3000);
+
+
 
 
           // this.currentItemModelList.forEach(model => {

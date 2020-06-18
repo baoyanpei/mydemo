@@ -1,0 +1,55 @@
+.xcx-qrcode-dialog {
+
+  .el-dialog__body {
+    color: #606266 !important;
+    padding: 10px 20px;
+  }
+
+  .el-dialog__header {
+    padding: 10px 20px 10px;
+    background-color: #FFFFFF;
+  }
+
+  .el-form-item {
+    margin-bottom: 22px;
+  }
+
+  .el-dialog__title {
+    line-height: 24px;
+    font-size: 16px;
+    color: #666666;
+    font-weight: 600;
+  }
+
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #666666;
+  }
+
+  .qrcode_type_name {
+    width: 300px;
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: left;
+    line-height: 70px;
+  }
+
+  .view_point_name {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: left;
+    line-height: 70px;
+  }
+
+  .view_point_floor {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: left;
+    line-height: 70px;
+  }
+
+  .logo-img {
+    text-align: left;
+  }
+
+}

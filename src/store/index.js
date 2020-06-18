@@ -21,6 +21,7 @@ import tools from './modules/tools' // tools
 import getters from './getters'
 import componentLibrary from './modules/componentLibrary'
 import device from './modules/device' // 物联网设备
+import logs from './modules/logs' // 物联网
 
 Vue.use(Vuex)
 
@@ -45,7 +46,8 @@ const store = new Vuex.Store({
     health,
     tools,
     componentLibrary,
-    device
+    device,
+    logs
   },
   getters
 })

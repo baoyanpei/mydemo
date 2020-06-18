@@ -49,6 +49,12 @@ export const constantRouterMap = [{
     component: () => import('@/views/screen3/index'),
     hidden: true
   },
+  {
+    path: '/screen3V3/:project_id?',
+    name: 'screen3V3',
+    component: () => import('@/views/screen3/indexV3'),
+    hidden: true
+  },
   // {
   //   path: '/screen1',
   //   name: 'screen1',
@@ -316,6 +322,24 @@ export const constantRouterMap = [{
     }]
   },
   {
+    path: '/lot6', // 此版本为从是物联网环境配置（视点）中获取数据
+    name: 'lot6',
+    component: Layout,
+    redirect: '/loT6/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/loT6/index'),
+      name: 'lot6-index',
+      meta: {
+        title: '物联网V6', // 设计开始时间2020年6月15日
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
     path: '/modelSelect',
     name: 'modelSelect',
     component: Layout,
@@ -362,6 +386,24 @@ export const constantRouterMap = [{
       name: 'model-lot-setting',
       meta: {
         title: 'BIM模型 物联网设置',
+        icon: 'building',
+        noCache: true,
+        requireAuth: false, // 是否需要信息验证
+        CheckCode: 'model3d_index_admin', // 权限Code,通过服务器验证
+      }
+    }]
+  },
+  {
+    path: '/modelTajiSetting',
+    name: 'modelTajiSetting',
+    component: Layout2,
+    redirect: '/modelTajiSetting/index',
+    children: [{
+      path: 'index/:pid?/:flist?', //pid:projectid,flist:floorlist
+      component: () => import('@/views/modelDisplay/tajiSetting'),
+      name: 'model-taji-setting',
+      meta: {
+        title: 'BIM模型 塔机设置',
         icon: 'building',
         noCache: true,
         requireAuth: false, // 是否需要信息验证
