@@ -109,7 +109,7 @@ const project = {
       data: {},
       dialogTitle: '上工时间'
     },
-    taskInfoDialog:{//任务大厅，任务详情
+    taskInfoDialog: { //任务大厅，任务详情
       refresh: 0,
       show: false,
       data: {}
@@ -151,6 +151,7 @@ const project = {
       state.project_list = projects
       let initProjectID = 0
       let initProjectName = ''
+      let initOrgName = ''
 
       projects.forEach(project => {
         // console.log("__PROJECT_ID", __PROJECT_ID, project.project_id)
@@ -160,13 +161,15 @@ const project = {
           label: project.project_name,
         })
         if (__PROJECT_ID !== undefined && __PROJECT_ID.toString() === project.project_id.toString()) {
+          console.log('projectprojectprojectproject', project)
           initProjectID = project.project_id
           initProjectName = project.project_name
+          initOrgName = project.org_name
         }
       })
       if (initProjectID !== 0) {
         state.project_id = initProjectID
-        state.org_name = initProjectName
+        state.org_name = initOrgName
       } else if (projects.length > 0) {
         state.project_id = projects[0].project_id
         state.org_name = projects[0].org_name
@@ -259,7 +262,7 @@ const project = {
         state.personInoutDialog = data
       }
     },
-     SET_PERSON_LIST_DIALOG: async (state, data) => { // 人员信息
+    SET_PERSON_LIST_DIALOG: async (state, data) => { // 人员信息
       if (data.show === true) {
         const _hasPermission = await hasPermissionToOperation({
           project_id: state.project_id,
@@ -510,7 +513,7 @@ const project = {
 
       })
     },
-    SetRelease({//发布任务
+    SetRelease({ //发布任务
       commit,
       rootState
     }, param) {

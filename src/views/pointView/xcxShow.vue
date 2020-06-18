@@ -108,6 +108,7 @@
         this.access_token = this.$route.query.access_token
       }
 
+      
 
       const __POINT_VIEW_ID = this.$route.query.pvid
       const __ERROR_MESSAGE = this.$route.query.errormsg
@@ -119,7 +120,7 @@
         this.tip_message = '缺少参数 pvid'
         return
       } else if (this.access_token === undefined || this.access_token === '') {
-        this.tip_message = '缺少参数 token或access_token'
+        this.tip_message = '请使用微信扫一扫'//'缺少参数 token或access_token'
         return
       }
       console.log('__ERROR_MESSAGE', __ERROR_MESSAGE)
@@ -164,7 +165,7 @@
           from: from // xcx_pv_qrcode
         }
         let param = {
-          method: 'person_health',
+          method: 'logs',
           project_id: this.project_id,
           oper_type: 4,
           source: 3,

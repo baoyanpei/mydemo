@@ -123,7 +123,7 @@ export default {
       await loadJs(`./static/libs/viewer3D/viewer3D.min.js`)
       console.log('./static/libs/viewer3D/viewer3D.min.js')
 
-      //   await loadJs(`./static/libs/viewer3D/extensions/Viewing.Extension.MeshSelection.js`)
+      await loadJs(`./static/libs/viewer3D/extensions/Viewing.Extension.MeshSelection.js`)
       this.tip_message = ''
       console.log('this.useFrom', this.useFrom)
       console.log('lot6-init-init')
@@ -145,7 +145,7 @@ export default {
       this.allItemList = await this.getProjectItemsAll()
       await this.init3DView()
       await this.loadViewPointModel()
-      
+
       this.viewer.addEventListener(
         // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
         Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
@@ -163,6 +163,7 @@ export default {
       this.addDeviveLabel()
 
       await this.initDevlist()
+      await this.initExtPerson()
       this.$refs.historyLocation.getLocationHisData(this.projID)
       this.$refs.mqttLocation.init(this.projID)
       this.$refs.mqttBim.init(this.projID, this.datumMeterMap)
@@ -172,7 +173,7 @@ export default {
       // 必须先恢复了视点以后才能初始化渐进式显示
       // 初始化设置 渐进式显示
       this.initProgressiveRendering()
-      
+
 
 
     },
@@ -427,8 +428,8 @@ export default {
             console.error('Failed to create a Viewer: WebGL not supported.');
             return;
           }
-          
-          
+
+
 
           resolve()
 
@@ -754,7 +755,7 @@ export default {
           }
         }
         if (this.cameraInfo !== null) {
-          
+
           setTimeout(() => {
             console.log('restoreStaterestoreStaterestoreStaterestoreState', this.cameraInfo)
             this.viewer.restoreState(this.cameraInfo) // it fails to restore state
@@ -1084,9 +1085,9 @@ export default {
     initPerson(obj) { // 收到定位数据以后，被调用
       console.log('objobjobj', obj)
       let _position = {
-        x: obj.x / 1000 - 62,
-        y: obj.y / 1000 - 37 + 150,
-        z: (obj.layer - 1) * 3.5 + 1.6 - 91
+        x: obj.x / 1000,
+        y: obj.y / 1000 + 150,
+        z: (obj.layer - 1) * 3.5 + 1.6
       }
       this.addPersonMesh(obj.name, obj, _position)
     },
@@ -1136,6 +1137,98 @@ export default {
           console.log(e)
         })
       }, 60 * 1000)
+    },
+    initExtPerson() {
+      return new Promise((resolve, reject) => {
+        console.log('MeshSelectionMeshSelectionMeshSelection')
+        this.viewer.loadExtension('Viewing.Extension.MeshSelection').then(
+          (externalExtension) => {
+            this.externalExtensionPerson = externalExtension
+            resolve()
+          }
+        )
+      })
+    },
+    addPersonMesh(name, userData, position) {
+      const geometry = new THREE.BoxGeometry(5, 5, 5)
+
+      const color = '#FF0000' //Math.floor(Math.random() * 16777215)
+      const material = new THREE.MeshPhongMaterial({
+        specular: new THREE.Color(color),
+        side: THREE.DoubleSide,
+        reflectivity: 0.0,
+        color
+      })
+
+      const materials = this.viewer.impl.getMaterials()
+
+      materials.addMaterial(
+        color.toString(16),
+        material,
+        true)
+
+      const mesh = new THREE.Mesh(geometry, material)
+
+      mesh.position.x = position.x //-71
+      mesh.position.y = position.y //-81
+      mesh.position.z = position.z
+      mesh.name = name
+      mesh.userData = userData
+      console.log('mesh.position', mesh.position)
+      this.externalExtensionPerson.addPersonToView(mesh)
+
+
+      // if (name === '') {
+      //   name = userData.mac
+      // }
+      this.drawPushpinPerson({
+        x: position.x,
+        y: position.y,
+        z: position.z
+      }, userData.mac, name)
+
+      if (this.isProgressiveRendering === false) { // 渐进显示关闭状态下
+        this.viewer.impl.invalidate(true, true, true)
+      }
+    },
+    drawPushpinPerson(pushpinModelPt, id, name) {
+      // console.log('idididid', id)
+      // convert 3D position to 2D screen coordination
+      var screenpoint = this.viewer.worldToClient(
+        new THREE.Vector3(pushpinModelPt.x,
+          pushpinModelPt.y,
+          pushpinModelPt.z))
+
+      // build the div container
+      var randomId = id // makeid();
+      $('#mymk' + randomId).remove()
+      var htmlMarker = '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>'
+      var parent = this.viewer.container
+      $(parent).append(htmlMarker)
+      $('#mymk' + randomId).css({
+        'pointer-events': 'none',
+        'width': '50px',
+        'height': '16px',
+        'position': 'absolute',
+        'overflow': 'visible',
+      })
+
+      // var snap = Snap($('#mysvg' + randomId)[0]);
+      var rad = 27
+      // set the position of the SVG
+      // adjust to make the circle center is the position of the click point
+      var $container = $('#mymk' + randomId)
+      $container.css({
+        'left': screenpoint.x - rad * 2,
+        'top': screenpoint.y - rad
+      })
+
+      // store 3D point data to the DOM
+      var div = $('#mymk' + randomId)
+      // add radius info with the 3D data
+      pushpinModelPt.radius = rad
+      var storeData = JSON.stringify(pushpinModelPt)
+      div.data('3DData', storeData)
     },
   },
 
