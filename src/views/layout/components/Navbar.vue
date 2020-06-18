@@ -15,6 +15,9 @@
         {{bim_name_desc}}
       </span>
       <div class="right-menu">
+        <el-button type="primary" style="top:0px;position: relative;" @click="openercode">
+          <img src="../../../../static/icon/icon.png" alt="" style="width: 20px;height: 20px;color: #eaeefb"> <span>系统二维码生成</span>
+        </el-button>
         <el-button type="primary" style="top:0px;position: relative;" @click="openScreenHandle">
           <icon name="desktop" scale="1.4" style="line-height: 0px;"></icon> <span>项目看板</span>
         </el-button>
@@ -162,6 +165,11 @@
       },
       openScreenHandle() {
         window.open(`/#/screen3?project_id=${this.project_id}`, '_blank');
+      },
+      openercode(){
+        this.$router.push({
+          path: '/generateercode'
+        })
       },
       userHandler() {
 
