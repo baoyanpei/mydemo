@@ -16,7 +16,6 @@
   .grid-content {
     line-height: 25px;
   }
-
   .el-col-6 {
     padding-left: 3px !important;
     padding-right: 3px !important;
@@ -30,3 +29,9 @@
     cursor: pointer;
   }
 }
+ @media screen and (min-width: 2047px){
+    .count-info-board{
+      width:700px;
+      height: 300px;
+    }
+  }

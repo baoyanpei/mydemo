@@ -1,0 +1,48 @@
+.temperature{
+    padding: 25px 5px 5px 5px;
+    font-size: 16px;
+    font-weight: 500;
+    width:340px;
+    height: 200px;
+    left: 1155px;
+    top: 10px;
+    border: 2px solid #cccccc;
+    border-radius: 5px;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 200;
+}
+.gate-area-div{
+    padding: 25px 5px 5px 5px;
+    font-size: 16px;
+    font-weight: 500;
+    width:580px;
+    height: 200px;
+    left: 560px;
+    top: 10px;
+    border: 2px solid #cccccc;
+    border-radius: 5px;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 200;
+  }
+.newtask{
+  position: absolute;
+  left: 15px;
+  top: 230px;
+  width: 430px;
+}
+.equipment{
+    position: absolute;
+    left: 465px;
+    top: 230px;
+    width: 655px;
+    height: 400px;
+  }
+.inoutcar{
+    position: absolute;
+    left: 1140px;
+    top: 230px;
+    width: 350px;
+    height: 400px;
+  }

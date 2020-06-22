@@ -13,6 +13,10 @@
           <i class="el-icon-truck"></i>
           <span slot="title">车辆进出场统计</span>
         </el-menu-item>
+        <el-menu-item index="/visitors">
+          <i class="el-icon-user-solid"></i>
+          <span slot="title">来访人员统计</span>
+        </el-menu-item>
         <el-menu-item index="/tjfx">
           <font-awesome-icon icon="chart-line" class="fa-icon"/>
           <span slot="title">统计分析</span>

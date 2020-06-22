@@ -300,8 +300,8 @@
 </template>
 
 <script>
+  import '../main/main-index.css'
   import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
-  // import VueDragResize from 'vue-drag-resize';
   import moment from 'moment'
   import {
     Loading

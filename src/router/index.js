@@ -163,6 +163,16 @@ export const constantRouterMap = [{
         }
       },
       {
+        path: 'visitors',
+        component: () => import('@/views/visitors/visitors'),
+        name: 'visitors',
+        meta: {
+          title: 'visitors',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
         path: 'generateercode',
         component: () => import('@/views/safety/generateercode'),
         name: 'ercode',

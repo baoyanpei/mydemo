@@ -63,3 +63,11 @@ export function planQuery(param) {
     data: param
   })
 }
+//访客记录
+export function visitorfnc(param) {
+  return request({
+    url: '/api/info/visitor',
+    method: 'post',
+    data: param
+  })
+}

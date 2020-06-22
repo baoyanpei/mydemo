@@ -1,7 +1,8 @@
 import {
   huiyiSubmit,
   planTypeQuery,
-  planQuery
+  planQuery,
+  visitorfnc
 } from '@/api/huiyi'
 
 const huiyi = {
@@ -87,6 +88,18 @@ const huiyi = {
           // console.log("SET_PLAN_DETAIL", response.data)
           commit('SET_PLAN_DETAIL', response.data)
           resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    //访客记录查询
+     vistor({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        visitorfnc(param).then(response => {
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
