@@ -500,7 +500,7 @@ export default {
           // this.projID = 10004
           break
         case 10019: // 兰通棚户区改造项目（二期）
-          this.LoadItemIDList = [100052]
+          this.LoadItemIDList = [100079] // 2020年6月20日 小卓叫改成100079
           // this.projID = 10004
           break
       }
