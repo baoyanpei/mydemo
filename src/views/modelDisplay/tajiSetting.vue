@@ -24,13 +24,13 @@
       </el-button>
       <el-button class="marker-button" title="删除当前塔机">
 
-        <font-awesome-icon v-if="currentDeviceModel !== null" icon="trash-alt" @click="deleteLotDeviceModelHandle(0)" />
+        <font-awesome-icon v-if="currentDeviceModel !== null" icon="trash-alt" @click="deleteTajiModelHandle(0)" />
         <font-awesome-icon v-if="currentDeviceModel === null" icon="trash-alt" style="color:grey;" />
 
       </el-button>
       <el-button class="marker-button" title="调整位置">
         <font-awesome-icon v-if="currentDeviceModel !== null" icon="arrows-alt"
-          @click="openLotPositionDialogHandle()" />
+          @click="openTajiPositionDialogHandle()" />
         <font-awesome-icon v-if="currentDeviceModel === null" icon="arrows-alt" style="color:grey;" disabled />
       </el-button>
       <hr />
@@ -38,11 +38,11 @@
         <font-awesome-icon v-if="currentDeviceModel !== null" icon="search-location" @click="FindModel()" />
         <font-awesome-icon v-if="currentDeviceModel === null" icon="search-location" style="color:grey;" />
       </el-button>
-      <el-button class="marker-button" title="高亮构件">
+      <!-- <el-button class="marker-button" title="高亮构件">
         <font-awesome-icon v-if="currentDeviceModel !== null" icon="lightbulb" @click="SelectModel()" />
         <font-awesome-icon v-if="currentDeviceModel === null" icon="lightbulb" style="color:grey;" />
-      </el-button>
-      <el-button class="marker-button" title="构件库">
+      </el-button> -->
+      <el-button class="marker-button" title="添加塔机">
         <font-awesome-icon icon="layer-group" @click="addTajiModelHandle" />
       </el-button>
 
@@ -50,8 +50,8 @@
     </div>
     <!--物联网设备列表dialog-->
     <LotListDialog></LotListDialog>
-    <!--物联网设备位置dialog-->
-    <LotPositionDialog></LotPositionDialog>
+    <!--塔机位置dialog-->
+    <TajiPositionDialog></TajiPositionDialog>
     <!--物联网设备信息dialog-->
     <LotInfoDetailDIalog></LotInfoDetailDIalog>
   </div>
@@ -61,7 +61,7 @@
   // 构件库列表
   import LotListDialog from '@/views/modelDisplay/lotListDialog'
 
-  import LotPositionDialog from '@/views/modelDisplay/lotPositionDialog'
+  import TajiPositionDialog from '@/views/modelDisplay/tajiPositionDialog'
 
   import LotInfoDetailDIalog from '@/views/modelDisplay/lotInfoDetailDIalog'
 
@@ -74,7 +74,7 @@
     name: 'model-taji-setting',
     components: {
       LotListDialog,
-      LotPositionDialog,
+      TajiPositionDialog,
       LotInfoDetailDIalog
     },
     data() {
@@ -141,6 +141,7 @@
           name: ''
         }, // 当前编辑的模型信息，用于顶部title显示
         currentDeviceHeight: 20, // 初始化塔机的高度
+        towerModelName: 'Tower',
         selectedPosition: { // 选择的构件位置
           x: 0,
           y: 0,
@@ -166,8 +167,8 @@
       ComponentDataAdd() {
         return this.$store.state.componentLibrary.ComponentDataAdd
       },
-      LotPositionChange() {
-        return this.$store.state.loT.LotPositionChange
+      TajiPositionChange() {
+        return this.$store.state.loT.TajiPositionChange
       },
       LotDeviceEditChange() {
         return this.$store.state.loT.LotDeviceEditChange
@@ -183,58 +184,38 @@
 
     },
     watch: {
-      // ComponentDataAdd: { // 物联网设备列表中添加设备
-      //   handler: function (newVal, oldVal) {
-      //     console.log('ComponentDataAdd ', newVal)
-      //     // if (newVal.type === 1) {
-      //     //   this.refreshDisplay(newVal)
-      //     // }
-      //     let _item = newVal.item;
-
-      //     switch (_item.type_id) {
-      //       case 999901:
-      //         this.addTajiModelToView(_item) // 塔吊的设备模型
-      //         break;
-      //       default:
-      //         this.AddComponentData(_item) // rvt 的设备模型
-      //         break;
-      //     }
-
-
-      //   },
-      //   deep: true
-      // },
-      LotPositionChange: {
+      TajiPositionChange: {
         handler: function (newVal, oldVal) {
-          console.log('LotPositionChange111 ', newVal)
+          console.log('TajiPositionChange1112 ', newVal)
           let _globalOffset = newVal.globalOffset
           this.currentDevicePosition = _globalOffset
 
           const _type = newVal.type
           // console.log('_rotate_x', _rotate_x)
           switch (_type) {
-            case "rotate_x":
-              let _rotate_x = newVal.rotate.x - this.currentDeviceRotate.x
-              // this.RotateModel(this.currentDeviceModel, 1, 0, 0, _rotate_x)
-              break;
-            case "rotate_y":
-              let _rotate_y = newVal.rotate.y - this.currentDeviceRotate.y
-              // this.RotateModel(this.currentDeviceModel, 0, 1, 0, _rotate_y)
-              break;
             case "rotate_z":
-              let _rotate_z = newVal.rotate.z - this.currentDeviceRotate.z
-              // this.RotateModel(this.currentDeviceModel, 0, 0, 1, _rotate_z)
+              modifyTower2(this.currentDeviceModel, this.towerModelName, this.currentDeviceHeight, newVal.rotate.z, 0,
+                0, 0)
+              this.viewer.impl.invalidate(true, true, true)
+              break;
+            case "height":
+              this.currentDeviceHeight = newVal.height
+              this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentDeviceModel)
+              this.currentDeviceModel = null
+              this.addTajiModelToView()
+              this.viewer.impl.invalidate(true, true, true)
               break;
             default:
-              this.MoveModel(this.currentDeviceModel, this.currentDevicePosition.x, this.currentDevicePosition.y, this
-                .currentDevicePosition.z)
+              this.currentDeviceModel.position.set(this.currentDevicePosition.x, this.currentDevicePosition.y, this
+                .currentDevicePosition
+                .z) // 红 绿
+              this.viewer.impl.invalidate(true, true, true)
               break;
-
-
           }
           this.currentDeviceRotate.x = newVal.rotate.x
           this.currentDeviceRotate.y = newVal.rotate.y
           this.currentDeviceRotate.z = newVal.rotate.z
+          this.currentDeviceHeight = newVal.height
           console.log('this.currentDeviceRotate.currentDeviceRotate', this.currentDeviceRotate)
 
         },
@@ -309,6 +290,8 @@
       this.project_id = parseInt(__PROJECT_ID)
       this.init()
 
+
+
     },
     beforeDestroy() {},
     destroyed() {},
@@ -356,10 +339,8 @@
             _itemList.forEach(itemInfo => {
               _mapData.set(itemInfo.id, itemInfo)
             })
-
             resolve(_mapData)
           })
-
         })
       },
       getDeviceConfigList() {
@@ -533,7 +514,9 @@
             Promise.all(_Plist).then(result => {
               resolve()
             })
-
+            if (!this.viewer.overlays.hasScene('custom-scene')) {
+              this.viewer.overlays.addScene('custom-scene')
+            }
             // 初始化设置 渐进式显示
             this.initProgressiveRendering()
           });
@@ -560,9 +543,7 @@
               this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255);
               this.viewer.setGroundShadow(true)
               this.viewer.setReverseZoomDirection(true) //true 滚动向前为放大
-              if (!this.viewer.overlays.hasScene('custom-scene-1')) {
-                this.viewer.overlays.addScene('custom-scene-1');
-              }
+              // 
               this.saveStatus = JSON.stringify(this.viewer.getState());
 
               this.addLotToolBar()
@@ -693,17 +674,18 @@
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotListDialog', param).then(() => {}).catch(() => {})
       },
-      openLotPositionDialogHandle() {
+      openTajiPositionDialogHandle() {
 
         console.log('this.currentDevicePosition', this.currentDevicePosition)
         // 打开物联网位置
         const param = {
           show: true,
           position: this.currentDevicePosition,
-          rotate: this.currentDeviceRotate
+          rotate: this.currentDeviceRotate,
+          height: this.currentDeviceHeight
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-        this.$store.dispatch('ShowLotPositionDialog', param).then(() => {}).catch(() => {})
+        this.$store.dispatch('ShowTajiPositionDialog', param).then(() => {}).catch(() => {})
       },
       openLotInfoDetailDialogHandle() {
         // 打开物联网信息编辑窗口
@@ -718,52 +700,7 @@
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowLotInfoDetailDialog', param).then(() => {}).catch(() => {})
       },
-      AddComponentData(item) {
-
-
-        this.addLotModelToView(item)
-      },
-      // 添加一个设备模型到viewer
-      addLotModelToView(item) {
-
-        let _url = item.file.replace('/BCP_FILE/', 'BCP_FILE/')
-        if (this.currentDeviceModel !== null) {
-          this.$message({
-            message: "编辑模式下已经有设备存在，要新增设备必须要先删除设备！",
-            type: 'error'
-          })
-          return;
-        }
-        const modelOpts = {
-          placementTransform: new THREE.Matrix4(),
-          globalOffset: {
-            x: 0,
-            y: 0,
-            z: 0
-          }
-        };
-
-        this.viewer.loadModel(_url, modelOpts, (model) => {
-          this.currentDeviceModel = model
-          console.log('modelmodelmodel', model)
-          this.currentDeviceModel.infoData = item
-          this.currentDevicePosition.x = this.selectedPosition.x
-          this.currentDevicePosition.y = this.selectedPosition.y
-          this.currentDevicePosition.z = this.selectedPosition.z
-          this.MoveModel(
-            this.currentDeviceModel,
-            this.currentDevicePosition.x,
-            this.currentDevicePosition.y,
-            this.currentDevicePosition.z)
-          const _x = this.currentDeviceRotate.x;
-          const _y = this.currentDeviceRotate.y;
-          const _z = this.currentDeviceRotate.z;
-          this.RotateModel(this.currentDeviceModel, 1, 0, 0, _x)
-          this.RotateModel(this.currentDeviceModel, 0, 1, 0, _y)
-          this.RotateModel(this.currentDeviceModel, 0, 0, 1, _z)
-
-        }, this.onLoadError);
-      },
+      
       addTajiModelHandle() {
         this.addTajiModelToView()
       },
@@ -775,9 +712,7 @@
           })
           return;
         }
-        if (!this.viewer.overlays.hasScene('custom-scene')) {
-          this.viewer.overlays.addScene('custom-scene')
-        }
+
         let towerGroup = new THREE.Group()
         this.currentDeviceModel = towerGroup
         towerGroup.name = 'towerGroup'
@@ -789,17 +724,18 @@
         this.currentDevicePosition.z = this.selectedPosition.z
 
 
-        let _towerHeight = this.currentDeviceHeight
+        // let _towerHeight = this.currentDeviceHeight
         towerGroup.position.set(this.currentDevicePosition.x, this.currentDevicePosition.y, this.currentDevicePosition
           .z) // 红 绿
         console.log('this.towerGroupthis.towerGroupthis.towerGroup', towerGroup)
-        modifyTower(this.currentDeviceModel, `T123`, _towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
+        modifyTower2(this.currentDeviceModel, this.towerModelName, this.currentDeviceHeight, 0, 0, 0,
+          0) // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
 
 
         this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
       },
-      deleteLotDeviceModelHandle() {
-        console.log('deleteLotDeviceModelHandle');
+      deleteTajiModelHandle() {
+        console.log('deleteTajiModelHandle');
         if (this.currentDeviceModel !== null) {
 
           this.$confirm('是否确定删除此设备的模型?', '提示', {
@@ -808,17 +744,12 @@
             type: 'info',
             // center: true
           }).then(() => {
-            // this.viewer.unloadModel(this.currentDeviceModel)
-            this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentDeviceModel)
-            this.currentDeviceModel = null
+            this.clearEditModelData()
           }).catch(() => {
 
           });
 
-
         }
-
-
 
       },
 
@@ -829,7 +760,7 @@
         buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
 
         buttonEnterLotMode.onClick = (e) => {
-          this.LotDeviceNewModel(); // 新增物联网模型
+          this.TajiDeviceNewModel(); // 新增物联网模型
         }
         buttonEnterLotMode.addClass('enter-add-lot-button')
         buttonEnterLotMode.setToolTip('添加物联网设备')
@@ -853,7 +784,7 @@
         this.viewer.toolbar.addControl(this.ControlLotManager)
 
       },
-      LotDeviceNewModel() {
+      TajiDeviceNewModel() {
         this.enterEditModeHandle()
         this.$store.dispatch('ShowLotListDialog', {
           show: false
@@ -870,22 +801,8 @@
 
 
       },
-      async exitEditModeHandle() { // 退出编辑模式
-
-
-        this.$store.dispatch('ShowComponentLibraryListDialog', {
-          show: false,
-        }).then(() => {}).catch(() => {})
-
-        this.$store.dispatch('ShowLotPositionDialog', {
-          show: false,
-        }).then(() => {}).catch(() => {})
-
-        this.viewer.toolbar.addControl(this.ControlLotManager)
-        this.isShowViewPointArea = false
-        this.isShowToolbarMarker = false
-        console.log('this.currentDeviceModel', this.currentDeviceModel)
-        // this.viewer.unloadModel(this.currentDeviceModel)
+      clearEditModelData() {
+        this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentDeviceModel)
         this.currentDeviceModel = null // 当前正在操作的设备模型
         this.currentDeviceData = null // 当前正在操作的设备数据
         this.currentEditModelName.name = ''
@@ -904,33 +821,30 @@
           y: 0,
           z: 0
         }
+        this.currentDeviceHeight = 20
+      },
+      async exitEditModeHandle() { // 退出编辑模式
+
+
+        // this.$store.dispatch('ShowComponentLibraryListDialog', {
+        //   show: false,
+        // }).then(() => {}).catch(() => {})
+
+        this.$store.dispatch('ShowTajiPositionDialog', {
+          show: false,
+        }).then(() => {}).catch(() => {})
+
+        this.viewer.toolbar.addControl(this.ControlLotManager)
+        this.isShowViewPointArea = false
+        this.isShowToolbarMarker = false
+        console.log('this.currentDeviceModel', this.currentDeviceModel)
+        // this.viewer.unloadModel(this.currentDeviceModel)
+
+        this.clearEditModelData()
 
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: false
         }).then(() => {})
-
-
-        var scene = this.viewer.impl.modelQueue();
-        var models = scene.getModels();
-        console.log('this.models', models)
-        let _modelMap = new Map()
-
-
-        models.forEach((model) => {
-          console.log('model.infoData', model.infoData)
-          console.log('modelmodel', model)
-          let _umodel = model
-          if (_umodel.infoData !== undefined) {
-            _modelMap.set(model.id, model)
-            // this.viewer.unloadModel(_umodel)
-          }
-        });
-        console.log('_modelMap', _modelMap)
-        _modelMap.forEach((value, key, map) => {
-          //value和key就是map的key，value，map是map本身
-          console.log('valuevaluevalue', value)
-          this.viewer.unloadModel(value)
-        });
         this.LotDeviceList = await this.getDeviceConfigList()
         this.setLotDeviceModelList()
       },

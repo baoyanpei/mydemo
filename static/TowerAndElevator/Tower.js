@@ -10,6 +10,18 @@ function modifyTower(towerGroup, name, high, degree, distance, length) {
   }
 }
 
+function modifyTower2(towerGroup, name, high, initDegree, degree, distance, length) {
+  //判断是新增还是更新信息
+  degree = degree + initDegree // 根据现场实际的角度进行了修正90度
+  var isEx = towerGroup.getObjectByName(name, true);
+  if (isEx) {
+    updateTower(isEx, degree, distance, length)
+    //数据更新的时候不处理高度！因为在一天之内，塔吊高度不会变化
+  } else {
+    addTower(towerGroup, name, high, degree, distance, length)
+  }
+}
+
 function addTower(towerGroup, Tname, Thigh, Tdegree, Tdistance, Tlength) {
   //初始化组变量，一个要转，一个不转
   var tower = new THREE.Object3D();

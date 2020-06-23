@@ -18,12 +18,21 @@ const loT = {
       show: false,
       data: {}
     },
+    TajiPositionDialog: { // 塔机位置设置
+      refresh: 0,
+      show: false,
+      data: {}
+    },
     LotInfoDetailDialog: { // 物联网设备位置设置
       refresh: 0,
       show: false,
       data: {}
     },
     LotPositionChange: {
+      refresh: 0,
+      data: {}
+    },
+    TajiPositionChange: {
       refresh: 0,
       data: {}
     },
@@ -65,6 +74,11 @@ const loT = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotPositionDialog.refresh = genRandom(1, 1000)
     },
+    SHOW_TAJI_POSITION_DIALOG: (state, data) => {
+      state.TajiPositionDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.TajiPositionDialog.refresh = genRandom(1, 1000)
+    },
     SHOW_LOT_INFO_DETAIL_DIALOG: (state, data) => {
       state.LotInfoDetailDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
@@ -74,6 +88,11 @@ const loT = {
       state.LotPositionChange = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotPositionChange.refresh = genRandom(1, 1000)
+    },
+    TAJI_POSITION_CHANGE: (state, data) => {
+      state.TajiPositionChange = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.TajiPositionChange.refresh = genRandom(1, 1000)
     },
     LOT_DEVICE_EDIT_CHANGE: (state, data) => {
       state.LotDeviceEditChange = data
@@ -142,6 +161,16 @@ const loT = {
         resolve()
       })
     },
+    ShowTajiPositionDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_TAJI_POSITION_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
     ShowLotInfoDetailDialog({
       commit
     }, param) {
@@ -157,6 +186,14 @@ const loT = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('LOT_POSITION_CHANGE', param)
+        resolve()
+      })
+    },
+    SetTajiPositionChange({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('TAJI_POSITION_CHANGE', param)
         resolve()
       })
     },
