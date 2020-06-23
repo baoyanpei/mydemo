@@ -120,6 +120,7 @@
         devicePosition: null, // 模型的位置
         deviceRotate: null, // 模型的旋转
         tajiHeight: 0,
+        tajiScale: 1,
         deviceList: [],
 
       }
@@ -165,6 +166,7 @@
         this.deviceRotate = null // 模型的旋转
         this.deviceList = []
         this.tajiHeight = 0
+        this.tajiScale = 1
         this.lotInfoDetailForm = {
           deviceType: '',
           deviceId: '',
@@ -183,6 +185,7 @@
         this.devicePosition = this.TajiInfoDetailDialog.devicePosition // 模型的位置
         this.deviceRotate = this.TajiInfoDetailDialog.deviceRotate // 模型的旋转
         this.tajiHeight = this.TajiInfoDetailDialog.tajiHeight // 塔机的高度
+        this.tajiScale = this.TajiInfoDetailDialog.tajiScale // 塔机的比例
         this.deviceList = await this.getDeviceConfigList(13)
         console.log('this.deviceListthis.deviceListthis.deviceList', this.deviceList)
         if (this.deviceEditData !== null) {
@@ -302,7 +305,8 @@
                 position: this.devicePosition,
                 rotate: this.deviceRotate,
                 displayHeight: this.lotInfoDetailForm.displayHeight,
-                height: this.tajiHeight
+                height: this.tajiHeight,
+                scale: this.tajiScale
               }
               param['family_location'] = JSON.stringify(_familyLocation)
             }

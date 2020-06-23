@@ -24,7 +24,12 @@
         </el-form-item>
         <div style="font-size: 20px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;">高度</div>
         <el-form-item label="模型高度">
-          <el-input-number v-model="tajiPositionForm.height" @change="lotPositionHandle('height')">
+          <el-input-number v-model="tajiPositionForm.height" @change="lotPositionHandle('height')" :min="1">
+          </el-input-number>
+        </el-form-item>
+        <div style="font-size: 20px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;">缩放</div>
+        <el-form-item label="缩放倍数">
+          <el-input-number v-model="tajiPositionForm.scale" @change="lotPositionHandle('scale')" :min="1">
           </el-input-number>
         </el-form-item>
         <div style="font-size: 20px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;">旋转</div>
@@ -51,7 +56,7 @@
     data() {
       return {
         loadingFull: false,
-        dialogTitle: '塔机位置设置',
+        dialogTitle: '塔机模型设置',
         tipMessage: '',
         tajiPositionForm: {
           globalOffset: {
@@ -64,7 +69,8 @@
             y: 0,
             z: 0
           },
-          height: 0
+          height: 0,
+          scale: 1
         }
       }
     },
@@ -114,6 +120,7 @@
         //   this.tajiPositionForm.rotate.y = this.TajiPositionDialog.rotate.y
         this.tajiPositionForm.rotate.z = this.TajiPositionDialog.rotate.z
         this.tajiPositionForm.height = this.TajiPositionDialog.height
+        this.tajiPositionForm.scale = this.TajiPositionDialog.scale
       },
       closeDialogHandle() {
         this.clearData()
@@ -126,6 +133,7 @@
           globalOffset: this.tajiPositionForm.globalOffset,
           rotate: this.tajiPositionForm.rotate,
           height: this.tajiPositionForm.height,
+          scale: this.tajiPositionForm.scale,
         }
         console.log('param', param)
         this.$store.dispatch('SetTajiPositionChange', param).then((result) => {

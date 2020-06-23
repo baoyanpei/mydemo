@@ -140,6 +140,7 @@
           name: ''
         }, // 当前编辑的模型信息，用于顶部title显示
         currentDeviceHeight: 20, // 初始化塔机的高度
+        currentDeviceScale: 1, // 初始化塔机的缩放
         towerModelName: 'Tower',
         selectedPosition: { // 选择的构件位置
           x: 0,
@@ -189,7 +190,11 @@
 
           let _globalOffset = newVal.globalOffset
           this.currentDevicePosition = _globalOffset
-
+          this.currentDeviceHeight = newVal.height
+          this.currentDeviceRotate.x = newVal.rotate.x
+          this.currentDeviceRotate.y = newVal.rotate.y
+          this.currentDeviceRotate.z = newVal.rotate.z
+          this.currentDeviceScale = newVal.scale
           const _type = newVal.type
           // console.log('_rotate_x', _rotate_x)
           switch (_type) {
@@ -199,7 +204,13 @@
               this.viewer.impl.invalidate(true, true, true)
               break;
             case "height":
-              this.currentDeviceHeight = newVal.height
+
+              this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentDeviceModel)
+              this.currentDeviceModel = null
+              this.addTajiModelToView()
+              this.viewer.impl.invalidate(true, true, true)
+              break;
+            case "scale":
               this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentDeviceModel)
               this.currentDeviceModel = null
               this.addTajiModelToView()
@@ -212,10 +223,7 @@
               this.viewer.impl.invalidate(true, true, true)
               break;
           }
-          this.currentDeviceRotate.x = newVal.rotate.x
-          this.currentDeviceRotate.y = newVal.rotate.y
-          this.currentDeviceRotate.z = newVal.rotate.z
-          this.currentDeviceHeight = newVal.height
+
           console.log('this.currentDeviceRotate.currentDeviceRotate', this.currentDeviceRotate)
 
         },
@@ -354,7 +362,7 @@
 
             let towerGroup = new THREE.Group()
             // towerGroup.name = `towerGroup${itemInfo.id}`
-            towerGroup.scale.set(3, 3, 3)
+            towerGroup.scale.set(familyLocation.scale, familyLocation.scale, familyLocation.scale)
 
 
 
@@ -373,7 +381,7 @@
               deviceData: itemInfo,
               model: towerGroup
             })
-
+            this.viewer.impl.invalidate(true, true, true)
             console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
           }
 
@@ -656,7 +664,8 @@
           show: true,
           position: this.currentDevicePosition,
           rotate: this.currentDeviceRotate,
-          height: this.currentDeviceHeight
+          height: this.currentDeviceHeight,
+          scale: this.currentDeviceScale
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowTajiPositionDialog', param).then(() => {}).catch(() => {})
@@ -671,7 +680,7 @@
           devicePosition: this.currentDevicePosition,
           deviceRotate: this.currentDeviceRotate,
           tajiHeight: this.currentDeviceHeight,
-
+          tajiScale: this.currentDeviceScale
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowTajiInfoDetailDialog', param).then(() => {}).catch(() => {})
@@ -696,7 +705,7 @@
         let towerGroup = new THREE.Group()
         this.currentDeviceModel = towerGroup
         // towerGroup.name = 'towerGroup'
-        towerGroup.scale.set(3, 3, 3)
+        towerGroup.scale.set(this.currentDeviceScale, this.currentDeviceScale, this.currentDeviceScale)
 
 
         // let _towerHeight = this.currentDeviceHeight
@@ -795,11 +804,7 @@
             break
         }
 
-
-
-
         this.currentDeviceModel = null // 当前正在操作的设备模型
-        
         this.currentEditModelName.name = ''
         this.selectedPosition = { // 选择的构件位置
           x: 0,
@@ -817,6 +822,7 @@
           z: 0
         }
         this.currentDeviceHeight = 20
+        this.currentDeviceScale = 1
       },
       async exitEditModeHandle() { // 退出编辑模式
 
