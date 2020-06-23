@@ -20,7 +20,7 @@
     </div>
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
       <el-button class="marker-button" title="保存">
-        <font-awesome-icon :icon="['far','save']" @click="openLotInfoDetailDialogHandle()" />
+        <font-awesome-icon :icon="['far','save']" @click="openTajiInfoDetailDialogHandle()" />
       </el-button>
       <el-button class="marker-button" title="删除当前塔机">
 
@@ -48,22 +48,22 @@
 
 
     </div>
-    <!--物联网设备列表dialog-->
-    <LotListDialog></LotListDialog>
+    <!--塔机设备列表dialog-->
+    <TajiListDialog></TajiListDialog>
     <!--塔机位置dialog-->
     <TajiPositionDialog></TajiPositionDialog>
-    <!--物联网设备信息dialog-->
-    <LotInfoDetailDIalog></LotInfoDetailDIalog>
+    <!--塔机设备信息dialog-->
+    <TajiInfoDetailDIalog></TajiInfoDetailDIalog>
   </div>
 </template>
 
 <script>
   // 构件库列表
-  import LotListDialog from '@/views/modelDisplay/lotListDialog'
+  import TajiListDialog from '@/views/modelDisplay/tajiListDialog'
 
   import TajiPositionDialog from '@/views/modelDisplay/tajiPositionDialog'
 
-  import LotInfoDetailDIalog from '@/views/modelDisplay/lotInfoDetailDIalog'
+  import TajiInfoDetailDIalog from '@/views/modelDisplay/tajiInfoDetailDIalog'
 
   import loadJs from '@/utils/loadJs.js'
   import Cookies from 'js-cookie'
@@ -73,9 +73,9 @@
   export default {
     name: 'model-taji-setting',
     components: {
-      LotListDialog,
+      TajiListDialog,
       TajiPositionDialog,
-      LotInfoDetailDIalog
+      TajiInfoDetailDIalog
     },
     data() {
       return {
@@ -131,9 +131,8 @@
         FPS_HIGH_LEVEL: 15, // 高于祯数 为快
         FPS_LOW_TIMES: 50, // 低速fps累计次数
 
-        FamilyListMap: [], // 模型库数据
-        LotDeviceList: [], // 已经绑定的物联网设备列表
-        LotDeviceModelMap: null, // 物联网模型列表
+        LotDeviceList: [], // 已经绑定的塔机设备列表
+        LotDeviceModelMap: null, // 塔机模型列表
         // currentDeviceOpType: 0, // 当前设备模型的编辑模式 0:新增模式 1:编辑模式
         currentDeviceModel: null, // 当前正在操作的设备模型
         currentDeviceData: null, // 当前正在操作的设备数据
@@ -187,6 +186,7 @@
       TajiPositionChange: {
         handler: function (newVal, oldVal) {
           console.log('TajiPositionChange1112 ', newVal)
+
           let _globalOffset = newVal.globalOffset
           this.currentDevicePosition = _globalOffset
 
@@ -318,34 +318,15 @@
         // console.log('itemIDList', itemIDList, itemIDList.join(','))
         await this.getItemInfoListByItemIDs(itemIDList.join(','))
         await this.getUrlAndInitView()
-        this.FamilyListMap = await this.getFamilyList()
-        console.log('FamilyListMap', this.FamilyListMap)
         this.LotDeviceList = await this.getDeviceConfigList()
         console.log('LotDeviceList', this.LotDeviceList)
 
         this.setLotDeviceModelList()
       },
-      getFamilyList() {
-        return new Promise((resolve, reject) => {
-          this.buildList = []
-          const param = {
-            method: 'family_query',
-            project_id: this.project_id,
-            // access_token: this.access_token
-          }
-          this.$store.dispatch('GetFamilyQuery', param).then((_itemList) => {
-            console.log('GetFamilyQuery - _itemList', _itemList)
-            let _mapData = new Map()
-            _itemList.forEach(itemInfo => {
-              _mapData.set(itemInfo.id, itemInfo)
-            })
-            resolve(_mapData)
-          })
-        })
-      },
+
       getDeviceConfigList() {
         return new Promise((resolve, reject) => {
-          this.buildList = []
+          let tajiList = []
           const param = {
             method: 'device_config',
             project_id: this.project_id,
@@ -353,8 +334,11 @@
           }
           this.$store.dispatch('GetDeviceConfig', param).then((_itemList) => {
             console.log('GetDeviceConfig - _itemList', _itemList)
-
-            resolve(_itemList)
+            _itemList.forEach(item => {
+              if (item.device_type === 13)
+                tajiList.push(item)
+            })
+            resolve(tajiList)
           })
 
         })
@@ -364,44 +348,33 @@
         this.LotDeviceList.forEach(itemInfo => {
           if (itemInfo.family_id > 0) {
             console.log('itemInfoitemInfo121113', itemInfo)
-            let _familyModel = this.FamilyListMap.get(itemInfo.family_id)
             let _family_location = itemInfo.family_location
             const familyLocation = JSON.parse(_family_location);
-            console.log('_model_model', _familyModel, _family_location, familyLocation)
+            console.log('_model_model', _family_location, familyLocation)
 
-            let _url = _familyModel.file.replace('/BCP_FILE/', 'BCP_FILE/')
-
-            const modelOpts = {
-              placementTransform: new THREE.Matrix4(),
-              globalOffset: {
-                x: 0,
-                y: 0,
-                z: 0
-              }
-            };
-
-            this.viewer.loadModel(_url, modelOpts, (model) => {
-              model.infoData = _familyModel
-              this.LotDeviceModelMap.set(itemInfo.id, {
-                deviceData: itemInfo,
-                model: model
-              })
-              console.log('---->', familyLocation.position.x, familyLocation.position.y, familyLocation.position
-                .z)
-              const _x = familyLocation.rotate.x;
-              const _y = familyLocation.rotate.y;
-              const _z = familyLocation.rotate.z;
-              this.RotateModel(model, 1, 0, 0, _x)
-              this.RotateModel(model, 0, 1, 0, _y)
-              this.RotateModel(model, 0, 0, 1, _z)
-              this.MoveModel(model,
-                familyLocation.position.x,
-                familyLocation.position.y,
-                familyLocation.position.z)
+            let towerGroup = new THREE.Group()
+            // towerGroup.name = `towerGroup${itemInfo.id}`
+            towerGroup.scale.set(3, 3, 3)
 
 
-              console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
-            }, this.onLoadError);
+
+            // let _towerHeight = this.currentDeviceHeight
+            towerGroup.position.set(familyLocation.position.x, familyLocation.position.y, familyLocation.position.z)
+            console.log('--->1', familyLocation.position.x, familyLocation.position.y, familyLocation.position.z)
+            console.log('--->', towerGroup, towerGroup.name, familyLocation.height, familyLocation.rotate.z)
+            console.log('towerGrouptowerGroup', towerGroup)
+            modifyTower2(towerGroup, `towerGroup${itemInfo.id}`, familyLocation.height, familyLocation.rotate.z, 0,
+              0, 0) // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
+
+
+            this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
+
+            this.LotDeviceModelMap.set(itemInfo.id, {
+              deviceData: itemInfo,
+              model: towerGroup
+            })
+
+            console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
           }
 
         })
@@ -453,6 +426,7 @@
             })
 
             await this.init3DView(_urlList, this.itemInfoList)
+            this.addLotToolBar()
             // console.log('init3DView - complete')
             this.viewer.addEventListener(
               // Autodesk.Viewing.SELECTION_CHANGED_EVENT,
@@ -665,19 +639,19 @@
 
 
       // },
-      openLotListDialogHandle() {
-        // 打开物联网管理窗口
+      openTajiListDialogHandle() {
+        // 打开塔机管理窗口
         const param = {
           show: true,
           buildItem: this.itemInfoList[0]
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-        this.$store.dispatch('ShowLotListDialog', param).then(() => {}).catch(() => {})
+        this.$store.dispatch('ShowTajiListDialog', param).then(() => {}).catch(() => {})
       },
       openTajiPositionDialogHandle() {
 
         console.log('this.currentDevicePosition', this.currentDevicePosition)
-        // 打开物联网位置
+        // 打开塔机位置
         const param = {
           show: true,
           position: this.currentDevicePosition,
@@ -687,24 +661,23 @@
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
         this.$store.dispatch('ShowTajiPositionDialog', param).then(() => {}).catch(() => {})
       },
-      openLotInfoDetailDialogHandle() {
-        // 打开物联网信息编辑窗口
+      openTajiInfoDetailDialogHandle() {
+        // 打开塔机信息编辑窗口
         const param = {
           show: true,
           buildItem: this.itemInfoList[0],
           deviceModel: this.currentDeviceModel, // 当前的模型
           deviceEditData: this.currentDeviceData, // 当前设备的数据
           devicePosition: this.currentDevicePosition,
-          deviceRotate: this.currentDeviceRotate
+          deviceRotate: this.currentDeviceRotate,
+          tajiHeight: this.currentDeviceHeight,
+
         }
         // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-        this.$store.dispatch('ShowLotInfoDetailDialog', param).then(() => {}).catch(() => {})
+        this.$store.dispatch('ShowTajiInfoDetailDialog', param).then(() => {}).catch(() => {})
       },
-      
+
       addTajiModelHandle() {
-        this.addTajiModelToView()
-      },
-      addTajiModelToView() {
         if (this.currentDeviceModel !== null) {
           this.$message({
             message: "编辑模式下已经有设备存在，要新增设备必须要先删除设备！",
@@ -712,23 +685,25 @@
           })
           return;
         }
-
-        let towerGroup = new THREE.Group()
-        this.currentDeviceModel = towerGroup
-        towerGroup.name = 'towerGroup'
-        towerGroup.scale.set(3, 3, 3)
-
-
         this.currentDevicePosition.x = this.selectedPosition.x
         this.currentDevicePosition.y = this.selectedPosition.y
         this.currentDevicePosition.z = this.selectedPosition.z
+        this.addTajiModelToView()
+      },
+      addTajiModelToView() {
+
+
+        let towerGroup = new THREE.Group()
+        this.currentDeviceModel = towerGroup
+        // towerGroup.name = 'towerGroup'
+        towerGroup.scale.set(3, 3, 3)
 
 
         // let _towerHeight = this.currentDeviceHeight
         towerGroup.position.set(this.currentDevicePosition.x, this.currentDevicePosition.y, this.currentDevicePosition
           .z) // 红 绿
         console.log('this.towerGroupthis.towerGroupthis.towerGroup', towerGroup)
-        modifyTower2(this.currentDeviceModel, this.towerModelName, this.currentDeviceHeight, 0, 0, 0,
+        modifyTower2(towerGroup, this.towerModelName, this.currentDeviceHeight, this.currentDeviceRotate.z, 0, 0,
           0) // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
 
 
@@ -744,7 +719,7 @@
             type: 'info',
             // center: true
           }).then(() => {
-            this.clearEditModelData()
+            this.clearEditModelData('delete')
           }).catch(() => {
 
           });
@@ -760,19 +735,19 @@
         buttonEnterLotMode.icon.style.backgroundImage = 'url(./static/icon/ico_marker.png)'
 
         buttonEnterLotMode.onClick = (e) => {
-          this.TajiDeviceNewModel(); // 新增物联网模型
+          this.TajiDeviceNewModel(); // 新增塔机模型
         }
         buttonEnterLotMode.addClass('enter-add-lot-button')
-        buttonEnterLotMode.setToolTip('添加物联网设备')
+        buttonEnterLotMode.setToolTip('添加塔机设备')
 
 
         // 标注功能 - 标定项目位置标准视点
         let buttonLotListDialog = new Autodesk.Viewing.UI.Button('lot-list-dialog-button')
         buttonLotListDialog.addClass('lot-list-dialog-button')
-        buttonLotListDialog.setToolTip('物联网设备列表')
+        buttonLotListDialog.setToolTip('塔机设备列表')
         buttonLotListDialog.icon.style.backgroundImage = 'url(./static/icon/ico_markup.png)'
         buttonLotListDialog.onClick = (e) => {
-          this.openLotListDialogHandle()
+          this.openTajiListDialogHandle()
 
         }
         // SubToolbar
@@ -786,7 +761,7 @@
       },
       TajiDeviceNewModel() {
         this.enterEditModeHandle()
-        this.$store.dispatch('ShowLotListDialog', {
+        this.$store.dispatch('ShowTajiListDialog', {
           show: false
         }).then(() => {}).catch(() => {})
       },
@@ -799,12 +774,32 @@
           isEditMode: true
         }).then(() => {})
 
+        this.$store.dispatch('ShowTajiListDialog', {
+          show: false
+        }).then(() => {}).catch(() => {})
+
 
       },
-      clearEditModelData() {
-        this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentDeviceModel)
+      clearEditModelData(type) {
+
+        switch (type) {
+          case 'delete':
+            if (this.currentDeviceModel !== null) {
+              this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentDeviceModel)
+            }
+            break
+          case 'clear':
+            this.viewer.overlays.removeScene('custom-scene')
+            this.viewer.overlays.addScene('custom-scene')
+            this.currentDeviceData = null // 当前正在操作的设备数据
+            break
+        }
+
+
+
+
         this.currentDeviceModel = null // 当前正在操作的设备模型
-        this.currentDeviceData = null // 当前正在操作的设备数据
+        
         this.currentEditModelName.name = ''
         this.selectedPosition = { // 选择的构件位置
           x: 0,
@@ -840,7 +835,7 @@
         console.log('this.currentDeviceModel', this.currentDeviceModel)
         // this.viewer.unloadModel(this.currentDeviceModel)
 
-        this.clearEditModelData()
+        this.clearEditModelData('clear')
 
         this.$store.dispatch('SetViewPointEditMode', {
           isEditMode: false
@@ -848,87 +843,6 @@
         this.LotDeviceList = await this.getDeviceConfigList()
         this.setLotDeviceModelList()
       },
-      MoveModel(model, x, y, z) {
-        const thisModel = model; //viewer.getAggregateSelection()[0].model
-        const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
-        for (let fragId = 0; fragId < fragCount; ++fragId) {
-          const fragProxy = this.viewer.impl.getFragmentProxy(thisModel, fragId);
-          fragProxy.getAnimTransform();
-          // const position = new THREE.Vector3(
-          //   fragProxy.position.x + x,
-          //   fragProxy.position.y + y,
-          //   fragProxy.position.z + z
-          // );
-          const position = new THREE.Vector3(
-            x,
-            y,
-            z
-          );
-          fragProxy.position = position;
-          fragProxy.updateAnimTransform();
-        }
-        this.viewer.impl.sceneUpdated(true);
-      },
-      geWorldBoundingBox(fragIds, fragList) {
-        var fragbBox = new THREE.Box3()
-        var nodebBox = new THREE.Box3()
-        fragIds.forEach((fragId) => {
-          fragList.getWorldBounds(fragId, fragbBox)
-          nodebBox.union(fragbBox)
-        })
-        return nodebBox
-      },
-      rotateFragments(model, fragIdsArray, axis, angle, center) {
-        console.log('angle', angle, axis)
-        var quaternion = new THREE.Quaternion()
-        quaternion.setFromAxisAngle(axis, angle)
-        fragIdsArray.forEach((fragId, idx) => {
-          var fragProxy = this.viewer.impl.getFragmentProxy(
-            model, fragId)
-          fragProxy.getAnimTransform()
-          var position = new THREE.Vector3(
-            fragProxy.position.x - center.x,
-            fragProxy.position.y - center.y,
-            fragProxy.position.z - center.z)
-          position.applyQuaternion(quaternion)
-          position.add(center)
-          fragProxy.position = position
-          fragProxy.quaternion.multiplyQuaternions(
-            quaternion, fragProxy.quaternion)
-          if (idx === 0) {
-            var euler = new THREE.Euler()
-            euler.setFromQuaternion(
-              fragProxy.quaternion, 0)
-            // this.emit('transform.rotate', {
-            //     rotation: euler,
-            //     model
-            // })
-          }
-          fragProxy.updateAnimTransform()
-        })
-        this.viewer.impl.sceneUpdated(true);
-      },
-      // RotateModel(model, axisX, axisY, axisZ, angle) {
-      //   const thisModel = model //viewer.getAggregateSelection()[0].model
-      //   const fragCount = thisModel.getFragmentList().fragments.fragId2dbId.length;
-      //   let fragIdsArray = []
-      //   for (var fragId = 0; fragId < fragCount; ++fragId) {
-      //     fragIdsArray.push(fragId)
-      //   }
-      //   var bBox = this.geWorldBoundingBox(fragIdsArray, thisModel.getFragmentList())
-      //   var center = new THREE.Vector3(
-      //     (bBox.min.x + bBox.max.x) / 2,
-      //     (bBox.min.y + bBox.max.y) / 2,
-      //     (bBox.min.z + bBox.max.z) / 2)
-
-      //   // var size = Math.max(
-      //   //     bBox.max.x - bBox.min.x,
-      //   //     bBox.max.y - bBox.min.y,
-      //   //     bBox.max.z - bBox.min.z) * 0.8
-
-      //   var axis = new THREE.Vector3(axisX, axisY, axisZ)
-      //   this.rotateFragments(thisModel, fragIdsArray, axis, angle * Math.PI / 180, center)
-      // },
       FindModel() {
         // 放大定位
         this.viewer.fitToView([1], this.currentDeviceModel)

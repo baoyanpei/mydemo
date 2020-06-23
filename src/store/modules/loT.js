@@ -13,6 +13,11 @@ const loT = {
       show: false,
       data: {}
     },
+    TajiListDialog: { // 列表窗口
+      refresh: 0,
+      show: false,
+      data: {}
+    },
     LotPositionDialog: { // 物联网设备位置设置
       refresh: 0,
       show: false,
@@ -23,7 +28,12 @@ const loT = {
       show: false,
       data: {}
     },
-    LotInfoDetailDialog: { // 物联网设备位置设置
+    LotInfoDetailDialog: { // 物联网设备信息设置
+      refresh: 0,
+      show: false,
+      data: {}
+    },
+    TajiInfoDetailDialog: { // 物联网设备信息设置
       refresh: 0,
       show: false,
       data: {}
@@ -69,6 +79,12 @@ const loT = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotListDialog.refresh = genRandom(1, 1000)
     },
+    SHOW_TAJI_LIST_DIALOG: (state, data) => {
+      state.TajiListDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.TajiListDialog.refresh = genRandom(1, 1000)
+    },
+    
     SHOW_LOT_POSITION_DIALOG: (state, data) => {
       state.LotPositionDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
@@ -84,6 +100,13 @@ const loT = {
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.LotInfoDetailDialog.refresh = genRandom(1, 1000)
     },
+    SHOW_TAJI_INFO_DETAIL_DIALOG: (state, data) => {
+      state.TajiInfoDetailDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.TajiInfoDetailDialog.refresh = genRandom(1, 1000)
+    },
+
+    
     LOT_POSITION_CHANGE: (state, data) => {
       state.LotPositionChange = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
@@ -151,6 +174,16 @@ const loT = {
         resolve()
       })
     },
+    ShowTajiListDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_TAJI_LIST_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
     ShowLotPositionDialog({
       commit
     }, param) {
@@ -176,6 +209,16 @@ const loT = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SHOW_LOT_INFO_DETAIL_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
+    ShowTajiInfoDetailDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_TAJI_INFO_DETAIL_DIALOG', {
           ...param
         })
         resolve()

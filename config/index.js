@@ -9,7 +9,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: proxyConfig.proxyList,
-    host: '127.0.0.1',
+    host: 'localhost', // 127.0.0.1
     port: 9527,
     autoOpenBrowser: true,
     errorOverlay: true,
