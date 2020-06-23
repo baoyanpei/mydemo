@@ -363,7 +363,7 @@
       },
       getDeviceConfigList() {
         return new Promise((resolve, reject) => {
-          this.buildList = []
+          let itemList = []
           const param = {
             method: 'device_config',
             project_id: this.project_id,
@@ -371,8 +371,12 @@
           }
           this.$store.dispatch('GetDeviceConfig', param).then((_itemList) => {
             console.log('GetDeviceConfig - _itemList', _itemList)
-
-            resolve(_itemList)
+            _itemList.forEach(item => {
+              if (item.device_type !== 13) {
+                itemList.push(item)
+              }
+            })
+            resolve(itemList)
           })
 
         })
