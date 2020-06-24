@@ -170,7 +170,7 @@ export default {
       this.$refs.historyLocation.getLocationHisData(this.projID)
       this.$refs.mqttLocation.init(this.projID)
       this.$refs.mqttBim.init(this.projID, this.datumMeterMap)
-      this.initData()
+      // this.initData()
 
       // 初始化镜头的变化事件
       this.initCameraChangeEvent()
@@ -435,7 +435,9 @@ export default {
           }
 
 
-
+          if (!this.viewer.overlays.hasScene('custom-scene')) {
+            this.viewer.overlays.addScene('custom-scene')
+          }
           resolve()
 
         });
@@ -597,15 +599,20 @@ export default {
 
         this.LotDeviceModelMap = new Map()
         let _Plist = []
+        console.log('this.LotDeviceListthis.LotDeviceList', this.LotDeviceList)
         for (var i = 0; i < this.LotDeviceList.length; i++) {
-          let p = await this.loadDeviceModel(this.LotDeviceList[i], i)
-          _Plist.push(p)
+          const LotDevice = this.LotDeviceList[i]
+          if (LotDevice.device_type === 13) { // 塔吊
+            this.loadTajiModel(LotDevice)
+          } else { // 其他物联网设备
+            let p = await this.loadDeviceModel(LotDevice, i)
+            _Plist.push(p)
+          }
         }
         Promise.all(_Plist).then(result => {
           resolve()
         })
       })
-
     },
     loadDeviceModel(itemInfo, index) {
       return new Promise((resolve, reject) => {
@@ -648,6 +655,25 @@ export default {
     },
     onLoadError(event) {
       console.log('fail')
+    },
+
+    loadTajiModel(tajiData) {
+      console.log('tajiData', tajiData)
+      if (tajiData.family_id > 0) {
+        const familyLocation = JSON.parse(tajiData.family_location);
+        let towerGroup = new THREE.Group()
+        towerGroup.scale.set(familyLocation.scale, familyLocation.scale, familyLocation.scale)
+        towerGroup.position.set(familyLocation.position.x, familyLocation.position.y, familyLocation.position.z)
+        console.log('--->1', familyLocation.position.x, familyLocation.position.y, familyLocation.position.z)
+
+        console.log('towerGrouptowerGroup', towerGroup)
+        modifyTower2(towerGroup, `towerGroup${tajiData.id}`, familyLocation.height, familyLocation.rotate.z, 0,
+          0, 0) // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
+        console.log('--->', towerGroup, towerGroup.name, familyLocation.height, familyLocation.rotate.z)
+        this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
+
+      }
+
     },
     initData() {
       this.datumMeterMap.forEach(datum => {
@@ -882,14 +908,16 @@ export default {
         const _z = familyLocation.position.z
 
         let _zzz = 0
+        console.log('this.LotDeviceModelMapthis.LotDeviceModelMap', this.LotDeviceModelMap)
         if (this.LotDeviceModelMap !== null) {
           let _modelData = this.LotDeviceModelMap.get(deviceInfo.id)
-          //   console.log('_modelData_modelData_modelData', _modelData)
-          let _model = _modelData.model
-          const _bbox = this.getModelBox(_model)
-          _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
+          console.log('_modelData_modelData_modelData', _modelData)
+          if (_modelData !== undefined) {
+            let _model = _modelData.model
+            const _bbox = this.getModelBox(_model)
+            _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
+          }
         }
-
         // let _xxx = Math.abs(_bbox.max.x - _bbox.min.x)
         // let _yyy = Math.abs(_bbox.max.y - _bbox.min.y)
         this.drawPushpinLot({
