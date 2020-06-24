@@ -447,7 +447,7 @@ export const constantRouterMap = [{
     children: [{
       path: 'index/:pid?/:flist?', //pid:projectid,flist:floorlist
       component: () => import('@/views/modelDisplay/lotPVSetting'),
-      name: 'model-lot-setting',
+      name: 'lot-pv-setting',
       meta: {
         title: '物联网用的模型视点设置',
         icon: 'building',

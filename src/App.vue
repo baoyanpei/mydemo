@@ -239,7 +239,7 @@
         console.log("fromfromfrom", from)
         if (from.name === 'lot2-index' || from.name === 'lot3-index' || from.name === 'lot4-index' || from.name ===
           'lot5-index' || from.name === 'lot6-index' || from.name === 'modelDisplay-index' || from.name ===
-          'model-lot-setting') {
+          'model-lot-setting' || from.name === 'model-taji-setting' || from.name === 'lot-pv-setting') {
           location.reload()
         }
       }
