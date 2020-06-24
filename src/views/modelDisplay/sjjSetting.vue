@@ -136,6 +136,8 @@
         // currentDeviceOpType: 0, // 当前设备模型的编辑模式 0:新增模式 1:编辑模式
         currentElevatorModel: null, // 当前Elevator模型
         currentElevatorData: null, // 当前正在操作的设备数据
+        currentSectionModel: null, // 当前Section模型
+
         currentEditModelName: {
           name: ''
         }, // 当前编辑的模型信息，用于顶部title显示
@@ -153,6 +155,16 @@
           z: 0
         },
         currentElevatorRotate: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        currentSectionPosition: { // 
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        currentSectionRotate: {
           x: 0,
           y: 0,
           z: 0
@@ -191,16 +203,15 @@
           let _globalOffset = newVal.globalOffset
           this.currentElevatorPosition = _globalOffset
           this.currentDeviceHeight = newVal.height
-          this.currentElevatorRotate.x = newVal.rotate.x
-          this.currentElevatorRotate.y = newVal.rotate.y
-          this.currentElevatorRotate.z = newVal.rotate.z
+
           this.currentDeviceScale = newVal.scale
           const _type = newVal.type
           // console.log('_rotate_x', _rotate_x)
           switch (_type) {
-            case "rotate_z":
-              modifyTower2(this.currentElevatorModel, this.towerModelName, this.currentDeviceHeight, newVal.rotate.z, 0,
-                0, 0)
+            case "elevator_rotate_z":
+              let _rotate_z = newVal.rotate.z - this.currentElevatorRotate.z
+              console.log('this.currentElevatorModel', this.currentElevatorModel, _rotate_z)
+              this.currentElevatorModel.rotateZ(_rotate_z * (Math.PI / 180)) // 红 绿
               this.viewer.impl.invalidate(true, true, true)
               break;
             case "height":
@@ -213,17 +224,25 @@
             case "scale":
               this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentElevatorModel)
               this.currentElevatorModel = null
+              this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentSectionModel)
+              this.currentSectionModel = null
               this.addSjjModelToView()
               this.viewer.impl.invalidate(true, true, true)
               break;
-            default:
-              this.currentElevatorModel.position.set(this.currentElevatorPosition.x, this.currentElevatorPosition.y, this
+            case "elevator_position":
+              this.currentElevatorModel.position.set(this.currentElevatorPosition.x, this.currentElevatorPosition.y,
+                this
                 .currentElevatorPosition
-                .z) // 红 绿
+                .z)
               this.viewer.impl.invalidate(true, true, true)
               break;
-          }
+            default:
 
+              break;
+          }
+          this.currentElevatorRotate.x = newVal.rotate.x
+          this.currentElevatorRotate.y = newVal.rotate.y
+          this.currentElevatorRotate.z = newVal.rotate.z
           console.log('this.currentElevatorRotate.currentElevatorRotate', this.currentElevatorRotate)
 
         },
@@ -697,6 +716,10 @@
         this.currentElevatorPosition.x = this.selectedPosition.x
         this.currentElevatorPosition.y = this.selectedPosition.y
         this.currentElevatorPosition.z = this.selectedPosition.z
+
+        this.currentSectionPosition.x = this.selectedPosition.x
+        this.currentSectionPosition.y = this.selectedPosition.y
+        this.currentSectionPosition.z = this.selectedPosition.z
         this.addSjjModelToView()
       },
       addSjjModelToView() {
@@ -704,7 +727,6 @@
         // 升降机的轿箱
         let elevatorGroup = new THREE.Group()
         this.currentElevatorModel = elevatorGroup
-        // elevatorGroup.name = 'elevatorGroup'
         elevatorGroup.scale.set(this.currentDeviceScale, this.currentDeviceScale, this.currentDeviceScale)
         elevatorGroup.position.set(this.currentElevatorPosition.x, this.currentElevatorPosition.y, this
           .currentElevatorPosition
@@ -715,11 +737,11 @@
 
         // 升降机的轨道
         let sectionGroup = new THREE.Group()
-        // this.sectionGroup.name = 'sectionGroup'
+        this.currentSectionModel = sectionGroup
         sectionGroup.scale.set(this.currentDeviceScale, this.currentDeviceScale, this.currentDeviceScale)
 
-        sectionGroup.position.set(this.currentElevatorPosition.x, this.currentElevatorPosition.y, this
-          .currentElevatorPosition
+        sectionGroup.position.set(this.currentSectionPosition.x, this.currentSectionPosition.y, this
+          .currentSectionPosition
           .z)
         this.viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
         LoadSection(sectionGroup, this.currentDeviceHeight)
@@ -803,6 +825,10 @@
             if (this.currentElevatorModel !== null) {
               this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentElevatorModel)
             }
+            if (this.currentSectionModel !== null) {
+              this.viewer.overlays.impl.removeOverlay('custom-scene', this.currentSectionModel)
+            }
+
             break
           case 'clear':
             this.viewer.overlays.removeScene('custom-scene')
@@ -812,6 +838,7 @@
         }
 
         this.currentElevatorModel = null // 当前正在操作的设备模型
+        this.currentSectionModel = null
         this.currentEditModelName.name = ''
         this.selectedPosition = { // 选择的构件位置
           x: 0,
