@@ -169,7 +169,7 @@ export default {
       await this.initExtPerson()
       this.$refs.historyLocation.getLocationHisData(this.projID)
       this.$refs.mqttLocation.init(this.projID)
-      this.$refs.mqttBim.init(this.projID, this.datumMeterMap)
+      this.$refs.mqttBim.init(this.projID, this.allLotDeviceList)
       // this.initData()
 
       // 初始化镜头的变化事件
