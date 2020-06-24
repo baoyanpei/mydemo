@@ -672,8 +672,13 @@ export default {
         console.log('--->', towerGroup, towerGroup.name, familyLocation.height, familyLocation.rotate.z)
         this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
 
+        let _familyModel = this.FamilyListMap.get(tajiData.family_id)
+        towerGroup.infoData = _familyModel
+        this.LotDeviceModelMap.set(tajiData.id, {
+          deviceData: tajiData,
+          model: towerGroup
+        })
       }
-
     },
     initData() {
       this.datumMeterMap.forEach(datum => {
@@ -746,9 +751,16 @@ export default {
     removeAllDeviceModel() {
       if (this.LotDeviceModelMap !== null) {
         this.LotDeviceModelMap.forEach((value, key) => {
-          this.viewer.unloadModel(value.model)
+          console.log('valuevaluevaluevalue', value)
+          if (value.deviceData.device_type === 13) {
+            this.viewer.overlays.impl.removeOverlay('custom-scene', value.model)
+          } else {
+            this.viewer.unloadModel(value.model)
+          }
+
           // this.viewer.unloadModel(this.viewer.model)
         })
+        this.LotDeviceModelMap = null
       }
     },
     // 获取当前建筑已经配置的设备列表
@@ -913,9 +925,14 @@ export default {
           let _modelData = this.LotDeviceModelMap.get(deviceInfo.id)
           console.log('_modelData_modelData_modelData', _modelData)
           if (_modelData !== undefined) {
-            let _model = _modelData.model
-            const _bbox = this.getModelBox(_model)
-            _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
+            if (deviceInfo.device_type === 13) {
+              console.log('计算塔机的标签')
+            } else {
+              let _model = _modelData.model
+              const _bbox = this.getModelBox(_model)
+              _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
+            }
+
           }
         }
         // let _xxx = Math.abs(_bbox.max.x - _bbox.min.x)
