@@ -28,6 +28,11 @@ const loT = {
       show: false,
       data: {}
     },
+    SjjPositionDialog: { // 升降机位置设置
+      refresh: 0,
+      show: false,
+      data: {}
+    },
     LotInfoDetailDialog: { // 物联网设备信息设置
       refresh: 0,
       show: false,
@@ -94,6 +99,11 @@ const loT = {
       state.TajiPositionDialog = data
       const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
       state.TajiPositionDialog.refresh = genRandom(1, 1000)
+    },
+    SHOW_SJJ_POSITION_DIALOG: (state, data) => {
+      state.SjjPositionDialog = data
+      const genRandom = (min, max) => (Math.random() * (max - min + 1) | 0) + min;
+      state.SjjPositionDialog.refresh = genRandom(1, 1000)
     },
     SHOW_LOT_INFO_DETAIL_DIALOG: (state, data) => {
       state.LotInfoDetailDialog = data
@@ -199,6 +209,16 @@ const loT = {
     }, param) {
       return new Promise((resolve, reject) => {
         commit('SHOW_TAJI_POSITION_DIALOG', {
+          ...param
+        })
+        resolve()
+      })
+    },
+    ShowSjjPositionDialog({
+      commit
+    }, param) {
+      return new Promise((resolve, reject) => {
+        commit('SHOW_SJJ_POSITION_DIALOG', {
           ...param
         })
         resolve()
