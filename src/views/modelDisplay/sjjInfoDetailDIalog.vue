@@ -43,9 +43,6 @@
           <span v-if="deviceModelData === null">不配置模型</span>
           <span v-if="deviceModelData !== null">升降机模型</span>
         </el-form-item>
-        <el-form-item prop="displayHeight" label="升降机实际高度（米）" :rules="ruleDisplayHeight" :min="0">
-          <el-input-number name="displayHeight" v-model="lotInfoDetailForm.displayHeight"></el-input-number>
-        </el-form-item>
         <el-form-item label="mqtt地址">
           <el-input type="input" v-model="lotInfoDetailForm.mqttParam"></el-input>
         </el-form-item>
@@ -94,13 +91,6 @@ export default {
         callback()
       }
     }
-    const validateDisplayHeight = (rule, value, callback) => {
-      if (value <= 0 && this.deviceModelData !== null) {
-        callback(new Error('升降机实际高度必须大于0米'))
-      } else {
-        callback()
-      }
-    }
 
     return {
       tipMessage: '',
@@ -122,29 +112,23 @@ export default {
           validator: validateParamsJson
         }
       ],
-      ruleDisplayHeight: [
-        {
-          // required: true,
-          trigger: 'blur',
-          validator: validateDisplayHeight
-        }
-      ],
       lotInfoDetailForm: {
         deviceType: '',
         deviceId: '',
         params_json: '',
-        mqttParam: '',
-        displayHeight: 0
+        mqttParam: ''
       },
 
       buildItem: null,
       deviceName: '',
       deviceEditData: null, // 设备的数据
       deviceModelData: null, // 设备的模型
-      devicePosition: null, // 模型的位置
-      deviceRotate: null, // 模型的旋转
-      tajiHeight: 0,
-      tajiScale: 1,
+      elevatorPosition: null,
+      sectionPosition: null,
+      elevatorRotate: null,
+      sectionRotate: null,
+      sectionHeight: null,
+      scale: null,
       deviceList: []
     }
   },
@@ -180,17 +164,19 @@ export default {
       this.deviceName = ''
       this.deviceEditData = null
       this.deviceModelData = null
-      this.devicePosition = null // 模型的位置
-      this.deviceRotate = null // 模型的旋转
+
+      this.elevatorPosition = null
+      this.sectionPosition = null
+      this.elevatorRotate = null
+      this.sectionRotate = null
+      this.sectionHeight = null
+      this.scale = null
       this.deviceList = []
-      this.tajiHeight = 0
-      this.tajiScale = 1
       this.lotInfoDetailForm = {
         deviceType: '',
         deviceId: '',
         params_json: '',
-        mqttParam: '',
-        displayHeight: 0
+        mqttParam: ''
       }
       this.$refs.lotInfoDetailForm.resetFields()
     },
@@ -200,10 +186,14 @@ export default {
       this.buildItem = this.SjjInfoDetailDialog.buildItem
       this.deviceModelData = this.SjjInfoDetailDialog.deviceModel
       this.deviceEditData = this.SjjInfoDetailDialog.deviceEditData
-      this.devicePosition = this.SjjInfoDetailDialog.devicePosition // 模型的位置
-      this.deviceRotate = this.SjjInfoDetailDialog.deviceRotate // 模型的旋转
-      this.tajiHeight = this.SjjInfoDetailDialog.tajiHeight // 升降机的高度
-      this.tajiScale = this.SjjInfoDetailDialog.tajiScale // 升降机的比例
+
+      this.elevatorPosition = this.SjjInfoDetailDialog.elevatorPosition
+      this.sectionPosition = this.SjjInfoDetailDialog.sectionPosition
+      this.elevatorRotate = this.SjjInfoDetailDialog.elevatorRotate
+      this.sectionRotate = this.SjjInfoDetailDialog.sectionRotate
+      this.sectionHeight = this.SjjInfoDetailDialog.sectionHeight
+      this.scale = this.SjjInfoDetailDialog.scale
+
       this.deviceList = await this.getDeviceConfigList(12)
       console.log(
         'this.deviceListthis.deviceListthis.deviceList',
@@ -213,14 +203,11 @@ export default {
         // this.deviceTypeDisabled = true
         this.deviceDisabled = true
         this.deviceName = this.deviceEditData.device_name
-        if (this.deviceEditData.family_id > 0) {
-          const familyLocation = JSON.parse(this.deviceEditData.family_location)
-          this.lotInfoDetailForm.displayHeight = familyLocation.displayHeight
-        }
+        // if (this.deviceEditData.family_id > 0) {
+        //   const familyLocation = JSON.parse(this.deviceEditData.family_location)
 
-        // let _dType = this.deviceEditData.device_type
-        // this.lotInfoDetailForm.deviceType = _dType
-        // this.deviceTypeChangeHandle(_dType)
+        // }
+
         this.lotInfoDetailForm.deviceId = this.deviceEditData.id
 
         if (this.deviceEditData.params_json !== '') {
@@ -320,12 +307,14 @@ export default {
           if (this.deviceModelData !== null) {
             param['buliding_id'] = this.buildItem.item_id
             param['family_id'] = 999999
+
             let _familyLocation = {
-              position: this.devicePosition,
-              rotate: this.deviceRotate,
-              displayHeight: this.lotInfoDetailForm.displayHeight,
-              height: this.tajiHeight,
-              scale: this.tajiScale
+              elevatorPosition: this.elevatorPosition,
+              sectionPosition: this.sectionPosition,
+              elevatorRotate: this.elevatorRotate,
+              sectionRotate: this.sectionRotate,
+              sectionHeight: this.sectionHeight,
+              scale: this.scale
             }
             param['family_location'] = JSON.stringify(_familyLocation)
           }

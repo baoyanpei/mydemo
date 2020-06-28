@@ -428,34 +428,59 @@ export default {
         if (itemInfo.family_id > 0) {
           let _family_location = itemInfo.family_location
           const familyLocation = JSON.parse(_family_location)
-          let towerGroup = new THREE.Group()
-          towerGroup.scale.set(
+          console.log('familyLocation', familyLocation)
+
+          /*
+            elevatorPosition: {x: 3, y: 6, z: 12}
+            elevatorRotate: {x: 0, y: 0, z: 41}
+            scale: 2
+            sectionHeight: 13
+            sectionPosition: {x: 5, y: 7, z: 18}
+            sectionRotate: {x: 0, y: 0, z: 43}
+          */
+
+          let elevatorGroup = new THREE.Group()
+          elevatorGroup.scale.set(
+            familyLocation.scale,
+            familyLocation.scale,
+            familyLocation.scale
+          )
+          elevatorGroup.position.set(
+            familyLocation.elevatorPosition.x,
+            familyLocation.elevatorPosition.y,
+            familyLocation.elevatorPosition.z
+          )
+
+          elevatorGroup.rotateZ(
+            familyLocation.elevatorRotate.z * (Math.PI / 180)
+          )
+
+          modifyElevator(elevatorGroup, `elevatorGroup${itemInfo.id}`, 0, false) // 名称，高度，门的开启状态
+          this.viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+
+          // 升降机的轨道
+          let sectionGroup = new THREE.Group()
+          sectionGroup.scale.set(
             familyLocation.scale,
             familyLocation.scale,
             familyLocation.scale
           )
 
-          towerGroup.position.set(
-            familyLocation.position.x,
-            familyLocation.position.y,
-            familyLocation.position.z
+          sectionGroup.position.set(
+            familyLocation.sectionPosition.x,
+            familyLocation.sectionPosition.y,
+            familyLocation.sectionPosition.z
           )
 
-          modifyTower2(
-            towerGroup,
-            `towerGroup${itemInfo.id}`,
-            familyLocation.height,
-            familyLocation.rotate.z,
-            0,
-            0,
-            0
-          ) // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
+          sectionGroup.rotateZ(familyLocation.sectionRotate.z * (Math.PI / 180))
 
-          this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
+          this.viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
+          LoadSection(sectionGroup, familyLocation.sectionHeight)
 
           this.LotDeviceModelMap.set(itemInfo.id, {
             deviceData: itemInfo,
-            model: towerGroup
+            elevatorModel: elevatorGroup,
+            sectionModel: sectionGroup
           })
           this.viewer.impl.invalidate(true, true, true)
         }
@@ -762,10 +787,12 @@ export default {
         buildItem: this.itemInfoList[0],
         deviceModel: this.currentElevatorModel, // 当前的模型
         deviceEditData: this.currentElevatorData, // 当前设备的数据
-        devicePosition: this.currentElevatorPosition,
-        deviceRotate: this.currentElevatorRotate,
-        tajiHeight: this.currentSectionHeight,
-        tajiScale: this.currentDeviceScale
+        elevatorPosition: this.currentElevatorPosition,
+        elevatorRotate: this.currentElevatorRotate,
+        sectionPosition: this.currentSectionPosition,
+        sectionRotate: this.currentSectionRotate,
+        sectionHeight: this.currentSectionHeight,
+        scale: this.currentDeviceScale
       }
       // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
       this.$store
@@ -805,10 +832,11 @@ export default {
         this.currentElevatorPosition.y,
         this.currentElevatorPosition.z
       )
-      console.log(
-        'this.towerGroupthis.towerGroupthis.elevatorGroup',
-        elevatorGroup
+
+      this.currentElevatorModel.rotateZ(
+        this.currentElevatorRotate.z * (Math.PI / 180)
       )
+
       modifyElevator(elevatorGroup, this.towerModelName, 0, false) // 名称，高度，门的开启状态
       this.viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
 
@@ -826,6 +854,11 @@ export default {
         this.currentSectionPosition.y,
         this.currentSectionPosition.z
       )
+
+      this.currentSectionModel.rotateZ(
+        this.currentSectionRotate.z * (Math.PI / 180)
+      )
+
       this.viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
       LoadSection(sectionGroup, this.currentSectionHeight)
     },
