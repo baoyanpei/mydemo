@@ -227,10 +227,8 @@ export default {
         this.currentElevatorPosition = newVal.elevatorPosition
         this.currentSectionPosition = newVal.sectionPosition
         this.currentSectionHeight = newVal.sectionHeight
-
         this.currentDeviceScale = newVal.scale
         const _type = newVal.type
-        // console.log('_rotate_x', _rotate_x)
         switch (_type) {
           case 'elevator_position':
             this.currentElevatorModel.position.set(
@@ -251,27 +249,17 @@ export default {
           case 'elevator_rotate_z':
             let _elevator_rotate_z =
               newVal.elevatorRotate.z - this.currentElevatorRotate.z
-            console.log(
-              'this.currentElevatorModel',
-              this.currentElevatorModel,
-              _elevator_rotate_z
-            )
             this.currentElevatorModel.rotateZ(
               _elevator_rotate_z * (Math.PI / 180)
-            ) // 红 绿
+            )
             this.viewer.impl.invalidate(true, true, true)
             break
           case 'section_rotate_z':
             let _section_rotate_z =
               newVal.sectionRotate.z - this.currentSectionRotate.z
-            console.log(
-              'this.currentElevatorModel',
-              this.currentSectionModel,
-              _section_rotate_z
-            )
             this.currentSectionModel.rotateZ(
               _section_rotate_z * (Math.PI / 180)
-            ) // 红 绿
+            )
             this.viewer.impl.invalidate(true, true, true)
             break
 
@@ -314,10 +302,6 @@ export default {
         this.currentSectionRotate.x = newVal.sectionRotate.x
         this.currentSectionRotate.y = newVal.sectionRotate.y
         this.currentSectionRotate.z = newVal.sectionRotate.z
-        console.log(
-          'this.currentElevatorRotate.currentElevatorRotate',
-          this.currentElevatorRotate
-        )
       },
       deep: true
     },
@@ -743,15 +727,6 @@ export default {
       // console.log('min,max', min, max, average)
       return average
     },
-    // openComponentLibraryDialogHandle() {
-
-    //   // 打开构件列表窗口
-    //   const param = {
-    //     show: true,
-    //   }
-    //   this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
-
-    // },
     openTajiListDialogHandle() {
       // 打开升降机管理窗口
       const param = {
@@ -765,7 +740,6 @@ export default {
         .catch(() => {})
     },
     openSjjPositionDialogHandle() {
-      // console.log('this.currentElevatorPosition', this.currentElevatorPosition)
       // 打开升降机位置
       const param = {
         show: true,
@@ -776,7 +750,6 @@ export default {
         sectionHeight: this.currentSectionHeight,
         scale: this.currentDeviceScale
       }
-      // console.log('this.paramparamparamparamparam', param)
       this.$store
         .dispatch('ShowSjjPositionDialog', param)
         .then(() => {})
@@ -955,10 +928,10 @@ export default {
         case 'clear':
           this.viewer.overlays.removeScene('custom-scene')
           this.viewer.overlays.addScene('custom-scene')
-          this.currentElevatorData = null // 当前正在操作的设备数据
+
           break
       }
-
+      this.currentElevatorData = null // 当前正在操作的设备数据
       this.currentElevatorModel = null // 当前正在操作的设备模型
       this.currentSectionModel = null
       this.currentEditModelName.name = ''
@@ -969,7 +942,11 @@ export default {
         z: 0
       }
       this.currentElevatorPosition = {
-        //
+        x: 0,
+        y: 0,
+        z: 0
+      }
+      this.currentSectionPosition = {
         x: 0,
         y: 0,
         z: 0

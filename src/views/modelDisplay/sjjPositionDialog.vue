@@ -76,21 +76,21 @@
             </el-form-item>
             <div
               style="font-size: 18px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;"
+            >旋转</div>
+            <el-form-item label="初始方向">
+              <el-input-number
+                v-model="tajiPositionForm.sectionRotate.z"
+                @change="lotPositionHandle('section_rotate_z')"
+              ></el-input-number>
+            </el-form-item>
+            <div
+              style="font-size: 18px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;"
             >高度</div>
             <el-form-item label="模型高度">
               <el-input-number
                 v-model="tajiPositionForm.sectionHeight"
                 @change="lotPositionHandle('section_height')"
                 :min="1"
-              ></el-input-number>
-            </el-form-item>
-            <div
-              style="font-size: 18px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;"
-            >旋转</div>
-            <el-form-item label="初始方向">
-              <el-input-number
-                v-model="tajiPositionForm.sectionRotate.z"
-                @change="lotPositionHandle('section_rotate_z')"
               ></el-input-number>
             </el-form-item>
           </el-tab-pane>
@@ -141,7 +141,6 @@ export default {
           y: 0,
           z: 0
         },
-        sectionHeight: 0,
         elevatorRotate: {
           x: 0,
           y: 0,
@@ -152,7 +151,7 @@ export default {
           y: 0,
           z: 0
         },
-        height: 0,
+        sectionHeight: 0,
         scale: 1
       }
     }
@@ -183,16 +182,40 @@ export default {
   },
   watch: {},
   methods: {
-    clearData() {},
+    clearData() {
+      this.tajiPositionForm = {
+        elevatorPosition: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        sectionPosition: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        elevatorRotate: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        sectionRotate: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        sectionHeight: 0,
+        scale: 1
+      }
+    },
     openedDialogHandle() {
       // this.tipMessage = "正在查询ComponentLibraryListDialog"
       console.log('this.SjjPositionDialogAAAAAAA', this.SjjPositionDialog)
       this.tajiPositionForm.elevatorPosition = this.SjjPositionDialog.elevatorPosition
       this.tajiPositionForm.sectionPosition = this.SjjPositionDialog.sectionPosition
-      this.tajiPositionForm.sectionHeight = this.SjjPositionDialog.sectionHeight
       this.tajiPositionForm.elevatorRotate.z = this.SjjPositionDialog.elevatorRotate.z
       this.tajiPositionForm.sectionRotate.z = this.SjjPositionDialog.sectionRotate.z
-      this.tajiPositionForm.height = this.SjjPositionDialog.height
+      this.tajiPositionForm.sectionHeight = this.SjjPositionDialog.sectionHeight
       this.tajiPositionForm.scale = this.SjjPositionDialog.scale
     },
     closeDialogHandle() {
