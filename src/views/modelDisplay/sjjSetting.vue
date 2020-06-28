@@ -73,7 +73,7 @@
       </el-button>
     </div>
     <!--升降机设备列表dialog-->
-    <TajiListDialog></TajiListDialog>
+    <SjjListDialog></SjjListDialog>
     <!--升降机位置dialog-->
     <SjjPositionDialog></SjjPositionDialog>
     <!--升降机设备信息dialog-->
@@ -83,7 +83,7 @@
 
 <script>
 // 构件库列表
-import TajiListDialog from '@/views/modelDisplay/tajiListDialog'
+import SjjListDialog from '@/views/modelDisplay/sjjListDialog'
 
 import SjjPositionDialog from '@/views/modelDisplay/sjjPositionDialog'
 
@@ -97,7 +97,7 @@ let Base64 = require('js-base64').Base64
 export default {
   name: 'model-taji-setting',
   components: {
-    TajiListDialog,
+    SjjListDialog,
     SjjPositionDialog,
     SjjInfoDetailDIalog
   },
@@ -752,7 +752,7 @@ export default {
       // console.log('min,max', min, max, average)
       return average
     },
-    openTajiListDialogHandle() {
+    openSjjListDialogHandle() {
       // 打开升降机管理窗口
       const param = {
         show: true,
@@ -760,7 +760,7 @@ export default {
       }
       // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
       this.$store
-        .dispatch('ShowTajiListDialog', param)
+        .dispatch('ShowSjjListDialog', param)
         .then(() => {})
         .catch(() => {})
     },
@@ -901,7 +901,7 @@ export default {
       buttonLotListDialog.icon.style.backgroundImage =
         'url(./static/icon/ico_markup.png)'
       buttonLotListDialog.onClick = e => {
-        this.openTajiListDialogHandle()
+        this.openSjjListDialogHandle()
       }
       // SubToolbar
       this.ControlLotManager = new Autodesk.Viewing.UI.ControlGroup(
@@ -916,7 +916,7 @@ export default {
     TajiDeviceNewModel() {
       this.enterEditModeHandle()
       this.$store
-        .dispatch('ShowTajiListDialog', {
+        .dispatch('ShowSjjListDialog', {
           show: false
         })
         .then(() => {})
@@ -935,7 +935,7 @@ export default {
         .then(() => {})
 
       this.$store
-        .dispatch('ShowTajiListDialog', {
+        .dispatch('ShowSjjListDialog', {
           show: false
         })
         .then(() => {})
