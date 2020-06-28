@@ -222,7 +222,7 @@ export default {
   watch: {
     TajiPositionChange: {
       handler: function(newVal, oldVal) {
-        console.log('TajiPositionChange1112 ', newVal)
+        // console.log('TajiPositionChange1112 ', newVal)
 
         this.currentElevatorPosition = newVal.elevatorPosition
         this.currentSectionPosition = newVal.sectionPosition
@@ -345,17 +345,38 @@ export default {
 
         let _family_location = _device.family_location
         const familyLocation = JSON.parse(_family_location)
-        this.currentElevatorModel = _modelData.model
+        this.currentElevatorModel = _modelData.elevatorModel
+        this.currentSectionModel = _modelData.sectionModel
         this.currentElevatorData = _device
         console.log('familyLocationfamilyLocation', familyLocation)
         // // this.currentElevatorModel.infoData = item
-        this.currentElevatorPosition.x = familyLocation.position.x
-        this.currentElevatorPosition.y = familyLocation.position.y
-        this.currentElevatorPosition.z = familyLocation.position.z
+        /*
+          elevatorPosition: {x: 3, y: 6, z: 12}
+          elevatorRotate: {x: 0, y: 0, z: 41}
+          scale: 2
+          sectionHeight: 13
+          sectionPosition: {x: 5, y: 7, z: 18}
+          sectionRotate: {x: 0, y: 0, z: 43}
+        */
+        this.currentElevatorPosition.x = familyLocation.elevatorPosition.x
+        this.currentElevatorPosition.y = familyLocation.elevatorPosition.y
+        this.currentElevatorPosition.z = familyLocation.elevatorPosition.z
 
-        this.currentElevatorRotate.x = familyLocation.rotate.x
-        this.currentElevatorRotate.y = familyLocation.rotate.y
-        this.currentElevatorRotate.z = familyLocation.rotate.z
+        this.currentElevatorRotate.x = familyLocation.elevatorRotate.x
+        this.currentElevatorRotate.y = familyLocation.elevatorRotate.y
+        this.currentElevatorRotate.z = familyLocation.elevatorRotate.z
+
+        this.currentSectionPosition.x = familyLocation.sectionPosition.x
+        this.currentSectionPosition.y = familyLocation.sectionPosition.y
+        this.currentSectionPosition.z = familyLocation.sectionPosition.z
+
+        this.currentSectionRotate.x = familyLocation.sectionRotate.x
+        this.currentSectionRotate.y = familyLocation.sectionRotate.y
+        this.currentSectionRotate.z = familyLocation.sectionRotate.z
+
+        this.currentSectionHeight = familyLocation.sectionHeight
+
+        this.currentDeviceScale = familyLocation.scale
       },
       deep: true
     },
@@ -961,10 +982,10 @@ export default {
         case 'clear':
           this.viewer.overlays.removeScene('custom-scene')
           this.viewer.overlays.addScene('custom-scene')
-
+          this.currentElevatorData = null // 当前正在操作的设备数据
           break
       }
-      this.currentElevatorData = null // 当前正在操作的设备数据
+
       this.currentElevatorModel = null // 当前正在操作的设备模型
       this.currentSectionModel = null
       this.currentEditModelName.name = ''

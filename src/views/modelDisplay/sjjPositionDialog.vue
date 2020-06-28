@@ -237,7 +237,7 @@ export default {
         sectionHeight: this.tajiPositionForm.sectionHeight,
         scale: this.tajiPositionForm.scale
       }
-      console.log('param', param)
+      // console.log('param', param)
       this.$store.dispatch('SetTajiPositionChange', param).then(result => {})
     }
   }
