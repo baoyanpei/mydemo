@@ -202,14 +202,14 @@ export default {
             this.totalLowFps--;
           }
         }
-        console.log(
-          "当前帧数",
-          _fps,
-          "低于",
-          this.FPS_LOW_LEVEL,
-          "帧累计次数:",
-          this.totalLowFps
-        );
+        // console.log(
+        //   "当前帧数",
+        //   _fps,
+        //   "低于",
+        //   this.FPS_LOW_LEVEL,
+        //   "帧累计次数:",
+        //   this.totalLowFps
+        // );
         // let storageData = this.storage["lot3-control-" + this.project_id]
         // if (this.isProgressiveRendering === false) {
         if (this.totalLowFps >= this.FPS_LOW_TIMES) {
@@ -626,6 +626,9 @@ export default {
           if (LotDevice.device_type === 13) {
             // 塔吊
             this.loadTajiModel(LotDevice);
+          } else if (LotDevice.device_type === 12) {
+            // 升降机
+            this.loadSjjModel(LotDevice);
           } else {
             // 其他物联网设备
             let p = await this.loadDeviceModel(LotDevice, i);
@@ -640,9 +643,13 @@ export default {
     loadDeviceModel(itemInfo, index) {
       return new Promise((resolve, reject) => {
         let _familyModel = this.FamilyListMap.get(itemInfo.family_id);
+
+        if (_familyModel === undefined) {
+          resolve(-1);
+        }
         let _familyLocation = itemInfo.family_location;
         const familyLocation = JSON.parse(_familyLocation);
-
+        console.log("_familyModel_familyModel", _familyModel);
         let _url = _familyModel.file.replace("/BCP_FILE/", "BCP_FILE/");
 
         const modelOpts = {
@@ -701,14 +708,7 @@ export default {
           familyLocation.position.y,
           familyLocation.position.z
         );
-        console.log(
-          "--->1",
-          familyLocation.position.x,
-          familyLocation.position.y,
-          familyLocation.position.z
-        );
 
-        console.log("towerGrouptowerGroup", towerGroup);
         modifyTower2(
           towerGroup,
           `towerGroup${tajiData.id}`,
@@ -718,21 +718,65 @@ export default {
           0,
           0
         ); // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
-        console.log(
-          "--->",
-          towerGroup,
-          towerGroup.name,
-          familyLocation.height,
-          familyLocation.rotate.z
-        );
+
         this.viewer.overlays.impl.addOverlay("custom-scene", towerGroup);
 
-        let _familyModel = this.FamilyListMap.get(tajiData.family_id);
-        towerGroup.infoData = _familyModel;
+        // let _familyModel = this.FamilyListMap.get(tajiData.family_id);
+        // towerGroup.infoData = _familyModel;
         this.LotDeviceModelMap.set(tajiData.id, {
           deviceData: tajiData,
           model: towerGroup
         });
+      }
+    },
+    loadSjjModel(sjjData) {
+      console.log("sjjData", sjjData);
+      if (sjjData.family_id > 0) {
+        const familyLocation = JSON.parse(sjjData.family_location);
+        let elevatorGroup = new THREE.Group();
+        elevatorGroup.scale.set(
+          familyLocation.scale,
+          familyLocation.scale,
+          familyLocation.scale
+        );
+        elevatorGroup.position.set(
+          familyLocation.elevatorPosition.x,
+          familyLocation.elevatorPosition.y,
+          familyLocation.elevatorPosition.z
+        );
+
+        elevatorGroup.rotateZ(
+          familyLocation.elevatorRotate.z * (Math.PI / 180)
+        );
+
+        modifyElevator(elevatorGroup, `elevatorGroup${sjjData.id}`, 0, false); // 名称，高度，门的开启状态
+        this.viewer.overlays.impl.addOverlay("custom-scene", elevatorGroup);
+
+        // 升降机的轨道
+        let sectionGroup = new THREE.Group();
+        sectionGroup.scale.set(
+          familyLocation.scale,
+          familyLocation.scale,
+          familyLocation.scale
+        );
+
+        sectionGroup.position.set(
+          familyLocation.sectionPosition.x,
+          familyLocation.sectionPosition.y,
+          familyLocation.sectionPosition.z
+        );
+
+        sectionGroup.rotateZ(familyLocation.sectionRotate.z * (Math.PI / 180));
+
+        this.viewer.overlays.impl.addOverlay("custom-scene", sectionGroup);
+        LoadSection(sectionGroup, familyLocation.sectionHeight);
+
+        this.LotDeviceModelMap.set(sjjData.id, {
+          deviceData: sjjData,
+          elevatorModel: elevatorGroup,
+          sectionModel: sectionGroup
+        });
+        // this.viewer.impl.invalidate(true, true, true)
       }
     },
     initData() {
@@ -834,7 +878,19 @@ export default {
               "custom-scene",
               value.model
             );
-          } else {
+          } else if (value.deviceData.device_type === 12) {
+            this.viewer.overlays.impl.removeOverlay(
+              "custom-scene",
+              value.elevatorModel
+            );
+            this.viewer.overlays.impl.removeOverlay(
+              "custom-scene",
+              value.sectionModel
+            );
+          } else if (
+            value.deviceData.family_id > 0 &&
+            value.deviceData.family_id < 999999
+          ) {
             this.viewer.unloadModel(value.model);
           }
 
@@ -1012,6 +1068,9 @@ export default {
         let _familyLocation = deviceInfo.family_location;
         const familyLocation = JSON.parse(_familyLocation);
 
+        if (deviceInfo.device_type === 12) {
+          familyLocation.position = familyLocation.sectionPosition;
+        }
         const _x = familyLocation.position.x;
         const _y = familyLocation.position.y;
         const _z = familyLocation.position.z;
@@ -1027,6 +1086,8 @@ export default {
           if (_modelData !== undefined) {
             if (deviceInfo.device_type === 13) {
               console.log("计算塔机的标签");
+            } else if (deviceInfo.device_type === 12) {
+              console.log("计算升降机的标签");
             } else {
               let _model = _modelData.model;
               const _bbox = this.getModelBox(_model);
