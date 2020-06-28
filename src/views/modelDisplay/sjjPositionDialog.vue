@@ -25,20 +25,53 @@
             >平移</div>
             <el-form-item label="X轴方向">
               <el-input-number
-                v-model="tajiPositionForm.globalOffset.x"
+                v-model="tajiPositionForm.elevatorPosition.x"
                 @change="lotPositionHandle('elevator_position')"
               ></el-input-number>
             </el-form-item>
             <el-form-item label="Y轴方向">
               <el-input-number
-                v-model="tajiPositionForm.globalOffset.y"
+                v-model="tajiPositionForm.elevatorPosition.y"
                 @change="lotPositionHandle('elevator_position')"
               ></el-input-number>
             </el-form-item>
             <el-form-item label="Z轴方向">
               <el-input-number
-                v-model="tajiPositionForm.globalOffset.z"
+                v-model="tajiPositionForm.elevatorPosition.z"
                 @change="lotPositionHandle('elevator_position')"
+              ></el-input-number>
+            </el-form-item>
+            <div
+              style="font-size: 18px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;"
+            >旋转</div>
+            <el-form-item label="初始方向">
+              <el-input-number
+                v-model="tajiPositionForm.elevatorRotate.z"
+                @change="lotPositionHandle('elevator_rotate_z')"
+              ></el-input-number>
+            </el-form-item>
+          </el-tab-pane>
+
+          <el-tab-pane label="大柱设置">
+            <div
+              style="font-size: 18px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;"
+            >平移</div>
+            <el-form-item label="X轴方向">
+              <el-input-number
+                v-model="tajiPositionForm.sectionPosition.x"
+                @change="lotPositionHandle('section_position')"
+              ></el-input-number>
+            </el-form-item>
+            <el-form-item label="Y轴方向">
+              <el-input-number
+                v-model="tajiPositionForm.sectionPosition.y"
+                @change="lotPositionHandle('section_position')"
+              ></el-input-number>
+            </el-form-item>
+            <el-form-item label="Z轴方向">
+              <el-input-number
+                v-model="tajiPositionForm.sectionPosition.z"
+                @change="lotPositionHandle('section_position')"
               ></el-input-number>
             </el-form-item>
             <div
@@ -46,23 +79,21 @@
             >高度</div>
             <el-form-item label="模型高度">
               <el-input-number
-                v-model="tajiPositionForm.height"
-                @change="lotPositionHandle('height')"
+                v-model="tajiPositionForm.sectionHeight"
+                @change="lotPositionHandle('section_height')"
                 :min="1"
               ></el-input-number>
             </el-form-item>
-
             <div
               style="font-size: 18px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;"
             >旋转</div>
             <el-form-item label="初始方向">
               <el-input-number
-                v-model="tajiPositionForm.rotate.z"
-                @change="lotPositionHandle('elevator_rotate_z')"
+                v-model="tajiPositionForm.sectionRotate.z"
+                @change="lotPositionHandle('section_rotate_z')"
               ></el-input-number>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="大柱设置">配置管理</el-tab-pane>
           <el-tab-pane label="其他设置">
             <div
               style="font-size: 18px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;"
@@ -100,12 +131,23 @@ export default {
       dialogTitle: '升降机模型设置',
       tipMessage: '',
       tajiPositionForm: {
-        globalOffset: {
+        elevatorPosition: {
           x: 0,
           y: 0,
           z: 0
         },
-        rotate: {
+        sectionPosition: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        sectionHeight: 0,
+        elevatorRotate: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        sectionRotate: {
           x: 0,
           y: 0,
           z: 0
@@ -144,11 +186,12 @@ export default {
     clearData() {},
     openedDialogHandle() {
       // this.tipMessage = "正在查询ComponentLibraryListDialog"
-      console.log('this.SjjPositionDialog', this.SjjPositionDialog)
-      this.tajiPositionForm.globalOffset = this.SjjPositionDialog.position
-      //   this.tajiPositionForm.rotate.x = this.SjjPositionDialog.rotate.x
-      //   this.tajiPositionForm.rotate.y = this.SjjPositionDialog.rotate.y
-      this.tajiPositionForm.rotate.z = this.SjjPositionDialog.rotate.z
+      console.log('this.SjjPositionDialogAAAAAAA', this.SjjPositionDialog)
+      this.tajiPositionForm.elevatorPosition = this.SjjPositionDialog.elevatorPosition
+      this.tajiPositionForm.sectionPosition = this.SjjPositionDialog.sectionPosition
+      this.tajiPositionForm.sectionHeight = this.SjjPositionDialog.sectionHeight
+      this.tajiPositionForm.elevatorRotate.z = this.SjjPositionDialog.elevatorRotate.z
+      this.tajiPositionForm.sectionRotate.z = this.SjjPositionDialog.sectionRotate.z
       this.tajiPositionForm.height = this.SjjPositionDialog.height
       this.tajiPositionForm.scale = this.SjjPositionDialog.scale
     },
@@ -159,14 +202,16 @@ export default {
       console.log(
         'tajiPositionForm',
         type,
-        this.tajiPositionForm.globalOffset.x
+        this.tajiPositionForm.elevatorPosition.x
       )
 
       let param = {
         type: type,
-        globalOffset: this.tajiPositionForm.globalOffset,
-        rotate: this.tajiPositionForm.rotate,
-        height: this.tajiPositionForm.height,
+        elevatorPosition: this.tajiPositionForm.elevatorPosition,
+        sectionPosition: this.tajiPositionForm.sectionPosition,
+        elevatorRotate: this.tajiPositionForm.elevatorRotate,
+        sectionRotate: this.tajiPositionForm.sectionRotate,
+        sectionHeight: this.tajiPositionForm.sectionHeight,
         scale: this.tajiPositionForm.scale
       }
       console.log('param', param)

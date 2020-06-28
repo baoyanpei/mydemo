@@ -164,7 +164,7 @@ export default {
       currentEditModelName: {
         name: ''
       }, // 当前编辑的模型信息，用于顶部title显示
-      currentDeviceHeight: 20, // 初始化升降机的高度
+      currentSectionHeight: 20, // 初始化升降机的高度
       currentDeviceScale: 1, // 初始化升降机的缩放
       towerModelName: 'Tower',
       selectedPosition: {
@@ -224,30 +224,68 @@ export default {
       handler: function(newVal, oldVal) {
         console.log('TajiPositionChange1112 ', newVal)
 
-        let _globalOffset = newVal.globalOffset
-        this.currentElevatorPosition = _globalOffset
-        this.currentDeviceHeight = newVal.height
+        this.currentElevatorPosition = newVal.elevatorPosition
+        this.currentSectionPosition = newVal.sectionPosition
+        this.currentSectionHeight = newVal.sectionHeight
 
         this.currentDeviceScale = newVal.scale
         const _type = newVal.type
         // console.log('_rotate_x', _rotate_x)
         switch (_type) {
+          case 'elevator_position':
+            this.currentElevatorModel.position.set(
+              this.currentElevatorPosition.x,
+              this.currentElevatorPosition.y,
+              this.currentElevatorPosition.z
+            )
+            this.viewer.impl.invalidate(true, true, true)
+            break
+          case 'section_position':
+            this.currentSectionModel.position.set(
+              this.currentSectionPosition.x,
+              this.currentSectionPosition.y,
+              this.currentSectionPosition.z
+            )
+            this.viewer.impl.invalidate(true, true, true)
+            break
           case 'elevator_rotate_z':
-            let _rotate_z = newVal.rotate.z - this.currentElevatorRotate.z
+            let _elevator_rotate_z =
+              newVal.elevatorRotate.z - this.currentElevatorRotate.z
             console.log(
               'this.currentElevatorModel',
               this.currentElevatorModel,
-              _rotate_z
+              _elevator_rotate_z
             )
-            this.currentElevatorModel.rotateZ(_rotate_z * (Math.PI / 180)) // 红 绿
+            this.currentElevatorModel.rotateZ(
+              _elevator_rotate_z * (Math.PI / 180)
+            ) // 红 绿
             this.viewer.impl.invalidate(true, true, true)
             break
-          case 'height':
+          case 'section_rotate_z':
+            let _section_rotate_z =
+              newVal.sectionRotate.z - this.currentSectionRotate.z
+            console.log(
+              'this.currentElevatorModel',
+              this.currentSectionModel,
+              _section_rotate_z
+            )
+            this.currentSectionModel.rotateZ(
+              _section_rotate_z * (Math.PI / 180)
+            ) // 红 绿
+            this.viewer.impl.invalidate(true, true, true)
+            break
+
+          case 'section_height':
             this.viewer.overlays.impl.removeOverlay(
               'custom-scene',
               this.currentElevatorModel
             )
             this.currentElevatorModel = null
+            this.viewer.overlays.impl.removeOverlay(
+              'custom-scene',
+              this.currentSectionModel
+            )
+            this.currentSectionModel = null
             this.addSjjModelToView()
             this.viewer.impl.invalidate(true, true, true)
             break
@@ -265,20 +303,17 @@ export default {
             this.addSjjModelToView()
             this.viewer.impl.invalidate(true, true, true)
             break
-          case 'elevator_position':
-            this.currentElevatorModel.position.set(
-              this.currentElevatorPosition.x,
-              this.currentElevatorPosition.y,
-              this.currentElevatorPosition.z
-            )
-            this.viewer.impl.invalidate(true, true, true)
-            break
+
           default:
             break
         }
-        this.currentElevatorRotate.x = newVal.rotate.x
-        this.currentElevatorRotate.y = newVal.rotate.y
-        this.currentElevatorRotate.z = newVal.rotate.z
+        this.currentElevatorRotate.x = newVal.elevatorRotate.x
+        this.currentElevatorRotate.y = newVal.elevatorRotate.y
+        this.currentElevatorRotate.z = newVal.elevatorRotate.z
+
+        this.currentSectionRotate.x = newVal.sectionRotate.x
+        this.currentSectionRotate.y = newVal.sectionRotate.y
+        this.currentSectionRotate.z = newVal.sectionRotate.z
         console.log(
           'this.currentElevatorRotate.currentElevatorRotate',
           this.currentElevatorRotate
@@ -407,39 +442,21 @@ export default {
       this.LotDeviceModelMap = new Map()
       this.LotDeviceList.forEach(itemInfo => {
         if (itemInfo.family_id > 0) {
-          console.log('itemInfoitemInfo121113', itemInfo)
           let _family_location = itemInfo.family_location
           const familyLocation = JSON.parse(_family_location)
-          console.log('_model_model', _family_location, familyLocation)
-
           let towerGroup = new THREE.Group()
-          // towerGroup.name = `towerGroup${itemInfo.id}`
           towerGroup.scale.set(
             familyLocation.scale,
             familyLocation.scale,
             familyLocation.scale
           )
 
-          // let _towerHeight = this.currentDeviceHeight
           towerGroup.position.set(
             familyLocation.position.x,
             familyLocation.position.y,
             familyLocation.position.z
           )
-          console.log(
-            '--->1',
-            familyLocation.position.x,
-            familyLocation.position.y,
-            familyLocation.position.z
-          )
-          console.log(
-            '--->',
-            towerGroup,
-            towerGroup.name,
-            familyLocation.height,
-            familyLocation.rotate.z
-          )
-          console.log('towerGrouptowerGroup', towerGroup)
+
           modifyTower2(
             towerGroup,
             `towerGroup${itemInfo.id}`,
@@ -457,7 +474,6 @@ export default {
             model: towerGroup
           })
           this.viewer.impl.invalidate(true, true, true)
-          console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
         }
       })
     },
@@ -749,16 +765,18 @@ export default {
         .catch(() => {})
     },
     openSjjPositionDialogHandle() {
-      console.log('this.currentElevatorPosition', this.currentElevatorPosition)
+      // console.log('this.currentElevatorPosition', this.currentElevatorPosition)
       // 打开升降机位置
       const param = {
         show: true,
-        position: this.currentElevatorPosition,
-        rotate: this.currentElevatorRotate,
-        height: this.currentDeviceHeight,
+        elevatorPosition: this.currentElevatorPosition,
+        elevatorRotate: this.currentElevatorRotate,
+        sectionPosition: this.currentSectionPosition,
+        sectionRotate: this.currentSectionRotate,
+        sectionHeight: this.currentSectionHeight,
         scale: this.currentDeviceScale
       }
-      // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+      // console.log('this.paramparamparamparamparam', param)
       this.$store
         .dispatch('ShowSjjPositionDialog', param)
         .then(() => {})
@@ -773,7 +791,7 @@ export default {
         deviceEditData: this.currentElevatorData, // 当前设备的数据
         devicePosition: this.currentElevatorPosition,
         deviceRotate: this.currentElevatorRotate,
-        tajiHeight: this.currentDeviceHeight,
+        tajiHeight: this.currentSectionHeight,
         tajiScale: this.currentDeviceScale
       }
       // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
@@ -836,7 +854,7 @@ export default {
         this.currentSectionPosition.z
       )
       this.viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
-      LoadSection(sectionGroup, this.currentDeviceHeight)
+      LoadSection(sectionGroup, this.currentSectionHeight)
     },
     deleteTajiModelHandle() {
       console.log('deleteTajiModelHandle')
@@ -961,7 +979,12 @@ export default {
         y: 0,
         z: 0
       }
-      this.currentDeviceHeight = 20
+      this.currentSectionRotate = {
+        x: 0,
+        y: 0,
+        z: 0
+      }
+      this.currentSectionHeight = 20
       this.currentDeviceScale = 1
     },
     async exitEditModeHandle() {
