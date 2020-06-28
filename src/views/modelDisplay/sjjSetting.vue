@@ -24,7 +24,7 @@
     </div>
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
       <el-button class="marker-button" title="保存">
-        <font-awesome-icon :icon="['far','save']" @click="openTajiInfoDetailDialogHandle()" />
+        <font-awesome-icon :icon="['far','save']" @click="openSjjInfoDetailDialogHandle()" />
       </el-button>
       <el-button class="marker-button" title="删除当前升降机">
         <font-awesome-icon
@@ -77,7 +77,7 @@
     <!--升降机位置dialog-->
     <SjjPositionDialog></SjjPositionDialog>
     <!--升降机设备信息dialog-->
-    <TajiInfoDetailDIalog></TajiInfoDetailDIalog>
+    <SjjInfoDetailDIalog></SjjInfoDetailDIalog>
   </div>
 </template>
 
@@ -87,7 +87,7 @@ import TajiListDialog from '@/views/modelDisplay/tajiListDialog'
 
 import SjjPositionDialog from '@/views/modelDisplay/sjjPositionDialog'
 
-import TajiInfoDetailDIalog from '@/views/modelDisplay/tajiInfoDetailDIalog'
+import SjjInfoDetailDIalog from '@/views/modelDisplay/sjjInfoDetailDIalog'
 
 import loadJs from '@/utils/loadJs.js'
 import Cookies from 'js-cookie'
@@ -99,7 +99,7 @@ export default {
   components: {
     TajiListDialog,
     SjjPositionDialog,
-    TajiInfoDetailDIalog
+    SjjInfoDetailDIalog
   },
   data() {
     return {
@@ -755,7 +755,7 @@ export default {
         .then(() => {})
         .catch(() => {})
     },
-    openTajiInfoDetailDialogHandle() {
+    openSjjInfoDetailDialogHandle() {
       // 打开升降机信息编辑窗口
       const param = {
         show: true,
@@ -769,7 +769,7 @@ export default {
       }
       // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
       this.$store
-        .dispatch('ShowTajiInfoDetailDialog', param)
+        .dispatch('ShowSjjInfoDetailDialog', param)
         .then(() => {})
         .catch(() => {})
     },
