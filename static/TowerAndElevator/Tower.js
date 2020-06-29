@@ -23,7 +23,6 @@ function modifyTower2(
   degree = degree + initDegree; // 根据现场实际的角度进行了修正90度
 
   var isEx = towerGroup.getObjectByName(name, true);
-  console.log("namenamename", name, isEx);
   if (isEx) {
     updateTower(isEx, degree, distance, length);
     // 数据更新的时候不处理高度！因为在一天之内，塔吊高度不会变化

@@ -35,29 +35,29 @@ export default {
       showWeatherInfo: true,
       showShuibiaoInfo: true,
       showDianbiaoInfo: true,
-      tdData: {
-        // 塔吊面板数据
-        tdgd: 0,
-        dbjd: "-",
-        xcjl: "-",
-        dggd: "-",
-        sbsj: "-"
-      },
-      sjjData: {
-        // 升降机面板数据
-        sjjgd: "-",
-        sjjlc: "-",
-        sbsj: "-",
-        mzt: "-"
-      },
-      weather_data: {
-        temp: "-",
-        h: "-",
-        noise: "-",
-        wind: "-",
-        pm10: "-",
-        pm2_5: "-"
-      },
+      // tdData: {
+      //   // 塔吊面板数据
+      //   tdgd: 0,
+      //   dbjd: "-",
+      //   xcjl: "-",
+      //   dggd: "-",
+      //   sbsj: "-"
+      // },
+      // sjjData: {
+      //   // 升降机面板数据
+      //   sjjgd: "-",
+      //   sjjlc: "-",
+      //   sbsj: "-",
+      //   mzt: "-"
+      // },
+      // weather_data: {
+      //   temp: "-",
+      //   h: "-",
+      //   noise: "-",
+      //   wind: "-",
+      //   pm10: "-",
+      //   pm2_5: "-"
+      // },
       shuibiaoTotalUsed: "-",
       dianbiaoTotalUsed: "-",
       urns: [],
@@ -810,19 +810,8 @@ export default {
 
             this.towerHeight = paramsJson.height;
             this.tdData.tdgd = this.towerHeight;
-            /*
-            this.towerGroup = new THREE.Group()
-            this.towerGroup.visible = false
-            this.towerGroup.name = 'towerGroup'
-            this.towerGroup.scale.set(3, 3, 3)
-            this.towerGroup.position.set(paramsJson.pos_x, paramsJson.pos_y, paramsJson.pos_z) // 红 绿
-            modifyTower(this.towerGroup, `T${datum.device_id}`, this.towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
-            */
           }
 
-          // this.viewer.hide(118)
-          console.log("viewer123", this.viewer.overlays.impl);
-          console.log("viewer234", this.viewer);
           this.viewer.overlays.impl.addOverlay("custom-scene", this.towerGroup);
         } else if (datum.device_type === 12) {
           // 升降机
@@ -1201,10 +1190,18 @@ export default {
       div.data("3DData", storeData);
     },
     mqttWeather(data) {
-      // console.log('weather', data)
-      const _data = JSON.parse(data);
-      // console.log('_data', _data)
-      this.weather_data = _data;
+      let _data = JSON.parse(data);
+      this.LotDeviceModelMap.forEach(device => {
+        const _deviceData = device.deviceData;
+        if (_deviceData.device_type === 15) {
+          const _station_nbr = `${_data.station}${_data.nbr}`;
+          if (_deviceData.device_id === _station_nbr) {
+            _data.device_name = _deviceData.device_name;
+            _data.station_nbr = _station_nbr;
+          }
+        }
+      });
+      this.showHJJCYData(_data);
       // $('#divHJJCY').html(_h)
       // this.$refs.weather.updateData(_data)
     },
@@ -1214,10 +1211,10 @@ export default {
       const _data = JSON.parse(data);
       // console.log('幅度-RRange:', _data.RRange, '高度-Height:', _data.Height, '角度-Angle:', _data.Angle)
       // console.log('RealtimeDataCrane', _data)
-      $("#td_dbjd").html(_data.rotate); // 回转
-      $("#td_xcjl").html(_data.extent); // 幅度
-      $("#td_dggd").html(_data.height); // 吊钩高度
-      $("#td_sbsj").html(moment(_data.created_time).format("HH:mm:ss")); // moment(_data.RTime).format('HH:mm:ss')
+      // $("#td_dbjd").html(_data.rotate); // 回转
+      // $("#td_xcjl").html(_data.extent); // 幅度
+      // $("#td_dggd").html(_data.height); // 吊钩高度
+      // $("#td_sbsj").html(moment(_data.created_time).format("HH:mm:ss")); // moment(_data.RTime).format('HH:mm:ss')
 
       const _tjData = this.TajiModelMap.get(_data.device_id);
       // console.log("_tjData_tjData_tjData_tjData", _tjData);
@@ -1242,7 +1239,9 @@ export default {
           // 渐进显示关闭状态下
           this.viewer.impl.invalidate(true, true, true);
         }
-
+        _data.device_name = _deviceData.device_name;
+        _data.displayHeight = familyLocation.displayHeight;
+        this.showTaDiaoData(_data);
         // 名称，高度，大臂角度，小车距离，吊钩线长
       }
     },
