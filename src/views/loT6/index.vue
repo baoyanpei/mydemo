@@ -95,18 +95,18 @@
         <el-col v-for="item in shuibiaoDataList" :key="item.device_id" :span="12">
           <div v-show="showShuibiaoInfo" class="divDataShuibiao">
             <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(4)" title="关闭" /> -->
-            <div style="padding-bottom: 5px;font-size: 14px;">水表</div>
+            <div style="padding-bottom: 5px;font-size: 14px;">{{item.device_name}}</div>
             <div>
               当前用量：
-              <span>{{item.shuibiaoTotalUsed}}</span> 吨
+              <span>{{item.total_used}}</span> 吨
             </div>
           </div>
         </el-col>
         <el-col v-for="item in dianbiaoDataList" :key="item.device_id" :span="12">
           <div v-show="showDianbiaoInfo" class="divDataDianbiao">
             <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(5)" title="关闭" /> -->
-            <div style="padding-bottom: 5px;font-size: 14px;">电表</div>
-            <div>当前用量：{{item.dianbiaoTotalUsed}} 度</div>
+            <div style="padding-bottom: 5px;font-size: 14px;">{{item.device_name}}</div>
+            <div>当前用量：{{item.total_used}} 度</div>
           </div>
         </el-col>
       </el-row>
@@ -203,6 +203,32 @@ export default {
       })
       if (hasData === false) {
         this.hjjcyDataList.push(_newData)
+      }
+    },
+    showDianbiaoData(_newData) {
+      console.log('showDianbiaoDatashowDianbiaoData', _newData)
+      let hasData = false
+      this.dianbiaoDataList.forEach(data => {
+        if (data.device_id === _newData.device_id) {
+          data.total_used = _newData.total_used
+          hasData = true
+        }
+      })
+      if (hasData === false) {
+        this.dianbiaoDataList.push(_newData)
+      }
+    },
+    showShuibiaoData(_newData) {
+      console.log('showShuibiaoDatashowShuibiaoDatashowShuibiaoData', _newData)
+      let hasData = false
+      this.shuibiaoDataList.forEach(data => {
+        if (data.device_id === _newData.device_id) {
+          data.total_used = _newData.total_used
+          hasData = true
+        }
+      })
+      if (hasData === false) {
+        this.shuibiaoDataList.push(_newData)
       }
     }
   }
