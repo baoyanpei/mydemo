@@ -6,7 +6,7 @@ module.exports = {
       changeOrigin: true, //是否跨域
       pathRewrite: {
         '/api': '/api'
-        //需要rewrite重写的,
+        //需要rewrite重写的,dd
       }
     },
     '/BCP_FILE': {
