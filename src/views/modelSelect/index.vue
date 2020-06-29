@@ -72,7 +72,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="oper" label="操作" width="300" align="center">
+            <el-table-column prop="oper" label="操作" width="350" align="center">
               <template slot-scope="scope">
                 <el-button type="primary" size="mini"
                   v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
@@ -80,11 +80,15 @@
                 </el-button>
                 <el-button type="primary" size="mini"
                   v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
-                  @click="handleLotSetting(scope.row)">物联设备配置
+                  @click="handleLotSetting(scope.row)">物联设备
                 </el-button>
                 <el-button type="primary" size="mini"
                   v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
-                  @click="handleTajiSetting(scope.row)">塔机配置
+                  @click="handleTajiSetting(scope.row)">塔机
+                </el-button>
+                <el-button type="primary" size="mini"
+                  v-if="scope.row.menuType==='item' && scope.row.url!==undefined && scope.row.url!==null && scope.row.url!==''"
+                  @click="handleSjjSetting(scope.row)">升降机
                 </el-button>
                 <!-- <el-button title="上传"
                   v-if="scope.row.name !== '' && scope.row.menuType ==='item' && scope.row.isShowUploadItem === true"
@@ -487,6 +491,28 @@
         }).then(() => {
           this.$router.push({
             path: '/modelTajiSetting',
+            // query: {
+            //   'queryData': 131
+            // }
+          })
+        }).catch(() => {})
+
+      },
+      handleSjjSetting(row) {
+        console.log('rowrowrow', row)
+        let _item = {
+          ITEM_ID: row.id,
+          FILE_ID: row.file_id,
+        }
+        console.log('_item', _item);
+        Cookies.set('MODEL_DISPLAY_DATA', JSON.stringify({
+          'item_list': [_item]
+        }))
+        this.$store.dispatch('SetModelDisplayData', {
+          'item_list': [_item]
+        }).then(() => {
+          this.$router.push({
+            path: '/modelSjjSetting',
             // query: {
             //   'queryData': 131
             // }
