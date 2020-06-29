@@ -91,6 +91,7 @@ export default {
       LotDeviceList: [], // 已经绑定的物联网设备列表
       LotDeviceModelMap: null, // 所有物联网模型列表
       TajiModelMap: null, // 塔机模型列表
+      SjjModelMap: null, // 升降机模型列表
       viewPointCurrentData: null, // 当前的视点数据
       itemsAllMap: new Map(),
 
@@ -620,6 +621,7 @@ export default {
 
         this.LotDeviceModelMap = new Map();
         this.TajiModelMap = new Map();
+        this.SjjModelMap = new Map();
         let _Plist = [];
         console.log("this.LotDeviceListthis.LotDeviceList", this.LotDeviceList);
         for (var i = 0; i < this.LotDeviceList.length; i++) {
@@ -782,6 +784,12 @@ export default {
           elevatorModel: elevatorGroup,
           sectionModel: sectionGroup
         });
+
+        this.SjjModelMap.set(sjjData.device_id, {
+          deviceData: sjjData,
+          elevatorModel: elevatorGroup,
+          sectionModel: sectionGroup
+        });
         // this.viewer.impl.invalidate(true, true, true)
       }
     },
@@ -903,6 +911,7 @@ export default {
           // this.viewer.unloadModel(this.viewer.model)
         });
         this.TajiModelMap = null;
+        this.SjjModelMap = null;
         this.LotDeviceModelMap = null;
       }
     },
@@ -1244,6 +1253,13 @@ export default {
       switch (cmd) {
         case "RealtimeDataElevator": // 2.11上报升降机实时数据（专用）
           _data = JSON.parse(data);
+
+          console.log(
+            "升降机高度",
+            `E${_data.HxzId}`,
+            _data.Height,
+            _data.Height - 91 / 3
+          );
           // console.log('RealtimeDataElevator', _data)
           // console.log('高度', _data.Height)
           // 获取数据之后调用方法初始化或者调整状态
@@ -1251,22 +1267,33 @@ export default {
           if (_data.DoorState === "0") {
             doorOpen = false;
           }
-          if (this.elevatorGroup === null) {
-            return;
+
+          const _tjData = this.SjjModelMap.get(_data.device_id);
+          // console.log("_tjData_tjData_tjData_tjData", _tjData);
+          if (_tjData.model !== null) {
+            const _deviceData = _tjData.deviceData;
+            const familyLocation = JSON.parse(_deviceData.family_location);
+            modifyElevator(
+              _tjData.elevatorModel,
+              `elevatorGroup${_deviceData.id}`,
+              _data.Height - 91 / 3,
+              doorOpen
+            ); // 名称，高度，门的开启状态
           }
-          console.log(
-            "升降机高度",
-            `E${_data.HxzId}`,
-            _data.Height,
-            _data.Height - 91 / 3
-          );
+
+          // if (this.elevatorGroup === null) {
+          //   return;
+          // }
+
           // viewer.overlays.impl.removeOverlay('custom-scene', elevatorGroup)
-          modifyElevator(
-            this.levatorGroup,
-            `E${_data.HxzId}`,
-            _data.Height - 91 / 3,
-            doorOpen
-          ); // 名称，高度，门的开启状态
+
+          // modifyElevator(
+          //   this.levatorGroup,
+          //   `E${_data.HxzId}`,
+          //   _data.Height - 91 / 3,
+          //   doorOpen
+          // ); // 名称，高度，门的开启状态
+
           // 刷新模型
           if (this.isProgressiveRendering === false) {
             // 渐进显示关闭状态下

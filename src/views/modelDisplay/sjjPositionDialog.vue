@@ -5,7 +5,7 @@
   <div id="sjj-position-dialog" class="sjj-position-dialog">
     <el-dialog
       :modal="false"
-      width="600px"
+      width="400px"
       top="10vh"
       left="100"
       :lock-scroll="true"
@@ -18,7 +18,7 @@
       v-el-drag-dialog
     >
       <el-form ref="tajiPositionForm" :model="tajiPositionForm" label-width="80px" :inline="true">
-        <el-tabs type="border-card" style="height: 650px;">
+        <el-tabs type="border-card" style="height: 550px;">
           <el-tab-pane label="轿箱设置">
             <div
               style="font-size: 18px;margin: 10px;padding: 10px;border-bottom: 1px solid #eeeeee;"
