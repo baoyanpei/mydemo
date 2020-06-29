@@ -177,6 +177,7 @@
                  <span  class="originator_span" style="border-left: 1px solid #a8a8a8;padding-left: 10px;" v-show=item.xian2>质检人:<span style="color: #383838" @click="handleNameClick(item.person_id3)">{{item.qualiter}}</span></span>
               </div>
               <span class="created_time">发布时间:<span style="color: #383838">{{item.sendTime}}</span></span>
+              <!--{{item.aaaid}}-->
               <div class="imgbox_right_bottom">
                 <div class="logobox" :class="{'yellow':item.stateall==='任务','zise':item.stateall==='会议','lvse':item.stateall==='通知','anquan':item.stateall==='安全巡检','ziliao':item.stateall==='资料'}">{{item.stateall}}</div>
                 <div class="logobox" v-show=item.xian3>{{item.questions_type}}</div>
@@ -184,6 +185,15 @@
               </div>
             </div>
           </div>
+          <el-pagination background
+           layout="prev, pager, next,total,jumper"
+           :current-page="currpage2"
+           :total="infonum2"
+           :page-sizes='[1,2,3]'
+           :page-size="pagesize2"
+            @current-change='pagechange2'
+            @size-change='handleSizeChange'>
+          </el-pagination>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -218,6 +228,9 @@
     name: 'index',
     data() {
       return {
+        infonum2:0,
+        currpage2:1,
+        pagesize2:20,
         jinjianshow:false,
         iframeurl:'',
         iframeshow:false,
@@ -685,9 +698,10 @@
       },
       pagechange (e) {//每页多少条数据
       this.currpage = e
-      // console.log(this.currpage)
       this.allpersondata()
-        // this.secondpage()
+      },
+      pagechange2(e){
+        console.log("当前页数",e)
       },
       startchange(index){//改变星级
         console.log("改变星级别",index)
@@ -1045,14 +1059,15 @@
           }
           this.$store.dispatch('GetAllInstList', _param).then((data) => {
             console.log("我的任务",data)
+            data.forEach(item=>{
+              item["aaaid"]=data.indexOf(item)
+            })
             this.secondtitle="我的任务("+data.length+")"
+            this.infonum2=data.length
              this.boxinfo=[]
             this.boxinfo1=[]
             this.boxinfo=data
             this.events=[]
-            // console.log("日历提取父容器",this.boxinfo)
-            //我的任务日历
-            // console.log("我的任务日历",this.events)
             //事件监听flowid,判断任务类型
             this.boxinfo.forEach(item=>{
               if(item.flowId==="Meeting01"){

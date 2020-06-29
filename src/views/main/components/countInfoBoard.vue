@@ -6,13 +6,6 @@
   <div class="count-info-board">
     <!--v-draggable-->
     <div class="data-board">
-      <!-- <el-row :gutter="20">
-        <el-col :span="24">
-          <div class="grid-content bg-purple text-center">
-            甘肃省建设投资（控股）集团总公司
-          </div>
-        </el-col>
-      </el-row> -->
       <el-row>
         <el-col :span="8">
           <div class="grid-content bg-purple link" @click="personListDialogHandle">登记总人数：{{projectCount.登记人数}}</div>

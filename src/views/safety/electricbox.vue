@@ -82,6 +82,17 @@
               </template>
             </el-table-column>
           </el-table>
+          <el-pagination
+            background
+            layout="prev, pager, next,total,jumper"
+            :current-page="currpage"
+            :page-size="pagesize"
+            :page-sizes='[1,2,3]'
+            @current-change='pagechange'
+            @size-change='handleSizeChange'
+            style="text-align: center;margin-top: 10px;"
+            :total="infonum">
+          </el-pagination>
         </div>
       </el-col>
     </el-row>
@@ -99,6 +110,9 @@
     name: 'index',
     data(){
       return{
+        currpage:1,
+        pagesize:20,
+        infonum:0,
         worktimeForm: {
           InoutDaterange: [
           ], // 时间范围
@@ -112,7 +126,8 @@
         categoryIndex:0,
         ids:[],
         deviceid:"",
-        loading:true
+        loading:false,
+        newarrspk:[]
       }
     },
     computed: {
@@ -152,6 +167,20 @@
       this.worktimeForm.InoutDaterange = [_FirstDay, _LastDay]
     },
     methods:{
+      pagechange (e) {//每页多少条数据
+        this.tableData=[]
+        let startnum=(e-1)*20+1
+        let endnum=20*e
+        console.log("ee",startnum,endnum)
+        for(let i=0;i<this.newarrspk.length;i++){
+          if(this.newarrspk[i].eleid>=startnum && this.newarrspk[i].eleid<=endnum){
+            this.tableData.push(this.newarrspk[i])
+          }
+        }
+      },
+      handleSizeChange (e) {
+      this.pagesize = e
+    },
       headClass() {
         return 'text-align: center;'
       },
@@ -183,6 +212,10 @@
           device_type:101
         }
         this.$store.dispatch('GetDist', param).then((data) => {
+          console.log("获取设备",data)
+          if(data.length!==0){
+           this.loading=true
+          }
           this.equipmentbox=[]
           this.tableData=[]
           for(let i=0;i<data.length;i++){
@@ -204,17 +237,20 @@
           checked_count:1,
           device_id:this.firstid,
           bt:this.staarttime,
-          et:this.endtime
-
+          et:this.endtime,
+          page:this.currpage,
+          limit:10000
         }
         this.$store.dispatch('GetDist', param).then((data) => {
-          this.loading=false
-          this.tableData=[]
-          this.tableData=data
+          console.log("获取列表",data)
+          this.newarrspk=[]
           data.forEach(item=>{
             item["nopassed"]=item.count-item.passed
             item["eleid"]=data.indexOf(item)+1
           })
+          this.loading=false
+          this.tableData=[]
+          this.infonum=data.length
           for(let i=0;i<data.length;i++){
             if(data[i].status==1){
               data[i]["statespan"]="已完成"
@@ -226,7 +262,6 @@
               data[i]["statespan"]="未处理"
             }
           }
-          this.tableData=data
           this.tableData.forEach(item=>{
             if(item.statespan == "已完成") {
               item["stateshow"] = true
@@ -234,6 +269,12 @@
               item["stateshow"] = false
             }
           })
+          this.newarrspk=data
+           for(let i=0;i<data.length;i++){
+            if(data[i].eleid<=20){
+              this.tableData.push(data[i])
+            }
+          }
           console.log("配电箱列表信息",this.tableData)
         }).catch(() => {
         })

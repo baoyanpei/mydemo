@@ -86,6 +86,17 @@
               width="180">
             </el-table-column>
           </el-table>
+         <el-pagination
+            background
+            layout="prev, pager, next,total,jumper"
+            :current-page="currpage"
+            :page-size="pagesize"
+            :page-sizes='[1,2,3]'
+            @current-change='pagechange'
+            @size-change='handleSizeChange'
+            style="text-align: center;margin-top: 10px;"
+            :total="infonum">
+          </el-pagination>
       </el-col>
     </el-row>
     </div>
@@ -115,6 +126,7 @@
         able2:[],
         currentRow: null,
         pagesize:20,
+        currpage:1,
         infonum:0,
         currentPage:1
       }
@@ -163,7 +175,6 @@
         const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
         const eTime = moment(this.worktimeForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
         this.getvisitor(sTime,eTime)
-        this.tabeldownload(sTime,eTime)
       },
       tabeldownload(){
         const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
@@ -183,15 +194,28 @@
       handleCurrentChange(){
 
       },
+       pagechange (e) {//每页多少条数据
+        console.log("ee",e)
+        this.currpage = e
+        const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
+        const eTime = moment(this.worktimeForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
+         this.getvisitor(sTime,eTime)
+      },
+      handleSizeChange (e) {
+      this.pagesize = e
+    },
       getvisitor(sTime,eTime){
         const param = {
             method: 'query',
             project_id: this.project_id,
             bt:sTime,
-            et:eTime
+            et:eTime,
+            limit:20,
+            page:this.currpage
           }
           this.$store.dispatch('vistor', param).then((data) => {
             console.log("访客",data)
+            this.infonum=data.count
             this.tableData=data.data
             this.tableData.forEach(item=>{
               item["carnum"]=this.tableData.indexOf(item)+1
@@ -199,7 +223,6 @@
             for(let i=0;i<this.tableData.length;i++){
               this.optionGroups.push({label:this.tableData[i].reason,value:i})
             }
-            console.log("访客---------2",option)
           })
       }
     }

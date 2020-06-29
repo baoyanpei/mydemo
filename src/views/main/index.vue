@@ -43,17 +43,17 @@
         暂无环境数据
       </div>
       <div v-show="huanjingshow">
-          <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 75px 0 20px">
-            <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">温度:<span>{{temp}}℃</span></span>
-            <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">湿度:<span>{{shiduh}}%</span></span>
+          <div class="huanjinline" style="width: 100%;height: 30px;padding: 0 75px 0 20px">
+            <span style="float: left;line-height: 30px;font-weight: 600;color: #FF0000;">温度:<span>{{temp}}℃</span></span>
+            <span style="float: right;line-height: 30px;font-weight: 600;color: #FF0000;">湿度:<span>{{shiduh}}%</span></span>
           </div>
-          <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 85px 0 20px">
-            <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">噪声:<span>{{noise}}db</span></span>
-            <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">风速:<span>{{wind}}级</span></span>
+          <div class="huanjinline" style="width: 100%;height: 30px;padding: 0 85px 0 20px">
+            <span style="float: left;line-height: 30px;font-weight: 600;color: #FF0000;">噪声:<span>{{noise}}db</span></span>
+            <span style="float: right;line-height: 30px;font-weight: 600;color: #FF0000;">风速:<span>{{wind}}级</span></span>
           </div>
-          <div class="huanjinline" style="width: 100%;height: 30px;margin-top: 15px;padding: 0 20px">
-            <span style="float: left;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">扬尘:<span>{{powder}}ug/m3</span></span>
-            <span style="float: right;line-height: 30px;font-size: 15px;font-weight: 600;color: #FF0000;">PM2.5:<span>{{pm25}}ug/m3</span></span>
+          <div class="huanjinline" style="width: 100%;height: 30px;padding: 0 20px">
+            <span style="float: left;line-height: 30px;font-weight: 600;color: #FF0000;">扬尘:<span>{{powder}}ug/m3</span></span>
+            <span style="float: right;line-height: 30px;font-weight: 600;color: #FF0000;">PM2.5:<span>{{pm25}}ug/m3</span></span>
           </div>
       </div>
     </div>
@@ -124,17 +124,17 @@
         </div>
       </div>
       <div v-for="item in this.tajidatabox">
-        <div class="tajitp" style="width: 220px;height: 230px;float: left;position: relative" v-show="tajitupianshow">
-        <img src="../../../static/mainpng/taji.png" alt="" style="width:100%;height: 100%">
-        <span style="position: absolute;left: 100px;top: 10px;">{{item.dabi}}°</span>
-        <span style="position: absolute;left: 136px;top: 50px;">{{item.fudu}}m</span>
-        <span style="position: absolute;left: 30px;top: 118px;">{{item.height1}}m</span>
-        <span style="position: absolute;left: 180px;top: 150px;">{{item.height2}}m</span>
-      </div>
+        <div class="tajitp" v-show="tajitupianshow">
+          <img src="../../../static/mainpng/taji.png" alt="" style="width:100%;height: 100%">
+          <span style="position: absolute;left: 100px;top: 10px;">{{item.dabi}}°</span>
+          <span style="position: absolute;left: 136px;top: 50px;">{{item.fudu}}m</span>
+          <span style="position: absolute;left: 30px;top: 118px;">{{item.height1}}m</span>
+          <span style="position: absolute;left: 180px;top: 150px;">{{item.height2}}m</span>
+        </div>
         <div class="tajitupian2" v-show="tajitupianshow2">
           <img src="../../../static/mainpng/taji.png" alt="" style="width:100%;height: 100%">
         </div>
-        <div class="tajiright" style="width:410px;height:230px;float: left;">
+        <div class="tajiright">
           <div class="tajirighttop" style="width: 100%;height: 30px;background-color: #1abc9c;">
             <span style="line-height: 30px;color: #ffffff;font-weight: 800;margin-left: 10px;">塔机数据</span>
           </div>
@@ -195,13 +195,13 @@
         <i class="el-icon-arrow-right" ></i>
       </div>
       <div v-show="asasasas">
-          <div class="carsmall" style="width: 100%;height: 100px;margin-top: 10px" v-for="item in this.carbox">
+          <div class="carsmall" v-for="item in this.carbox">
           <div class="carsmallleft" style="float:left;width: 40%;height: 100%;">
             <img :src=item.pic alt="" style="width: 90%;height: 90%;margin: 5%;">
           </div>
-          <div class="carsmallright" style="float: right;width: 60%;height: 100%;">
-              <h1 style="margin-top: 15px;float: left;margin-left: 20px;margin-right:50px;color: #0a131c">{{item.lisence}}</h1>
-              <h2 style="display: block;float:left;font-size:13px;margin-left: 20px;color: #0a131c;margin-top: 25px;">进场时间:{{item.created_time}}</h2>
+          <div class="carsmallright">
+              <h1 class="carsmallrightspan1" style="color: #0a131c">{{item.lisence}}</h1>
+              <h2 class="carsmallrighth2">进场时间:{{item.created_time}}</h2>
           </div>
         </div>
       </div>
