@@ -16,13 +16,8 @@
     <div v-if="tip_message!==''" class="tip_message" v-html="tip_message"></div>
     <div style="width:350px;height: 100vh;z-index:10;position: relative;padding: 5px;">
       <el-row>
-        <el-col :span="12">
-          <div
-            v-for="item in tdDataList"
-            :key="item.device_id"
-            v-show="showTadiaoInfo"
-            class="divDataTadiao"
-          >
+        <el-col v-for="item in tdDataList" :key="item.device_id" :span="12">
+          <div v-show="showTadiaoInfo" class="divDataTadiao">
             <div style="padding-bottom: 5px;font-size: 14px;">{{item.device_name}}</div>
             <div>
               塔吊高度：
@@ -46,13 +41,8 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="12">
-          <div
-            v-for="item in sjjDataList"
-            :key="item.device_id"
-            v-show="showShenjiangjiInfo"
-            class="divDataShenJiangJi"
-          >
+        <el-col v-for="item in sjjDataList" :key="item.device_id" :span="12">
+          <div v-show="showShenjiangjiInfo" class="divDataShenJiangJi">
             <div style="padding-bottom: 5px;font-size: 14px;">升降机</div>
             <div>
               高度：
@@ -72,13 +62,8 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="12">
-          <div
-            v-for="item in hjjcyDataList"
-            :key="item.station_nbr"
-            v-show="showWeatherInfo"
-            class="divDataWeather"
-          >
+        <el-col v-for="item in hjjcyDataList" :key="item.station_nbr" :span="12">
+          <div v-show="showWeatherInfo" class="divDataWeather">
             <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(3)" title="关闭" /> -->
             <div style="padding-bottom: 5px;font-size: 14px;">{{item.device_name}}</div>
             <div>
@@ -107,21 +92,21 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="12">
+        <el-col v-for="item in shuibiaoDataList" :key="item.device_id" :span="12">
           <div v-show="showShuibiaoInfo" class="divDataShuibiao">
             <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(4)" title="关闭" /> -->
             <div style="padding-bottom: 5px;font-size: 14px;">水表</div>
             <div>
               当前用量：
-              <span>{{shuibiaoTotalUsed}}</span> 吨
+              <span>{{item.shuibiaoTotalUsed}}</span> 吨
             </div>
           </div>
         </el-col>
-        <el-col :span="12">
+        <el-col v-for="item in dianbiaoDataList" :key="item.device_id" :span="12">
           <div v-show="showDianbiaoInfo" class="divDataDianbiao">
             <!-- <img class='iconTipClose' src='/static/icon/closeIcon.png' @click="closeInfoAreaHandle(5)" title="关闭" /> -->
             <div style="padding-bottom: 5px;font-size: 14px;">电表</div>
-            <div>当前用量：{{dianbiaoTotalUsed}} 度</div>
+            <div>当前用量：{{item.dianbiaoTotalUsed}} 度</div>
           </div>
         </el-col>
       </el-row>
@@ -150,7 +135,9 @@ export default {
     return {
       tdDataList: [], // 塔吊
       sjjDataList: [], //升降机
-      hjjcyDataList: [] // 环境检测仪
+      hjjcyDataList: [], // 环境检测仪
+      shuibiaoDataList: [], // 水表
+      dianbiaoDataList: [] // 电表
     }
   },
   computed: {
