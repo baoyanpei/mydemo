@@ -89,8 +89,8 @@ export default {
 
       FamilyListMap: [], // 模型库数据
       LotDeviceList: [], // 已经绑定的物联网设备列表
-      LotDeviceModelMap: null, // 物联网模型列表
-
+      LotDeviceModelMap: null, // 所有物联网模型列表
+      TajiModelMap: null, // 塔机模型列表
       viewPointCurrentData: null, // 当前的视点数据
       itemsAllMap: new Map(),
 
@@ -619,6 +619,7 @@ export default {
         }
 
         this.LotDeviceModelMap = new Map();
+        this.TajiModelMap = new Map();
         let _Plist = [];
         console.log("this.LotDeviceListthis.LotDeviceList", this.LotDeviceList);
         for (var i = 0; i < this.LotDeviceList.length; i++) {
@@ -708,7 +709,7 @@ export default {
           familyLocation.position.y,
           familyLocation.position.z
         );
-
+        // towerGroup.name = `towerGroup${tajiData.id}`;
         modifyTower2(
           towerGroup,
           `towerGroup${tajiData.id}`,
@@ -724,6 +725,11 @@ export default {
         // let _familyModel = this.FamilyListMap.get(tajiData.family_id);
         // towerGroup.infoData = _familyModel;
         this.LotDeviceModelMap.set(tajiData.id, {
+          deviceData: tajiData,
+          model: towerGroup
+        });
+
+        this.TajiModelMap.set(tajiData.device_id, {
           deviceData: tajiData,
           model: towerGroup
         });
@@ -896,6 +902,7 @@ export default {
 
           // this.viewer.unloadModel(this.viewer.model)
         });
+        this.TajiModelMap = null;
         this.LotDeviceModelMap = null;
       }
     },
@@ -1040,7 +1047,7 @@ export default {
         fragIdsArray,
         thisModel.getFragmentList()
       );
-      console.log("bBox", model.myData.bbox.min.z);
+      // console.log("bBox", model.myData.bbox.min.z);
       // var center = new THREE.Vector3(
       //   (bBox.min.x + bBox.max.x) / 2,
       //   (bBox.min.y + bBox.max.y) / 2,
@@ -1064,7 +1071,7 @@ export default {
     },
     addDeviveLabel() {
       this.LotDeviceList.forEach(deviceInfo => {
-        console.log("deviceInfo", deviceInfo);
+        // console.log("deviceInfo", deviceInfo);
         let _familyLocation = deviceInfo.family_location;
         const familyLocation = JSON.parse(_familyLocation);
 
@@ -1076,13 +1083,10 @@ export default {
         const _z = familyLocation.position.z;
 
         let _zzz = 0;
-        console.log(
-          "this.LotDeviceModelMapthis.LotDeviceModelMap",
-          this.LotDeviceModelMap
-        );
+
         if (this.LotDeviceModelMap !== null) {
           let _modelData = this.LotDeviceModelMap.get(deviceInfo.id);
-          console.log("_modelData_modelData_modelData", _modelData);
+          // console.log("_modelData_modelData_modelData", _modelData);
           if (_modelData !== undefined) {
             if (deviceInfo.device_type === 13) {
               console.log("计算塔机的标签");
@@ -1206,18 +1210,24 @@ export default {
       $("#td_dggd").html(_data.height); // 吊钩高度
       $("#td_sbsj").html(moment(_data.created_time).format("HH:mm:ss")); // moment(_data.RTime).format('HH:mm:ss')
 
-      if (this.towerGroup !== null) {
-        let _dgxc = this.towerHeight - _data.height; // 吊钩线长
+      const _tjData = this.TajiModelMap.get(_data.device_id);
+      // console.log("_tjData_tjData_tjData_tjData", _tjData);
+      if (_tjData.model !== null) {
+        const _deviceData = _tjData.deviceData;
+        const familyLocation = JSON.parse(_deviceData.family_location);
+        let _dgxc = familyLocation.height - _data.height; // 吊钩线长
 
-        modifyTower(
-          this.towerGroup,
-          `T${_data.device_id}`,
-          this.towerHeight,
-          _data.rotate,
-          _data.extent,
+        modifyTower2(
+          _tjData.model,
+          `towerGroup${_deviceData.id}`,
+          familyLocation.height,
+          familyLocation.rotate.z,
+          parseInt(_data.rotate),
+          parseInt(_data.extent),
           _dgxc
-        );
-        // this.viewer.refresh(true)
+        ); // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
+
+        // console.log("塔吊_data", _data);
         // 刷新模型
         if (this.isProgressiveRendering === false) {
           // 渐进显示关闭状态下
@@ -1225,25 +1235,6 @@ export default {
         }
 
         // 名称，高度，大臂角度，小车距离，吊钩线长
-        console.log("塔吊_data", _data);
-        // $("#td_dbjd").html(_data.rotate) // 回转
-        // $("#td_xcjl").html(_data.extent) // 幅度
-        // $("#td_dggd").html(_data.height) // 吊钩高度
-        // $("#td_sbsj").html(moment(_data.created_time).format('HH:mm:ss')) // moment(_data.RTime).format('HH:mm:ss')
-        if (this.towerHeight > 0) {
-          if (
-            this.towerGroup !== null &&
-            this.towerGroup.visible !== undefined &&
-            this.towerGroup.visible === false
-          ) {
-            console.log("this.towerGroup.visible", this.towerGroup.visible);
-            this.towerGroup.visible = true;
-            // console.log("isNodeVisible", this.viewer.isNodeVisible(118))
-            if (this.hideDbid > 0) {
-              this.hideNode(this.hideDbid); // 隐藏一个塔吊
-            }
-          }
-        }
       }
     },
     mqttShenJiangJi(cmd, data) {
