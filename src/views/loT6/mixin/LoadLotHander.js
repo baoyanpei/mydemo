@@ -157,12 +157,18 @@ export default {
       // 加载设备标签
       this.addDeviveLabel();
 
-      // 初始获取电表水表数据
-      await this.initDevlist();
+      if (this.useFrom !== "screen") {
+        // 初始获取电表水表数据
+        await this.initDevlist();
+        // 获取物联网设备mqtt数据
+        this.$refs.mqttBim.init(this.projID, this.allLotDeviceList);
+      }
+
+      // 定位数据
       await this.initExtPerson();
       this.$refs.historyLocation.getLocationHisData(this.projID);
       this.$refs.mqttLocation.init(this.projID);
-      this.$refs.mqttBim.init(this.projID, this.allLotDeviceList);
+
       // this.initData()
 
       // 初始化镜头的变化事件
