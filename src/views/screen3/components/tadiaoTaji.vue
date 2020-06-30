@@ -133,7 +133,7 @@ export default {
           }
           this.showData()
           this.changeIndex()
-        }, 5 * 1000)
+        }, 10 * 1000)
       }
     },
     noDevice() {
