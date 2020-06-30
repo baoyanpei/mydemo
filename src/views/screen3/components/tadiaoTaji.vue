@@ -53,6 +53,14 @@
           <div class="grid-content">{{tdData.sbsj}}</div>
         </el-col>
       </el-row>
+      <el-row class="dot-page-list">
+        <div
+          v-for="(item,i) in tdDataList"
+          :key="i"
+          :class="{ 'marker_white': i!==currentIndex, 'marker': i===currentIndex }"
+          @click="dotClick(i)"
+        ></div>
+      </el-row>
     </div>
   </div>
 </template>
@@ -135,6 +143,10 @@ export default {
           this.changeIndex()
         }, 10 * 1000)
       }
+    },
+    dotClick(index) {
+      this.currentIndex = index
+      this.showData()
     },
     noDevice() {
       this.hasDevice = false

@@ -1,4 +1,4 @@
-$box-border-color: #ECA198;
+$box-border-color: #eca198;
 
 %box-border {
   border: 3px solid $box-border-color;
@@ -17,13 +17,12 @@ $box-border-color: #ECA198;
 }
 
 .screen3-index-container {
-
   width: 100%;
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  color: #FFFFFF;
+  color: #ffffff;
 
   overflow: hidden;
   min-width: 1920px;
@@ -70,7 +69,12 @@ $box-border-color: #ECA198;
     margin: 0px auto;
     width: 100%;
     // color: #FFFFFF;
-    background-image: -webkit-linear-gradient(bottom, #FFD8CE, #f4dddb, #FFFFFF);
+    background-image: -webkit-linear-gradient(
+      bottom,
+      #ffd8ce,
+      #f4dddb,
+      #ffffff
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -92,7 +96,6 @@ $box-border-color: #ECA198;
   .screen-loT5 {
     // position: absolute;
     z-index: 0;
-
   }
 
   /* 门禁管理 */
@@ -116,8 +119,6 @@ $box-border-color: #ECA198;
         font-weight: 500;
       }
     }
-
-
 
     .main {
       @extend %box-border;
@@ -258,7 +259,6 @@ $box-border-color: #ECA198;
 
   /* 智慧工地 */
   .center-area {
-
     .main {
       // @extend %box-border;
       height: 570px;
@@ -383,8 +383,6 @@ $box-border-color: #ECA198;
         width: 100%;
         opacity: 0.5;
       }
-
-
     }
   }
 
