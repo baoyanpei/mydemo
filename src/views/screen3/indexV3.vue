@@ -186,6 +186,7 @@ export default {
       todayDate: '',
       totalInoutPerson: '0',
       datumMeterMap: new Map(),
+      allDeviceConfigList: [],
       project_id: null,
       project_name: '',
       personInfo: null,
@@ -193,9 +194,7 @@ export default {
     }
   },
   computed: {},
-  created() {
-    // this.mqttConnect()
-  },
+  created() {},
   watch: {
     $route(to, from) {
       console.log('totototo', to, from)
@@ -213,7 +212,10 @@ export default {
     console.log('_projectID', _projectID)
     if (_projectID === undefined || _projectID === '') {
       // this.errTips = 'URL参数缺少project_id'
-      _initProjectID = 10000
+      // _initProjectID = 10000
+      this.canShow = false
+      this.errTips = '项目ID错误,请重新打开'
+      return
     } else {
       _initProjectID = parseInt(_projectID, 10)
     }
@@ -235,6 +237,9 @@ export default {
         })
         if (this.project_id !== null) {
           await this.initDevlist()
+          // 获取该项目所有的设备配置
+          this.allDeviceConfigList = await this.getDeviceConfigList()
+          console.log('this.allDeviceConfigList', this.allDeviceConfigList)
           console.log('personInfo1233', this.personInfo)
           console.log('this.datumMeterMap', this.datumMeterMap)
           this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
@@ -246,7 +251,7 @@ export default {
           this.$refs.weather.init(this.project_id, this.datumMeterMap)
           this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
           this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
-          this.$refs.tajiArea.init(this.project_id, this.datumMeterMap)
+          this.$refs.tajiArea.init(this.project_id, this.allDeviceConfigList)
           this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
           this.$refs.tasks.init(this.project_id)
         } else {
@@ -301,6 +306,26 @@ export default {
             console.log(e)
             resolve()
           })
+      })
+    },
+    // 获取该项目的设备配置
+    getDeviceConfigList() {
+      return new Promise((resolve, reject) => {
+        const param = {
+          method: 'device_config',
+          project_id: this.project_id,
+          used: 1
+          // buliding_id: this.itemInfoList[0].item_id
+        }
+        this.$store.dispatch('GetDeviceConfig', param).then(_itemList => {
+          let _deviceList = []
+          _itemList.forEach(item => {
+            if (item.used === 1) {
+              _deviceList.push(item)
+            }
+          })
+          resolve(_deviceList)
+        })
       })
     },
     inoutTotalPerson(total) {
