@@ -793,84 +793,6 @@ export default {
         // this.viewer.impl.invalidate(true, true, true)
       }
     },
-    // initData() {
-    //   this.datumMeterMap.forEach(datum => {
-    //     if (datum.device_type === 13) {
-    //       // 塔机
-
-    //       console.log("datum.params_json", datum.params_json);
-
-    //       if (datum.params_json !== "" && datum.params_json != null) {
-    //         let paramsJson = JSON.parse(datum.params_json);
-    //         console.log("paramsJson123", paramsJson);
-    //         console.log("hide_dbid", paramsJson.hide_dbid);
-    //         // if (paramsJson.hide_dbid !== undefined) {
-    //         //   this.hideDbid = paramsJson.hide_dbid
-    //         // }
-
-    //         this.towerHeight = paramsJson.height;
-    //         this.tdData.tdgd = this.towerHeight;
-    //       }
-
-    //       this.viewer.overlays.impl.addOverlay("custom-scene", this.towerGroup);
-    //     } else if (datum.device_type === 12) {
-    //       // 升降机
-    //       // $('.divDataShenJiangJi').show()
-
-    //       this.elevatorGroup = new THREE.Group();
-    //       this.elevatorGroup.name = "elevatorGroup";
-
-    //       this.elevatorGroup.scale.set(3, 3, 3);
-
-    //       let paramsJson = JSON.parse(datum.params_json);
-    //       // {"pos_x":78.5,"pos_y":24,"pos_z":0,"mqtt":"BIM/Sets/zhgd/DEYE/18090302/#"}
-    //       this.elevatorGroup.position.set(
-    //         paramsJson.pos_x,
-    //         paramsJson.pos_y,
-    //         paramsJson.pos_z
-    //       );
-    //       // this.elevatorGroup.position.set(181, 34, 0) // y 前后
-    //       this.viewer.overlays.impl.addOverlay(
-    //         "custom-scene",
-    //         this.elevatorGroup
-    //       );
-    //       // viewer.impl.scene.add(elevatorGroup);
-
-    //       modifyElevator(
-    //         this.elevatorGroup,
-    //         `E${datum.device_id}`,
-    //         -91 / 3,
-    //         false
-    //       ); // 名称，高度，门的开启状态
-    //       // this.viewer.hide(118)
-    //     } else if (datum.device_type === 100) {
-    //       // 升降机轨道
-    //       this.sectionGroup = new THREE.Group();
-    //       this.sectionGroup.name = "sectionGroup";
-
-    //       this.sectionGroup.scale.set(3, 3, 3);
-
-    //       let paramsJson = JSON.parse(datum.params_json);
-    //       this.sectionGroup.position.set(
-    //         paramsJson.pos_x,
-    //         paramsJson.pos_y,
-    //         paramsJson.pos_z
-    //       ); // 红 绿
-    //       // this.sectionGroup.position.set(185, 39, -90);
-    //       // console.log('paramsJson.height', paramsJson.height)
-    //       // viewer.impl.scene.add(sectionGroup);
-    //       this.viewer.overlays.impl.addOverlay(
-    //         "custom-scene",
-    //         this.sectionGroup
-    //       );
-    //       LoadSection(this.sectionGroup, paramsJson.height);
-    //     }
-    //   });
-
-    //   // viewer.loadExtension('Viewing.Extension.MeshSelection').then(
-
-    //   // )
-    // },
     // 清除所有的设备
     removeAllDeviceModel() {
       if (this.LotDeviceModelMap !== null) {
@@ -1385,36 +1307,6 @@ export default {
           });
       });
     },
-    // updateDeviceData() {
-    //   setTimeout(() => {
-    //     const param = {
-    //       method: "devlist",
-    //       project_id: this.projID
-    //     };
-    //     this.$store
-    //       .dispatch("QueryDatumMeter", param)
-    //       .then(deviceList => {
-    //         deviceList.forEach(device => {
-    //           if (device.device_type === 10) {
-    //             // 电表
-    //             // console.log('devicdianbiaoTotalUsede1234', device)
-    //             this.dianbiaoTotalUsed = device.total_used;
-    //             // $("#divDianBiao" + device.device_id).html(device.total_used);
-    //             this.showDianbiaoData(device);
-    //           } else if (device.device_type === 11) {
-    //             // 水表
-    //             // console.log('shuibiaoTotalUsed', device)
-    //             this.shuibiaoTotalUsed = device.total_used;
-    //             // $("#divShuiBiao" + device.device_id).html(device.total_used);
-    //           }
-    //         });
-    //         this.updateDeviceData();
-    //       })
-    //       .catch(e => {
-    //         console.log(e);
-    //       });
-    //   }, 60 * 1000);
-    // },
     initExtPerson() {
       return new Promise((resolve, reject) => {
         console.log("MeshSelectionMeshSelectionMeshSelection");
