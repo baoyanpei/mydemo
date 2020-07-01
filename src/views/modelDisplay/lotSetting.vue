@@ -956,6 +956,7 @@ export default {
       this.viewer.toolbar.removeControl(this.ControlLotManager)
       this.isShowViewPointArea = true
       this.isShowToolbarMarker = true
+      this.removeAllDeviceLabel()
       this.$store
         .dispatch('SetViewPointEditMode', {
           isEditMode: true
@@ -1032,7 +1033,7 @@ export default {
         this.viewer.unloadModel(value)
       })
       this.LotDeviceList = await this.getDeviceConfigList()
-      this.removeAllDeviceLabel()
+      // this.removeAllDeviceLabel()
       this.setLotDeviceModelList()
       // 加载设备标签
       this.addDeviveLabel()
@@ -1178,15 +1179,9 @@ export default {
           let _modelData = this.LotDeviceModelMap.get(deviceInfo.id)
           // console.log("_modelData_modelData_modelData", _modelData);
           if (_modelData !== undefined) {
-            if (deviceInfo.device_type === 13) {
-              console.log('计算塔机的标签')
-            } else if (deviceInfo.device_type === 12) {
-              console.log('计算升降机的标签')
-            } else {
-              let _model = _modelData.model
-              const _bbox = this.getModelBox(_model)
-              _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
-            }
+            let _model = _modelData.model
+            const _bbox = this.getModelBox(_model)
+            _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
           }
         }
         // let _xxx = Math.abs(_bbox.max.x - _bbox.min.x)
@@ -1235,32 +1230,32 @@ export default {
         position: 'absolute',
         overflow: 'visible'
       })
-      $('#mymk' + randomId).click(() => {
-        console.log('data', data)
-        if (data.device_type === 16) {
-          let deviceData = data
-          if (deviceData === undefined) {
-            this.$message({
-              message: '此摄像头未配置数据',
-              type: 'error'
-            })
-          } else if (deviceData.video_url === '') {
-            this.$message({
-              message: '此摄像头无法直播',
-              type: 'error'
-            })
-          } else {
-            const param = {
-              show: true,
-              deviceData: deviceData
-            }
-            this.$store
-              .dispatch('SetVideoDialog', param)
-              .then(() => {})
-              .catch(() => {})
-          }
-        }
-      })
+      // $('#mymk' + randomId).click(() => {
+      //   console.log('data', data)
+      //   if (data.device_type === 16) {
+      //     let deviceData = data
+      //     if (deviceData === undefined) {
+      //       this.$message({
+      //         message: '此摄像头未配置数据',
+      //         type: 'error'
+      //       })
+      //     } else if (deviceData.video_url === '') {
+      //       this.$message({
+      //         message: '此摄像头无法直播',
+      //         type: 'error'
+      //       })
+      //     } else {
+      //       const param = {
+      //         show: true,
+      //         deviceData: deviceData
+      //       }
+      //       this.$store
+      //         .dispatch('SetVideoDialog', param)
+      //         .then(() => {})
+      //         .catch(() => {})
+      //     }
+      //   }
+      // })
       // build the svg element and draw a circle
       // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
 
