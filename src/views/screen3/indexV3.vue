@@ -250,7 +250,7 @@ export default {
           this.$refs.inout.init(this.project_id)
           this.$refs.carema.openPlayer(this.datumMeterMap)
           this.$refs.weather.init(this.project_id, this.datumMeterMap)
-          this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
+          this.$refs.meterShui.update(this.project_id, this.allDeviceConfigList)
           this.$refs.meterDian.update(this.project_id, this.allDeviceConfigList)
           this.$refs.tajiArea.init(this.project_id, this.allDeviceConfigList)
           this.$refs.vehicle.init(this.project_id, this.datumMeterMap)

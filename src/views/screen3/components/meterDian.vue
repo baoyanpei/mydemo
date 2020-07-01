@@ -40,7 +40,6 @@ export default {
     return {
       noMeterDianTips: '',
       project_id: null,
-      // device_id: null, //YD10000SB03, YD10000DB01
       dianbiaoDataList: [],
       device_name: '电表',
       currentIndex: 0,
