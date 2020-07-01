@@ -103,7 +103,8 @@ export default {
       allItemList: [], // 所有的模型列表
 
       isShowDevice: true, // 是否显示设备
-      isShowBiaozhu: true // 是否显示标注
+      isShowBiaozhu: true, // 是否显示标注
+      isShowShuju: false // 是否显示数据
     };
   },
   computed: {},
@@ -128,6 +129,12 @@ export default {
       if (this.projID === null) {
         return;
       }
+
+      this.showTadiaoInfo = this.isShowShuju;
+      this.showShenjiangjiInfo = this.isShowShuju;
+      this.showWeatherInfo = this.isShowShuju;
+      this.showShuibiaoInfo = this.isShowShuju;
+      this.showDianbiaoInfo = this.isShowShuju;
 
       // 恢复视点的模型
       this.viewPointCurrentData = await this.getViewPointsByType();
@@ -407,12 +414,43 @@ export default {
         }
       };
 
+      // 数据显示开关
+      let buttonShowShuju = new Autodesk.Viewing.UI.Button("show-shuju-button");
+      buttonShowShuju.addClass("show-shuju-button");
+      buttonShowShuju.setToolTip("物联网设备数据显示开关");
+      if (this.isShowShuju === true) {
+        buttonShowShuju.icon.style.backgroundImage =
+          "url(./static/icon/ico_shuju_b.png)";
+      } else {
+        buttonShowShuju.icon.style.backgroundImage =
+          "url(./static/icon/ico_shuju.png)";
+      }
+
+      buttonShowShuju.onClick = e => {
+        this.isShowShuju = !this.isShowShuju;
+        this.showTadiaoInfo = this.isShowShuju;
+        this.showShenjiangjiInfo = this.isShowShuju;
+        this.showWeatherInfo = this.isShowShuju;
+        this.showShuibiaoInfo = this.isShowShuju;
+        this.showDianbiaoInfo = this.isShowShuju;
+        if (this.isShowShuju === true) {
+          buttonShowShuju.icon.style.backgroundImage =
+            "url(./static/icon/ico_shuju_b.png)";
+        } else {
+          buttonShowShuju.icon.style.backgroundImage =
+            "url(./static/icon/ico_shuju.png)";
+        }
+      };
+
       // SubToolbar
       this.ControlLotManager = new Autodesk.Viewing.UI.ControlGroup(
         "my-view-point-toolbar"
       );
       this.ControlLotManager.addControl(buttonEnterLotMode);
       this.ControlLotManager.addControl(buttonLotListDialog);
+      if (this.useFrom !== "screen") {
+        this.ControlLotManager.addControl(buttonShowShuju);
+      }
 
       // Add subToolbar to main toolbar
       this.viewer.toolbar.addControl(this.ControlLotManager);
