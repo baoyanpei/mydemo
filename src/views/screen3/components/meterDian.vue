@@ -20,6 +20,14 @@
       </div>
       <div class="total-today-label">今日用电量</div>
       <div class="total-today">{{total_today}} 度</div>
+      <el-row class="dot-page-list">
+        <div
+          v-for="(item,i) in dianbiaoDataList"
+          :key="i"
+          :class="{ 'marker_white': i!==currentIndex, 'marker': i===currentIndex }"
+          @click="dotClick(i)"
+        ></div>
+      </el-row>
     </div>
   </div>
 </template>
@@ -45,10 +53,7 @@ export default {
   computed: {},
   created() {},
   watch: {},
-  mounted() {
-    // this.getAllData()
-    // this.refreshData()
-  },
+  mounted() {},
   destroyed() {},
   methods: {
     async update(project_id, allDeviceConfigList) {
@@ -58,9 +63,7 @@ export default {
         let device = allDeviceConfigList[i]
         if (device.device_type === 10) {
           const totalToday = await this.getTodayHoursData(device.device_id)
-          console.log('totalToday', totalToday)
           device.total_today = totalToday
-          console.log('devicedevicedevicedevice', device)
           // 电表
           let hasDevice = false
           this.dianbiaoDataList.forEach(dianbiao => {
@@ -74,21 +77,6 @@ export default {
           }
         }
       }
-
-      // allDeviceConfigList.forEach(async device => {
-      //   // if (this.device_id === null) {
-      //   //   if (
-      //   //     datum.device_type === 10 &&
-      //   //     datum.total_used !== null &&
-      //   //     datum.total_used !== ''
-      //   //   ) {
-      //   //     // this.cameraURList.push(datum)
-      //   //     this.device_id = datum.device_id
-      //   //     this.getAllData()
-      //   //     this.refreshData()
-      //   //   }
-      //   // }
-      // })
       console.log('this.dianbiaoDataList', this.dianbiaoDataList)
       if (this.dianbiaoDataList.length === 0) {
         this.noMeterDianTips = '无电表数据'
@@ -98,9 +86,6 @@ export default {
           this.changeIndex()
         }
       }
-
-      // this.getAllData()
-      // this.refreshData()
     },
     showData() {
       if (this.dianbiaoDataList.length > 0) {
@@ -110,14 +95,11 @@ export default {
           parseInt(currentDisplayData.total_used).toString()
         )
         this.total_today = currentDisplayData.total_today
-
-        // this.hasDevice = true
       }
     },
     changeIndex() {
       if (this.dianbiaoDataList.length > 1) {
         this.timerChangeData = setTimeout(() => {
-          // this.showData()
           this.currentIndex = this.currentIndex + 1
           if (this.currentIndex === this.dianbiaoDataList.length) {
             this.currentIndex = 0
@@ -127,30 +109,6 @@ export default {
         }, 10 * 1000)
       }
     },
-    getAllData() {
-      // this.getCurrentData()
-      this.getTodayHoursData()
-      // this.getLastHoursData()
-    },
-    // getCurrentData() {
-    //   const param = {
-    //     method: 'devlist',
-    //     project_id: this.project_id,
-    //     device_id: this.device_id
-    //   }
-    //   this.$store
-    //     .dispatch('QueryDatumMeter', param)
-    //     .then(MeterData => {
-    //       console.log('MeterData', MeterData)
-    //       if (MeterData.length > 0) {
-    //         this.total_used = MeterData[0].total_used
-    //       }
-    //       this.total_used = this.FillZero(parseInt(this.total_used).toString())
-    //     })
-    //     .catch(e => {
-    //       console.log(e)
-    //     })
-    // },
     FillZero(p) {
       return new Array(6 - (p + '').length + 1).join('0') + p
     },
@@ -178,12 +136,9 @@ export default {
         })
       })
     },
-    refreshData() {
-      setTimeout(() => {
-        this.getAllData()
-        this.refreshData()
-        // console.log('getVehicleGateData')
-      }, 120 * 1000)
+    dotClick(index) {
+      this.currentIndex = index
+      this.showData()
     }
   }
 }

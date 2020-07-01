@@ -54,9 +54,41 @@
     .total-today {
       font-size: 16px;
       color: #ffc297;
-      padding: 5px 0px;
+      padding: 0px 0px;
       font-family: "Roboto Slab", sans-serif;
       font-weight: 600;
+    }
+  }
+
+  .dot-page-list {
+    text-align: center;
+    margin: 0 auto;
+    width: 130px;
+    padding-top: 0px;
+    pointer-events: auto;
+    .marker {
+      width: 6px;
+      display: inline-block;
+      height: 6px;
+      border: 0px solid #088;
+      border-radius: 100px;
+      background-color: #088;
+      cursor: pointer;
+      // float: left;
+      margin: 2px;
+      // opacity: 0.5;
+    }
+
+    .marker_white {
+      width: 6px;
+      display: inline-block;
+      height: 6px;
+      border: 0px solid #fff;
+      border-radius: 100px;
+      background-color: #fff;
+      cursor: pointer;
+      // float: left;
+      margin: 2px;
     }
   }
 }

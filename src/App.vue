@@ -249,6 +249,7 @@ export default {
         to.name !== 'xcx-cesium-display' &&
         to.name !== 'xcx-cad-display' &&
         to.name !== 'xcx-sketchup-display' &&
+        to.name !== 'screen3V3' &&
         this.personInfo === null
       ) {
         this.getPerson()
