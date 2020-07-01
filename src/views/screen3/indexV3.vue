@@ -2,7 +2,7 @@
 @import './indexV3';
 </style>
   <template>
-  <div class="screen3-v3-index-container" style="margin: 0px;">
+  <div class="screen3-v3-index-container">
     <LotArea ref="lotArea"></LotArea>
     <div class="screen-header">
       <el-row>

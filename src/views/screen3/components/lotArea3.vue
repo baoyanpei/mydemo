@@ -12,7 +12,7 @@
     ></mqttBim>
     <historyLocation ref="historyLocation" v-on:initPerson="initPerson"></historyLocation>
     <mqttLocation ref="mqttLocation" v-on:initPerson="initPerson"></mqttLocation>
-    <div id="viewer-local">
+    <div id="viewer-local" class="viewer-local-v3">
       <div v-if="nomodel_message!==''" class="noModelTip">{{nomodel_message}}</div>
     </div>
   </div>
