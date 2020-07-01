@@ -104,7 +104,7 @@ export default {
 
       isShowDevice: true, // 是否显示设备
       isShowBiaozhu: true, // 是否显示标注
-      isShowShuju: false // 是否显示数据
+      isShowShuju: true // 是否显示数据
     };
   },
   computed: {},
