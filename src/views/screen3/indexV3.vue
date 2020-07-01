@@ -1,8 +1,8 @@
 <style lang="scss">
-@import './index';
+@import './indexV3';
 </style>
   <template>
-  <div class="screen3-index-container" style="margin: 0px;">
+  <div class="screen3-v3-index-container" style="margin: 0px;">
     <LotArea ref="lotArea"></LotArea>
     <div class="screen-header">
       <el-row>
@@ -190,7 +190,8 @@ export default {
       project_id: null,
       project_name: '',
       personInfo: null,
-      canShow: true
+      canShow: true,
+      timerReloadDeviceConfigList: null
     }
   },
   computed: {},
@@ -250,10 +251,12 @@ export default {
           this.$refs.carema.openPlayer(this.datumMeterMap)
           this.$refs.weather.init(this.project_id, this.datumMeterMap)
           this.$refs.meterShui.init(this.project_id, this.datumMeterMap)
-          this.$refs.meterDian.init(this.project_id, this.datumMeterMap)
+          this.$refs.meterDian.update(this.project_id, this.allDeviceConfigList)
           this.$refs.tajiArea.init(this.project_id, this.allDeviceConfigList)
           this.$refs.vehicle.init(this.project_id, this.datumMeterMap)
           this.$refs.tasks.init(this.project_id)
+
+          this.reloadDeviceConfigList()
         } else {
           this.canShow = false
           this.errTips = '项目ID错误或您没有查看权限'
@@ -334,6 +337,13 @@ export default {
     gateMessage(data) {
       console.log('gateMessage', data)
       // this.$refs.lotArea.gateData(data)
+    },
+    reloadDeviceConfigList() {
+      this.timerReloadDeviceConfigList = setTimeout(async () => {
+        this.allDeviceConfigList = await this.getDeviceConfigList()
+        this.$refs.meterDian.update(this.project_id, this.allDeviceConfigList)
+        this.reloadDeviceConfigList()
+      }, 120 * 1000)
     }
   }
 }
