@@ -120,6 +120,8 @@ export default {
       FamilyListMap: [], // 模型库数据
       LotDeviceList: [], // 已经绑定的物联网设备列表
       LotDeviceModelMap: null, // 物联网模型列表
+      TajiModelMap: null, // 塔机模型列表
+      SjjModelMap: null, // 升降机模型列表
       // currentDeviceOpType: 0, // 当前设备模型的编辑模式 0:新增模式 1:编辑模式
       currentDeviceModel: null, // 当前正在操作的设备模型
       currentDeviceData: null, // 当前正在操作的设备数据
@@ -246,14 +248,8 @@ export default {
         this.viewer.unloadModel(model)
       })
       this.currentItemModelList = []
-      // this.currentItemList = []
-      // this.currentItemIDList = []
       console.log('-->', this.LotDeviceModelMap)
-      // this.LotDeviceModelMap.forEach((value, key) => {
-      //   this.viewer.unloadModel(value.model)
-      // });
       this.removeAllDeviceModel()
-      // this.LotDeviceModelMap = new map()
     },
     async loadViewPointModel() {
       if (this.viewPointCurrentData !== null) {
@@ -355,6 +351,10 @@ export default {
           if (startedCode > 0) {
             console.error('Failed to create a Viewer: WebGL not supported.')
             return
+          }
+
+          if (!this.viewer.overlays.hasScene('custom-scene')) {
+            this.viewer.overlays.addScene('custom-scene')
           }
           this.viewer.setBackgroundColor(0, 59, 111, 255, 255, 255)
           this.viewer.addEventListener(
@@ -543,6 +543,7 @@ export default {
           this.viewPointCurrentData = null
           this.clearData()
           this.getCurrentItemData([])
+          this.removeAllDeviceLabel()
           this.$message({
             message: '物联网建筑配置删除成功！',
             type: 'success'
@@ -592,10 +593,30 @@ export default {
     removeAllDeviceModel() {
       if (this.LotDeviceModelMap !== null) {
         this.LotDeviceModelMap.forEach((value, key) => {
-          console.log(value)
-          this.viewer.unloadModel(value.model)
+          console.log('valuevaluevaluevalue', value)
+          if (value.deviceData.device_type === 13) {
+            this.viewer.overlays.impl.removeOverlay('custom-scene', value.model)
+          } else if (value.deviceData.device_type === 12) {
+            this.viewer.overlays.impl.removeOverlay(
+              'custom-scene',
+              value.elevatorModel
+            )
+            this.viewer.overlays.impl.removeOverlay(
+              'custom-scene',
+              value.sectionModel
+            )
+          } else if (
+            value.deviceData.family_id > 0 &&
+            value.deviceData.family_id < 999999
+          ) {
+            this.viewer.unloadModel(value.model)
+          }
+
           // this.viewer.unloadModel(this.viewer.model)
         })
+        this.TajiModelMap = null
+        this.SjjModelMap = null
+        this.LotDeviceModelMap = null
       }
     },
     // 获取当前建筑已经配置的设备列表
@@ -613,17 +634,30 @@ export default {
     async setLotDeviceModelList() {
       return new Promise(async (resolve, reject) => {
         if (this.isShowDevice === false) {
+          resolve()
           return
         }
         this.LotDeviceModelMap = new Map()
-
+        this.TajiModelMap = new Map()
+        this.SjjModelMap = new Map()
         this.getLotDeviceList()
 
         let _Plist = []
         for (var i = 0; i < this.LotDeviceList.length; i++) {
-          let p = await this.loadDeviceModel(this.LotDeviceList[i], i)
-          _Plist.push(p)
+          const LotDevice = this.LotDeviceList[i]
+          if (LotDevice.device_type === 13) {
+            // 塔吊
+            this.loadTajiModel(LotDevice)
+          } else if (LotDevice.device_type === 12) {
+            // 升降机
+            this.loadSjjModel(LotDevice)
+          } else {
+            // 其他物联网设备
+            let p = await this.loadDeviceModel(LotDevice, i)
+            _Plist.push(p)
+          }
         }
+
         Promise.all(_Plist).then(result => {
           resolve()
         })
@@ -685,6 +719,101 @@ export default {
           this.onLoadError
         )
       })
+    },
+    loadTajiModel(tajiData) {
+      console.log('tajiData', tajiData)
+      if (tajiData.family_id > 0) {
+        const familyLocation = JSON.parse(tajiData.family_location)
+        let towerGroup = new THREE.Group()
+        towerGroup.scale.set(
+          familyLocation.scale,
+          familyLocation.scale,
+          familyLocation.scale
+        )
+        towerGroup.position.set(
+          familyLocation.position.x,
+          familyLocation.position.y,
+          familyLocation.position.z
+        )
+        // towerGroup.name = `towerGroup${tajiData.id}`;
+        modifyTower2(
+          towerGroup,
+          `towerGroup${tajiData.id}`,
+          familyLocation.height,
+          familyLocation.rotate.z,
+          0,
+          0,
+          0
+        ) // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
+
+        this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
+
+        // let _familyModel = this.FamilyListMap.get(tajiData.family_id);
+        // towerGroup.infoData = _familyModel;
+        this.LotDeviceModelMap.set(tajiData.id, {
+          deviceData: tajiData,
+          model: towerGroup
+        })
+
+        this.TajiModelMap.set(tajiData.device_id, {
+          deviceData: tajiData,
+          model: towerGroup
+        })
+      }
+    },
+    loadSjjModel(sjjData) {
+      console.log('sjjData', sjjData)
+      if (sjjData.family_id > 0) {
+        const familyLocation = JSON.parse(sjjData.family_location)
+        let elevatorGroup = new THREE.Group()
+        elevatorGroup.scale.set(
+          familyLocation.scale,
+          familyLocation.scale,
+          familyLocation.scale
+        )
+        elevatorGroup.position.set(
+          familyLocation.elevatorPosition.x,
+          familyLocation.elevatorPosition.y,
+          familyLocation.elevatorPosition.z
+        )
+
+        elevatorGroup.rotateZ(familyLocation.elevatorRotate.z * (Math.PI / 180))
+
+        modifyElevator(elevatorGroup, `elevatorGroup${sjjData.id}`, 0, false) // 名称，高度，门的开启状态
+        this.viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+
+        // 升降机的轨道
+        let sectionGroup = new THREE.Group()
+        sectionGroup.scale.set(
+          familyLocation.scale,
+          familyLocation.scale,
+          familyLocation.scale
+        )
+
+        sectionGroup.position.set(
+          familyLocation.sectionPosition.x,
+          familyLocation.sectionPosition.y,
+          familyLocation.sectionPosition.z
+        )
+
+        sectionGroup.rotateZ(familyLocation.sectionRotate.z * (Math.PI / 180))
+
+        this.viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
+        LoadSection(sectionGroup, familyLocation.sectionHeight)
+
+        this.LotDeviceModelMap.set(sjjData.id, {
+          deviceData: sjjData,
+          elevatorModel: elevatorGroup,
+          sectionModel: sectionGroup
+        })
+
+        this.SjjModelMap.set(sjjData.device_id, {
+          deviceData: sjjData,
+          elevatorModel: elevatorGroup,
+          sectionModel: sectionGroup
+        })
+        // this.viewer.impl.invalidate(true, true, true)
+      }
     },
     MoveModel(model, x, y, z) {
       const thisModel = model //viewer.getAggregateSelection()[0].model
@@ -807,6 +936,9 @@ export default {
         let _family_location = deviceInfo.family_location
         const familyLocation = JSON.parse(_family_location)
 
+        if (deviceInfo.device_type === 12) {
+          familyLocation.position = familyLocation.sectionPosition
+        }
         const _x = familyLocation.position.x
         const _y = familyLocation.position.y
         const _z = familyLocation.position.z
@@ -818,10 +950,18 @@ export default {
         let _zzz = 0
         if (this.LotDeviceModelMap !== null) {
           let _modelData = this.LotDeviceModelMap.get(deviceInfo.id)
-          console.log('_modelData_modelData_modelData', _modelData)
-          let _model = _modelData.model
-          const _bbox = this.getModelBox(_model)
-          _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
+
+          if (_modelData !== undefined) {
+            if (deviceInfo.device_type === 13) {
+              console.log('计算塔机的标签')
+            } else if (deviceInfo.device_type === 12) {
+              console.log('计算升降机的标签')
+            } else {
+              let _model = _modelData.model
+              const _bbox = this.getModelBox(_model)
+              _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
+            }
+          }
         }
 
         // let _xxx = Math.abs(_bbox.max.x - _bbox.min.x)
