@@ -5,7 +5,7 @@
           <planindex></planindex>
         </el-col>
         <el-col :span="20">
-          weeksplan
+          weeksplan111
         </el-col>
       </el-row>
     </div>
