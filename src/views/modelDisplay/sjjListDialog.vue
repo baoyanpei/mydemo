@@ -1,8 +1,8 @@
 <style lang="scss">
-@import './lotListDialog';
+@import './sjjListDialog';
 </style>
 <template>
-  <div id="lot-list-dialog" class="lot-list-dialog">
+  <div id="sjj-list-dialog" class="sjj-list-dialog">
     <el-dialog
       :modal="false"
       width="450px"
@@ -11,7 +11,7 @@
       :lock-scroll="true"
       :close-on-click-modal="false"
       :close-on-press-escape="true"
-      :visible.sync="LotListDialog.show"
+      :visible.sync="SjjListDialog.show"
       @opened="openedDialogHandle"
       @close="closeDialogHandle"
       :title="dialogTitle"
@@ -35,7 +35,7 @@
           <el-col :span="14">
             <div class="view-point-button">
               <el-button size="mini" type="primary" @click="findDeviceHandle(item,'find')">查找</el-button>
-              <el-button size="mini" type="primary" @click="findDeviceHandle(item,'select')">高亮</el-button>
+              <!-- <el-button size="mini" type="primary" @click="findDeviceHandle(item,'select')">高亮</el-button> -->
               <el-button size="mini" type="primary" @click="editDeviceHandle(item)">编辑</el-button>
             </div>
           </el-col>
@@ -56,7 +56,7 @@ export default {
   data() {
     return {
       loadingFull: false,
-      dialogTitle: '物联网设备库',
+      dialogTitle: '已经配置的升降机',
       tipMessage: '',
       buildItem: null, // 建筑模型信息
       deviceList: []
@@ -71,12 +71,12 @@ export default {
         this.$store.state.project.project_id = newValue
       }
     },
-    LotListDialog: {
+    SjjListDialog: {
       get: function() {
-        return this.$store.state.loT.LotListDialog
+        return this.$store.state.loT.SjjListDialog
       },
       set: function(newValue) {
-        this.$store.state.loT.LotListDialog = newValue
+        this.$store.state.loT.SjjListDialog = newValue
       }
     }
   },
@@ -95,12 +95,12 @@ export default {
     },
     async openedDialogHandle() {
       // this.tipMessage = "正在查询ComponentLibraryListDialog"
-      this.buildItem = this.LotListDialog.buildItem
-      console.log('this.LotListDialog', this.LotListDialog)
+      this.buildItem = this.SjjListDialog.buildItem
+      console.log('this.SjjListDialog', this.SjjListDialog)
       this.tipMessage = '正在查询...'
       this.deviceList = await this.getDeviceConfigList()
       if (this.deviceList.length === 0) {
-        this.tipMessage = '当前建筑中没有绑定物联网设备模型'
+        this.tipMessage = '当前建筑中没有配置升降机模型'
         return
       }
       this.tipMessage = ''
@@ -111,7 +111,7 @@ export default {
 
     getDeviceConfigList() {
       return new Promise((resolve, reject) => {
-        let itemList = []
+        let tajiList = []
         const param = {
           method: 'device_config',
           project_id: this.project_id,
@@ -120,11 +120,12 @@ export default {
         this.$store.dispatch('GetDeviceConfig', param).then(_itemList => {
           console.log('GetDeviceConfig - _itemList', _itemList)
           _itemList.forEach(item => {
-            if (item.device_type !== 13 && item.device_type !== 12) {
-              itemList.push(item)
+            if (item.device_type === 12) {
+              tajiList.push(item)
             }
           })
-          resolve(itemList)
+
+          resolve(tajiList)
         })
       })
     },

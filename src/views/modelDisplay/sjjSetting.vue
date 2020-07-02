@@ -1,14 +1,14 @@
 <style lang="scss">
-@import './tajiSetting';
+@import './sjjSetting';
 </style>
 <template>
-  <div id="model-taji-setting" class="model-taji-setting" style="margin: 0px;">
+  <div id="model-sjj-setting" class="model-sjj-setting" style="margin: 0px;">
     <div id="viewer-local"></div>
     <div v-if="isShowViewPointArea" class="viewPointShowArea">
       <div class="viewPointTitle">
         <div class="title">
-          <span>塔机管理</span> -
-          <span v-if="currentEditModelName.name === ''">新增塔机</span>
+          <span>升降机管理</span> -
+          <span v-if="currentEditModelName.name === ''">新增升降机</span>
           <span v-if="currentEditModelName.name !== ''">{{currentEditModelName.name}}</span>
         </div>
         <el-button
@@ -24,24 +24,28 @@
     </div>
     <div v-if="isShowToolbarMarker" class="toolbar-marker">
       <el-button class="marker-button" title="保存">
-        <font-awesome-icon :icon="['far','save']" @click="openTajiInfoDetailDialogHandle()" />
+        <font-awesome-icon :icon="['far','save']" @click="openSjjInfoDetailDialogHandle()" />
       </el-button>
-      <el-button class="marker-button" title="删除当前塔机">
+      <el-button class="marker-button" title="删除当前升降机">
         <font-awesome-icon
-          v-if="currentDeviceModel !== null"
+          v-if="currentElevatorModel !== null"
           icon="trash-alt"
-          @click="deleteTajiModelHandle(0)"
+          @click="deleteSjjModelHandle(0)"
         />
-        <font-awesome-icon v-if="currentDeviceModel === null" icon="trash-alt" style="color:grey;" />
+        <font-awesome-icon
+          v-if="currentElevatorModel === null"
+          icon="trash-alt"
+          style="color:grey;"
+        />
       </el-button>
       <el-button class="marker-button" title="调整位置">
         <font-awesome-icon
-          v-if="currentDeviceModel !== null"
+          v-if="currentElevatorModel !== null"
           icon="arrows-alt"
-          @click="openTajiPositionDialogHandle()"
+          @click="openSjjPositionDialogHandle()"
         />
         <font-awesome-icon
-          v-if="currentDeviceModel === null"
+          v-if="currentElevatorModel === null"
           icon="arrows-alt"
           style="color:grey;"
           disabled
@@ -50,40 +54,40 @@
       <hr />
       <el-button class="marker-button" title="定位构件">
         <font-awesome-icon
-          v-if="currentDeviceModel !== null"
+          v-if="currentElevatorModel !== null"
           icon="search-location"
           @click="FindModel()"
         />
         <font-awesome-icon
-          v-if="currentDeviceModel === null"
+          v-if="currentElevatorModel === null"
           icon="search-location"
           style="color:grey;"
         />
       </el-button>
       <!-- <el-button class="marker-button" title="高亮构件">
-        <font-awesome-icon v-if="currentDeviceModel !== null" icon="lightbulb" @click="SelectModel()" />
-        <font-awesome-icon v-if="currentDeviceModel === null" icon="lightbulb" style="color:grey;" />
+          <font-awesome-icon v-if="currentElevatorModel !== null" icon="lightbulb" @click="SelectModel()" />
+          <font-awesome-icon v-if="currentElevatorModel === null" icon="lightbulb" style="color:grey;" />
       </el-button>-->
-      <el-button class="marker-button" title="添加塔机">
-        <font-awesome-icon icon="layer-group" @click="addTajiModelHandle" />
+      <el-button class="marker-button" title="添加升降机">
+        <font-awesome-icon icon="layer-group" @click="addSjjModelHandle" />
       </el-button>
     </div>
-    <!--塔机设备列表dialog-->
-    <TajiListDialog></TajiListDialog>
-    <!--塔机位置dialog-->
-    <TajiPositionDialog></TajiPositionDialog>
-    <!--塔机设备信息dialog-->
-    <TajiInfoDetailDIalog></TajiInfoDetailDIalog>
+    <!--升降机设备列表dialog-->
+    <SjjListDialog></SjjListDialog>
+    <!--升降机位置dialog-->
+    <SjjPositionDialog></SjjPositionDialog>
+    <!--升降机设备信息dialog-->
+    <SjjInfoDetailDIalog></SjjInfoDetailDIalog>
   </div>
 </template>
 
 <script>
 // 构件库列表
-import TajiListDialog from '@/views/modelDisplay/tajiListDialog'
+import SjjListDialog from '@/views/modelDisplay/sjjListDialog'
 
-import TajiPositionDialog from '@/views/modelDisplay/tajiPositionDialog'
+import SjjPositionDialog from '@/views/modelDisplay/sjjPositionDialog'
 
-import TajiInfoDetailDIalog from '@/views/modelDisplay/tajiInfoDetailDIalog'
+import SjjInfoDetailDIalog from '@/views/modelDisplay/sjjInfoDetailDIalog'
 
 import loadJs from '@/utils/loadJs.js'
 import Cookies from 'js-cookie'
@@ -91,11 +95,11 @@ import lodash from 'lodash'
 let Base64 = require('js-base64').Base64
 
 export default {
-  name: 'model-taji-setting',
+  name: 'model-sjj-setting',
   components: {
-    TajiListDialog,
-    TajiPositionDialog,
-    TajiInfoDetailDIalog
+    SjjListDialog,
+    SjjPositionDialog,
+    SjjInfoDetailDIalog
   },
   data() {
     return {
@@ -150,16 +154,18 @@ export default {
       FPS_HIGH_LEVEL: 15, // 高于祯数 为快
       FPS_LOW_TIMES: 50, // 低速fps累计次数
 
-      LotDeviceList: [], // 已经绑定的塔机设备列表
-      LotDeviceModelMap: null, // 塔机模型列表
+      LotDeviceList: [], // 已经绑定的升降机设备列表
+      LotDeviceModelMap: null, // 升降机模型列表
       // currentDeviceOpType: 0, // 当前设备模型的编辑模式 0:新增模式 1:编辑模式
-      currentDeviceModel: null, // 当前正在操作的设备模型
-      currentDeviceData: null, // 当前正在操作的设备数据
+      currentElevatorModel: null, // 当前Elevator模型
+      currentElevatorData: null, // 当前正在操作的设备数据
+      currentSectionModel: null, // 当前Section模型
+
       currentEditModelName: {
         name: ''
       }, // 当前编辑的模型信息，用于顶部title显示
-      currentDeviceHeight: 20, // 初始化塔机的高度
-      currentDeviceScale: 1, // 初始化塔机的缩放
+      currentSectionHeight: 20, // 初始化升降机的高度
+      currentDeviceScale: 1, // 初始化升降机的缩放
       towerModelName: 'Tower',
       selectedPosition: {
         // 选择的构件位置
@@ -167,13 +173,24 @@ export default {
         y: 0,
         z: 0
       },
-      currentDevicePosition: {
+      currentElevatorPosition: {
         //
         x: 0,
         y: 0,
         z: 0
       },
-      currentDeviceRotate: {
+      currentElevatorRotate: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      currentSectionPosition: {
+        //
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      currentSectionRotate: {
         x: 0,
         y: 0,
         z: 0
@@ -188,8 +205,8 @@ export default {
     ComponentDataAdd() {
       return this.$store.state.componentLibrary.ComponentDataAdd
     },
-    TajiPositionChange() {
-      return this.$store.state.loT.TajiPositionChange
+    SjjPositionChange() {
+      return this.$store.state.loT.SjjPositionChange
     },
     LotDeviceEditChange() {
       return this.$store.state.loT.LotDeviceEditChange
@@ -203,64 +220,88 @@ export default {
   },
   created() {},
   watch: {
-    TajiPositionChange: {
+    SjjPositionChange: {
       handler: function(newVal, oldVal) {
-        console.log('TajiPositionChange1112 ', newVal)
+        // console.log('SjjPositionChange1112 ', newVal)
 
-        let _globalOffset = newVal.globalOffset
-        this.currentDevicePosition = _globalOffset
-        this.currentDeviceHeight = newVal.height
-        this.currentDeviceRotate.x = newVal.rotate.x
-        this.currentDeviceRotate.y = newVal.rotate.y
-        this.currentDeviceRotate.z = newVal.rotate.z
+        this.currentElevatorPosition = newVal.elevatorPosition
+        this.currentSectionPosition = newVal.sectionPosition
+        this.currentSectionHeight = newVal.sectionHeight
         this.currentDeviceScale = newVal.scale
         const _type = newVal.type
-        // console.log('_rotate_x', _rotate_x)
         switch (_type) {
-          case 'rotate_z':
-            modifyTower2(
-              this.currentDeviceModel,
-              this.towerModelName,
-              this.currentDeviceHeight,
-              newVal.rotate.z,
-              0,
-              0,
-              0
+          case 'elevator_position':
+            this.currentElevatorModel.position.set(
+              this.currentElevatorPosition.x,
+              this.currentElevatorPosition.y,
+              this.currentElevatorPosition.z
             )
             this.viewer.impl.invalidate(true, true, true)
             break
-          case 'height':
+          case 'section_position':
+            this.currentSectionModel.position.set(
+              this.currentSectionPosition.x,
+              this.currentSectionPosition.y,
+              this.currentSectionPosition.z
+            )
+            this.viewer.impl.invalidate(true, true, true)
+            break
+          case 'elevator_rotate_z':
+            let _elevator_rotate_z =
+              newVal.elevatorRotate.z - this.currentElevatorRotate.z
+            this.currentElevatorModel.rotateZ(
+              _elevator_rotate_z * (Math.PI / 180)
+            )
+            this.viewer.impl.invalidate(true, true, true)
+            break
+          case 'section_rotate_z':
+            let _section_rotate_z =
+              newVal.sectionRotate.z - this.currentSectionRotate.z
+            this.currentSectionModel.rotateZ(
+              _section_rotate_z * (Math.PI / 180)
+            )
+            this.viewer.impl.invalidate(true, true, true)
+            break
+
+          case 'section_height':
             this.viewer.overlays.impl.removeOverlay(
               'custom-scene',
-              this.currentDeviceModel
+              this.currentElevatorModel
             )
-            this.currentDeviceModel = null
-            this.addTajiModelToView()
+            this.currentElevatorModel = null
+            this.viewer.overlays.impl.removeOverlay(
+              'custom-scene',
+              this.currentSectionModel
+            )
+            this.currentSectionModel = null
+            this.addSjjModelToView()
             this.viewer.impl.invalidate(true, true, true)
             break
           case 'scale':
             this.viewer.overlays.impl.removeOverlay(
               'custom-scene',
-              this.currentDeviceModel
+              this.currentElevatorModel
             )
-            this.currentDeviceModel = null
-            this.addTajiModelToView()
+            this.currentElevatorModel = null
+            this.viewer.overlays.impl.removeOverlay(
+              'custom-scene',
+              this.currentSectionModel
+            )
+            this.currentSectionModel = null
+            this.addSjjModelToView()
             this.viewer.impl.invalidate(true, true, true)
             break
+
           default:
-            this.currentDeviceModel.position.set(
-              this.currentDevicePosition.x,
-              this.currentDevicePosition.y,
-              this.currentDevicePosition.z
-            ) // 红 绿
-            this.viewer.impl.invalidate(true, true, true)
             break
         }
+        this.currentElevatorRotate.x = newVal.elevatorRotate.x
+        this.currentElevatorRotate.y = newVal.elevatorRotate.y
+        this.currentElevatorRotate.z = newVal.elevatorRotate.z
 
-        console.log(
-          'this.currentDeviceRotate.currentDeviceRotate',
-          this.currentDeviceRotate
-        )
+        this.currentSectionRotate.x = newVal.sectionRotate.x
+        this.currentSectionRotate.y = newVal.sectionRotate.y
+        this.currentSectionRotate.z = newVal.sectionRotate.z
       },
       deep: true
     },
@@ -304,20 +345,38 @@ export default {
 
         let _family_location = _device.family_location
         const familyLocation = JSON.parse(_family_location)
-        this.currentDeviceModel = _modelData.model
-        this.currentDeviceData = _device
+        this.currentElevatorModel = _modelData.elevatorModel
+        this.currentSectionModel = _modelData.sectionModel
+        this.currentElevatorData = _device
         console.log('familyLocationfamilyLocation', familyLocation)
-        // // this.currentDeviceModel.infoData = item
-        this.currentDevicePosition.x = familyLocation.position.x
-        this.currentDevicePosition.y = familyLocation.position.y
-        this.currentDevicePosition.z = familyLocation.position.z
+        // // this.currentElevatorModel.infoData = item
+        /*
+          elevatorPosition: {x: 3, y: 6, z: 12}
+          elevatorRotate: {x: 0, y: 0, z: 41}
+          scale: 2
+          sectionHeight: 13
+          sectionPosition: {x: 5, y: 7, z: 18}
+          sectionRotate: {x: 0, y: 0, z: 43}
+        */
+        this.currentElevatorPosition.x = familyLocation.elevatorPosition.x
+        this.currentElevatorPosition.y = familyLocation.elevatorPosition.y
+        this.currentElevatorPosition.z = familyLocation.elevatorPosition.z
 
-        this.currentDeviceRotate.x = familyLocation.rotate.x
-        this.currentDeviceRotate.y = familyLocation.rotate.y
-        this.currentDeviceRotate.z = familyLocation.rotate.z
+        this.currentElevatorRotate.x = familyLocation.elevatorRotate.x
+        this.currentElevatorRotate.y = familyLocation.elevatorRotate.y
+        this.currentElevatorRotate.z = familyLocation.elevatorRotate.z
 
-        this.currentDeviceHeight = familyLocation.height // 塔机的高度
-        this.currentDeviceScale = familyLocation.scale // 塔机的缩放
+        this.currentSectionPosition.x = familyLocation.sectionPosition.x
+        this.currentSectionPosition.y = familyLocation.sectionPosition.y
+        this.currentSectionPosition.z = familyLocation.sectionPosition.z
+
+        this.currentSectionRotate.x = familyLocation.sectionRotate.x
+        this.currentSectionRotate.y = familyLocation.sectionRotate.y
+        this.currentSectionRotate.z = familyLocation.sectionRotate.z
+
+        this.currentSectionHeight = familyLocation.sectionHeight
+
+        this.currentDeviceScale = familyLocation.scale
       },
       deep: true
     },
@@ -412,7 +471,7 @@ export default {
     },
     getDeviceConfigList() {
       return new Promise((resolve, reject) => {
-        let tajiList = []
+        let sjjList = []
         const param = {
           method: 'device_config',
           project_id: this.project_id,
@@ -421,9 +480,9 @@ export default {
         this.$store.dispatch('GetDeviceConfig', param).then(_itemList => {
           console.log('GetDeviceConfig - _itemList', _itemList)
           _itemList.forEach(item => {
-            if (item.device_type === 13) tajiList.push(item)
+            if (item.device_type === 12) sjjList.push(item)
           })
-          resolve(tajiList)
+          resolve(sjjList)
         })
       })
     },
@@ -431,57 +490,63 @@ export default {
       this.LotDeviceModelMap = new Map()
       this.LotDeviceList.forEach(itemInfo => {
         if (itemInfo.family_id > 0) {
-          console.log('itemInfoitemInfo121113', itemInfo)
           let _family_location = itemInfo.family_location
           const familyLocation = JSON.parse(_family_location)
-          console.log('_model_model', _family_location, familyLocation)
+          console.log('familyLocation', familyLocation)
 
-          let towerGroup = new THREE.Group()
-          // towerGroup.name = `towerGroup${itemInfo.id}`
-          towerGroup.scale.set(
+          /*
+            elevatorPosition: {x: 3, y: 6, z: 12}
+            elevatorRotate: {x: 0, y: 0, z: 41}
+            scale: 2
+            sectionHeight: 13
+            sectionPosition: {x: 5, y: 7, z: 18}
+            sectionRotate: {x: 0, y: 0, z: 43}
+          */
+
+          let elevatorGroup = new THREE.Group()
+          elevatorGroup.scale.set(
+            familyLocation.scale,
+            familyLocation.scale,
+            familyLocation.scale
+          )
+          elevatorGroup.position.set(
+            familyLocation.elevatorPosition.x,
+            familyLocation.elevatorPosition.y,
+            familyLocation.elevatorPosition.z
+          )
+
+          elevatorGroup.rotateZ(
+            familyLocation.elevatorRotate.z * (Math.PI / 180)
+          )
+
+          modifyElevator(elevatorGroup, `elevatorGroup${itemInfo.id}`, 0, false) // 名称，高度，门的开启状态
+          this.viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+
+          // 升降机的轨道
+          let sectionGroup = new THREE.Group()
+          sectionGroup.scale.set(
             familyLocation.scale,
             familyLocation.scale,
             familyLocation.scale
           )
 
-          // let _towerHeight = this.currentDeviceHeight
-          towerGroup.position.set(
-            familyLocation.position.x,
-            familyLocation.position.y,
-            familyLocation.position.z
+          sectionGroup.position.set(
+            familyLocation.sectionPosition.x,
+            familyLocation.sectionPosition.y,
+            familyLocation.sectionPosition.z
           )
-          console.log(
-            '--->1',
-            familyLocation.position.x,
-            familyLocation.position.y,
-            familyLocation.position.z
-          )
-          console.log(
-            '--->',
-            towerGroup,
-            towerGroup.name,
-            familyLocation.height,
-            familyLocation.rotate.z
-          )
-          console.log('towerGrouptowerGroup', towerGroup)
-          modifyTower2(
-            towerGroup,
-            `towerGroup${itemInfo.id}`,
-            familyLocation.height,
-            familyLocation.rotate.z,
-            0,
-            0,
-            0
-          ) // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
 
-          this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
+          sectionGroup.rotateZ(familyLocation.sectionRotate.z * (Math.PI / 180))
+
+          this.viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
+          LoadSection(sectionGroup, familyLocation.sectionHeight)
 
           this.LotDeviceModelMap.set(itemInfo.id, {
             deviceData: itemInfo,
-            model: towerGroup
+            elevatorModel: elevatorGroup,
+            sectionModel: sectionGroup
           })
           this.viewer.impl.invalidate(true, true, true)
-          console.log('this.LotDeviceModelMap', this.LotDeviceModelMap)
         }
       })
     },
@@ -751,107 +816,119 @@ export default {
       // console.log('min,max', min, max, average)
       return average
     },
-    // openComponentLibraryDialogHandle() {
-
-    //   // 打开构件列表窗口
-    //   const param = {
-    //     show: true,
-    //   }
-    //   this.$store.dispatch('ShowComponentLibraryListDialog', param).then(() => {}).catch(() => {})
-
-    // },
-    openTajiListDialogHandle() {
-      // 打开塔机管理窗口
+    openSjjListDialogHandle() {
+      // 打开升降机管理窗口
       const param = {
         show: true,
         buildItem: this.itemInfoList[0]
       }
       // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
       this.$store
-        .dispatch('ShowTajiListDialog', param)
+        .dispatch('ShowSjjListDialog', param)
         .then(() => {})
         .catch(() => {})
     },
-    openTajiPositionDialogHandle() {
-      console.log('this.currentDevicePosition', this.currentDevicePosition)
-      // 打开塔机位置
+    openSjjPositionDialogHandle() {
+      // 打开升降机位置
       const param = {
         show: true,
-        position: this.currentDevicePosition,
-        rotate: this.currentDeviceRotate,
-        height: this.currentDeviceHeight,
+        elevatorPosition: this.currentElevatorPosition,
+        elevatorRotate: this.currentElevatorRotate,
+        sectionPosition: this.currentSectionPosition,
+        sectionRotate: this.currentSectionRotate,
+        sectionHeight: this.currentSectionHeight,
+        scale: this.currentDeviceScale
+      }
+      this.$store
+        .dispatch('ShowSjjPositionDialog', param)
+        .then(() => {})
+        .catch(() => {})
+    },
+    openSjjInfoDetailDialogHandle() {
+      // 打开升降机信息编辑窗口
+      const param = {
+        show: true,
+        buildItem: this.itemInfoList[0],
+        deviceModel: this.currentElevatorModel, // 当前的模型
+        deviceEditData: this.currentElevatorData, // 当前设备的数据
+        elevatorPosition: this.currentElevatorPosition,
+        elevatorRotate: this.currentElevatorRotate,
+        sectionPosition: this.currentSectionPosition,
+        sectionRotate: this.currentSectionRotate,
+        sectionHeight: this.currentSectionHeight,
         scale: this.currentDeviceScale
       }
       // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
       this.$store
-        .dispatch('ShowTajiPositionDialog', param)
-        .then(() => {})
-        .catch(() => {})
-    },
-    openTajiInfoDetailDialogHandle() {
-      // 打开塔机信息编辑窗口
-      const param = {
-        show: true,
-        buildItem: this.itemInfoList[0],
-        deviceModel: this.currentDeviceModel, // 当前的模型
-        deviceEditData: this.currentDeviceData, // 当前设备的数据
-        devicePosition: this.currentDevicePosition,
-        deviceRotate: this.currentDeviceRotate,
-        tajiHeight: this.currentDeviceHeight,
-        tajiScale: this.currentDeviceScale
-      }
-      // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
-      this.$store
-        .dispatch('ShowTajiInfoDetailDialog', param)
+        .dispatch('ShowSjjInfoDetailDialog', param)
         .then(() => {})
         .catch(() => {})
     },
 
-    addTajiModelHandle() {
-      if (this.currentDeviceModel !== null) {
+    addSjjModelHandle() {
+      if (this.currentElevatorModel !== null) {
         this.$message({
           message: '编辑模式下已经有设备存在，要新增设备必须要先删除设备！',
           type: 'error'
         })
         return
       }
-      this.currentDevicePosition.x = this.selectedPosition.x
-      this.currentDevicePosition.y = this.selectedPosition.y
-      this.currentDevicePosition.z = this.selectedPosition.z
-      this.addTajiModelToView()
+      this.currentElevatorPosition.x = this.selectedPosition.x
+      this.currentElevatorPosition.y = this.selectedPosition.y
+      this.currentElevatorPosition.z = this.selectedPosition.z
+
+      this.currentSectionPosition.x = this.selectedPosition.x
+      this.currentSectionPosition.y = this.selectedPosition.y
+      this.currentSectionPosition.z = this.selectedPosition.z
+      this.addSjjModelToView()
     },
-    addTajiModelToView() {
-      let towerGroup = new THREE.Group()
-      this.currentDeviceModel = towerGroup
-      // towerGroup.name = 'towerGroup'
-      towerGroup.scale.set(
+    addSjjModelToView() {
+      // 升降机的轿箱
+      let elevatorGroup = new THREE.Group()
+      this.currentElevatorModel = elevatorGroup
+      elevatorGroup.scale.set(
+        this.currentDeviceScale,
+        this.currentDeviceScale,
+        this.currentDeviceScale
+      )
+      elevatorGroup.position.set(
+        this.currentElevatorPosition.x,
+        this.currentElevatorPosition.y,
+        this.currentElevatorPosition.z
+      )
+
+      this.currentElevatorModel.rotateZ(
+        this.currentElevatorRotate.z * (Math.PI / 180)
+      )
+
+      modifyElevator(elevatorGroup, this.towerModelName, 0, false) // 名称，高度，门的开启状态
+      this.viewer.overlays.impl.addOverlay('custom-scene', elevatorGroup)
+
+      // 升降机的轨道
+      let sectionGroup = new THREE.Group()
+      this.currentSectionModel = sectionGroup
+      sectionGroup.scale.set(
         this.currentDeviceScale,
         this.currentDeviceScale,
         this.currentDeviceScale
       )
 
-      // let _towerHeight = this.currentDeviceHeight
-      towerGroup.position.set(
-        this.currentDevicePosition.x,
-        this.currentDevicePosition.y,
-        this.currentDevicePosition.z
-      ) // 红 绿
-      console.log('this.towerGroupthis.towerGroupthis.towerGroup', towerGroup)
-      modifyTower2(
-        towerGroup,
-        this.towerModelName,
-        this.currentDeviceHeight,
-        this.currentDeviceRotate.z,
-        0,
-        0,
-        0
-      ) // towerGroup,名称，高度，初始化角度大臂角度，小车距离，吊钩线长
+      sectionGroup.position.set(
+        this.currentSectionPosition.x,
+        this.currentSectionPosition.y,
+        this.currentSectionPosition.z
+      )
 
-      this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
+      this.currentSectionModel.rotateZ(
+        this.currentSectionRotate.z * (Math.PI / 180)
+      )
+
+      this.viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
+      LoadSection(sectionGroup, this.currentSectionHeight)
     },
-    deleteTajiModelHandle() {
-      console.log('deleteTajiModelHandle')
-      if (this.currentDeviceModel !== null) {
+    deleteSjjModelHandle() {
+      console.log('deleteSjjModelHandle')
+      if (this.currentElevatorModel !== null) {
         this.$confirm('是否确定删除此设备的模型?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -874,21 +951,21 @@ export default {
         'url(./static/icon/ico_marker.png)'
 
       buttonEnterLotMode.onClick = e => {
-        this.TajiDeviceNewModel() // 新增塔机模型
+        this.SjjDeviceNewModel() // 新增升降机模型
       }
       buttonEnterLotMode.addClass('enter-add-lot-button')
-      buttonEnterLotMode.setToolTip('添加塔机设备')
+      buttonEnterLotMode.setToolTip('添加升降机设备')
 
       // 标注功能 - 标定项目位置标准视点
       let buttonLotListDialog = new Autodesk.Viewing.UI.Button(
         'lot-list-dialog-button'
       )
       buttonLotListDialog.addClass('lot-list-dialog-button')
-      buttonLotListDialog.setToolTip('塔机设备列表')
+      buttonLotListDialog.setToolTip('升降机设备列表')
       buttonLotListDialog.icon.style.backgroundImage =
         'url(./static/icon/ico_markup.png)'
       buttonLotListDialog.onClick = e => {
-        this.openTajiListDialogHandle()
+        this.openSjjListDialogHandle()
       }
       // SubToolbar
       this.ControlLotManager = new Autodesk.Viewing.UI.ControlGroup(
@@ -900,10 +977,10 @@ export default {
       // Add subToolbar to main toolbar
       this.viewer.toolbar.addControl(this.ControlLotManager)
     },
-    TajiDeviceNewModel() {
+    SjjDeviceNewModel() {
       this.enterEditModeHandle()
       this.$store
-        .dispatch('ShowTajiListDialog', {
+        .dispatch('ShowSjjListDialog', {
           show: false
         })
         .then(() => {})
@@ -923,7 +1000,7 @@ export default {
         .then(() => {})
 
       this.$store
-        .dispatch('ShowTajiListDialog', {
+        .dispatch('ShowSjjListDialog', {
           show: false
         })
         .then(() => {})
@@ -932,21 +1009,29 @@ export default {
     clearEditModelData(type) {
       switch (type) {
         case 'delete':
-          if (this.currentDeviceModel !== null) {
+          if (this.currentElevatorModel !== null) {
             this.viewer.overlays.impl.removeOverlay(
               'custom-scene',
-              this.currentDeviceModel
+              this.currentElevatorModel
             )
           }
+          if (this.currentSectionModel !== null) {
+            this.viewer.overlays.impl.removeOverlay(
+              'custom-scene',
+              this.currentSectionModel
+            )
+          }
+
           break
         case 'clear':
           this.viewer.overlays.removeScene('custom-scene')
           this.viewer.overlays.addScene('custom-scene')
-          this.currentDeviceData = null // 当前正在操作的设备数据
+          this.currentElevatorData = null // 当前正在操作的设备数据
           break
       }
 
-      this.currentDeviceModel = null // 当前正在操作的设备模型
+      this.currentElevatorModel = null // 当前正在操作的设备模型
+      this.currentSectionModel = null
       this.currentEditModelName.name = ''
       this.selectedPosition = {
         // 选择的构件位置
@@ -954,18 +1039,27 @@ export default {
         y: 0,
         z: 0
       }
-      this.currentDevicePosition = {
-        //
+      this.currentElevatorPosition = {
         x: 0,
         y: 0,
         z: 0
       }
-      this.currentDeviceRotate = {
+      this.currentSectionPosition = {
         x: 0,
         y: 0,
         z: 0
       }
-      this.currentDeviceHeight = 20
+      this.currentElevatorRotate = {
+        x: 0,
+        y: 0,
+        z: 0
+      }
+      this.currentSectionRotate = {
+        x: 0,
+        y: 0,
+        z: 0
+      }
+      this.currentSectionHeight = 20
       this.currentDeviceScale = 1
     },
     async exitEditModeHandle() {
@@ -976,7 +1070,7 @@ export default {
       // }).then(() => {}).catch(() => {})
 
       this.$store
-        .dispatch('ShowTajiPositionDialog', {
+        .dispatch('ShowSjjPositionDialog', {
           show: false
         })
         .then(() => {})
@@ -985,8 +1079,8 @@ export default {
       this.viewer.toolbar.addControl(this.ControlLotManager)
       this.isShowViewPointArea = false
       this.isShowToolbarMarker = false
-      console.log('this.currentDeviceModel', this.currentDeviceModel)
-      // this.viewer.unloadModel(this.currentDeviceModel)
+      console.log('this.currentElevatorModel', this.currentElevatorModel)
+      // this.viewer.unloadModel(this.currentElevatorModel)
 
       this.clearEditModelData('clear')
 
@@ -1002,12 +1096,12 @@ export default {
     },
     FindModel() {
       // 放大定位
-      this.viewer.fitToView([1], this.currentDeviceModel)
+      this.viewer.fitToView([1], this.currentElevatorModel)
     },
     SelectModel() {
       this.viewer.select(
         [1],
-        this.currentDeviceModel,
+        this.currentElevatorModel,
         Autodesk.Viewing.SelectionType.OVERLAYED
       )
     },
@@ -1019,7 +1113,9 @@ export default {
         // console.log("deviceInfo", deviceInfo);
         let _familyLocation = deviceInfo.family_location
         const familyLocation = JSON.parse(_familyLocation)
-
+        if (deviceInfo.device_type === 12) {
+          familyLocation.position = familyLocation.sectionPosition
+        }
         const _x = familyLocation.position.x
         const _y = familyLocation.position.y
         const _z = familyLocation.position.z
@@ -1030,8 +1126,8 @@ export default {
           let _modelData = this.LotDeviceModelMap.get(deviceInfo.id)
           // console.log("_modelData_modelData_modelData", _modelData);
           if (_modelData !== undefined) {
-            if (deviceInfo.device_type === 13) {
-              console.log('计算塔机的标签')
+            if (deviceInfo.device_type === 12) {
+              console.log('计算升降机的标签')
             }
           }
         }

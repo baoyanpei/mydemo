@@ -216,7 +216,7 @@
       },
       getDeviceTypeList() {
         return new Promise((resolve, reject) => {
-          this.buildList = []
+          let itemList = []
           const param = {
             method: 'device_type',
             project_id: this.project_id,
@@ -225,8 +225,12 @@
           }
           this.$store.dispatch('GetDeviceType', param).then((_itemList) => {
             console.log('GetDeviceType - _itemList', _itemList)
-
-            resolve(_itemList)
+            _itemList.forEach(item => {
+              if (item.id !== 13 && item.id !== 12) {
+                itemList.push(item)
+              }
+            })
+            resolve(itemList)
           })
 
         })

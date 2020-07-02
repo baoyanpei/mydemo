@@ -1,266 +1,144 @@
 <style lang="scss">
-  @import "./meterShui.scss";
-
+@import './meterShui.scss';
 </style>
 
 <template>
   <div class="screen-meter-shui">
-    <div v-if="device_id === null" class="noMeterShuiTips">{{noMeterShuiTips}}</div>
-    <div v-if="device_id !== null" class="data-area">
-      <!-- <div class="label">当前水表读数</div> -->
+    <div v-if="noMeterShuiTips !=='' " class="noMeterShuiTips">{{noMeterShuiTips}}</div>
+    <div v-if="noMeterShuiTips ==='' && shuibiaoDataList.length>0" class="data-area">
+      <div>
+        <span class="device_name">{{device_name}}</span>
+      </div>
       <div class="total-used">
         <div class="item-box">{{total_used[0]}}</div>
         <div class="item-box">{{total_used[1]}}</div>
         <div class="item-box">{{total_used[2]}}</div>
         <div class="item-box">{{total_used[3]}}</div>
         <div class="item-box">{{total_used[4]}}</div>
+        <div class="item-box">{{total_used[5]}}</div>
       </div>
       <div class="total-today-label">今日用水量</div>
       <div class="total-today">{{total_today}} 吨</div>
+      <el-row class="dot-page-list">
+        <div
+          v-for="(item,i) in shuibiaoDataList"
+          :key="i"
+          :class="{ 'marker_white': i!==currentIndex, 'marker': i===currentIndex }"
+          @click="dotClick(i)"
+        ></div>
+      </el-row>
     </div>
-    <!-- <div v-if="device_id !== null">
-      <echart ref="echarts-shuibiao" :options="option" class="echarts-shuibiao" theme="infographic"
-        style="width:100%;height: 170px;">
-      </echart>
-    </div> -->
   </div>
 </template>
 <script>
-  import lodash from 'lodash'
-  import moment from 'moment'
-  export default {
-    components: {},
-    data() {
-      return {
-        noMeterShuiTips: '',
-        project_id: null,
-        device_id: null, //YD10000SB03, YD10000DB01
-        total_used: '',
-        total_today: '',
-        option: {
-          title: {
-            // text: '进场人员走势'
-          },
+import lodash from 'lodash'
+import moment from 'moment'
+export default {
+  components: {},
+  data() {
+    return {
+      noMeterShuiTips: '',
+      project_id: null,
+      shuibiaoDataList: [],
+      device_name: '水表',
+      currentIndex: 0,
+      total_used: '',
+      total_today: 0,
+      timerChangeData: null
+    }
+  },
+  props: {},
+  computed: {},
+  created() {},
+  watch: {},
+  mounted() {},
+  destroyed() {},
+  methods: {
+    async update(project_id, allDeviceConfigList) {
+      this.project_id = project_id
 
-          grid: {
-            left: '3%',
-            right: '3%',
-            bottom: '3%',
-            top: 5,
-            height: 140,
-            // borderWidth: 1,
-            // borderColor: '#ccc',
-            containLabel: true
-          },
-          legend: {
-            show: true,
-            bottom: 0,
-            itemHeight: 4,
-            data: ['最近7小时用水'],
-            align: 'left',
-            // align: 'right',
-            // right: 30,
-            textStyle: {
-              color: '#FFFFFF'
+      for (var i = 0; i < allDeviceConfigList.length; i++) {
+        let device = allDeviceConfigList[i]
+        if (device.device_type === 11) {
+          const totalToday = await this.getTodayHoursData(device.device_id)
+          device.total_today = totalToday
+          //11 水表
+          let hasDevice = false
+          this.shuibiaoDataList.forEach(dianbiao => {
+            if (device.device_id === dianbiao.device_id) {
+              dianbiao.total_today = device.total_today
+              dianbiao.total_used = device.total_used
+              hasDevice = true
             }
-          },
-          tooltip: {
-            trigger: 'axis'
-          },
-          xAxis: {
-            type: 'category',
-            data: [],
-
-            axisLabel: {
-              color: '#3960CB'
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#4e535d'
-              }
-            },
-            axisTick: {
-              show: false,
-              lineStyle: {
-                color: '#34716c'
-              }
-            }
-          },
-          yAxis: {
-            type: 'value',
-            splitNumber: 4,
-            splitLine: {
-              show: true,
-              lineStyle: {
-                color: ['#4e535d'],
-                type: 'solid',
-              }
-            },
-            axisLabel: {
-              color: '#3960CB'
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#4e535d'
-              }
-            },
-            axisTick: {
-              show: false,
-              lineStyle: {
-                color: '#34716c'
-              }
-            }
-          },
-          series: [{
-            name: '最近7小时用水',
-            data: [],
-            type: 'bar',
-            smooth: false,
-            center: ['10%', '10%'],
-            symbol: 'circle',
-            symbolSize: 10,
-            barWidth: 8,
-            itemStyle: {
-              color: '#3960CB',
-            },
-            lineStyle: {
-              color: '#3960CB',
-            }
-          }]
+          })
+          if (hasDevice === false) {
+            this.shuibiaoDataList.push(device)
+          }
+        }
+      }
+      console.log('this.shuibiaoDataList', this.shuibiaoDataList)
+      if (this.shuibiaoDataList.length === 0) {
+        this.noMeterShuiTips = '无水表数据'
+      } else {
+        this.showData()
+        if (this.timerChangeData === null) {
+          this.changeIndex()
         }
       }
     },
-    props: {
-
+    showData() {
+      if (this.shuibiaoDataList.length > 0) {
+        const currentDisplayData = this.shuibiaoDataList[this.currentIndex]
+        this.device_name = currentDisplayData.device_name
+        this.total_used = this.FillZero(
+          parseInt(currentDisplayData.total_used).toString()
+        )
+        this.total_today = currentDisplayData.total_today
+      }
     },
-    computed: {
-
-    },
-    created() {
-
-    },
-    watch: {
-
-    },
-    mounted() {
-      // this.getAllData()
-      // this.refreshData()
-    },
-    destroyed() {
-
-    },
-    methods: {
-      init(project_id, datumMeterMap) {
-        this.project_id = project_id
-
-        datumMeterMap.forEach(datum => {
-          if (this.device_id === null) {
-            if (datum.device_type === 11 && datum.total_used !== null && datum.total_used !== '') {
-              // this.cameraURList.push(datum)
-              this.device_id = datum.device_id
-              this.getAllData()
-              this.refreshData()
-            }
+    changeIndex() {
+      if (this.shuibiaoDataList.length > 1) {
+        this.timerChangeData = setTimeout(() => {
+          this.currentIndex = this.currentIndex + 1
+          if (this.currentIndex === this.shuibiaoDataList.length) {
+            this.currentIndex = 0
           }
-
-        })
-        if (this.device_id === null) {
-          this.noMeterShuiTips = "无水表数据"
-        }
-      },
-      getAllData() {
-        this.getCurrentData()
-        this.getTodayHoursData()
-        this.getLastHoursData()
-
-      },
-      getCurrentData() {
-        const param = {
-          method: 'devlist',
-          project_id: this.project_id,
-          device_id: this.device_id,
-        }
-        this.$store.dispatch('QueryDatumMeter', param).then((MeterData) => {
-          // console.log('MeterData', MeterData)
-          if (MeterData.length > 0) {
-            this.total_used = MeterData[0].total_used
-          }
-          this.total_used = this.FillZero(parseInt(this.total_used).toString())
-
-        }).catch((e) => {
-          console.log(e)
-        })
-      },
-      FillZero(p) {
-        return new Array(5 - (p + '').length + 1).join('0') + p;
-      },
-      getTodayHoursData() {
+          this.showData()
+          this.changeIndex()
+        }, 10 * 1000)
+      }
+    },
+    FillZero(p) {
+      return new Array(6 - (p + '').length + 1).join('0') + p
+    },
+    getTodayHoursData(device_id) {
+      return new Promise((resolve, reject) => {
         const _param = {
           method: 'query_hours',
           project_id: this.project_id,
-          meter_id: this.device_id,
+          meter_id: device_id,
           bt: moment().format('YYYY-MM-DD 00:00:00'),
           et: moment().format('YYYY-MM-DD 23:59:59') //HH:mm:ss
         }
-        this.total_today = 0
-        this.$store.dispatch('QueryDatumMeterHours', _param).then((dataList) => {
-          // console.log('QueryDatumMeterHours', dataList)
+        let _totalToday = 0
+        this.$store.dispatch('QueryDatumMeterHours', _param).then(dataList => {
+          //   console.log('QueryDatumMeterHours', dataList)
           dataList.forEach(hourData => {
             if (hourData.used !== '') {
-              this.total_today = this.total_today + hourData.used
+              _totalToday = _totalToday + hourData.used
             }
-          });
-          this.total_today = this.total_today.toFixed(2)
-        })
-      },
-      getLastHoursData() {
-        this.option.xAxis.data = []
-        this.option.series[0].data = []
-
-        const _param = {
-          method: 'query_hours',
-          project_id: this.project_id,
-          meter_id: this.device_id,
-          bt: moment().add('hours', -7).format('YYYY-MM-DD HH:00:00'),
-          et: moment().add('hours', -1).format('YYYY-MM-DD HH:59:59'),
-        }
-        let btHH = parseInt(moment().add('hours', -7).format('H'))
-        let etHH = parseInt(moment().add('hours', -1).format('H'))
-        this.total_today = 0
-        this.$store.dispatch('QueryDatumMeterHours', _param).then((dataList) => {
-          let _hourMap = new Map()
-          dataList.forEach((item, index) => {
-            // this.option.xAxis.data.push(moment(item.hour, 'YYYYMMDDHHMM').format('HH'))
-            let _h = moment(item.hour, 'YYYYMMDDHHMM').format('H')
-            _hourMap.set(_h, item)
-            // this.option.series[0].data.push(used)
-            // loading.close();
           })
-          for (let i = btHH; i <= etHH; i++) {
-            this.option.xAxis.data.push(i)
-            let _hourData = _hourMap.get(i.toString())
-            if (_hourData !== undefined) {
-              let used = _hourData.used
-              if (used === '') {
-                used = 0
-              }
-              this.option.series[0].data.push(used)
-            } else {
-              this.option.series[0].data.push(0)
-            }
+          _totalToday = _totalToday.toFixed(2)
 
-          }
+          console.log('_totalToday_totalToday', _totalToday)
+          resolve(_totalToday)
         })
-      },
-      refreshData() {
-        setTimeout(() => {
-          this.getAllData()
-          this.refreshData()
-          // console.log('getVehicleGateData')
-        }, 120 * 1000)
-      },
+      })
     },
-
+    dotClick(index) {
+      this.currentIndex = index
+      this.showData()
+    }
   }
-
+}
 </script>

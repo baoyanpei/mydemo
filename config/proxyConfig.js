@@ -1,31 +1,35 @@
 module.exports = {
   proxyList: {
-    '/api': {
+    "/api": {
       // 测试环境
-      target: 'http://admin.man.yidebim.com/', // 接口域名
+      target: "http://admin.man.yidebim.com/", // 接口域名
       changeOrigin: true, //是否跨域
       pathRewrite: {
         '/api': '/api'
         //需要rewrite重写的,dd
       }
+      },
+      secure: false
     },
-    '/BCP_FILE': {
+    "/BCP_FILE": {
       // 测试环境
-      target: 'http://admin.man.yidebim.com/', // 接口域名
+      target: "http://admin.man.yidebim.com/", // 接口域名
       changeOrigin: true, //是否跨域
       pathRewrite: {
-        '/BCP_FILE': '/BCP_FILE'
+        "/BCP_FILE": "/BCP_FILE"
         //需要rewrite重写的,
-      }
+      },
+      secure: false
     },
-    '/veh_pic': {
+    "/veh_pic": {
       // 测试环境
-      target: 'http://admin.man.yidebim.com/', // 接口域名
+      target: "http://admin.man.yidebim.com/", // 接口域名
       changeOrigin: true, //是否跨域
       pathRewrite: {
-        '/veh_pic': '/veh_pic'
+        "/veh_pic": "/veh_pic"
         //需要rewrite重写的,
-      }
+      },
+      secure: false
     }
   }
-}
+};

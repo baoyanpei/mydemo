@@ -8,6 +8,37 @@
   // border: 1px solid rgba(0, 0, 0, 0.1);
   // height: 290px;
   position: relative;
+  .dot-page-list {
+    text-align: center;
+    margin: 0 auto;
+    width: 130px;
+    padding-top: 5px;
+    pointer-events: auto;
+    .marker {
+      width: 6px;
+      display: inline-block;
+      height: 6px;
+      border: 0px solid #088;
+      border-radius: 100px;
+      background-color: #088;
+      cursor: pointer;
+      // float: left;
+      margin: 2px;
+      // opacity: 0.5;
+    }
+
+    .marker_white {
+      width: 6px;
+      display: inline-block;
+      height: 6px;
+      border: 0px solid #fff;
+      border-radius: 100px;
+      background-color: #fff;
+      cursor: pointer;
+      // float: left;
+      margin: 2px;
+    }
+  }
 
   .noTJTdTip {
     line-height: 100px;
@@ -43,7 +74,7 @@
 
     // background-color: #757373;
     span {
-      background-color: #ECA198;
+      background-color: #eca198;
       padding: 3px 5px 3px 5px;
       color: #115288;
       border-radius: 5px;
@@ -52,23 +83,21 @@
   }
 
   .label {
-    color: #E78163 !important;
+    color: #e78163 !important;
   }
 
   .grid-content {
     // color: #ffcc00;
     font-weight: 600;
-    line-height: 1.5rem;
-
-
+    line-height: 1.3rem;
   }
 
   .ZhenchangColor {
-    color: #67C23A;
+    color: #67c23a;
   }
 
   .BaojinColor {
-    color: #FF0000;
+    color: #ff0000;
   }
 
   .YujinColor {
@@ -76,6 +105,6 @@
   }
 
   .NodataColor {
-    color: #FFFFFF;
+    color: #ffffff;
   }
 }

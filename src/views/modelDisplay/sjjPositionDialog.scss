@@ -1,0 +1,12 @@
+.sjj-position-dialog {
+  .el-dialog__wrapper {
+    padding-right: calc(40vw) !important;
+    pointer-events: none;
+  }
+  .el-dialog__body {
+    padding: 0px;
+    color: #606266;
+    font-size: 14px;
+    word-break: break-all;
+  }
+}

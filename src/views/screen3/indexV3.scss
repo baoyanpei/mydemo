@@ -1,31 +1,33 @@
-$box-border-color: #eca198;
+.screen3-v3-index-container {
+  $box-border-color: #eca198;
 
-%box-border {
-  border: 3px solid $box-border-color;
-  box-shadow: 0 0 10px #d43982; //d43982
-  border-radius: 5px;
-  // background-color: #000000;
-  // opacity:0.5;
-}
+  %box-border {
+    border: 3px solid $box-border-color;
+    box-shadow: 0 0 10px #d43982; //d43982
+    border-radius: 5px;
+    // background-color: #000000;
+    // opacity:0.5;
+  }
 
-.errTips {
-  min-height: 1080px;
-  line-height: 1080px;
-  text-align: center;
-  font-size: 4rem;
-  // color: #333333;
-}
+  .errTips {
+    min-height: 1080px;
+    line-height: 1080px;
+    text-align: center;
+    font-size: 4rem;
+    // color: #333333;
+  }
 
-.screen3-index-container {
   width: 100%;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
+  margin: 0px auto;
+  // position: absolute;
+  // top: 0;
+  // bottom: 0;
+  // left: 0;
   color: #ffffff;
 
   overflow: hidden;
   min-width: 1920px;
+  max-width: 1920px;
   min-height: 1080px;
   max-height: 1080px;
 
@@ -347,7 +349,7 @@ $box-border-color: #eca198;
 
   /* 环境检测仪 */
   .weather-area {
-    margin: 0px 20px 5px 20px;
+    margin: 0px 20px 0px 20px;
 
     .title {
       text-align: center;
@@ -369,7 +371,7 @@ $box-border-color: #eca198;
 
     .main {
       @extend %box-border;
-      height: 160px;
+      height: 155px;
       padding: 0px 0px 0px 0px;
       position: relative;
       top: -15px;
@@ -388,7 +390,7 @@ $box-border-color: #eca198;
 
   /* 水表电表数据 */
   .meter-area {
-    margin: 0px 20px 10px 20px;
+    margin: 0px 20px 0px 20px;
 
     .title {
       text-align: center;
@@ -410,7 +412,7 @@ $box-border-color: #eca198;
 
     .main {
       @extend %box-border;
-      height: 105px;
+      height: 135px;
       // padding: 20px 0px 10px 0px;
       position: relative;
       top: -15px;
@@ -433,7 +435,7 @@ $box-border-color: #eca198;
 
   /* 塔机/升降机数据 */
   .taji-area {
-    margin: 0px 20px 10px 20px;
+    margin: 0px 20px 0px 20px;
 
     .title {
       text-align: center;

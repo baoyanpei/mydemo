@@ -19,7 +19,7 @@
         // topicTJ1: '', // 塔机和升降机推送消息
         // topicTJ2: '', // 塔机和升降机推送消息
         reconnectTimes: 0, //重连次数
-        datumMeterMap: new Map(),
+        allLotDeviceList: null,
         mqttMap: new Map()
 
       }
@@ -62,9 +62,9 @@
     },
     destroyed() {},
     methods: {
-      init(project_id, datumMeterMap) {
-        this.datumMeterMap = datumMeterMap
-        console.log('datumMeterMap', datumMeterMap)
+      init(project_id, allLotDeviceList) {
+        this.allLotDeviceList = allLotDeviceList
+        console.log('allLotDeviceList', allLotDeviceList)
         this.mqttConnect()
       },
       mqttConnect() {
@@ -143,20 +143,19 @@
 
 
 
-          this.datumMeterMap.forEach(datum => {
+          this.allLotDeviceList.forEach(datum => {
+            // console.log('datumdatumdatum111', datum)
             // BIM/Sets/zhgd/DEYE/18090311/# 塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
             // 'BIM/Sets/zhgd/DEYE/18090302/#' 塔机和升降机推送消息 BIM/Sets/zhgd/厂家/和匣子编号/cmd
             // 15 环境监测仪 13 塔机 12 主楼升降机右
             if ((datum.device_type === 15 || datum.device_type === 13 || datum.device_type === 12) && datum
-              .params_json !== '') { // 环境检测仪
-              let paramsJson = JSON.parse(datum.params_json)
-              if (paramsJson.mqtt !== undefined) {
-                this.client.subscribe(paramsJson.mqtt); //订阅主题
-                this.mqttMap.set(paramsJson.mqtt, datum)
-                console.log("订阅成功！- mqttBim", paramsJson.mqtt)
-                if (datum.device_type === 15) {
-                  this.topicWeather = paramsJson.mqtt
-                }
+              .mqtt_url !== '') { // 环境检测仪
+
+              this.client.subscribe(datum.mqtt_url); //订阅主题
+              this.mqttMap.set(datum.mqtt_url, datum)
+              console.log("订阅成功！- mqttBim", datum.mqtt_url)
+              if (datum.device_type === 15) {
+                this.topicWeather = datum.mqtt_url
               }
 
             }
@@ -174,16 +173,14 @@
         // }
 
         if (this.isConnectMqtt === true && this.topicUserInfo !== '') {
-          this.datumMeterMap.forEach(datum => {
+          this.allLotDeviceList.forEach(datum => {
 
             if ((datum.device_type === 15 || datum.device_type === 13 || datum.device_type === 12) && datum
-              .params_json !== '') { // 环境检测仪
-              let paramsJson = JSON.parse(datum.params_json)
-              if (paramsJson.mqtt !== undefined) {
-                this.client.unsubscribe(paramsJson.mqtt); //订阅主题
-                this.mqttMap.delete(paramsJson.mqtt)
-                console.log("取消订阅成功！", paramsJson.mqtt)
-              }
+              .mqtt_url !== '') { // 环境检测仪
+
+              this.client.unsubscribe(datum.mqtt_url); //订阅主题
+              this.mqttMap.delete(datum.mqtt_url)
+              console.log("取消订阅成功！", datum.mqtt_url)
 
             }
 

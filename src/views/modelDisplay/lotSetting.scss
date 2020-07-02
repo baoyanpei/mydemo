@@ -1,5 +1,4 @@
 .model-lot-setting {
-
   .viewPointShowArea {
     /*视点展示区域*/
     position: absolute;
@@ -11,7 +10,13 @@
     // background-color: #FFFFFF;
     background: -moz-linear-gradient(top, #b8c4cb, #f6f6f8);
     /*非IE6的其它*/
-    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#b8c4cb), to(#f6f6f8));
+    background: -webkit-gradient(
+      linear,
+      0% 0%,
+      0% 100%,
+      from(#b8c4cb),
+      to(#f6f6f8)
+    );
 
     .viewPointTitle {
       width: 100%;
@@ -33,8 +38,6 @@
         margin-top: 4px;
       }
     }
-
-
   }
 
   .toolbar-marker {
@@ -64,15 +67,24 @@
 
     .el-button {
       background: transparent;
-      color: #DDDDDD;
+      color: #dddddd;
     }
 
     .el-button :hover {
       background: transparent;
-      color: #FFFFFF;
-      border-color: #FFFF00;
+      color: #ffffff;
+      border-color: #ffff00;
       font-size: 24px;
     }
-
+  }
+  .mymlLabel {
+    background-color: #ffffff;
+    color: #000000;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 10px;
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px;
   }
 }
