@@ -42,9 +42,9 @@
         <font-awesome-icon icon="map-marked" />
         <span slot="title">BIM管理</span>
       </el-menu-item>
-      <el-menu-item index="">
-        <i class="el-icon-notebook-1"></i>
-        <span slot="title">计划</span>
+      <el-menu-item index="yearsplan">
+        <i class="el-icon-notebook-1" style="width:16px;font-size: 18px;"></i>
+        <span slot="title">计划管理</span>
       </el-menu-item>
       <!--
       <el-menu-item index="/main1">
