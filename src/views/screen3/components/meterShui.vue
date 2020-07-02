@@ -66,7 +66,8 @@ export default {
           let hasDevice = false
           this.shuibiaoDataList.forEach(dianbiao => {
             if (device.device_id === dianbiao.device_id) {
-              dianbiao = device
+              dianbiao.total_today = device.total_today
+              dianbiao.total_used = device.total_used
               hasDevice = true
             }
           })

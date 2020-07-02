@@ -6,7 +6,6 @@
   <div class="screen-meter-dian">
     <div v-if="noMeterDianTips !=='' " class="noMeterDianTips">{{noMeterDianTips}}</div>
     <div v-if="noMeterDianTips ==='' && dianbiaoDataList.length>0" class="data-area">
-      <!-- <div class="label">当前电表读数</div> -->
       <div>
         <span class="device_name">{{device_name}}</span>
       </div>
@@ -67,7 +66,8 @@ export default {
           let hasDevice = false
           this.dianbiaoDataList.forEach(dianbiao => {
             if (device.device_id === dianbiao.device_id) {
-              dianbiao = device
+              dianbiao.total_today = device.total_today
+              dianbiao.total_used = device.total_used
               hasDevice = true
             }
           })

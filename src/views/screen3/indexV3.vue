@@ -342,6 +342,7 @@ export default {
       this.timerReloadDeviceConfigList = setTimeout(async () => {
         this.allDeviceConfigList = await this.getDeviceConfigList()
         this.$refs.meterDian.update(this.project_id, this.allDeviceConfigList)
+        this.$refs.meterShui.update(this.project_id, this.allDeviceConfigList)
         this.reloadDeviceConfigList()
       }, 120 * 1000)
     }
