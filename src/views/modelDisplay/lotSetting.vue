@@ -209,19 +209,8 @@ export default {
       // 物联网设备列表中添加设备
       handler: function(newVal, oldVal) {
         console.log('ComponentDataAdd ', newVal)
-        // if (newVal.type === 1) {
-        //   this.refreshDisplay(newVal)
-        // }
         let _item = newVal.item
-
-        switch (_item.type_id) {
-          // case 999901:
-          //   this.addTajiModelToView(_item) // 塔吊的设备模型
-          //   break;
-          default:
-            this.AddComponentData(_item) // rvt 的设备模型
-            break
-        }
+        this.AddComponentData(_item) // rvt 的设备模型
       },
       deep: true
     },
@@ -376,8 +365,7 @@ export default {
       // $(this.viewer.container).bind('click', this.onMouseClick)
       this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, rt => {
         // find out all pushpin markups
-        // var $eles = $("div[id^='mymk']"),id^='personLabel'
-        var $eles = $("div[id^='mymk'],div[id^='personLabel']")
+        var $eles = $("div[id^='mymk']")
         var DOMeles = $eles.get()
 
         for (var index in DOMeles) {
@@ -874,21 +862,6 @@ export default {
         this.onLoadError
       )
     },
-    // addTajiModelToView(item) {
-    //   console.log('addTajiModelToView', item)
-    //   if (!this.viewer.overlays.hasScene('custom-scene')) {
-    //     this.viewer.overlays.addScene('custom-scene')
-    //   }
-    //   let towerGroup = new THREE.Group()
-    //   towerGroup.name = 'towerGroup'
-    //   towerGroup.scale.set(3, 3, 3)
-    //   let _towerHeight = 20
-    //   towerGroup.position.set(38, 188, 19) // 红 绿
-    //   console.log('this.towerGroupthis.towerGroupthis.towerGroup', towerGroup)
-    //   modifyTower(towerGroup, `T123`, _towerHeight + 15, 0, 0, 0) // 名称，高度，大臂角度，小车距离，吊钩线长
-
-    //   this.viewer.overlays.impl.addOverlay('custom-scene', towerGroup)
-    // },
     deleteLotDeviceModelHandle() {
       console.log('deleteLotDeviceModelHandle')
       if (this.currentDeviceModel !== null) {
@@ -1166,9 +1139,6 @@ export default {
         let _familyLocation = deviceInfo.family_location
         const familyLocation = JSON.parse(_familyLocation)
 
-        if (deviceInfo.device_type === 12) {
-          familyLocation.position = familyLocation.sectionPosition
-        }
         const _x = familyLocation.position.x
         const _y = familyLocation.position.y
         const _z = familyLocation.position.z
@@ -1184,8 +1154,6 @@ export default {
             _zzz = Math.abs(_bbox.max.z - _bbox.min.z)
           }
         }
-        // let _xxx = Math.abs(_bbox.max.x - _bbox.min.x)
-        // let _yyy = Math.abs(_bbox.max.y - _bbox.min.y)
         this.drawPushpinLot(
           {
             x: _x,
@@ -1199,15 +1167,6 @@ export default {
       })
     },
     drawPushpinLot(pushpinModelPt, id, name, data) {
-      // this.viewer.loadExtension('IconMarkupExtension', {
-      //   icons: [{
-      //     dbId: 495,
-      //     label: '300C',
-      //     css: 'fas fa-thermometer'
-      //   }]
-      // });
-      // console.log('idididid', id)
-      // convert 3D position to 2D screen coordination
       const screenpoint = this.viewer.worldToClient(
         new THREE.Vector3(pushpinModelPt.x, pushpinModelPt.y, pushpinModelPt.z)
       )
@@ -1230,34 +1189,6 @@ export default {
         position: 'absolute',
         overflow: 'visible'
       })
-      // $('#mymk' + randomId).click(() => {
-      //   console.log('data', data)
-      //   if (data.device_type === 16) {
-      //     let deviceData = data
-      //     if (deviceData === undefined) {
-      //       this.$message({
-      //         message: '此摄像头未配置数据',
-      //         type: 'error'
-      //       })
-      //     } else if (deviceData.video_url === '') {
-      //       this.$message({
-      //         message: '此摄像头无法直播',
-      //         type: 'error'
-      //       })
-      //     } else {
-      //       const param = {
-      //         show: true,
-      //         deviceData: deviceData
-      //       }
-      //       this.$store
-      //         .dispatch('SetVideoDialog', param)
-      //         .then(() => {})
-      //         .catch(() => {})
-      //     }
-      //   }
-      // })
-      // build the svg element and draw a circle
-      // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
 
       // var snap = Snap($('#mysvg' + randomId)[0]);
       var rad = 40

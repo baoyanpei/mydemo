@@ -71,6 +71,10 @@ const loT = {
       refresh: 0,
       data: {}
     },
+    SjjPositionChange: {
+      refresh: 0,
+      data: {}
+    },
     LotDeviceEditChange: {
       // 在建筑模型的物联网设备列表中选择了设备
       refresh: 0,
@@ -170,6 +174,12 @@ const loT = {
       const genRandom = (min, max) =>
         ((Math.random() * (max - min + 1)) | 0) + min;
       state.TajiPositionChange.refresh = genRandom(1, 1000);
+    },
+    SJJ_POSITION_CHANGE: (state, data) => {
+      state.SjjPositionChange = data;
+      const genRandom = (min, max) =>
+        ((Math.random() * (max - min + 1)) | 0) + min;
+      state.SjjPositionChange.refresh = genRandom(1, 1000);
     },
     LOT_DEVICE_EDIT_CHANGE: (state, data) => {
       state.LotDeviceEditChange = data;
@@ -296,6 +306,12 @@ const loT = {
     SetTajiPositionChange({ commit }, param) {
       return new Promise((resolve, reject) => {
         commit("TAJI_POSITION_CHANGE", param);
+        resolve();
+      });
+    },
+    SetSjjPositionChange({ commit }, param) {
+      return new Promise((resolve, reject) => {
+        commit("SJJ_POSITION_CHANGE", param);
         resolve();
       });
     },

@@ -1,0 +1,91 @@
+.model-sjj-setting {
+  .viewPointShowArea {
+    /*视点展示区域*/
+    position: absolute;
+    // background-color: #FFFFFF;
+    z-index: 100;
+    // height: 100%;
+    width: calc(100vw - 0px); //100%;
+    min-width: 970px;
+    // background-color: #FFFFFF;
+    background: -moz-linear-gradient(top, #b8c4cb, #f6f6f8);
+    /*非IE6的其它*/
+    background: -webkit-gradient(
+      linear,
+      0% 0%,
+      0% 100%,
+      from(#b8c4cb),
+      to(#f6f6f8)
+    );
+
+    .viewPointTitle {
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      padding: 0px 10px 0px 20px;
+      position: relative;
+
+      /*非IE6的其它*/
+      z-index: 105;
+
+      .title {
+        width: 500px;
+        float: left;
+      }
+
+      .btn-close-view-point {
+        float: right;
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .toolbar-marker {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    background-color: #2f2f2f;
+    height: calc(100vh - 48px - 27px);
+    width: 50px;
+    border-radius: 0px;
+    z-index: 999;
+    text-align: center;
+    padding: 10px 0px;
+
+    .marker-button {
+      margin: 0px auto;
+    }
+
+    .el-button--medium {
+      padding: 3px 3px;
+      margin: 2px 2px;
+      font-size: 22px;
+      border-radius: 4px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .el-button {
+      background: transparent;
+      color: #dddddd;
+    }
+
+    .el-button :hover {
+      background: transparent;
+      color: #ffffff;
+      border-color: #ffff00;
+      font-size: 24px;
+    }
+  }
+
+  .mymlLabel {
+    background-color: #ffffff;
+    color: #000000;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 10px;
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px;
+  }
+}

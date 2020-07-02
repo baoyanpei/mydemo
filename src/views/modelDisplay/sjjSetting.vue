@@ -1,8 +1,8 @@
 <style lang="scss">
-@import './tajiSetting';
+@import './sjjSetting';
 </style>
 <template>
-  <div id="model-taji-setting" class="model-taji-setting" style="margin: 0px;">
+  <div id="model-sjj-setting" class="model-sjj-setting" style="margin: 0px;">
     <div id="viewer-local"></div>
     <div v-if="isShowViewPointArea" class="viewPointShowArea">
       <div class="viewPointTitle">
@@ -30,7 +30,7 @@
         <font-awesome-icon
           v-if="currentElevatorModel !== null"
           icon="trash-alt"
-          @click="deleteTajiModelHandle(0)"
+          @click="deleteSjjModelHandle(0)"
         />
         <font-awesome-icon
           v-if="currentElevatorModel === null"
@@ -95,7 +95,7 @@ import lodash from 'lodash'
 let Base64 = require('js-base64').Base64
 
 export default {
-  name: 'model-taji-setting',
+  name: 'model-sjj-setting',
   components: {
     SjjListDialog,
     SjjPositionDialog,
@@ -205,8 +205,8 @@ export default {
     ComponentDataAdd() {
       return this.$store.state.componentLibrary.ComponentDataAdd
     },
-    TajiPositionChange() {
-      return this.$store.state.loT.TajiPositionChange
+    SjjPositionChange() {
+      return this.$store.state.loT.SjjPositionChange
     },
     LotDeviceEditChange() {
       return this.$store.state.loT.LotDeviceEditChange
@@ -220,9 +220,9 @@ export default {
   },
   created() {},
   watch: {
-    TajiPositionChange: {
+    SjjPositionChange: {
       handler: function(newVal, oldVal) {
-        // console.log('TajiPositionChange1112 ', newVal)
+        // console.log('SjjPositionChange1112 ', newVal)
 
         this.currentElevatorPosition = newVal.elevatorPosition
         this.currentSectionPosition = newVal.sectionPosition
@@ -424,11 +424,54 @@ export default {
       console.log('LotDeviceList', this.LotDeviceList)
 
       this.setLotDeviceModelList()
-    },
+      // 加载设备标签
+      this.addDeviveLabel()
 
+      // 初始化镜头的变化事件
+      this.initCameraChangeEvent()
+    },
+    initCameraChangeEvent() {
+      // 在场景中通过点击添加圆圈标记
+      // $(this.viewer.container).bind('click', this.onMouseClick)
+      this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, rt => {
+        // find out all pushpin markups
+        // var $eles = $("div[id^='mymk']"),id^='personLabel'
+        var $eles = $("div[id^='mymk']")
+        var DOMeles = $eles.get()
+
+        for (var index in DOMeles) {
+          // get each DOM element
+          let DOMEle = DOMeles[index]
+          let divEle = $('#' + DOMEle.id)
+          // get out the 3D coordination
+          let val = divEle.data('3DData')
+          let pushpinModelPt = JSON.parse(val)
+          // get the updated screen point
+          let screenpoint = this.viewer.worldToClient(
+            new THREE.Vector3(
+              pushpinModelPt.x,
+              pushpinModelPt.y,
+              pushpinModelPt.z
+            )
+          )
+          // update the SVG position.
+          // console.log('pushpinModelPt', pushpinModelPt)
+          divEle.css({
+            left: screenpoint.x - pushpinModelPt.radius,
+            top: screenpoint.y - pushpinModelPt.radius
+          })
+        }
+      })
+
+      // drawPushpinLot({
+      //   x: -12.590157398363942,
+      //   y: -256.6158517922297,
+      //   z: -33.46542876355482
+      // }, 'lot5', '摄像头');
+    },
     getDeviceConfigList() {
       return new Promise((resolve, reject) => {
-        let tajiList = []
+        let sjjList = []
         const param = {
           method: 'device_config',
           project_id: this.project_id,
@@ -437,9 +480,9 @@ export default {
         this.$store.dispatch('GetDeviceConfig', param).then(_itemList => {
           console.log('GetDeviceConfig - _itemList', _itemList)
           _itemList.forEach(item => {
-            if (item.device_type === 12) tajiList.push(item)
+            if (item.device_type === 12) sjjList.push(item)
           })
-          resolve(tajiList)
+          resolve(sjjList)
         })
       })
     },
@@ -883,8 +926,8 @@ export default {
       this.viewer.overlays.impl.addOverlay('custom-scene', sectionGroup)
       LoadSection(sectionGroup, this.currentSectionHeight)
     },
-    deleteTajiModelHandle() {
-      console.log('deleteTajiModelHandle')
+    deleteSjjModelHandle() {
+      console.log('deleteSjjModelHandle')
       if (this.currentElevatorModel !== null) {
         this.$confirm('是否确定删除此设备的模型?', '提示', {
           confirmButtonText: '确定',
@@ -908,7 +951,7 @@ export default {
         'url(./static/icon/ico_marker.png)'
 
       buttonEnterLotMode.onClick = e => {
-        this.TajiDeviceNewModel() // 新增升降机模型
+        this.SjjDeviceNewModel() // 新增升降机模型
       }
       buttonEnterLotMode.addClass('enter-add-lot-button')
       buttonEnterLotMode.setToolTip('添加升降机设备')
@@ -934,7 +977,7 @@ export default {
       // Add subToolbar to main toolbar
       this.viewer.toolbar.addControl(this.ControlLotManager)
     },
-    TajiDeviceNewModel() {
+    SjjDeviceNewModel() {
       this.enterEditModeHandle()
       this.$store
         .dispatch('ShowSjjListDialog', {
@@ -949,6 +992,7 @@ export default {
       this.viewer.toolbar.removeControl(this.ControlLotManager)
       this.isShowViewPointArea = true
       this.isShowToolbarMarker = true
+      this.removeAllDeviceLabel()
       this.$store
         .dispatch('SetViewPointEditMode', {
           isEditMode: true
@@ -1047,6 +1091,8 @@ export default {
         .then(() => {})
       this.LotDeviceList = await this.getDeviceConfigList()
       this.setLotDeviceModelList()
+      // 加载设备标签
+      this.addDeviveLabel()
     },
     FindModel() {
       // 放大定位
@@ -1058,6 +1104,88 @@ export default {
         this.currentElevatorModel,
         Autodesk.Viewing.SelectionType.OVERLAYED
       )
+    },
+    removeAllDeviceLabel() {
+      $('.mymlLabel').remove()
+    },
+    addDeviveLabel() {
+      this.LotDeviceList.forEach(deviceInfo => {
+        // console.log("deviceInfo", deviceInfo);
+        let _familyLocation = deviceInfo.family_location
+        const familyLocation = JSON.parse(_familyLocation)
+        if (deviceInfo.device_type === 12) {
+          familyLocation.position = familyLocation.sectionPosition
+        }
+        const _x = familyLocation.position.x
+        const _y = familyLocation.position.y
+        const _z = familyLocation.position.z
+
+        let _zzz = 0
+
+        if (this.LotDeviceModelMap !== null) {
+          let _modelData = this.LotDeviceModelMap.get(deviceInfo.id)
+          // console.log("_modelData_modelData_modelData", _modelData);
+          if (_modelData !== undefined) {
+            if (deviceInfo.device_type === 12) {
+              console.log('计算升降机的标签')
+            }
+          }
+        }
+        this.drawPushpinLot(
+          {
+            x: _x,
+            y: _y,
+            z: _z + _zzz
+          },
+          deviceInfo.id,
+          deviceInfo.device_name,
+          deviceInfo
+        )
+      })
+    },
+    drawPushpinLot(pushpinModelPt, id, name, data) {
+      const screenpoint = this.viewer.worldToClient(
+        new THREE.Vector3(pushpinModelPt.x, pushpinModelPt.y, pushpinModelPt.z)
+      )
+      const randomId = id // makeid();
+      $('#mymk' + randomId).remove()
+      // build the div container
+
+      var htmlMarker =
+        '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>'
+      var parent = this.viewer.container
+      $(parent).append(htmlMarker)
+      if (this.isShowBiaozhu === false) {
+        $('#mymk' + randomId).hide()
+      }
+
+      $('#mymk' + randomId).css({
+        // 'pointer-events': 'none',
+        width: '80px',
+        // 'height': '16px',
+        position: 'absolute',
+        overflow: 'visible'
+      })
+
+      // build the svg element and draw a circle
+      // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
+
+      // var snap = Snap($('#mysvg' + randomId)[0]);
+      var rad = 40
+      // set the position of the SVG
+      // adjust to make the circle center is the position of the click point
+      var $container = $('#mymk' + randomId)
+      $container.css({
+        left: screenpoint.x - rad,
+        top: screenpoint.y - rad
+      })
+
+      // store 3D point data to the DOM
+      var div = $('#mymk' + randomId)
+      // add radius info with the 3D data
+      pushpinModelPt.radius = rad
+      var storeData = JSON.stringify(pushpinModelPt)
+      div.data('3DData', storeData)
     }
   }
 }

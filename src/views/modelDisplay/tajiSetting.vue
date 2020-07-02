@@ -365,8 +365,51 @@ export default {
       console.log('LotDeviceList', this.LotDeviceList)
 
       this.setLotDeviceModelList()
-    },
+      // 加载设备标签
+      this.addDeviveLabel()
 
+      // 初始化镜头的变化事件
+      this.initCameraChangeEvent()
+    },
+    initCameraChangeEvent() {
+      // 在场景中通过点击添加圆圈标记
+      // $(this.viewer.container).bind('click', this.onMouseClick)
+      this.viewer.addEventListener(Autodesk.Viewing.CAMERA_CHANGE_EVENT, rt => {
+        // find out all pushpin markups
+        // var $eles = $("div[id^='mymk']"),id^='personLabel'
+        var $eles = $("div[id^='mymk']")
+        var DOMeles = $eles.get()
+
+        for (var index in DOMeles) {
+          // get each DOM element
+          let DOMEle = DOMeles[index]
+          let divEle = $('#' + DOMEle.id)
+          // get out the 3D coordination
+          let val = divEle.data('3DData')
+          let pushpinModelPt = JSON.parse(val)
+          // get the updated screen point
+          let screenpoint = this.viewer.worldToClient(
+            new THREE.Vector3(
+              pushpinModelPt.x,
+              pushpinModelPt.y,
+              pushpinModelPt.z
+            )
+          )
+          // update the SVG position.
+          // console.log('pushpinModelPt', pushpinModelPt)
+          divEle.css({
+            left: screenpoint.x - pushpinModelPt.radius,
+            top: screenpoint.y - pushpinModelPt.radius
+          })
+        }
+      })
+
+      // drawPushpinLot({
+      //   x: -12.590157398363942,
+      //   y: -256.6158517922297,
+      //   z: -33.46542876355482
+      // }, 'lot5', '摄像头');
+    },
     getDeviceConfigList() {
       return new Promise((resolve, reject) => {
         let tajiList = []
@@ -872,6 +915,7 @@ export default {
       this.viewer.toolbar.removeControl(this.ControlLotManager)
       this.isShowViewPointArea = true
       this.isShowToolbarMarker = true
+      this.removeAllDeviceLabel()
       this.$store
         .dispatch('SetViewPointEditMode', {
           isEditMode: true
@@ -953,6 +997,8 @@ export default {
         .then(() => {})
       this.LotDeviceList = await this.getDeviceConfigList()
       this.setLotDeviceModelList()
+      // 加载设备标签
+      this.addDeviveLabel()
     },
     FindModel() {
       // 放大定位
@@ -964,6 +1010,86 @@ export default {
         this.currentDeviceModel,
         Autodesk.Viewing.SelectionType.OVERLAYED
       )
+    },
+    removeAllDeviceLabel() {
+      $('.mymlLabel').remove()
+    },
+    addDeviveLabel() {
+      this.LotDeviceList.forEach(deviceInfo => {
+        // console.log("deviceInfo", deviceInfo);
+        let _familyLocation = deviceInfo.family_location
+        const familyLocation = JSON.parse(_familyLocation)
+
+        const _x = familyLocation.position.x
+        const _y = familyLocation.position.y
+        const _z = familyLocation.position.z
+
+        let _zzz = 0
+
+        if (this.LotDeviceModelMap !== null) {
+          let _modelData = this.LotDeviceModelMap.get(deviceInfo.id)
+          // console.log("_modelData_modelData_modelData", _modelData);
+          if (_modelData !== undefined) {
+            if (deviceInfo.device_type === 13) {
+              console.log('计算塔机的标签')
+            }
+          }
+        }
+        this.drawPushpinLot(
+          {
+            x: _x,
+            y: _y,
+            z: _z + _zzz
+          },
+          deviceInfo.id,
+          deviceInfo.device_name,
+          deviceInfo
+        )
+      })
+    },
+    drawPushpinLot(pushpinModelPt, id, name, data) {
+      const screenpoint = this.viewer.worldToClient(
+        new THREE.Vector3(pushpinModelPt.x, pushpinModelPt.y, pushpinModelPt.z)
+      )
+      const randomId = id // makeid();
+      $('#mymk' + randomId).remove()
+      // build the div container
+
+      var htmlMarker =
+        '<div id="mymk' + randomId + '" class="mymlLabel">' + name + '</div>'
+      var parent = this.viewer.container
+      $(parent).append(htmlMarker)
+      if (this.isShowBiaozhu === false) {
+        $('#mymk' + randomId).hide()
+      }
+
+      $('#mymk' + randomId).css({
+        // 'pointer-events': 'none',
+        width: '80px',
+        // 'height': '16px',
+        position: 'absolute',
+        overflow: 'visible'
+      })
+
+      // build the svg element and draw a circle
+      // $('#mymk' + randomId).append('<svg id="mysvg' + randomId + '"></svg>')
+
+      // var snap = Snap($('#mysvg' + randomId)[0]);
+      var rad = 40
+      // set the position of the SVG
+      // adjust to make the circle center is the position of the click point
+      var $container = $('#mymk' + randomId)
+      $container.css({
+        left: screenpoint.x - rad,
+        top: screenpoint.y - rad
+      })
+
+      // store 3D point data to the DOM
+      var div = $('#mymk' + randomId)
+      // add radius info with the 3D data
+      pushpinModelPt.radius = rad
+      var storeData = JSON.stringify(pushpinModelPt)
+      div.data('3DData', storeData)
     }
   }
 }

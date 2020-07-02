@@ -238,7 +238,7 @@ export default {
         scale: this.tajiPositionForm.scale
       }
       // console.log('param', param)
-      this.$store.dispatch('SetTajiPositionChange', param).then(result => {})
+      this.$store.dispatch('SetSjjPositionChange', param).then(result => {})
     }
   }
 }
