@@ -5,9 +5,8 @@ module.exports = {
       target: "http://admin.man.yidebim.com/", // 接口域名
       changeOrigin: true, //是否跨域
       pathRewrite: {
-        '/api': '/api'
+        "/api": "/api"
         //需要rewrite重写的,dd
-      }
       },
       secure: false
     },
