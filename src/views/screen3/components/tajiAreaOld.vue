@@ -17,7 +17,7 @@
 <script>
 import lodash from 'lodash'
 import moment from 'moment'
-import TadiaoTaji from './tadiaoTaji'
+import TadiaoTaji from './tadiaoTajiOld'
 import ShenjiangjiTaji from './shenjiangjiTaji'
 const MQTT_USERNAME = 'BIM_messager' // mqtt连接用户名
 const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码
