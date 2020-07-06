@@ -279,12 +279,13 @@ export default {
             console.log('_state', _state)
             const familyLocation = JSON.parse(_device.family_location)
             console.log('familyLocation', familyLocation)
-            _state.viewport.target = [
-              familyLocation.position.x,
-              familyLocation.position.y,
-              familyLocation.position.z
-            ]
-            // _state.viewport.distanceToOrbit = 50
+
+            // _state.viewport.eye = [
+            //   familyLocation.position.x - 10,
+            //   familyLocation.position.y - 10,
+            //   familyLocation.position.z - 10
+            // ]
+            // _state.viewport.distanceToOrbit = 0
 
             // var vector = new THREE.Vector3(
             //   amilyLocation.position.x,
@@ -293,36 +294,49 @@ export default {
             // )
             // this.viewer.fitToView([1], _modelData.model)
             // this.viewer.fitToView()
-            // this.viewer.restoreState(_state) //it fails to restore state
+
+            let camera = this.viewer.getCamera()
+            // console.log('getFocalLength()', this.viewer.getFocalLength())
+            // console.log('camera', camera)
+            // camera.near = 10
+            // this.viewer.setFocalLength(10)
+            this.viewer.applyCamera(camera, true)
+            // _state = this.viewer.getState()
+            _state.viewport.target = [
+              familyLocation.position.x,
+              familyLocation.position.y,
+              familyLocation.position.z
+            ]
+            this.viewer.restoreState(_state) //it fails to restore state
             // this.viewer.setZoomInLimitFactor(0)
 
-            const currentView = this.viewer.autocam.getCurrentView()
-            console.log('currentView', currentView)
-            const eye = this.viewer.navigation.getEyeVector()
-            console.log('eye', eye)
+            // const currentView = this.viewer.autocam.getCurrentView()
+            // console.log('currentView', currentView)
+            // const eye = this.viewer.navigation.getEyeVector()
+            // console.log('eye', eye)
             // const eyeDir = viewVec.normalize()
             // const distance = eye.length() //!<<< 相机与焦点的距离
 
-            let x1 = familyLocation.position.x
-            let y1 = familyLocation.position.y
-            let z1 = familyLocation.position.z
-            const newPosition = new THREE.Vector3(x1, y1, z1) //!<<< 相机的新位置
+            // let x1 = familyLocation.position.x
+            // let y1 = familyLocation.position.y
+            // let z1 = familyLocation.position.z
+            // const newPosition = new THREE.Vector3(x1, y1, z1) //!<<< 相机的新位置
             // const target = eye.add(newPosition) //!<<< 计算新焦点位置
 
             // 产生新相机信息
-            const newView = {
-              position: newPosition.clone(), //!<<< 相机的新位置
-              up: currentView.up.clone(),
-              center: currentView.center.clone(), //!<<< 相机的新焦点
-              pivot: currentView.pivot.clone(), //!<<< 相机的新环绕（Orbit）中心
-              fov: currentView.fov,
-              worldUp: currentView.worldUp.clone(),
-              isOrtho: currentView.isOrtho
-            }
+            // const newView = {
+            //   position: newPosition.clone(), //!<<< 相机的新位置
+            //   up: currentView.up.clone(),
+            //   center: currentView.center.clone(), //!<<< 相机的新焦点
+            //   pivot: currentView.pivot.clone(), //!<<< 相机的新环绕（Orbit）中心
+            //   fov: currentView.fov,
+            //   worldUp: currentView.worldUp.clone(),
+            //   isOrtho: currentView.isOrtho
+            // }
 
             // 将信息更新到相机上
             // this.viewer.autocam.goToView(newView)
-            this.viewer.navigation.setView(newPosition, newPosition)
+            // this.viewer.navigation.setView(newPosition, newPosition)
             console.log('newView')
             break
           case 'select':
