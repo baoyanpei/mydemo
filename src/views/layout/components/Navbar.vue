@@ -47,9 +47,9 @@
           <icon name="users" scale="1.4" style="line-height: 20px;"></icon>
           <span>通讯录</span>
         </el-button>
-        <el-button type="primary">
+        <!-- <el-button type="primary">
           <icon name="envelope" scale="1.2"></icon>
-        </el-button>
+        </el-button>-->
         <el-button @click="userHandler" type="primary">
           <icon name="user-circle" scale="1.2"></icon>
         </el-button>
