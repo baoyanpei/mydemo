@@ -230,19 +230,21 @@ export default {
       if (this.personInfo !== null) {
         let _projects = this.personInfo.project
         _projects.forEach(project => {
-          // console.log('project', project)
+          console.log('project1111', project)
           if (project.project_id === projectID) {
             this.project_id = projectID
-            this.project_name = project.project_name
+
+            if (project.project_full_name !== '' && project.length <= 10) {
+              this.project_name = project.project_full_name
+            } else {
+              this.project_name = project.project_name
+            }
           }
         })
         if (this.project_id !== null) {
           await this.initDevlist()
           // 获取该项目所有的设备配置
           this.allDeviceConfigList = await this.getDeviceConfigList()
-          console.log('this.allDeviceConfigList', this.allDeviceConfigList)
-          console.log('personInfo1233', this.personInfo)
-          console.log('this.datumMeterMap', this.datumMeterMap)
           this.$refs.lotArea.init(this.project_id, this.datumMeterMap)
           this.$refs.gateArea.init(this.project_id, this.datumMeterMap)
           this.$refs.messageArea.init(this.project_id)
