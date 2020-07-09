@@ -28,7 +28,7 @@
         <el-input
           type="textarea"
           placeholder="请输入200字以内的作品介绍"
-          v-model="textarea"
+          v-model="textareaindex"
           maxlength="200"
           style="width: 400px"
           show-word-limit>
@@ -82,6 +82,7 @@
       </div>
       <el-button type="primary" @click="fabufnc()" style="width: 100%;margin-top: 20px;">发布</el-button>
     </el-dialog>
+
     <el-tabs type="border-card" v-model="activeName" @tab-click="mytask">
       <!--任务大厅-->
       <el-tab-pane :label="bannertitle" name="first" style="height: 700px; overflow:scroll;">
@@ -236,7 +237,7 @@
         iframeshow:false,
         bannertitle:'任务大厅(0)',
         dialogVisible:false,
-        textarea:'',
+        textareaindex:'',
         fileList:[],
         beizhuinput:'',
         gettypearr:[],
@@ -398,7 +399,7 @@
       },
       closedialog(){
         this.dingshow=false
-        this.textarea=""
+        this.textareaindex=""
         this.gettypearr=null
         this.leibieoptions=null
         this.building=null
@@ -592,15 +593,15 @@
         for(let i=0;i<this.fabu_people.length;i++){
           namebox=namebox+"@"+this.fabu_people[i].name
         }
-        this.datalistfrom.title=namebox+this.textarea
+        this.datalistfrom.title=namebox+this.textareaindex
         this.datalistfrom.receiver=this.fabu_people
-        console.log("发布任务",this.datalistfrom)
+        console.log("发布任务",namebox+this.textareaindex)
         this.fabusuccessfnc()
         const _param = {
           method: 'start_issue',
           project_id: this.project_id,
           questions_type:this.fabuquestions_type,
-          title:namebox+this.textarea,
+          title:namebox+"发布任务标题",
           flow_id:this.fabufncflowid,
           priority: this.fabustartvalue,
           form:this.datalistfrom,
@@ -622,7 +623,7 @@
             });
           }
         })
-        this.textarea=""
+        this.textareaindex=""
         this.gettypearr=null
         this.leibieoptions=null
         this.building=null

@@ -138,3 +138,12 @@ export function safeinspection(data) {//安全巡检页面
     // baseURL: 'http://w.yidebim.com:3004'
   })
 }
+
+// 计划
+export function plan(data) {//计划
+  return request({
+    url:'/api/oa/plan',
+    method:'post',
+    data:data,
+  })
+}

@@ -8,7 +8,8 @@ import {
   postmomment,
   allinfodictionary,
   queryLocationHis,
-  safeinspection
+  safeinspection,
+  plan
 } from '@/api/datum'
 
 const datum = {
@@ -147,7 +148,18 @@ const datum = {
         })
       })
     },
-
+    // 计划
+    Getplan({
+      commit
+    },param){
+      return new Promise((resolve, reject) => {
+        plan(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
   }
 }
 
