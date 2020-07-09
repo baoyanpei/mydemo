@@ -1,13 +1,20 @@
 <style lang="scss">
-  @import "./index";
-
+@import './index';
 </style>
 <template>
   <div v-on:mouseenter="mouseOver" v-on:mouseleave="mouseLeave" class="index-sidebar">
-
-    <el-menu default-active="1-4-1" router :default-active="$route.path" class="el-menu-vertical-demo"
-      @open="handleOpen" @close="handleClose" :collapse="isCollapse" :collapse-transition="collapseTransition"
-      background-color="#29bb9c" text-color="#ffffff">
+    <el-menu
+      default-active="1-4-1"
+      router
+      :default-active="$route.path"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose"
+      :collapse="isCollapse"
+      :collapse-transition="collapseTransition"
+      background-color="#29bb9c"
+      text-color="#ffffff"
+    >
       <el-menu-item index="/main">
         <font-awesome-icon icon="home" />
         <span slot="title">首页</span>
@@ -25,24 +32,24 @@
       <!-- <el-menu-item index="/gztz">
         <font-awesome-icon icon="calendar-alt" />
         <span slot="title">工资台帐</span>
-      </el-menu-item> -->
+      </el-menu-item>-->
       <!-- <el-menu-item index="/lot/index">
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
-      </el-menu-item> -->
+      </el-menu-item>-->
       <el-menu-item index="/lot5/index">
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
       </el-menu-item>
       <el-menu-item index="/safety-inspection">
-        <font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;"/>
+        <font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />
         <span slot="title">巡检管理</span>
       </el-menu-item>
       <el-menu-item index="/modelSelect/index">
         <font-awesome-icon icon="map-marked" />
         <span slot="title">BIM管理</span>
       </el-menu-item>
-      <el-menu-item index="yearsplan">
+      <el-menu-item index="/yearsplan">
         <i class="el-icon-notebook-1" style="width:16px;font-size: 18px;"></i>
         <span slot="title">计划管理</span>
       </el-menu-item>
@@ -96,56 +103,48 @@
       active-text-color="#409EFF"
     >
       <sidebar-item v-for="route in permission_routers" :key="route.name" :item="route" :base-path="route.path"/>
-    </el-menu> -->
+    </el-menu>-->
   </div>
 </template>
 
 <script>
-  import {
-    mapGetters
-  } from 'vuex'
-  import SidebarItem from './SidebarItem'
+import { mapGetters } from 'vuex'
+import SidebarItem from './SidebarItem'
 
-  export default {
-    components: {
-      SidebarItem
+export default {
+  components: {
+    SidebarItem
+  },
+  data() {
+    return {
+      // isCollapse: true,
+      collapseTransition: false
+    }
+  },
+  computed: {
+    ...mapGetters(['permission_routers', 'sidebar']),
+    isCollapse() {
+      return !this.sidebar.opened
     },
-    data() {
-      return {
-        // isCollapse: true,
-        collapseTransition: false
-      };
+    sidebar() {
+      return this.$store.state.app.sidebar
+    }
+  },
+  methods: {
+    mouseOver: function() {
+      this.sidebar.opened = true
     },
-    computed: {
-      ...mapGetters([
-        'permission_routers',
-        'sidebar'
-      ]),
-      isCollapse() {
-        return !this.sidebar.opened
-      },
-      sidebar() {
-        return this.$store.state.app.sidebar
-      },
-
-
+    mouseLeave: function() {
+      this.sidebar.opened = false
     },
-    methods: {
-      mouseOver: function () {
-        this.sidebar.opened = true
-      },
-      mouseLeave: function () {
-        this.sidebar.opened = false
-      },
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-        this.sidebar.opened = true
-      },
-      handleClose(key, keyPath) {
-        console.log(key, keyPath);
-        this.sidebar.opened = faltruese
-      }
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath)
+      this.sidebar.opened = true
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath)
+      this.sidebar.opened = faltruese
     }
   }
-
+}
 </script>
