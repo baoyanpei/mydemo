@@ -10,27 +10,24 @@
             <div class="boxtop_right">新增计划</div>
           </div>
           <div class="plantoon">
-            <span class="plantoonspan">计划名称</span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input>
+            <el-cascader v-model="jihuavalue" :options="optionstype" @change="handleChange" style="width: 150px;border: none;"></el-cascader>
+            <el-input v-model="input" placeholder="请输入计划名称" style="width: 320px"></el-input>
             <div class="planstyle">
-              <span class="plantoonspan">计划类别</span>
-              <el-cascader v-model="jihuavalue" :options="optionstype" @change="handleChange"></el-cascader>
-            </div>
-            <div class="planstyle">
-              <span class="plantoonspan">计划时间</span>
               <el-date-picker
                 v-model="value1"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
-                end-placeholder="结束日期" style="width: 250px">
+                end-placeholder="结束日期" style="width: 480px;margin-top: 20px">
               </el-date-picker>
             </div>
-            <span class="plantoonspan">计划内容</span>
-            <el-input type="textarea" v-model="desc"></el-input>
-            <div @click="releaseplan" style="width: 100%;height: 40px;text-align: center;line-height: 40px;background-color: #169BD5;color: #ffffff;margin-top: 10px;border-radius: 10px">
+            <el-input type="textarea" v-model="desc" :rows="10"></el-input>
+            <div @click="releaseplan" style="width: 100%;height: 40px;text-align: center;line-height: 40px;background-color: #169BD5;color: #ffffff;margin-top: 20px;border-radius: 10px">
               发布实施任务</div>
-            <div style="width: 120px;margin-top: 10px;color: #34ba9c"><i class="el-icon-circle-plus-outline"></i>添加所属计划</div>
+            <div style="width: 400px;margin-top: 10px;color: #34ba9c"><i class="el-icon-circle-plus-outline" style="float: left;display: block;margin-top: 10px;"></i><span style="float: left;display: block;margin-top: 7px" @click="sonplanshow">添加子计划</span>
+              <el-cascader style="float: left;margin-left: 15px" v-show="plannewshow" v-model="plannewvalue" :options="plannewop" @change="plannewhandleChange"></el-cascader>
+            </div>
+            <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
           </div>
           <!--//暂无实施计划-->
           <div class="newplanxijie">
@@ -172,6 +169,37 @@
     name: 'newplan',
     data() {
       return {
+        plannewvalue:'',
+        plannewshow:false,
+        plannewop:[
+        {label:"年计划",
+         value:1,
+         children:[]
+        },
+          {label:"月计划",
+         value:2,
+         children:[]
+        },
+          {label:"周计划",
+         value:3,
+         children:[]
+        },
+          {label:"日计划",
+         value:4,
+         children:[]
+        },
+          {label:"施工组织计划",
+         value:5,
+         children:[]
+        },
+          {label:"施工计划",
+         value:6,
+         children:[]
+        },
+          {label:"其他",
+         value:0,
+         children:[]
+        }],
         plantextarea:'',//计划内容
         plantime:'',
         plantypevalue:"",
@@ -342,6 +370,44 @@
         console.log(value[0]);
         this.typetid=value[0]
       },
+      sonplanshow(){
+        this.getplan()
+      },
+      getplan(){
+         const param = {
+            method:'plan_query',
+            project_id: this.project_id,
+          }
+          this.$store.dispatch('Getplan', param).then((data) => {
+            console.log("data",data)
+            for(let i=0;i<data.data.length;i++){
+              if(data.data[i].type=1){
+                this.plannewop[0].children.push({label:data.data[i].title,value:i})
+              }
+              if(data.data[i].type=2){
+                this.plannewop[1].children.push({label:data.data[i].title,value:i})
+              }
+              if(data.data[i].type=3){
+                this.plannewop[2].children.push({label:data.data[i].title,value:i})
+              }
+              if(data.data[i].type=4){
+                this.plannewop[3].children.push({label:data.data[i].title,value:i})
+              }
+              if(data.data[i].type=5){
+                this.plannewop[4].children.push({label:data.data[i].title,value:i})
+              }
+              if(data.data[i].type=6){
+                this.plannewop[5].children.push({label:data.data[i].title,value:i})
+              }
+              if(data.data[i].type=0){
+                this.plannewop[6].children.push({label:data.data[i].title,value:i})
+              }
+            }
+            this.plannewshow=true
+            console.log("plannewop",this.plannewop)
+          })
+      },
+      plannewhandleChange(){},
       changeplangettypearr(){
 
       },
@@ -1170,11 +1236,11 @@
   }
   .plantoon{
     width: 500px;
-    padding: 10px;
     background-color: #fff;
     float: left;
     margin-bottom: 15px;
     margin-top: 10px;
+    padding: 30px 0;
   }
   .plantoonspan{
     line-height: 30px;
@@ -1234,11 +1300,11 @@
   }
   .nulldiv{
     width: 700px;
-    height: 300px;
+    height: 560px;
     background-color: #fff;
     font-size: 30px;
     text-align: center;
-    line-height: 300px;
+    line-height: 560px;
     color: #e7e7e7;
   }
 </style>

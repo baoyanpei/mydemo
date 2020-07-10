@@ -11,10 +11,11 @@
             <div class="boxtop_right">新增计划</div>
           </div>
           <!--时间线-->
-          <div class="block" style="float: left">
+          <div class="block" style="float: left;background-color: #e5e5e5">
             <el-timeline :reverse="reverse">
               <el-timeline-item v-for="(activity, index) in activities" :key="index" class="linespan">
-                <span style="position: absolute;top: -6px;left: 25px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 170px;" @click="showtitle(activity)">{{activity.title}}</span>
+                <span style="position: absolute;top: -6px;left: 30px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 170px;"
+                      @click="showtitle(activity)" :class="{active:indexspan==activity.id}">{{activity.title}}</span>
                 <span style="position: absolute;top: -6px;left: -40px;">{{activity.datayear}}</span>
               </el-timeline-item>
             </el-timeline>
@@ -56,11 +57,11 @@
                   </div>
                 </div>
                  <el-divider></el-divider>
-                <span style="display: block;float: left;font-size: 20px;font-weight: 700;">计划内容</span>
+                <span style="display: block;float: left;font-size: 14px;color:#AAAAAA;font-weight: 700;">计划内容</span>
                 <br>
-                <p>{{item.content}}</p>
+                <p style="color: #000000;font-size: 16px">{{item.content}}</p>
                 <el-divider></el-divider>
-               <span style="display: block;float: left;font-size: 20px;font-weight: 700;">所属计划</span>
+               <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;">子计划</span>
             </div>
             <br>
             <!--所属计划粗略描述-->
@@ -102,7 +103,8 @@
         plan3id:'',
         span1:'',
         span2:"",
-        span3:""
+        span3:"",
+        indexspan:0
       };
     },
     computed:{
@@ -136,7 +138,7 @@
             this.activities=data.data
             this.firstactivities.push(this.activities[0])
             this.bannertitle=data.data[0].title
-            this.fatherid=data.data[0].parent_id
+            this.fatherid=data.data[0].id
             this.plan3id=data.data[0].id
             this.getplan2()
             this.getplane3()
@@ -192,8 +194,8 @@
         })
       },
       showtitle(index){
-        console.log('index',index.parent_id)
-        this.fatherid=index.parent_id
+        this.indexspan = index.id
+        this.fatherid=index.id
         this.firstactivities.splice(0,1)
         this.firstactivities.push(index)
         this.bannertitle=index.title
@@ -251,4 +253,8 @@
     width: 100%;
     height: 100px;
   }
+  .active {
+   background-color: #ffffff;
+    padding-bottom: 20px;
+}
 </style>

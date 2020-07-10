@@ -56,11 +56,11 @@
                   </div>
                 </div>
                  <el-divider></el-divider>
-                <span style="display: block;float: left;font-size: 20px;font-weight: 700;">计划内容</span>
+                <span style="display: block;float: left;font-size: 14px;color:#AAAAAA;font-weight: 700;">计划内容</span>
                 <br>
-                <p>{{item.content}}</p>
+                <p style="color: #000000;font-size: 16px">{{item.content}}</p>
                 <el-divider></el-divider>
-              <span style="display: block;float: left;font-size: 20px;font-weight: 700;">所属计划</span>
+              <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;">子计划</span>
             </div>
             <br>
             <!--所属计划粗略描述-->
@@ -136,7 +136,7 @@
             this.activities=data.data
             this.firstactivities.push(this.activities[0])
             this.bannertitle=data.data[0].title
-            this.fatherid=data.data[0].parent_id
+            this.fatherid=data.data[0].id
             this.bannertitle=index.title
             this.plan3id=data.data[0].id
             this.getplan2()
@@ -193,7 +193,7 @@
         })
       },
       showtitle(index){
-         this.fatherid=index.parent_id
+         this.fatherid=index.id
         this.bannertitle=index.title
         this.firstactivities.splice(0,1)
         this.firstactivities.push(index)
