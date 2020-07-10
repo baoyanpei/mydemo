@@ -1,7 +1,7 @@
 <template>
   <div class="nav-bar" style="padding-left: 32px;">
     <el-menu class="navbar" mode="horizontal">
-      <span class="nav-title">机构名称：{{org_name}}</span>
+      <span class="nav-title">机构名称：{{orgName}}</span>
       <!-- <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container" /> -->
 
       <!-- <breadcrumb class="breadcrumb-container" /> -->
@@ -119,7 +119,8 @@ export default {
   data() {
     return {
       isBindBIM: true,
-      bim_name_desc: ''
+      bim_name_desc: '',
+      orgName: ''
     }
   },
   computed: {
@@ -138,12 +139,20 @@ export default {
     project_list() {
       return this.$store.state.project.project_list
     },
-    org_name: {
+    // org_name: {
+    //   get: function() {
+    //     return this.$store.state.project.org_name
+    //   },
+    //   set: function(newValue) {
+    //     this.$store.state.project.org_name = newValue
+    //   }
+    // },
+    currentProject: {
       get: function() {
-        return this.$store.state.project.org_name
+        return this.$store.state.project.currentProject
       },
       set: function(newValue) {
-        this.$store.state.project.org_name = newValue
+        this.$store.state.project.currentProject = newValue
       }
     },
     BindBimDataChanged() {
@@ -154,6 +163,7 @@ export default {
     project_id(curVal, oldVal) {
       if (curVal !== null) {
         console.log('Nabar-project_id', curVal)
+        this.ShowOriName(this.currentProject)
         this.GetOutsysInfo(curVal)
       }
     },
@@ -205,12 +215,11 @@ export default {
     },
     ProjectChangeHandle(projectID) {
       // console.log("aaa", projectID)
-      this.project_list.forEach(optionData => {
-        // console.log("optionData", optionData)
-        if (optionData.project_id === projectID) {
+      this.project_list.forEach(projectInfo => {
+        if (projectInfo.project_id === projectID) {
           Cookies.set('PROJECT_ID', projectID)
-          this.org_name = optionData.org_name
-          // this.GetOutsysInfo(projectID)
+          // this.org_name = projectInfo.org_name
+          this.currentProject = projectInfo
         }
       })
     },
@@ -232,6 +241,21 @@ export default {
           }
         })
       })
+    },
+    ShowOriName(projectInfo) {
+      console.log('projectInfoprojectInfo12', projectInfo)
+      let _orgName = ''
+      if (projectInfo !== null) {
+        if (
+          projectInfo.org_full_name !== '' &&
+          projectInfo.org_full_name.length <= 10
+        ) {
+          _orgName = projectInfo.org_full_name
+        } else {
+          _orgName = projectInfo.org_name
+        }
+      }
+      this.orgName = _orgName
     }
   }
 }

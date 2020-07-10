@@ -234,7 +234,10 @@ export default {
           if (project.project_id === projectID) {
             this.project_id = projectID
 
-            if (project.project_full_name !== '' && project.length <= 10) {
+            if (
+              project.project_full_name !== '' &&
+              project.project_full_name.length <= 10
+            ) {
               this.project_name = project.project_full_name
             } else {
               this.project_name = project.project_name
