@@ -1,7 +1,7 @@
 <template>
   <div class="nav-bar2" style="padding-left: 0px;">
     <el-menu class="navbar" mode="horizontal">
-      <span class="nav-title">机构名称：{{org_name}}</span>
+      <span class="nav-title">机构名称：{{orgName}}</span>
       <div class="right-menu">
         <!-- <el-button type="primary" style="top:0px;position: relative;" @click="openScreenHandle">
           <icon name="desktop" scale="1.4" style="line-height: 20px;"></icon>
@@ -34,7 +34,9 @@ import Cookies from 'js-cookie'
 export default {
   components: {},
   data() {
-    return {}
+    return {
+      orgName: ''
+    }
   },
   computed: {
     ...mapGetters(['sidebar', 'name', 'avatar']),
@@ -49,12 +51,20 @@ export default {
     project_list() {
       return this.$store.state.project.project_list
     },
-    org_name: {
+    // org_name: {
+    //   get: function() {
+    //     return this.$store.state.project.org_name
+    //   },
+    //   set: function(newValue) {
+    //     this.$store.state.project.org_name = newValue
+    //   }
+    // },
+    currentProject: {
       get: function() {
-        return this.$store.state.project.org_name
+        return this.$store.state.project.currentProject
       },
       set: function(newValue) {
-        this.$store.state.project.org_name = newValue
+        this.$store.state.project.currentProject = newValue
       }
     },
     IsViewPointEditMode() {
@@ -64,10 +74,17 @@ export default {
   watch: {
     IsViewPointEditMode(curVal, oldVal) {
       // console.log("IsViewPointEditMode", curVal)
+    },
+    currentProject(curVal, oldVal) {
+      if (curVal !== null) {
+        this.ShowOriName(this.currentProject)
+      }
     }
   },
   mounted() {
-    // console.log("personInfo123", this.personInfo)
+    if (this.currentProject !== null && this.orgName === '') {
+      this.ShowOriName(this.currentProject)
+    }
   },
   methods: {
     toggleSideBar() {
@@ -93,6 +110,20 @@ export default {
         })
         .then(() => {})
         .catch(() => {})
+    },
+    ShowOriName(projectInfo) {
+      let _orgName = ''
+      if (projectInfo !== null) {
+        if (
+          projectInfo.org_full_name !== '' &&
+          projectInfo.org_full_name.length <= 10
+        ) {
+          _orgName = projectInfo.org_full_name
+        } else {
+          _orgName = projectInfo.org_name
+        }
+      }
+      this.orgName = _orgName
     }
   }
 }

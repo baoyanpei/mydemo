@@ -239,7 +239,7 @@ export default {
     }
   },
   watch: {
-    $route(to, from) {
+    async $route(to, from) {
       console.log('totototo', to)
       if (
         to.name !== 'login' &&
@@ -252,7 +252,7 @@ export default {
         to.name !== 'screen3V3' &&
         this.personInfo === null
       ) {
-        this.getPerson()
+        await this.getPerson()
       }
       console.log('fromfromfrom', from)
       if (
@@ -277,25 +277,34 @@ export default {
   mounted() {},
   methods: {
     getPerson() {
-      const param = {
-        method: 'query'
-      }
-      this.$store
-        .dispatch('QueryPersonInfo', param)
-        .then(() => {
-          this.setProjectInfo()
-        })
-        .catch(() => {
-          this.loading = false
-        })
+      return new Promise((resolve, reject) => {
+        const param = {
+          method: 'query'
+        }
+        this.$store
+          .dispatch('QueryPersonInfo', param)
+          .then(async () => {
+            await this.setProjectInfo()
+            resolve()
+          })
+          .catch(() => {
+            this.loading = false
+            resolve()
+          })
+      })
     },
     setProjectInfo() {
-      this.$store
-        .dispatch('setProjectInfo', this.personInfo)
-        .then(() => {})
-        .catch(() => {
-          this.loading = false
-        })
+      return new Promise((resolve, reject) => {
+        this.$store
+          .dispatch('setProjectInfo', this.personInfo)
+          .then(() => {
+            resolve()
+          })
+          .catch(() => {
+            this.loading = false
+            resolve()
+          })
+      })
     },
     // 打开窗口
     openPersonFullCalendarDialogHandle() {
