@@ -163,8 +163,12 @@ export default {
     project_id(curVal, oldVal) {
       if (curVal !== null) {
         console.log('Nabar-project_id', curVal)
-        this.ShowOriName(this.currentProject)
         this.GetOutsysInfo(curVal)
+      }
+    },
+    currentProject(curVal, oldVal) {
+      if (curVal !== null) {
+        this.ShowOriName(this.currentProject)
       }
     },
     BindBimDataChanged(curVal, oldVal) {
@@ -243,7 +247,6 @@ export default {
       })
     },
     ShowOriName(projectInfo) {
-      console.log('projectInfoprojectInfo12', projectInfo)
       let _orgName = ''
       if (projectInfo !== null) {
         if (

@@ -165,7 +165,6 @@ const project = {
       let initProjectName = "";
       let initOrgName = "";
       let initProject = null;
-
       projects.forEach(project => {
         // console.log("__PROJECT_ID", __PROJECT_ID, project.project_id)
         // console.log("project", project)
@@ -177,7 +176,6 @@ const project = {
           __PROJECT_ID !== undefined &&
           __PROJECT_ID.toString() === project.project_id.toString()
         ) {
-          console.log("projectprojectprojectproject", project);
           initProjectID = project.project_id;
           initProjectName = project.project_name;
           initOrgName = project.org_name;
@@ -185,13 +183,14 @@ const project = {
         }
       });
       if (initProjectID !== 0) {
+        state.currentProject = initProject;
         state.project_id = initProjectID;
         state.org_name = initOrgName;
-        state.currentProject = initProject;
       } else if (projects.length > 0) {
+        state.currentProject = projects[0];
         state.project_id = projects[0].project_id;
         state.org_name = projects[0].org_name;
-        state.currentProject = projects[0];
+
         Cookies.set("PROJECT_ID", projects[0].project_id);
       }
       // console.log("state.project_option", state.project_option)
@@ -701,6 +700,7 @@ const project = {
       return new Promise((resolve, reject) => {
         // console.log("paramparamparam", param)
         commit("SET_PROJECT_INFO", param);
+        resolve();
       });
     },
     // 查询项目人员进出记录
