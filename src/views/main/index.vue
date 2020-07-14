@@ -550,6 +550,14 @@ export default {
       set: function(newValue) {
         this.$store.state.huiyi.showHuiyiFullCalendar = newValue
       }
+    },
+    currentProject: {
+      get: function() {
+        return this.$store.state.project.currentProject
+      },
+      set: function(newValue) {
+        this.$store.state.project.currentProject = newValue
+      }
     }
   },
   created() {
@@ -584,6 +592,14 @@ export default {
     reconnectTimes(curVal, oldVal) {
       if (oldVal > 0 && curVal === 0) {
         this.info_system = ''
+      }
+    },
+    currentProject(curVal, oldVal) {
+      if (curVal !== null) {
+        console.log(
+          'this.currentProjectthis.currentProject1233333',
+          this.currentProject
+        )
       }
     }
   },
