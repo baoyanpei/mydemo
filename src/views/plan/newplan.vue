@@ -24,8 +24,8 @@
             <el-input type="textarea" v-model="desc" :rows="10"></el-input>
             <div @click="releaseplan" style="width: 100%;height: 40px;text-align: center;line-height: 40px;background-color: #169BD5;color: #ffffff;margin-top: 20px;border-radius: 10px">
               发布实施任务</div>
-            <div style="width: 400px;margin-top: 10px;color: #34ba9c"><i class="el-icon-circle-plus-outline" style="float: left;display: block;margin-top: 10px;"></i><span style="float: left;display: block;margin-top: 7px" @click="sonplanshow">添加子计划</span>
-              <el-cascader style="float: left;margin-left: 15px" v-show="plannewshow" v-model="plannewvalue" :options="plannewop" @change="plannewhandleChange"></el-cascader>
+            <div style="width: 600px;margin-top: 10px;color: #34ba9c"><i class="el-icon-circle-plus-outline" style="float: left;display: block;margin-top: 10px;"></i><span style="float: left;display: block;margin-top: 7px" @click="sonplanshow">添加子计划</span>
+              <el-cascader style="float: left;margin-left: 15px;width: 300px" v-show="plannewshow" v-model="plannewvalue" :options="plannewop" @change="plannewhandleChange"></el-cascader>
             </div>
             <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
           </div>
@@ -87,6 +87,11 @@
           style="width: 400px"
           show-word-limit>
         </el-input>
+        <br><br>
+        <div v-show="organizationshow">
+           <span style="margin-right: 20px">组织计划:</span>
+           <el-cascader style="width: 400px" :options="organizationarr" v-model="organizationvalue" @change="handleChangegetorganization"></el-cascader>
+        </div>
         <br><br>
         <div style="width: 100%;height: 40px;">
            <span class="plantoonspan" style="float: left">计划时间:</span>
@@ -171,6 +176,10 @@
       return {
         plannewvalue:'',
         plannewshow:false,
+        organizationarr:[],
+        organizationvalue:"",
+        organizationshow:false,
+        structid:0,
         plannewop:[
         {label:"年计划",
          value:1,
@@ -192,8 +201,12 @@
          value:5,
          children:[]
         },
-          {label:"施工计划",
+          {label:"施工任务",
          value:6,
+         children:[]
+        },
+          {label:"施工计划",
+         value:7,
          children:[]
         },
           {label:"其他",
@@ -373,33 +386,40 @@
       sonplanshow(){
         this.getplan()
       },
+      handleChangegetorganization(val){
+        console.log("组织计划val",val)
+        this.structid=val[1]
+      },
       getplan(){
          const param = {
             method:'plan_query',
             project_id: this.project_id,
           }
           this.$store.dispatch('Getplan', param).then((data) => {
-            console.log("data",data)
+            console.log("下拉框data",data)
             for(let i=0;i<data.data.length;i++){
-              if(data.data[i].type=1){
+              if(data.data[i].type==1){
                 this.plannewop[0].children.push({label:data.data[i].title,value:i})
               }
-              if(data.data[i].type=2){
+              if(data.data[i].type==2){
                 this.plannewop[1].children.push({label:data.data[i].title,value:i})
               }
-              if(data.data[i].type=3){
+              if(data.data[i].type==3){
                 this.plannewop[2].children.push({label:data.data[i].title,value:i})
               }
-              if(data.data[i].type=4){
+              if(data.data[i].type==4){
                 this.plannewop[3].children.push({label:data.data[i].title,value:i})
               }
-              if(data.data[i].type=5){
+              if(data.data[i].type==5){
                 this.plannewop[4].children.push({label:data.data[i].title,value:i})
               }
-              if(data.data[i].type=6){
+              if(data.data[i].type==6){
                 this.plannewop[5].children.push({label:data.data[i].title,value:i})
               }
-              if(data.data[i].type=0){
+              if(data.data[i].type==7){
+                this.plannewop[6].children.push({label:data.data[i].title,value:i})
+              }
+              if(data.data[i].type==0){
                 this.plannewop[6].children.push({label:data.data[i].title,value:i})
               }
             }
@@ -407,9 +427,39 @@
             console.log("plannewop",this.plannewop)
           })
       },
-      plannewhandleChange(){},
+      plannewhandleChange(val){
+        console.log("val",val)
+        this.structid=val[0]
+      },
       changeplangettypearr(){
 
+      },
+      getorganization(){
+        const param = {
+            method:'plan_struct',
+            project_id: this.project_id,
+          }
+          this.$store.dispatch('Getplan', param).then((data) => {
+            console.log('获取组织计划', data.data)
+            data.data.forEach(item=>{
+              item["label"]=item.text
+              item["value"]=item.id
+              if(item.children.length==0){
+                delete item.children
+              }
+              if(item.children!==undefined){
+                item.children.forEach(obj=>{
+                  obj["label"]=obj.text
+                  obj["value"]=obj.id
+                  if(obj.children.length==0){
+                    delete obj.children
+                  }
+                })
+              }
+            })
+            this.organizationarr=data.data
+            console.log("this.organizationarr",this.organizationarr)
+          })
       },
       getstyle(){//获取计划类型
         const param = {
@@ -458,12 +508,19 @@
       },
       openeldialog(){//打开发布任务窗口
         console.log("组别",this.projectGroupList)
-        // console.log("token=====",getToken())
+        console.log("stuckid",this.structid)
         this.getcategory()
         this.gettype()
         this.getmodel()
         this.getpersonlist()
-        // this.getdidian()
+        this.getorganization()
+        if(this.structid==5||this.structid==7){
+          this.organizationshow=true
+          console.log(" type:5施工组织计划,7:施工计划,的任务")
+        }
+        else {
+          this.organizationshow=false
+        }
       },
       closedialog(){
         this.dingshow=false
@@ -665,8 +722,6 @@
         }
         this.datalistfrom.title=namebox+this.textareaindex
         this.datalistfrom.receiver=this.fabu_people
-        // console.log("发布任务",namebox+this.textareaindex)
-        this.fabusuccessfnc()
         const _param = {
           method: 'plan_start_issue',
           project_id: this.project_id,
@@ -681,7 +736,8 @@
           content:this.plantextarea,
           start_date:firstdaytime,
           end_date:endtime,
-          parent_id:''
+          parent_id:'',
+          struct_id:this.structid
         }
         this.$store.dispatch('Getplan', _param).then((data) => {
           console.log("任务发布成功",data)

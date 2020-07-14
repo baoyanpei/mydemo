@@ -11,12 +11,12 @@
             <div class="boxtop_right">新增计划</div>
           </div>
           <!--时间线-->
-          <div class="block" style="float: left;background-color: #e5e5e5">
+          <div class="block" style="float: left;background-color: #DFDFDF">
             <el-timeline :reverse="reverse">
               <el-timeline-item v-for="(activity, index) in activities" :key="index" class="linespan">
                 <span style="position: absolute;top: -6px;left: 30px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 170px;"
                       @click="showtitle(activity)" :class="{active:indexspan==activity.id}">{{activity.title}}</span>
-                <span style="position: absolute;top: -6px;left: -40px;">{{activity.datayear}}</span>
+                <span class="datayear">{{activity.datayear}}</span>
               </el-timeline-item>
             </el-timeline>
           </div>
@@ -57,16 +57,16 @@
                   </div>
                 </div>
                  <el-divider></el-divider>
-                <span style="display: block;float: left;font-size: 14px;color:#AAAAAA;font-weight: 700;">计划内容</span>
+                <span style="display: block;float: left;font-size: 14px;color:#AAAAAA;font-weight: 700;margin-left: 15px;">计划内容</span>
                 <br>
-                <p style="color: #000000;font-size: 16px">{{item.content}}</p>
+                <p style="color: #000000;font-size: 16px;margin-left: 15px;">{{item.content}}</p>
                 <el-divider></el-divider>
-               <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;">子计划</span>
+               <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">子计划</span>
             </div>
             <br>
             <!--所属计划粗略描述-->
             <div class="objjjj" v-for="obj in this.sonplanbox">
-                <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px">
+                <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
                     <div class="round" style="margin-top: 25px;margin-right:15px;width: 50px;height: 50px;background-color: #e5e5e5;border-radius: 25px;float:left;text-align: center;line-height: 50px;font-size: 20px;">{{obj.sonnum}}</div>
                     <div class="smallplan_box" style="width: 800px;height: 100px;background-color: #e5e5e5;float: left;padding: 10px">
                         <div class="smallplan_box_top" style="width: 100%;height: 30px">
@@ -131,13 +131,21 @@
             type:6
           }
           this.$store.dispatch('Getplan', param).then((data) => {
+            let todaydata=new Date()
+            let todayyear=todaydata.getFullYear()
             data.data.forEach(item=>{
-              item["datayear"]=item.start_date.slice(0,4)
+              if(item.start_date.slice(0,4)==todayyear){
+                item["datayear"]=item.start_date.slice(5,11)
+              }
+              else {
+               item["datayear"]=item.start_date.slice(0,11)
+              }
             })
            this.firstactivities=[]
             this.activities=data.data
             this.firstactivities.push(this.activities[0])
             this.bannertitle=data.data[0].title
+            this.indexspan=data.data[0].id
             this.fatherid=data.data[0].id
             this.plan3id=data.data[0].id
             this.getplan2()
@@ -255,6 +263,11 @@
   }
   .active {
    background-color: #ffffff;
-    padding-bottom: 20px;
-}
+    padding-bottom: 35px;
+  }
+  .datayear{
+    position: absolute;
+    top: 20px;
+    left: 30px;
+  }
 </style>

@@ -230,7 +230,14 @@ export default {
           // console.log('project', project)
           if (project.project_id === projectID) {
             this.project_id = projectID
-            this.project_name = project.project_name
+            if (
+              project.project_full_name !== '' &&
+              project.project_full_name.length <= 10
+            ) {
+              this.project_name = project.project_full_name
+            } else {
+              this.project_name = project.project_name
+            }
           }
         })
         if (this.project_id !== null) {
