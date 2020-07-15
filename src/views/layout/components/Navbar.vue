@@ -2,16 +2,12 @@
   <div class="nav-bar" style="padding-left: 32px;">
     <el-menu class="navbar" mode="horizontal">
       <span class="nav-title">机构名称：{{orgName}}</span>
-      <!-- <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container" /> -->
-
-      <!-- <breadcrumb class="breadcrumb-container" /> -->
       <span class="nav-xmmc">项目名称：</span>
       <el-select
         v-model="project_id"
         placeholder="请选择"
         style="width: 210px;"
-        @change="ProjectChangeHandle"
-      >
+        @change="ProjectChangeHandle">
         <el-option
           v-for="item in project_option"
           :key="item.value"

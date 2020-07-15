@@ -168,7 +168,7 @@
             console.log('获取评论', this.getcommentbox)
           })
       },
-      commentclick(){//Postmomment
+      commentclick(){
         console.log("评论按钮",this.commentsinput,this.indexspan)
         const param = {
             method:'comment',
@@ -348,6 +348,7 @@
         })
       },
       showtitle(index){
+        this.getcommentbox=[]
         this.indexspan = index.id
         this.fatherid=index.id
         this.firstactivities.splice(0,1)
@@ -356,6 +357,7 @@
         this.plan3id=index.id
         this.getplan2()
         this.getplane3()
+        this.getcomment()
       }
     }
   }

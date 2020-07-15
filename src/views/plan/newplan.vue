@@ -10,7 +10,7 @@
             <div class="boxtop_right">新增计划</div>
           </div>
           <div class="plantoon">
-            <el-cascader v-model="jihuavalue" :options="optionstype" @change="handleChange" style="width: 150px;border: none;"></el-cascader>
+            <el-cascader v-model="jihuavalue" :options="optionstype" @change="handleChangetypetid" style="width: 150px;border: none;"></el-cascader>
             <el-input v-model="input" placeholder="请输入计划名称" style="width: 320px"></el-input>
             <div class="planstyle">
               <el-date-picker
@@ -24,7 +24,7 @@
             <el-input type="textarea" v-model="desc" :rows="10"></el-input>
             <div @click="releaseplan" style="width: 100%;height: 40px;text-align: center;line-height: 40px;background-color: #169BD5;color: #ffffff;margin-top: 20px;border-radius: 10px">
               发布实施任务</div>
-            <div style="width: 600px;margin-top: 10px;color: #34ba9c"><i class="el-icon-circle-plus-outline" style="float: left;display: block;margin-top: 10px;"></i><span style="float: left;display: block;margin-top: 7px" @click="sonplanshow">添加子计划</span>
+            <div style="width: 600px;margin-top: 10px;color: #34ba9c"><i class="el-icon-circle-plus-outline" style="float: left;display: block;margin-top: 10px;"></i><span style="float: left;display: block;margin-top: 7px" @click="sonplanshow">添加所属计划</span>
               <el-cascader style="float: left;margin-left: 15px;width: 300px" v-show="plannewshow" v-model="plannewvalue" :options="plannewop" @change="plannewhandleChange"></el-cascader>
             </div>
             <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
@@ -52,7 +52,7 @@
             </div>
           </div>
           <div class="faqijihua" style="width: 100%;height: 80px;float: left;text-align: center;line-height: 50px">
-              <div style=" box-shadow:0px 0px 30px #e5e5e5;width: 180px;color:#fff;border-radius:20px;height: 50px;background-color: #1ABC9C;margin: auto">发起计划</div>
+              <div style=" box-shadow:0px 0px 30px #e5e5e5;width: 180px;color:#fff;border-radius:20px;height: 50px;background-color: #1ABC9C;margin: auto" @click="planinititate">发起计划</div>
           </div>
         </el-col>
       </el-row>
@@ -379,8 +379,30 @@
       planindex
     },
     methods: {
-      handleChange(value) {
-        console.log(value[0]);
+      planinititate(){
+        let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
+        let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
+        this.loading=true
+        const param = {
+            method:'plan_add',
+            project_id: this.project_id,
+            title:this.input,
+            content:this.desc,
+            start_date:firstdaytime,
+            end_date:endtime,
+            type:this.typetid,
+          }
+          this.$store.dispatch('Getplan', param).then((data) => {
+            console.log('新建计划提交状态', data)
+            this.loading=false
+            this.numbox=[]
+            this.numbox=this.desc.split("\n")
+            this.planshow=false
+            this.planshow2=true
+          })
+      },
+      handleChangetypetid(value) {
+        console.log("ddddddd",value[0]);
         this.typetid=value[0]
       },
       sonplanshow(){
@@ -481,26 +503,6 @@
           this.numbox=this.desc.split("\n")
           this.planshow=false
           this.planshow2=true
-        // let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
-        // let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
-        // this.loading=true
-        // const param = {
-        //     method:'plan_add',
-        //     project_id: this.project_id,
-        //     title:this.input,
-        //     content:this.desc,
-        //     start_date:firstdaytime,
-        //     end_date:endtime,
-        //     type:this.typetid,
-        //   }
-        //   this.$store.dispatch('Getplan', param).then((data) => {
-        //     console.log('新建计划提交状态', data)
-        //     this.loading=false
-        //     this.numbox=[]
-        //     this.numbox=this.desc.split("\n")
-        //     this.planshow=false
-        //     this.planshow2=true
-        //   })
       },
       releasefnc(index){//发布任务弹窗
         this.dialogVisible=true
