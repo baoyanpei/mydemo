@@ -996,7 +996,7 @@ export default {
       }
     },
     onConnect() {
-      console.log('onConnected')
+      // console.log('onConnected')
       this.isConnectMqtt = true
     },
     onFailure(eee) {
@@ -1017,7 +1017,7 @@ export default {
     },
     mqttUserCount(data) {
       const _data = JSON.parse(data)
-      console.log('mqttUserCount-mqttUserCount', _data)
+      // console.log('mqttUserCount-mqttUserCount', _data)
       this.subscribe()
       this.count_data = _data
       if (this.$refs.count_info !== undefined) {
@@ -1093,7 +1093,7 @@ export default {
         // BIM/door/10001/count
         this.client.subscribe(this.topicUserInfo) //订阅主题
         this.client.subscribe(this.topicCount) //订阅主题
-        console.log('订阅成功！')
+        // console.log('订阅成功！')
       }
     },
     unsubscribe() {
@@ -1101,7 +1101,7 @@ export default {
         // 取消老的订阅
         this.client.unsubscribe(this.topicUserInfo) //订阅主题
         this.client.unsubscribe(this.topicCount) //订阅主题
-        console.log('取消订阅成功！')
+        // console.log('取消订阅成功！')
       }
     }
   }
