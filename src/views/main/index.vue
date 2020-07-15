@@ -322,7 +322,7 @@
       <div class="noanzhuang">未安装设备</div>
     </div>
     <div class="yizheng-logo">
-      <img src="/static/gsjt-logo1.png" />
+      <img v-if="img_src!==''" :src="img_src" />
       <!--甘肃建投图标LOGO-->
     </div>
     <div class="bim-toolbar">
@@ -536,7 +536,8 @@ export default {
       reconnectTimes: 0, //重连次数
       allwaterdevicedid: 0, //总水表id
       alleledevicedid: 0, //总电表id
-      asasasas: true
+      asasasas: true,
+      img_src: ''
     }
   },
   computed: {
@@ -549,6 +550,14 @@ export default {
       },
       set: function(newValue) {
         this.$store.state.huiyi.showHuiyiFullCalendar = newValue
+      }
+    },
+    currentProject: {
+      get: function() {
+        return this.$store.state.project.currentProject
+      },
+      set: function(newValue) {
+        this.$store.state.project.currentProject = newValue
       }
     }
   },
@@ -584,6 +593,19 @@ export default {
     reconnectTimes(curVal, oldVal) {
       if (oldVal > 0 && curVal === 0) {
         this.info_system = ''
+      }
+    },
+    currentProject(curVal, oldVal) {
+      if (curVal !== null) {
+        console.log(
+          'this.currentProjectthis.currentProject1233333',
+          this.currentProject
+        )
+        console.log(
+          'process.env.BASE_DOMAIN_ORG_URL',
+          process.env.BASE_DOMAIN_ORG_URL
+        )
+        this.img_src = `${process.env.BASE_DOMAIN_ORG_URL}${this.currentProject.org_id}/01.png`
       }
     }
   },
@@ -980,7 +1002,7 @@ export default {
       }
     },
     onConnect() {
-      console.log('onConnected')
+      // console.log('onConnected')
       this.isConnectMqtt = true
     },
     onFailure(eee) {
@@ -1001,7 +1023,7 @@ export default {
     },
     mqttUserCount(data) {
       const _data = JSON.parse(data)
-      console.log('mqttUserCount-mqttUserCount', _data)
+      // console.log('mqttUserCount-mqttUserCount', _data)
       this.subscribe()
       this.count_data = _data
       if (this.$refs.count_info !== undefined) {
@@ -1077,7 +1099,7 @@ export default {
         // BIM/door/10001/count
         this.client.subscribe(this.topicUserInfo) //订阅主题
         this.client.subscribe(this.topicCount) //订阅主题
-        console.log('订阅成功！')
+        // console.log('订阅成功！')
       }
     },
     unsubscribe() {
@@ -1085,7 +1107,7 @@ export default {
         // 取消老的订阅
         this.client.unsubscribe(this.topicUserInfo) //订阅主题
         this.client.unsubscribe(this.topicCount) //订阅主题
-        console.log('取消订阅成功！')
+        // console.log('取消订阅成功！')
       }
     }
   }
