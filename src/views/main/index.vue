@@ -322,7 +322,7 @@
       <div class="noanzhuang">未安装设备</div>
     </div>
     <div class="yizheng-logo">
-      <img src="/static/gsjt-logo1.png" />
+      <img v-if="img_src!==''" :src="img_src" />
       <!--甘肃建投图标LOGO-->
     </div>
     <div class="bim-toolbar">
@@ -536,7 +536,8 @@ export default {
       reconnectTimes: 0, //重连次数
       allwaterdevicedid: 0, //总水表id
       alleledevicedid: 0, //总电表id
-      asasasas: true
+      asasasas: true,
+      img_src: ''
     }
   },
   computed: {
@@ -600,6 +601,11 @@ export default {
           'this.currentProjectthis.currentProject1233333',
           this.currentProject
         )
+        console.log(
+          'process.env.BASE_DOMAIN_ORG_URL',
+          process.env.BASE_DOMAIN_ORG_URL
+        )
+        this.img_src = `${process.env.BASE_DOMAIN_ORG_URL}${this.currentProject.org_id}/01.png`
       }
     }
   },
