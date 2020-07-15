@@ -30,11 +30,7 @@
                         <i class="el-icon-edit-outline"></i>
                         <span>发布实施任务</span>
                       </div>
-                      <div class="comments" style="width: 80px;height:30px;margin-top:10px;border: 1px solid #BABABA;float: left;text-align: center;line-height: 30px;color: #BABABA;margin-left: 15px">
-                        <i class="el-icon-chat-square"></i>
-                        <span>评论</span>
-                      </div>
-                      <h1 style="font-size: 20px;margin-left: 15px;float: left;color: #000000;margin-top: 15px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 300px;">{{item.title}}</h1>
+                      <h1 style="font-size: 20px;margin-left: 15px;float: left;color: #000000;margin-top: 15px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 380px;">{{item.title}}</h1>
                     </div>
                     <div class="planboxtop_left_2" style="width: 100%;height: 50%;overflow: hidden">
                       <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-date"></i>计划时间:{{item.start_date}}-{{item.created_time}}</span>
@@ -60,21 +56,52 @@
                 <br>
                 <p style="color: #000000;font-size: 16px;margin-left: 15px;">{{item.content}}</p>
                 <el-divider></el-divider>
-              <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">子计划</span>
             </div>
+            <!--显示评论-->
+              <div v-for="item in this.getcommentbox">
+                  <div class="showcomment">
+                    <span>{{item.person_name}}：</span>
+                    <span>{{item.comment}}</span>
+                  </div>
+              </div>
+              <!--上传评论-->
+              <div class="comments" style="width: 120px;height:35px;margin-top:8px;background-color:#1BB1F4;float: left;text-align: center;line-height: 35px;color: #ffffff;margin-left: 15px" @click="commentclick()">
+                <i class="el-icon-chat-square"></i>
+                <span>评论</span>
+              </div>
+              <el-input v-model="commentsinput" placeholder="请输入评论内容" style="float: left;width: 300px;margin-top:8px;"></el-input>
+             <br><br><br><br>
+              <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">子计划</span>
             <br>
             <!--所属计划粗略描述-->
             <div class="objjjj" v-for="obj in this.sonplanbox">
                 <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
                     <div class="round" style="margin-top: 25px;margin-right:15px;width: 50px;height: 50px;background-color: #e5e5e5;border-radius: 25px;float:left;text-align: center;line-height: 50px;font-size: 20px;">{{obj.sonnum}}</div>
                     <div class="smallplan_box" style="width: 800px;height: 100px;background-color: #e5e5e5;float: left;padding: 10px">
-                        <div class="smallplan_box_top" style="width: 100%;height: 30px">
-                          <span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;">{{obj.title}}</span>
+                        <div class="smallplan_box_top" style="width: 100%;height: 30px;margin-bottom: 15px">
+                          <span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;" @click="jumpson(obj)">{{obj.title}}</span>
                           <div class="planstybox" style="width:110px;height: 30px;background-color: #1abc9c;text-align: center;line-height: 30px;float: right;color: #ffffff">{{obj.typename}}</div>
                         </div>
-                      <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 600px;">{{obj.content}}</span>
+                      <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
                       <br>
-                      <span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>
+                      <!--<span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>-->
+                    </div>
+                </div>
+            </div>
+            <el-divider></el-divider>
+              <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">实施任务</span>
+            <br><br>
+            <div class="objjjj" v-for="obj in this.taskplanbox">
+                <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
+                    <div class="round" style="margin-top: 25px;margin-right:15px;width: 50px;height: 50px;background-color: #e5e5e5;border-radius: 25px;float:left;text-align: center;line-height: 50px;font-size: 20px;">{{obj.sonnum}}</div>
+                    <div class="smallplan_box" style="width: 800px;height: 100px;background-color: #e5e5e5;float: left;padding: 10px">
+                        <div class="smallplan_box_top" style="width: 100%;height: 30px;margin-bottom: 15px">
+                          <span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;" @click="jumpfnc(obj)">{{obj.title}}</span>
+                          <div class="planstybox" style="width:110px;height: 30px;background-color: #1abc9c;text-align: center;line-height: 30px;float: right;color: #ffffff">{{obj.typename}}</div>
+                        </div>
+                      <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
+                      <br>
+                      <!--<span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>-->
                     </div>
                 </div>
             </div>
@@ -94,6 +121,9 @@
     data() {
       return {
         reverse: true,
+        getcommentbox:[],
+        commentsinput:"",//评论内容
+        taskplanbox:[],
         bannertitle:'',//导航栏标题
         fatherid:0,
         firstactivities:[],
@@ -126,8 +156,84 @@
       }
     },
     methods:{
+      getcomment(){
+        const param = {
+            method:'query',
+            project_id: this.project_id,
+            work_id:this.indexspan,
+          }
+          this.$store.dispatch('Postmomment', param).then((data) => {
+            // console.log('获取评论', data)
+            this.getcommentbox=data.data
+            console.log('获取评论', this.getcommentbox)
+          })
+      },
+      commentclick(){//Postmomment
+        console.log("评论按钮",this.commentsinput,this.indexspan)
+        const param = {
+            method:'comment',
+            project_id: this.project_id,
+            comment:this.commentsinput,
+            work_id:this.indexspan,
+            comment_node:"plan",
+            current_node:0
+          }
+          this.$store.dispatch('Postmomment', param).then((data) => {
+            console.log('计划评论', data)
+            this.commentsinput=""
+            this.getcomment()
+          })
+      },
       getnewplan(){
         this.$router.push({path:'/newplan'})
+      },
+      jumpfnc(index){
+        console.log("跳转",index)
+      },
+      jumpson(index){
+        console.log("子任务",index)
+        if(index.type==1){
+          this.indexspan = index.id
+          this.fatherid=index.id
+          this.firstactivities.splice(0,1)
+          this.firstactivities.push(index)
+          this.bannertitle=index.title
+          this.plan3id=index.id
+          this.getplan2()
+          this.getplane3()
+        }
+        if(index.type==2){
+          this.$router.push({
+            name: 'monthplan',
+            query: {
+              taskid:index.id
+            }
+          })
+        }
+        if(index.type==3){
+          this.$router.push({
+            name: 'weeksplan',
+            query: {
+              taskid:index.id
+            }
+          })
+        }
+        if(index.type==4){
+          this.$router.push({
+            name: 'dayplan',
+            query: {
+              taskid:index.id
+            }
+          })
+        }
+        else {
+          this.$router.push({
+            name: 'constructionplan',
+            query: {
+              taskid:index.id
+            }
+          })
+        }
       },
       getplan(){
         const param = {
@@ -149,6 +255,7 @@
             this.plan3id=data.data[0].id
             this.getplan2()
             this.getplane3()
+            this.getcomment()
           })
       },
       getplan2(){
@@ -184,6 +291,47 @@
                 item["typename"]="其他"
               }
             })
+            this.gettaskplan()
+          })
+      },
+      gettaskplan(){
+        const param = {
+            method:'plan_query',
+            project_id: this.project_id,
+            type:6,
+            parent_id:this.fatherid
+          }
+          this.$store.dispatch('Getplan', param).then((data) => {
+            console.log('实施任务', data)
+            this.taskplanbox=[]
+            this.taskplanbox=data.data
+            this.taskplanbox.forEach(item=>{
+              item["sonnum"]=this.taskplanbox.indexOf(item)+1
+              if(item.type==1){
+                item["typename"]="年计划"
+              }
+              if(item.type==2){
+                item["typename"]="月计划"
+              }
+              if(item.type==3){
+                item["typename"]="周计划"
+              }
+              if(item.type==4){
+                item["typename"]="日计划"
+              }
+              if(item.type==5){
+                item["typename"]="施工组织计划"
+              }
+              if(item.type==6){
+                item["typename"]="施工任务"
+              }
+                if(item.type==7){
+                item["typename"]="施工计划"
+              }
+              if(item.type==0){
+                item["typename"]="其他"
+              }
+            })
           })
       },
       getplane3(){//任务状态
@@ -201,7 +349,7 @@
       },
       showtitle(index){
         this.indexspan = index.id
-       this.fatherid=index.id
+        this.fatherid=index.id
         this.firstactivities.splice(0,1)
         this.firstactivities.push(index)
         this.bannertitle=index.title
@@ -264,4 +412,11 @@
    background-color: #ffffff;
     padding-bottom: 35px;
 }
+  .showcomment{
+    width: 100%;
+    height: 50px;
+    margin-left: 15px;
+    padding-left: 20px;
+    line-height: 50px;
+  }
 </style>

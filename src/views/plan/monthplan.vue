@@ -8,7 +8,7 @@
           <!--顶部导航栏-->
           <div class="boxtop">
             <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">月计划>计划列表>{{this.bannertitle}}</span></div>
-            <div class="boxtop_right">新增计划</div>
+            <div class="boxtop_right" @click="getnewplan">新增计划</div>
           </div>
           <!--时间线-->
           <div class="block" style="float: left;background-color: #DFDFDF">
@@ -68,13 +68,30 @@
                 <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
                     <div class="round" style="margin-top: 25px;margin-right:15px;width: 50px;height: 50px;background-color: #e5e5e5;border-radius: 25px;float:left;text-align: center;line-height: 50px;font-size: 20px;">{{obj.sonnum}}</div>
                     <div class="smallplan_box" style="width: 800px;height: 100px;background-color: #e5e5e5;float: left;padding: 10px">
-                        <div class="smallplan_box_top" style="width: 100%;height: 30px">
+                        <div class="smallplan_box_top" style="width: 100%;height: 30px;margin-bottom: 15px">
                           <span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;">{{obj.title}}</span>
                           <div class="planstybox" style="width:110px;height: 30px;background-color: #1abc9c;text-align: center;line-height: 30px;float: right;color: #ffffff">{{obj.typename}}</div>
                         </div>
-                      <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 600px;">{{obj.content}}</span>
+                      <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
                       <br>
-                      <span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>
+                      <!--<span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>-->
+                    </div>
+                </div>
+            </div>
+            <el-divider></el-divider>
+              <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">实施任务</span>
+            <br><br>
+            <div class="objjjj" v-for="obj in this.taskplanbox">
+                <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
+                    <div class="round" style="margin-top: 25px;margin-right:15px;width: 50px;height: 50px;background-color: #e5e5e5;border-radius: 25px;float:left;text-align: center;line-height: 50px;font-size: 20px;">{{obj.sonnum}}</div>
+                    <div class="smallplan_box" style="width: 800px;height: 100px;background-color: #e5e5e5;float: left;padding: 10px">
+                        <div class="smallplan_box_top" style="width: 100%;height: 30px;margin-bottom: 15px">
+                          <span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;">{{obj.title}}</span>
+                          <div class="planstybox" style="width:110px;height: 30px;background-color: #1abc9c;text-align: center;line-height: 30px;float: right;color: #ffffff">{{obj.typename}}</div>
+                        </div>
+                      <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
+                      <br>
+                      <!--<span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>-->
                     </div>
                 </div>
             </div>
@@ -95,6 +112,7 @@
       return {
         reverse: true,
         activities: [],
+        taskplanbox:[],
         firstactivities:[],
         bannertitle:'',
         fatherid:'',
@@ -123,6 +141,9 @@
       }
     },
     methods:{
+      getnewplan(){
+        this.$router.push({path:'/newplan'})
+      },
       getplan(){
         const param = {
             method:'plan_query',
@@ -132,13 +153,13 @@
           this.$store.dispatch('Getplan', param).then((data) => {
             let todaydata=new Date()
             let todayyear=todaydata.getFullYear()
+            console.log("路由传参过来的数据",this.$route.query.taskid)
             data.data.forEach(item=>{
               if(item.start_date.slice(0,4)==todayyear){
                 console.log("这是今年",todayyear,item.start_date.slice(0,4))
                 item["datayear"]=item.start_date.slice(5,7)+"月"
               }
               else {
-                console.log("不是今年",item.start_date.slice(0,7))
                item["datayear"]=item.start_date.slice(0,7)
               }
             })
@@ -187,6 +208,47 @@
               }
             })
             this.getplane3()
+            this.gettaskplan()
+          })
+      },
+      gettaskplan(){
+        const param = {
+            method:'plan_query',
+            project_id: this.project_id,
+            type:6,
+            parent_id:this.fatherid
+          }
+          this.$store.dispatch('Getplan', param).then((data) => {
+            console.log('实施任务', data)
+            this.taskplanbox=[]
+            this.taskplanbox=data.data
+            this.taskplanbox.forEach(item=>{
+              item["sonnum"]=this.taskplanbox.indexOf(item)+1
+              if(item.type==1){
+                item["typename"]="年计划"
+              }
+              if(item.type==2){
+                item["typename"]="月计划"
+              }
+              if(item.type==3){
+                item["typename"]="周计划"
+              }
+              if(item.type==4){
+                item["typename"]="日计划"
+              }
+              if(item.type==5){
+                item["typename"]="施工组织计划"
+              }
+              if(item.type==6){
+                item["typename"]="施工任务"
+              }
+                if(item.type==7){
+                item["typename"]="施工计划"
+              }
+              if(item.type==0){
+                item["typename"]="其他"
+              }
+            })
           })
       },
       getplane3(){//任务状态
