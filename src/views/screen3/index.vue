@@ -10,7 +10,8 @@
           <div class="project—name">{{project_name}}</div>
           <div class="now-time">{{todayDate}}</div>
           <div class="title-bg">
-            <img src="/static/screen/red/title1.png" />
+            <img v-if="img_src_title!==''" :src="img_src_title" />
+            <!-- src="/static/screen/red/title1.png" -->
           </div>
         </div>
       </el-row>
@@ -189,7 +190,8 @@ export default {
       project_id: null,
       project_name: '',
       personInfo: null,
-      canShow: true
+      canShow: true,
+      img_src_title: ''
     }
   },
   computed: {},
@@ -238,6 +240,8 @@ export default {
             } else {
               this.project_name = project.project_name
             }
+
+            this.img_src_title = `${process.env.BASE_DOMAIN_ORG_URL}${project.org_id}/BrowserPreview_tmp.png`
           }
         })
         if (this.project_id !== null) {
