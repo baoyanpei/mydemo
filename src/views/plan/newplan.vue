@@ -50,9 +50,9 @@
                   </div>
                 </div>
             </div>
-          </div>
-          <div class="faqijihua" style="width: 100%;height: 80px;float: left;text-align: center;line-height: 50px">
-              <div style=" box-shadow:0px 0px 30px #e5e5e5;width: 180px;color:#fff;border-radius:20px;height: 50px;background-color: #1ABC9C;margin: auto" @click="planinititate">发起计划</div>
+            <div class="faqijihua" v-show="faqijihuashow" style="width: 100%;height: 80px;float: left;text-align: center;line-height: 50px;margin-top: 20px">
+                <div style=" box-shadow:0px 0px 30px #e5e5e5;width: 180px;color:#fff;border-radius:20px;height: 50px;background-color: #1ABC9C;margin: auto" @click="planinititate">发起计划</div>
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -175,6 +175,7 @@
     data() {
       return {
         plannewvalue:'',
+        faqijihuashow:false,
         planindexworkid:0,
         oneparentid:0,
         plannewshow:false,
@@ -491,27 +492,28 @@
           this.numbox=this.desc.split("\n")
           this.planshow=false
           this.planshow2=true
-        let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
-        let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
-        this.loading=true
-        const param = {
-            method:'plan_add',
-            project_id: this.project_id,
-            title:this.input,
-            content:this.desc,
-            start_date:firstdaytime,
-            end_date:endtime,
-            type:this.typetid,
-          }
-          this.$store.dispatch('Getplan', param).then((data) => {
-            console.log('新建计划提交状态', data)
-            this.oneparentid=data.id
-            this.loading=false
-            this.numbox=[]
-            this.numbox=this.desc.split("\n")
-            this.planshow=false
-            this.planshow2=true
-          })
+          this.faqijihuashow=true
+        // let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
+        // let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
+        // this.loading=true
+        // const param = {
+        //     method:'plan_add',
+        //     project_id: this.project_id,
+        //     title:this.input,
+        //     content:this.desc,
+        //     start_date:firstdaytime,
+        //     end_date:endtime,
+        //     type:this.typetid,
+        //   }
+        //   this.$store.dispatch('Getplan', param).then((data) => {
+        //     console.log('新建计划提交状态', data)
+        //     this.oneparentid=data.id
+        //     this.loading=false
+        //     this.numbox=[]
+        //     this.numbox=this.desc.split("\n")
+        //     this.planshow=false
+        //     this.planshow2=true
+        //   })
       },
       releasefnc(index){//发布任务弹窗
         this.dialogVisible=true

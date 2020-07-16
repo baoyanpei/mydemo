@@ -7,7 +7,7 @@
         <el-col :span="20">
           <!--顶部导航栏-->
           <div class="boxtop">
-            <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">年计划>计划列表>{{this.bannertitle}}</span></div>
+            <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">{{this.firsttitletype}}>计划列表>{{this.bannertitle}}</span></div>
             <div class="boxtop_right" @click="getnewplan">新增计划</div>
           </div>
           <!--时间线-->
@@ -34,7 +34,7 @@
                     </div>
                     <div class="planboxtop_left_2" style="width: 100%;height: 50%;overflow: hidden">
                       <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-date"></i>计划时间:{{item.start_date}}-{{item.created_time}}</span>
-                      <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-coin"></i>计划类别:年计划</span>
+                      <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-coin"></i>计划类别:{{item.firstlittertype}}</span>
                       <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-user"></i>发起人:{{item.person_name}}</span>
                     </div>
                   </div>
@@ -125,6 +125,9 @@
     data() {
       return {
         reverse: true,
+        idplan:[],
+        firsttitletype:"",
+        planchanidtype:1,
         planindexworkid:0,
         getcommentbox:[],
         commentsinput:"",//评论内容
@@ -148,13 +151,41 @@
     computed:{
       project_id() {
         return this.$store.state.project.project_id
+      },
+      plan_typeid(){
+        return this.$store.state.plantypeid.count
       }
     },
     watch: {
       project_id(curVal, oldVal) {
-        console.log('curVal',curVal,oldVal)
+        console.log("dsadas")
         this.getplan()
       },
+      plan_typeid(curVal, oldVal){
+        console.log("监听事件plan_typeid",curVal)
+        if(curVal==1){
+          this.firsttitletype="年计划"
+        }
+        if(curVal==2){
+          this.firsttitletype="月计划"
+        }
+        if(curVal==3){
+          this.firsttitletype="周计划"
+        }
+        if(curVal==4){
+          this.firsttitletype="日计划"
+        }
+        if(curVal==5){
+          this.firsttitletype="施工组织计划"
+        }
+        if(curVal==6){
+          this.firsttitletype="施工计划"
+        }
+        if(curVal==0){
+          this.firsttitletype="其他"
+        }
+        this.planchangeid()
+      }
     },
     mounted(){
       if (this.project_id !== null) {
@@ -162,6 +193,10 @@
       }
     },
     methods:{
+      planchangeid(){
+        this.planchanidtype=this.plan_typeid
+        this.getplan()
+      },
       getcomment(){
         const param = {
             method:'query',
@@ -220,72 +255,77 @@
         })
     },
       jumpson(index){
-        console.log("子任务",index)
-        if(index.type==1){
-          this.indexspan = index.id
-          this.fatherid=index.id
-          this.firstactivities.splice(0,1)
-          this.firstactivities.push(index)
-          this.bannertitle=index.title
-          this.plan3id=index.id
-          this.getplan2()
-          this.getplane3()
-        }
-        if(index.type==2){
-          this.$router.push({
-            name: 'monthplan',
-            query: {
-              taskid:index.id
-            }
-          })
-        }
-        if(index.type==3){
-          this.$router.push({
-            name: 'weeksplan',
-            query: {
-              taskid:index.id
-            }
-          })
-        }
-        if(index.type==4){
-          this.$router.push({
-            name: 'dayplan',
-            query: {
-              taskid:index.id
-            }
-          })
-        }
-        if(index.type==5||index.type==6||index.type==7) {
-          this.$router.push({
-            name: 'constructionplan',
-            query: {
-              taskid:index.id
-            }
-          })
-        }
+        console.log("子计划",index)
+        this.planchanidtype=index.type
+        this.sonplanjump(index.id)
+        this.$store.commit('planidchange',index.type)
+      },
+      sonplanjump(idsss){
+        this.idplan=[]
+        this.idplan.push(idsss)
       },
       getplan(){
         const param = {
             method:'plan_query',
             project_id: this.project_id,
-            type:1,
-            sort:"asc"
+            type:this.planchanidtype,
+            sort:"desc"
           }
           this.$store.dispatch('Getplan', param).then((data) => {
             console.log('plan', data)
             data.data.forEach(item=>{
               item["datayear"]=item.start_date.slice(0,4)
+              if(item.type==1){
+                item["firstlittertype"]="年计划"
+              }
+              if(item.type==2){
+                item["firstlittertype"]="月计划"
+              }
+              if(item.type==3){
+                item["firstlittertype"]="周计划"
+              }
+              if(item.type==4){
+                item["firstlittertype"]="日计划"
+              }
+              if(item.type==5){
+                item["firstlittertype"]="施工组织计划"
+              }
+              if(item.type==7){
+                item["firstlittertype"]="施工计划"
+              }
+              if(item.type==0){
+                item["firstlittertype"]="其他"
+              }
             })
-            this.firstactivities=[]
-            this.activities=data.data
-            this.firstactivities.push(this.activities[0])
-            this.indexspan=data.data[0].id
-            this.bannertitle=data.data[0].title
-            this.fatherid=data.data[0].id
-            this.plan3id=data.data[0].id
-            this.getplan2()
-            this.getplane3()
-            this.getcomment()
+            for(let o=0;o<data.data.length;o++){
+              if(this.idplan[0]==data.data[o].id){
+                console.log("idplan有值",data.data[o])
+                this.firstactivities=[]
+                this.activities=data.data
+                this.firstactivities.push(data.data[o])
+                this.indexspan=data.data[o].id
+                this.bannertitle=data.data[o].title
+                this.fatherid=data.data[o].id
+                this.plan3id=data.data[o].id
+                this.getplan2()//子计划
+                this.getplane3()//任务状态
+                this.getcomment()//该计划的评论
+                this.idplan=[]
+              }
+            }
+            if(this.idplan.length==0){
+              console.log("idplan为空")
+              this.firstactivities=[]
+              this.activities=data.data
+              this.firstactivities.push(this.activities[0])
+              this.indexspan=data.data[0].id
+              this.bannertitle=data.data[0].title
+              this.fatherid=data.data[0].id
+              this.plan3id=data.data[0].id
+              this.getplan2()//子计划
+              this.getplane3()//任务状态
+              this.getcomment()//该计划的评论
+            }
           })
       },
       getplan2(){
@@ -315,6 +355,9 @@
                 item["typename"]="施工组织计划"
               }
               if(item.type==6){
+                item["typename"]="施工任务"
+              }
+              if(item.type==7){
                 item["typename"]="施工计划"
               }
               if(item.type==0){
@@ -444,6 +487,7 @@
     .active {
    background-color: #ffffff;
     padding-bottom: 35px;
+      color: #1abc9c;
 }
   .showcomment{
     width: 100%;

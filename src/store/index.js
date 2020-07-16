@@ -7,6 +7,7 @@ import tagsView from './modules/tagsView'
 import user from './modules/user'
 import huiyi from './modules/huiyi'
 import project from './modules/project' // 项目
+import plantypeid from './modules/plantypeid' //计划id
 import person from './modules/person' // person
 import model3d from './modules/model3d' // person
 import msg from './modules/msg' // person
@@ -28,6 +29,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     app,
+    plantypeid,
     errorLog,
     permission,
     tagsView,

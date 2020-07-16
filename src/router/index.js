@@ -132,6 +132,16 @@ export const constantRouterMap = [{
           noCache: true
         }
       },
+       {
+        path: 'indexplan',//indexplan
+        component: () => import('@/views/plan/indexplan'),
+        name: 'indexplan',
+        meta: {
+          title: 'indexplan',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
       {
         path: 'yearsplan',
         component: () => import('@/views/plan/yearsplan'),
