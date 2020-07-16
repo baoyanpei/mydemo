@@ -75,9 +75,9 @@
         <span style="margin-right: 20px">选择类别:</span>
         <el-cascader :options="gettypearr" @change="handleChangegettypearr" :show-all-levels="false"></el-cascader>
         <br><br>
-        <span style="margin-right: 20px">计划类型:</span>
-        <el-cascader :options="plangettypearr" v-model="plantypevalue" @change="changeplangettypearr" :show-all-levels="false"></el-cascader>
-        <br><br>
+        <!--<span style="margin-right: 20px">计划类型:</span>-->
+        <!--<el-cascader :options="plangettypearr" v-model="plantypevalue" @change="changeplangettypearr" :show-all-levels="false"></el-cascader>-->
+        <!--<br><br>-->
         <span style="margin-right: 20px">介绍内容:</span>
          <el-input
           type="textarea"
@@ -93,20 +93,20 @@
            <el-cascader style="width: 400px" :options="organizationarr" v-model="organizationvalue" @change="handleChangegetorganization"></el-cascader>
         </div>
         <br><br>
-        <div style="width: 100%;height: 40px;">
-           <span class="plantoonspan" style="float: left">计划时间:</span>
-            <el-date-picker
-              v-model="plantime"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期" style="width: 350px;float: left;margin-left: 25px">
-            </el-date-picker>
-        </div>
+        <!--<div style="width: 100%;height: 40px;">-->
+           <!--<span class="plantoonspan" style="float: left">计划时间:</span>-->
+            <!--<el-date-picker-->
+              <!--v-model="plantime"-->
+              <!--type="daterange"-->
+              <!--range-separator="至"-->
+              <!--start-placeholder="开始日期"-->
+              <!--end-placeholder="结束日期" style="width: 350px;float: left;margin-left: 25px">-->
+            <!--</el-date-picker>-->
+        <!--</div>-->
 
       </div>
       <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 20px">发布内容:</span>
+        <span style="margin-right: 20px">发布标题:</span>
         <el-input
           type="textarea"
           placeholder="请输入200字以内的作品介绍"
@@ -175,6 +175,8 @@
     data() {
       return {
         plannewvalue:'',
+        planindexworkid:0,
+        oneparentid:0,
         plannewshow:false,
         organizationarr:[],
         organizationvalue:"",
@@ -380,25 +382,11 @@
     },
     methods: {
       planinititate(){
-        let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
-        let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
-        this.loading=true
-        const param = {
-            method:'plan_add',
-            project_id: this.project_id,
-            title:this.input,
-            content:this.desc,
-            start_date:firstdaytime,
-            end_date:endtime,
-            type:this.typetid,
-          }
-          this.$store.dispatch('Getplan', param).then((data) => {
-            console.log('新建计划提交状态', data)
-            this.loading=false
-            this.numbox=[]
-            this.numbox=this.desc.split("\n")
-            this.planshow=false
-            this.planshow2=true
+        this.$router.push({
+            name: 'yearsplan',
+            // query: {
+            //   taskid:index.id
+            // }
           })
       },
       handleChangetypetid(value) {
@@ -503,6 +491,27 @@
           this.numbox=this.desc.split("\n")
           this.planshow=false
           this.planshow2=true
+        let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
+        let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
+        this.loading=true
+        const param = {
+            method:'plan_add',
+            project_id: this.project_id,
+            title:this.input,
+            content:this.desc,
+            start_date:firstdaytime,
+            end_date:endtime,
+            type:this.typetid,
+          }
+          this.$store.dispatch('Getplan', param).then((data) => {
+            console.log('新建计划提交状态', data)
+            this.oneparentid=data.id
+            this.loading=false
+            this.numbox=[]
+            this.numbox=this.desc.split("\n")
+            this.planshow=false
+            this.planshow2=true
+          })
       },
       releasefnc(index){//发布任务弹窗
         this.dialogVisible=true
@@ -738,14 +747,37 @@
           content:this.plantextarea,
           start_date:firstdaytime,
           end_date:endtime,
-          parent_id:'',
+          parent_id:this.oneparentid,
           struct_id:this.structid
         }
         this.$store.dispatch('Getplan', _param).then((data) => {
-          console.log("任务发布成功",data)
+          console.log("任务发布成功",data)//work_id
+          this.planindexworkid=data.work_id
+          this.smalltaskfnc()
           this.fabusuccessfnc()
         })
       },
+      smalltaskfnc() {//获取任务列表接口
+        const _param = {
+          method: 'get_todo_list',
+          project_id: this.project_id,
+          qtype: 'TodoList,BackLog,MatterRead'
+        }
+        this.$store.dispatch('GetAllInstList', _param).then(data => {
+          for(let i=0;i<data.length;i++){
+            if (this.planindexworkid==data[i].workId){
+              console.log("提取到对应的任务",data[i])
+              const param = {
+                show: true,
+                data:data[i]
+              }
+              this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
+              })
+            }
+          }
+          console.log('我的任务',data)
+        })
+    },
       fabusuccessfnc(){
         this.$alert('发布成功', '', {
           confirmButtonText: '确定',
@@ -1176,7 +1208,6 @@
       },
       infoshow(index){
         console.log("详情页面展示信息",index)
-        // console.log(this.boxinfo1.indexOf(index))   获取到当前元素的索引
         const param = {
           show: true,
           data:index

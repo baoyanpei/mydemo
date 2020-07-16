@@ -38,17 +38,21 @@
                       <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-user"></i>发起人:{{item.person_name}}</span>
                     </div>
                   </div>
-                  <div class="implementation" style="position:relative;width: 120px;height: 80px;background-color: #F2F2F2;float: left;margin-top: 10px;">
-                    <span class="implementation_span1" style="font-size: 40px;position: absolute;bottom: 15px;left: 0px;">{{span1}}</span>
-                    <span class="implementation_span2" style="position: absolute;bottom: 15px;right: 10px">实施任务</span>
+                  <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #1BB1F4;float: left;margin-top: 10px;">
+                    <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span4}}</span>
+                     <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子任务</span>
                   </div>
-                  <div class="implementation" style="position:relative;color:#fff;width: 120px;margin-left:10px;height: 80px;background-color: #1ABC9C;float: left;margin-top: 10px;">
-                    <span class="implementation_span1" style="font-size: 40px;position: absolute;bottom: 15px;left: 0px;">{{span2}}</span>
-                    <span class="implementation_span2" style="position: absolute;bottom: 15px;right: 10px">完成任务</span>
+                  <div class="implementation" style="position:relative;margin-left:10px;width: 80px;height: 60px;background-color: #F2F2F2;float: left;margin-top: 10px;">
+                     <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span1}}</span>
+                     <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">实施任务</span>
                   </div>
-                  <div class="implementation" style="position:relative;color:#fff;width: 120px;margin-left:10px;height: 80px;background-color: #BC0000;float: left;margin-top: 10px;">
-                    <span class="implementation_span1" style="font-size: 40px;position: absolute;bottom: 15px;left: 0px;">{{span3}}</span>
-                    <span class="implementation_span2" style="position: absolute;bottom: 15px;right: 10px">超时任务</span>
+                  <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #1ABC9C;float: left;margin-top: 10px;">
+                     <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span2}}</span>
+                    <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">完成任务</span>
+                  </div>
+                  <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #BC0000;float: left;margin-top: 10px;">
+                    <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span3}}</span>
+                    <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">超时任务</span>
                   </div>
                 </div>
                  <el-divider></el-divider>
@@ -121,6 +125,7 @@
     data() {
       return {
         reverse: true,
+        planindexworkid:0,
         getcommentbox:[],
         commentsinput:"",//评论内容
         taskplanbox:[],
@@ -136,6 +141,7 @@
         span1:'',
         span2:"",
         span3:"",
+        span4:"",
         indexspan:0
       };
     },
@@ -188,8 +194,31 @@
         this.$router.push({path:'/newplan'})
       },
       jumpfnc(index){
-        console.log("跳转",index)
+        console.log("跳转实施任务",index.work_id)
+        this.planindexworkid=index.work_id
+        this.smalltaskfnc()
       },
+      smalltaskfnc() {//获取任务列表接口
+        const _param = {
+          method: 'get_todo_list',
+          project_id: this.project_id,
+          qtype: 'TodoList,BackLog,MatterRead'
+        }
+        this.$store.dispatch('GetAllInstList', _param).then(data => {
+          for(let i=0;i<data.length;i++){
+            if (this.planindexworkid==data[i].workId){
+              console.log("提取到对应的任务",data[i])
+              const param = {
+                show: true,
+                data:data[i]
+              }
+              this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
+              })
+            }
+          }
+          console.log('我的任务',data)
+        })
+    },
       jumpson(index){
         console.log("子任务",index)
         if(index.type==1){
@@ -226,7 +255,7 @@
             }
           })
         }
-        else {
+        if(index.type==5||index.type==6||index.type==7) {
           this.$router.push({
             name: 'constructionplan',
             query: {
@@ -239,7 +268,8 @@
         const param = {
             method:'plan_query',
             project_id: this.project_id,
-            type:1
+            type:1,
+            sort:"asc"
           }
           this.$store.dispatch('Getplan', param).then((data) => {
             console.log('plan', data)
@@ -341,10 +371,11 @@
             id:this.plan3id
         }
         this.$store.dispatch('Getplan', param).then((data) => {
-          // console.log('plan3333', data)
-          this.span1=data.data.sub_work_count
-          this.span2=data.data.sub_finished
-          this.span3=data.data.sub_work_count-data.data.sub_finished
+          console.log('plan3333', data)
+          this.span4=data.data.sub_count    //子任务
+          this.span1=data.data.sub_work_count//实施任务
+          this.span2=data.data.sub_finished//完成任务
+          this.span3=data.data.sub_work_count-data.data.sub_finished//超时任务
         })
       },
       showtitle(index){

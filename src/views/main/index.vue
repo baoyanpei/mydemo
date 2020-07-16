@@ -957,7 +957,6 @@ export default {
       // this.$refs.select.blur()
     },
     newtaskdetailsfnc(index) {
-      //最新任务点击展示详情
       console.log('任务详情', index)
       const param = {
         show: true,
