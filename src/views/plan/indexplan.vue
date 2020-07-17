@@ -26,7 +26,7 @@
                 <div class="planboxtop">
                   <div class="planboxtop_left" style="width: 590px;height: 100%;float: left">
                     <div class="planboxtop_left_1" style="width: 100%;height: 50%;;overflow: hidden">
-                      <div class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #1bb1f4;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">
+                      <div  @click="releasetemplatefnc(item.content)" class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #1bb1f4;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">
                         <i class="el-icon-edit-outline"></i>
                         <span>发布实施任务</span>
                       </div>
@@ -96,7 +96,7 @@
               <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">实施任务</span>
             <br><br>
             <div class="objjjj" v-for="obj in this.taskplanbox">
-                <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
+                <div class="smallplan" :class="{'nohave':(obj.onshow=='none')}" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
                     <div class="round" style="margin-top: 25px;margin-right:15px;width: 50px;height: 50px;background-color: #e5e5e5;border-radius: 25px;float:left;text-align: center;line-height: 50px;font-size: 20px;">{{obj.sonnum}}</div>
                     <div class="smallplan_box" style="width: 800px;height: 100px;background-color: #e5e5e5;float: left;padding: 10px">
                         <div class="smallplan_box_top" style="width: 100%;height: 30px;margin-bottom: 15px">
@@ -126,7 +126,9 @@
       return {
         reverse: true,
         idplan:[],
-        firsttitletype:"",
+        mytaskbox:[],
+        alltask:[],
+        firsttitletype:"年计划",
         planchanidtype:1,
         planindexworkid:0,
         getcommentbox:[],
@@ -193,6 +195,17 @@
       }
     },
     methods:{
+      releasetemplatefnc(index){//发布实施任务
+        // console.log("发布实施任务",index)
+        let box=this.firstactivities[0].content.split("\n")
+        for(let i=0;i<box.length;i++){
+            // blockshow:true,blockshow:false
+            box.splice(i,1,{name:box[i],block:"have"})
+          }
+        this.$store.commit("titleboxchange",box)
+        this.$store.commit("leftshowfnc")
+        this.$router.push({path:'/newplan'})
+      },
       planchangeid(){
         this.planchanidtype=this.plan_typeid
         this.getplan()
@@ -226,6 +239,7 @@
           })
       },
       getnewplan(){
+        this.$store.commit("leftnoshowfnc")
         this.$router.push({path:'/newplan'})
       },
       jumpfnc(index){
@@ -251,6 +265,7 @@
               })
             }
           }
+          this.mytaskbox=data
           console.log('我的任务',data)
         })
     },
@@ -367,6 +382,17 @@
             this.gettaskplan()
           })
       },
+      getalltask(){
+        const _param = {
+          method: 'get_todo_list',
+          project_id: this.project_id,
+          qtype: 'TodoList,BackLog,MatterRead'
+        }
+        this.$store.dispatch('GetAllInstList', _param).then(data => {
+          this.alltask=data
+          console.log('所有任务',data)
+        })
+      },
       gettaskplan(){
         const param = {
             method:'plan_query',
@@ -375,6 +401,7 @@
             parent_id:this.fatherid
           }
           this.$store.dispatch('Getplan', param).then((data) => {
+            this.getalltask()
             console.log('实施任务', data)
             this.taskplanbox=[]
             this.taskplanbox=data.data
@@ -405,6 +432,16 @@
                 item["typename"]="其他"
               }
             })
+            for(let i=0;i<this.alltask.length;i++){
+              for(let j=0;j<this.taskplanbox.length;j++){
+                if(this.taskplanbox[j].work_id=this.alltask[i].workId){
+                  this.taskplanbox[j]["onshow"]="have"
+                }else {
+                  this.taskplanbox[j]["onshow"]="none"
+                }
+              }
+            }
+            console.log("实施任务有什么",this.taskplanbox)
           })
       },
       getplane3(){//任务状态
@@ -495,5 +532,8 @@
     margin-left: 15px;
     padding-left: 20px;
     line-height: 50px;
+  }
+  .nohave{
+    background-color: #ff6700;
   }
 </style>

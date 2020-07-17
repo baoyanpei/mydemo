@@ -24,11 +24,22 @@ import hasPermissionToOperation from "@/utils/permissionUrl"; // 权限判断函
 const plantypeid = {
   state: {
     count:1,
+    titlebox:[],
+    leftshow:"none"
   },
   mutations:{
     planidchange(state,step){
         state.count=step
-      }
+      },
+    titleboxchange(state,step){
+      state.titlebox=step
+    },
+    leftshowfnc(state){
+      state.leftshow="have"
+    },
+    leftnoshowfnc(state){
+       state.leftshow="none"
+    }
   }
 }
 export default plantypeid;

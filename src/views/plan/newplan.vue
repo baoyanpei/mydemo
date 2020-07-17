@@ -9,7 +9,7 @@
             <div class="boxtop_left">新增计划</div>
             <div class="boxtop_right">新增计划</div>
           </div>
-          <div class="plantoon">
+          <div class="plantoon" v-show="leftindexshow">
             <el-cascader v-model="jihuavalue" :options="optionstype" @change="handleChangetypetid" style="width: 150px;border: none;"></el-cascader>
             <el-input v-model="input" placeholder="请输入计划名称" style="width: 320px"></el-input>
             <div class="planstyle">
@@ -39,14 +39,18 @@
             <div v-for="item in this.numbox">
                 <div class="newplanxijie_1" v-show="planshow2">
                   <div class="newplanxijie_1_box">
-                    <span class="newplanxijie_1_box_span1">{{item}}</span>
-                    <span style="display: block;color: #0a76a4;line-height: 35px">实施计划</span>
-                    <span style="display: block;">
-                      <i class="el-icon-edit-outline" style="margin-right: 10px"></i>编辑
-                      <span style="margin-right: 10px;margin-left: 10px;color: #BABABA">|</span>
-                      <i class="el-icon-close" style="margin-right: 10px"></i>删除
-                    </span>
-                    <div class="jump" @click="releasefnc(item)"><i class="el-icon-right" style="font-size: 30px;color: #ffffff"></i></div>
+                    <span class="newplanxijie_1_box_span1">{{item.name}}</span>
+                    <span style="display: block;color: #0a76a4;line-height: 70px">实施计划</span>
+                    <!--<span style="display: block;">-->
+                      <!--<i class="el-icon-edit-outline" style="margin-right: 10px"></i>编辑-->
+                      <!--<span style="margin-right: 10px;margin-left: 10px;color: #BABABA">|</span>-->
+                      <!--<i class="el-icon-close" style="margin-right: 10px"></i>删除-->
+                    <!--</span>-->
+                    <div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">
+                      <i class="el-icon-right" style="font-size: 30px;color: #ffffff"></i>
+                      <!--<i class="el-icon-right" style="font-size: 30px;color: #ffffff" v-show="item.blockshow"></i>-->
+                      <!--<span class="fabuon" v-show="item.blockshow2">已发布</span>-->
+                    </div>
                   </div>
                 </div>
             </div>
@@ -72,22 +76,33 @@
           </div>
         </div>
 
-        <span style="margin-right: 20px">选择类别:</span>
-        <el-cascader :options="gettypearr" @change="handleChangegettypearr" :show-all-levels="false"></el-cascader>
-        <br><br>
+        <!--<span style="margin-right: 20px">选择类别:</span>-->
+        <!--<el-cascader :options="gettypearr" @change="handleChangegettypearr" :show-all-levels="false"></el-cascader>-->
+        <!--<br><br>-->
         <!--<span style="margin-right: 20px">计划类型:</span>-->
         <!--<el-cascader :options="plangettypearr" v-model="plantypevalue" @change="changeplangettypearr" :show-all-levels="false"></el-cascader>-->
         <!--<br><br>-->
-        <span style="margin-right: 20px">介绍内容:</span>
-         <el-input
+        <!--<span style="margin-right: 20px">介绍内容:</span>-->
+         <!--<el-input-->
+          <!--type="textarea"-->
+          <!--placeholder=""-->
+          <!--v-model="plantextarea"-->
+          <!--maxlength="200"-->
+          <!--style="width: 400px"-->
+          <!--show-word-limit>-->
+        <!--</el-input>-->
+        <!--<br><br>-->
+        <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 20px">发布标题:</span>
+        <el-input
           type="textarea"
-          placeholder=""
-          v-model="plantextarea"
+          placeholder="请输入200字以内的作品介绍"
+          v-model="textareaindex"
           maxlength="200"
           style="width: 400px"
           show-word-limit>
         </el-input>
-        <br><br>
+      </div>
         <div v-show="organizationshow">
            <span style="margin-right: 20px">组织计划:</span>
            <el-cascader style="width: 400px" :options="organizationarr" v-model="organizationvalue" @change="handleChangegetorganization"></el-cascader>
@@ -104,17 +119,6 @@
             <!--</el-date-picker>-->
         <!--</div>-->
 
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 20px">发布标题:</span>
-        <el-input
-          type="textarea"
-          placeholder="请输入200字以内的作品介绍"
-          v-model="textareaindex"
-          maxlength="200"
-          style="width: 400px"
-          show-word-limit>
-        </el-input>
       </div>
       <div class="fabudiv" style="width: 100%;padding-bottom: 20px;">
         <span style="margin-right: 20px;float: left;">添加附件:</span>
@@ -175,6 +179,7 @@
     data() {
       return {
         plannewvalue:'',
+        leftindexshow:false,
         faqijihuashow:false,
         planindexworkid:0,
         oneparentid:0,
@@ -365,6 +370,12 @@
       },
       projectPersonList() {//人员列表信息
         return this.$store.state.project.projectPersonList
+      },
+      titlebox(){//页面传来的title
+        return this.$store.state.plantypeid.titlebox
+      },
+      leftshow(){
+        return this.$store.state.plantypeid.leftshow
       }
     },
     watch: {
@@ -372,10 +383,26 @@
         console.log('curVal',curVal,oldVal)
         this.getstyle()
       },
+      titlebox(curVal){
+        console.log('titlebox',curVal)
+      },
+      leftshow(index){
+        this.leftshowfnc(index)
+      }
     },
     mounted(){
       if (this.project_id !== null) {
         this.getstyle()
+        if(this.leftshow="have"){
+          // this.leftindexshow=false
+          this.planshow=false
+          this.planshow2=true
+          this.numbox=this.titlebox
+        }
+      if(this.leftshow="none"){
+          this.leftindexshow=true
+        }
+        console.log("titlebox接受到了没得",this.titlebox,this.leftshow)
       }
     },
     components:{
@@ -389,6 +416,9 @@
             //   taskid:index.id
             // }
           })
+      },
+      leftshowfnc(){
+        // console.log("左边状态",this.leftshow)
       },
       handleChangetypetid(value) {
         console.log("ddddddd",value[0]);
@@ -490,6 +520,12 @@
       releaseplan(){//提交计划
          this.numbox=[]
           this.numbox=this.desc.split("\n")
+          console.log("实施计划的盒子",this.numbox)
+          for(let i=0;i<this.numbox.length;i++){
+            // blockshow:true,blockshow:false
+            this.numbox.splice(i,1,{name:this.numbox[i],block:"have"})
+          }
+          console.log("新数组",this.numbox)
           this.planshow=false
           this.planshow2=true
           this.faqijihuashow=true
@@ -517,7 +553,7 @@
       },
       releasefnc(index){//发布任务弹窗
         this.dialogVisible=true
-        this.plantextarea=index
+        this.textareaindex=index
       },
       openeldialog(){//打开发布任务窗口
         console.log("组别",this.projectGroupList)
@@ -746,7 +782,7 @@
           subjectionId:"",
           nosend:1,
           type:this.plantypevalue[0],
-          content:this.plantextarea,
+          content:"",
           start_date:firstdaytime,
           end_date:endtime,
           parent_id:this.oneparentid,
@@ -754,6 +790,14 @@
         }
         this.$store.dispatch('Getplan', _param).then((data) => {
           console.log("任务发布成功",data)//work_id
+          for(let i=0;i<this.numbox.length;i++){
+            if(this.textareaindex==this.numbox[i].name){
+              this.numbox[i].block="donot"
+              // this.num[i].blockshow=false
+              // this.num[i].blockshow2=true
+            }
+          }
+        console.log("numbox__donot",this.numbox)
           this.planindexworkid=data.work_id
           this.smalltaskfnc()
           this.fabusuccessfnc()
@@ -1389,6 +1433,9 @@
     top: 40px;
     right: 20px;
   }
+  .classdonot{
+    background-color: #ff6700;
+  }
   .nulldiv{
     width: 700px;
     height: 560px;
@@ -1397,5 +1444,8 @@
     text-align: center;
     line-height: 560px;
     color: #e7e7e7;
+  }
+  .fabuon{
+    color: #1bb1f4;
   }
 </style>
