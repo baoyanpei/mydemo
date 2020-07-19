@@ -147,7 +147,11 @@
         span2:"",
         span3:"",
         span4:"",
-        indexspan:0
+        indexspan:0,
+        pushdata:"",
+        thirdinfo:[],
+        postdata:[],
+        firstbox:[]
       };
     },
     computed:{
@@ -198,9 +202,8 @@
       releasetemplatefnc(index){//发布实施任务
         // console.log("发布实施任务",index)
         let box=this.firstactivities[0].content.split("\n")
-        for(let i=0;i<box.length;i++){
-            // blockshow:true,blockshow:false
-            box.splice(i,1,{name:box[i],block:"have"})
+        for(let i=0;i<box.length;i++){//{name:this.numbox[i],block:"have",blockshow1:true,blockshow2:false}
+            box.splice(i,1,{name:box[i],block:"have",blockshow1:true,blockshow2:false})
           }
         this.$store.commit("titleboxchange",box)
         this.$store.commit("leftshowfnc")
@@ -254,21 +257,67 @@
           qtype: 'TodoList,BackLog,MatterRead'
         }
         this.$store.dispatch('GetAllInstList', _param).then(data => {
-          for(let i=0;i<data.length;i++){
-            if (this.planindexworkid==data[i].workId){
-              console.log("提取到对应的任务",data[i])
-              const param = {
-                show: true,
-                data:data[i]
-              }
-              this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
-              })
+          this.firstbox=[]
+          data.forEach(item=>{
+            if (this.planindexworkid==item.workId){
+              this.firstbox.push(item)
+              this.postdata=[]
+              this.postdata.push(item.workId)
+              this.secondfnc()
+              this.thirdinterface()//配置列表
             }
-          }
+          })
           this.mytaskbox=data
           console.log('我的任务',data)
         })
     },
+      secondfnc(){
+        const _param = {
+        method: 'get_nodes_users_list',
+        project_id: this.project_id,
+        work_ids:this.postdata
+      }
+      this.$store.dispatch('Allpersondata', _param).then((data) => {
+        console.log("第二接口数据",data)
+        let aaa=data.data
+        let map1= new Map()
+        for(var i in aaa){
+          map1.set(i,aaa[i])
+        }
+        this.firstbox.forEach(item=>{
+          let workId = item.workId
+          item["state"]="1"
+          item['obj']=map1.get(workId)
+          item["flowId2"]=item.flowId.slice(0,item.flowId.length-2)
+          if(this.thirdinfo[item.flowId2]!=""){
+           let _config = this.thirdinfo[item.flowId2]
+            let _node = _config[item.getinfo]
+            if (_node !== undefined){
+              item.state = _node.status
+              item["statecolor"]=_node.color
+            }else{
+              item.state = "已完成"
+            }
+          }
+        })
+          const param = {
+            show: true,
+            data:this.firstbox[0]
+          }
+          this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
+          })
+      })
+      },
+      thirdinterface(){
+        const _param = {
+          method: 'cfg_nodes',
+          project_id: this.project_id,
+        }
+        this.$store.dispatch('Allinfodictionary', _param).then((data) => {
+          this.thirdinfo=data
+          console.log("第三接口",this.thirdinfo)
+        })
+      },
       jumpson(index){
         console.log("子计划",index)
         this.planchanidtype=index.type

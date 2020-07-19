@@ -35,21 +35,16 @@
               暂无计划内容
             </div>
             <!--有计划-->
-            <div class="newplanxijie_1_top" v-show="planshow2">新增实施计划</div>
+            <!--<div class="newplanxijie_1_top" v-show="planshow2">新增实施计划</div>-->
             <div v-for="item in this.numbox">
                 <div class="newplanxijie_1" v-show="planshow2">
                   <div class="newplanxijie_1_box">
                     <span class="newplanxijie_1_box_span1">{{item.name}}</span>
                     <span style="display: block;color: #0a76a4;line-height: 70px">实施计划</span>
-                    <!--<span style="display: block;">-->
-                      <!--<i class="el-icon-edit-outline" style="margin-right: 10px"></i>编辑-->
-                      <!--<span style="margin-right: 10px;margin-left: 10px;color: #BABABA">|</span>-->
-                      <!--<i class="el-icon-close" style="margin-right: 10px"></i>删除-->
-                    <!--</span>-->
-                    <div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">
-                      <i class="el-icon-right" style="font-size: 30px;color: #ffffff"></i>
-                      <!--<i class="el-icon-right" style="font-size: 30px;color: #ffffff" v-show="item.blockshow"></i>-->
-                      <!--<span class="fabuon" v-show="item.blockshow2">已发布</span>-->
+                    <!--<div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">-->
+                    <div class="jump"  @click="releasefnc(item.name)">
+                      <i class="el-icon-right fabuimg" v-if="item.blockshow1" style="font-size: 30px;color: #ffffff"></i>
+                      <span class="fabuon" v-if="item.blockshow2">已发布</span>
                     </div>
                   </div>
                 </div>
@@ -523,33 +518,33 @@
           console.log("实施计划的盒子",this.numbox)
           for(let i=0;i<this.numbox.length;i++){
             // blockshow:true,blockshow:false
-            this.numbox.splice(i,1,{name:this.numbox[i],block:"have"})
+            this.numbox.splice(i,1,{name:this.numbox[i],block:"have",blockshow1:true,blockshow2:false})
           }
           console.log("新数组",this.numbox)
           this.planshow=false
           this.planshow2=true
           this.faqijihuashow=true
-        // let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
-        // let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
-        // this.loading=true
-        // const param = {
-        //     method:'plan_add',
-        //     project_id: this.project_id,
-        //     title:this.input,
-        //     content:this.desc,
-        //     start_date:firstdaytime,
-        //     end_date:endtime,
-        //     type:this.typetid,
-        //   }
-        //   this.$store.dispatch('Getplan', param).then((data) => {
-        //     console.log('新建计划提交状态', data)
-        //     this.oneparentid=data.id
-        //     this.loading=false
-        //     this.numbox=[]
-        //     this.numbox=this.desc.split("\n")
-        //     this.planshow=false
-        //     this.planshow2=true
-        //   })
+        let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
+        let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
+        this.loading=true
+        const param = {
+            method:'plan_add',
+            project_id: this.project_id,
+            title:this.input,
+            content:this.desc,
+            start_date:firstdaytime,
+            end_date:endtime,
+            type:this.typetid,
+          }
+          this.$store.dispatch('Getplan', param).then((data) => {
+            console.log('新建计划提交状态', data)
+            this.oneparentid=data.id
+            this.loading=false
+            this.numbox=[]
+            this.numbox=this.desc.split("\n")
+            this.planshow=false
+            this.planshow2=true
+          })
       },
       releasefnc(index){//发布任务弹窗
         this.dialogVisible=true
@@ -792,9 +787,9 @@
           console.log("任务发布成功",data)//work_id
           for(let i=0;i<this.numbox.length;i++){
             if(this.textareaindex==this.numbox[i].name){
-              this.numbox[i].block="donot"
-              // this.num[i].blockshow=false
-              // this.num[i].blockshow2=true
+              this.numbox[i].block="donot"//blockshow1 blockshow2
+              this.numbox[i].blockshow1=false
+              this.numbox[i].blockshow2=true
             }
           }
         console.log("numbox__donot",this.numbox)
@@ -1425,9 +1420,6 @@
     height: 40px;
     background-color: #0081FE;
     text-align: center;
-    line-height: 50px;
-    font-weight: 800;
-    font-size: 20px;
     float: right;
     position: absolute;
     top: 40px;
@@ -1445,7 +1437,15 @@
     line-height: 560px;
     color: #e7e7e7;
   }
+  .fabuimg{
+    line-height: 40px;
+    font-weight: 800;
+    font-size: 20px;
+  }
   .fabuon{
-    color: #1bb1f4;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 40px;
   }
 </style>
