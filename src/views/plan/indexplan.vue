@@ -1,6 +1,6 @@
 <template>
     <div style="margin-top: 20px">
-      <el-row :gutter="10">
+      <el-row :gutter="10" v-loading.fullscreen.lock="fullscreenLoading">
         <el-col :span="4">
           <planindex></planindex>
         </el-col>
@@ -20,13 +20,17 @@
             </el-timeline>
           </div>
           <!--计划信息栏-->
-          <div class="planbox">
+          <div class="planbox"
+               v-loading="plansonloading"
+              element-loading-text="拼命加载中"
+              element-loading-spinner="el-icon-loading"
+              element-loading-background="rgba(0, 0, 0, 0.8)">
             <!--头部-->
             <div class="itemactovi" v-for="item in this.firstactivities">
                 <div class="planboxtop">
                   <div class="planboxtop_left" style="width: 590px;height: 100%;float: left">
                     <div class="planboxtop_left_1" style="width: 100%;height: 50%;;overflow: hidden">
-                      <div  @click="releasetemplatefnc(item.content)" class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #1bb1f4;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">
+                      <div  @click="releasetemplatefnc(item)" class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #1bb1f4;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">
                         <i class="el-icon-edit-outline"></i>
                         <span>发布实施任务</span>
                       </div>
@@ -40,7 +44,7 @@
                   </div>
                   <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #1BB1F4;float: left;margin-top: 10px;">
                     <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span4}}</span>
-                     <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子任务</span>
+                     <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子计划</span>
                   </div>
                   <div class="implementation" style="position:relative;margin-left:10px;width: 80px;height: 60px;background-color: #F2F2F2;float: left;margin-top: 10px;">
                      <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span1}}</span>
@@ -151,7 +155,9 @@
         pushdata:"",
         thirdinfo:[],
         postdata:[],
-        firstbox:[]
+        firstbox:[],
+        fullscreenLoading:false,
+        plansonloading:false
       };
     },
     computed:{
@@ -168,6 +174,7 @@
         this.getplan()
       },
       plan_typeid(curVal, oldVal){
+        this.fullscreenLoading=true
         console.log("监听事件plan_typeid",curVal)
         if(curVal==1){
           this.firsttitletype="年计划"
@@ -200,14 +207,15 @@
     },
     methods:{
       releasetemplatefnc(index){//发布实施任务
-        // console.log("发布实施任务",index)
+        console.log("发布实施任务",index)
         let box=this.firstactivities[0].content.split("\n")
         for(let i=0;i<box.length;i++){//{name:this.numbox[i],block:"have",blockshow1:true,blockshow2:false}
             box.splice(i,1,{name:box[i],block:"have",blockshow1:true,blockshow2:false})
           }
-        this.$store.commit("titleboxchange",box)
-        this.$store.commit("leftshowfnc")
-        this.$router.push({path:'/newplan'})
+          this.$store.commit("fatheridchange",index.id)
+          this.$store.commit("titleboxchange",box)
+          this.$store.commit("leftshowfnc")
+          this.$router.push({path:'/newplan'})
       },
       planchangeid(){
         this.planchanidtype=this.plan_typeid
@@ -246,20 +254,24 @@
         this.$router.push({path:'/newplan'})
       },
       jumpfnc(index){
-        console.log("跳转实施任务",index.work_id)
+        console.log("跳转实施任务1-1",index.work_id)
+        this.fullscreenLoading=true
         this.planindexworkid=index.work_id
         this.smalltaskfnc()
       },
       smalltaskfnc() {//获取任务列表接口
+        console.log("跳转实施任务1-2")
         const _param = {
-          method: 'get_todo_list',
+          method: 'query_task_all',
           project_id: this.project_id,
-          qtype: 'TodoList,BackLog,MatterRead'
+          limit:10000
         }
-        this.$store.dispatch('GetAllInstList', _param).then(data => {
+        this.$store.dispatch('Allpersondata', _param).then(data => {
+          console.log("跳转实施任务1-3",data)
           this.firstbox=[]
-          data.forEach(item=>{
+          data.data.forEach(item=>{
             if (this.planindexworkid==item.workId){
+              console.log("跳转实施任务1-3有任务---")
               this.firstbox.push(item)
               this.postdata=[]
               this.postdata.push(item.workId)
@@ -272,6 +284,7 @@
         })
     },
       secondfnc(){
+        console.log("跳转实施任务1-4",this.postdata)
         const _param = {
         method: 'get_nodes_users_list',
         project_id: this.project_id,
@@ -285,12 +298,14 @@
           map1.set(i,aaa[i])
         }
         this.firstbox.forEach(item=>{
+          console.log("---------item",item)
           let workId = item.workId
           item["state"]="1"
           item['obj']=map1.get(workId)
           item["flowId2"]=item.flowId.slice(0,item.flowId.length-2)
-          if(this.thirdinfo[item.flowId2]!=""){
-           let _config = this.thirdinfo[item.flowId2]
+          item["getinfo"]=map1.get(workId).info.flowNode[0]
+          if(this.thirdinfo[item.flowId2]!=""){ //item.flowId2--->PlanFlow
+           let _config = this.thirdinfo[item.flowId2]//this.thirdinfo["PlanFlow"]
             let _node = _config[item.getinfo]
             if (_node !== undefined){
               item.state = _node.status
@@ -306,9 +321,11 @@
           }
           this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
           })
+        this.fullscreenLoading=false
       })
       },
       thirdinterface(){
+        console.log("跳转实施任务1-5")
         const _param = {
           method: 'cfg_nodes',
           project_id: this.project_id,
@@ -329,6 +346,7 @@
         this.idplan.push(idsss)
       },
       getplan(){
+        this.fullscreenLoading=true
         const param = {
             method:'plan_query',
             project_id: this.project_id,
@@ -450,7 +468,7 @@
             parent_id:this.fatherid
           }
           this.$store.dispatch('Getplan', param).then((data) => {
-            this.getalltask()
+            // this.getalltask()
             console.log('实施任务', data)
             this.taskplanbox=[]
             this.taskplanbox=data.data
@@ -491,6 +509,8 @@
               }
             }
             console.log("实施任务有什么",this.taskplanbox)
+            this.plansonloading=false
+            this.fullscreenLoading=false
           })
       },
       getplane3(){//任务状态
@@ -501,13 +521,14 @@
         }
         this.$store.dispatch('Getplan', param).then((data) => {
           console.log('plan3333', data)
-          this.span4=data.data.sub_count    //子任务
+          this.span4=data.data.sub_count-data.data.sub_work_count    //子任务
           this.span1=data.data.sub_work_count//实施任务
           this.span2=data.data.sub_finished//完成任务
           this.span3=data.data.sub_work_count-data.data.sub_finished//超时任务
         })
       },
       showtitle(index){
+        this.plansonloading=true
         this.getcommentbox=[]
         this.indexspan = index.id
         this.fatherid=index.id

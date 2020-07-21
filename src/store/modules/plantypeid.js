@@ -25,7 +25,8 @@ const plantypeid = {
   state: {
     count:1,
     titlebox:[],
-    leftshow:"none"
+    leftshow:"none",
+    fatherid:0
   },
   mutations:{
     planidchange(state,step){
@@ -39,6 +40,9 @@ const plantypeid = {
     },
     leftnoshowfnc(state){
        state.leftshow="none"
+    },
+    fatheridchange(state,step){
+      state.fatherid=step
     }
   }
 }

@@ -98,7 +98,7 @@
           show-word-limit>
         </el-input>
       </div>
-        <div v-show="organizationshow">
+        <div v-if="shigongzuzhishow">
            <span style="margin-right: 20px">组织计划:</span>
            <el-cascader style="width: 400px" :options="organizationarr" v-model="organizationvalue" @change="handleChangegetorganization"></el-cascader>
         </div>
@@ -181,7 +181,8 @@
         plannewshow:false,
         organizationarr:[],
         organizationvalue:"",
-        organizationshow:false,
+        organizationshow:true,
+        shigongzuzhishow:false,
         structid:0,
         plannewop:[
         {label:"年计划",
@@ -357,6 +358,9 @@
       project_id() {
         return this.$store.state.project.project_id
       },
+      plan_typeid(){
+        return this.$store.state.plantypeid.count
+      },
       projectGroupList() {//组别
         return this.$store.state.project.projectGroupList
       },
@@ -371,11 +375,14 @@
       },
       leftshow(){
         return this.$store.state.plantypeid.leftshow
+      },
+      fatherid(){
+        return this.$store.state.plantypeid.fatherid
       }
     },
     watch: {
       project_id(curVal, oldVal) {
-        console.log('curVal',curVal,oldVal)
+        console.log('项目id改变',curVal,oldVal)
         this.getstyle()
       },
       titlebox(curVal){
@@ -383,21 +390,30 @@
       },
       leftshow(index){
         this.leftshowfnc(index)
+      },
+      fatherid(curVal, oldVal){
+        console.log("接受到父亲id改变",curVal, oldVal)
+        this.fatheridchange()
+      },
+      plan_typeid(curVal, oldVal){
+        console.log("监听事件plan_typeid",curVal)
+        this.$router.push({path:'/indexplan'})
       }
     },
     mounted(){
       if (this.project_id !== null) {
         this.getstyle()
-        if(this.leftshow="have"){
-          // this.leftindexshow=false
+        if(this.leftshow=="have"){
+          this.leftindexshow=false
           this.planshow=false
           this.planshow2=true
           this.numbox=this.titlebox
         }
-      if(this.leftshow="none"){
+      if(this.leftshow=="none"){
           this.leftindexshow=true
         }
-        console.log("titlebox接受到了没得",this.titlebox,this.leftshow)
+        console.log("leftshow的表现状态",this.fatherid)
+        this.oneparentid=this.fatherid
       }
     },
     components:{
@@ -412,6 +428,9 @@
             // }
           })
       },
+      fatheridchange(){
+        console.log("父级id变化",this.fatherid)
+      },
       leftshowfnc(){
         // console.log("左边状态",this.leftshow)
       },
@@ -420,6 +439,7 @@
         this.typetid=value[0]
       },
       sonplanshow(){
+        this.loading=true
         this.getplan()
       },
       handleChangegetorganization(val){
@@ -460,6 +480,7 @@
               }
             }
             this.plannewshow=true
+            this.loading=false
             console.log("plannewop",this.plannewop)
           })
       },
@@ -521,8 +542,6 @@
             this.numbox.splice(i,1,{name:this.numbox[i],block:"have",blockshow1:true,blockshow2:false})
           }
           console.log("新数组",this.numbox)
-          this.planshow=false
-          this.planshow2=true
           this.faqijihuashow=true
         let firstdaytime=moment(this.value1[0]).format('YYYY-MM-DD')
         let endtime=moment(this.value1[1]).format('YYYY-MM-DD')
@@ -542,6 +561,9 @@
             this.loading=false
             this.numbox=[]
             this.numbox=this.desc.split("\n")
+            for(let i=0;i<this.numbox.length;i++){
+              this.numbox.splice(i,1,{name:this.numbox[i],block:"have",blockshow1:true,blockshow2:false})
+            }
             this.planshow=false
             this.planshow2=true
           })
@@ -551,6 +573,12 @@
         this.textareaindex=index
       },
       openeldialog(){//打开发布任务窗口
+        console.log("施工组织计划",this.typetid)
+        if(this.typetid==5||this.typetid==7){//||this.structid==5||this.structid==7
+          this.shigongzuzhishow=true
+        }else {
+          this.shigongzuzhishow=false
+        }
         console.log("组别",this.projectGroupList)
         console.log("stuckid",this.structid)
         this.getcategory()
@@ -558,13 +586,6 @@
         this.getmodel()
         this.getpersonlist()
         this.getorganization()
-        if(this.structid==5||this.structid==7){
-          this.organizationshow=true
-          console.log(" type:5施工组织计划,7:施工计划,的任务")
-        }
-        else {
-          this.organizationshow=false
-        }
       },
       closedialog(){
         this.dingshow=false
@@ -758,6 +779,8 @@
         console.log("gettypearr",this.grouparr)
       },
       fabufnc(){//发布任务
+        this.loading=true
+        console.log("父id",this.fatherid,this.oneparentid)
         let firstdaytime=moment(this.plantime[0]).format('YYYY-MM-DD')
         let endtime=moment(this.plantime[1]).format('YYYY-MM-DD')
         let namebox=""
@@ -796,6 +819,7 @@
           this.planindexworkid=data.work_id
           this.smalltaskfnc()
           this.fabusuccessfnc()
+          this.loading=false
         })
       },
       smalltaskfnc() {//获取任务列表接口
