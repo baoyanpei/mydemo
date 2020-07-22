@@ -74,6 +74,7 @@
             <el-table-column label="操作" width="180">
               <template slot-scope="scope">
                 <div v-show=scope.row.stateshow>
+                  <!--//v-show=scope.row.stateshow-->
                   <el-button type="text" size="small" @click="previewfnc(scope.row)"><i class="el-icon-view">预览</i>
                   </el-button>
                   <el-button type="text" size="small" @click="downloadfnc(scope.row)"><i class="el-icon-download">下载打印</i>
@@ -254,21 +255,17 @@
           for(let i=0;i<data.length;i++){
             if(data[i].status==1){
               data[i]["statespan"]="已完成"
+              data[i]["stateshow"]=true
             }
             if(data[i].status==0){
               data[i]["statespan"]="处理中"
+              data[i]["stateshow"]=false
             }
             if(data[i].status==-1){
               data[i]["statespan"]="未处理"
+              data[i]["stateshow"]=false
             }
           }
-          this.tableData.forEach(item=>{
-            if(item.statespan == "已完成") {
-              item["stateshow"] = true
-            } else {
-              item["stateshow"] = false
-            }
-          })
           this.newarrspk=data
            for(let i=0;i<data.length;i++){
             if(data[i].eleid<=20){
@@ -299,7 +296,8 @@
         console.log("index",index)
       },
       previewfnc(val) { //预览
-        window.open("http://admin.yidebim.com" + val.url)
+        console.log("预览",val)
+        // window.open("http://admin.yidebim.com" + val.url)
         // window.location.href="http://admin.yidebim.com"+val.url
       },
       downloadfnc(val) { //下载

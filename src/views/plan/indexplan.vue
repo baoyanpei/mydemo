@@ -21,6 +21,7 @@
           </div>
           <!--计划信息栏-->
           <div class="planbox"
+               v-show="planboxshow"
                v-loading="plansonloading"
               element-loading-text="拼命加载中"
               element-loading-spinner="el-icon-loading"
@@ -129,6 +130,7 @@
     data() {
       return {
         reverse: true,
+        planboxshow:true,
         idplan:[],
         mytaskbox:[],
         alltask:[],
@@ -142,10 +144,7 @@
         fatherid:0,
         firstactivities:[],
         plan3id:"",
-        activities: [{
-          title: '活动按期开始',
-          datayear: '2018'
-        }],
+        activities: [],
         sonplanbox:[],
         span1:'',
         span2:"",
@@ -171,6 +170,8 @@
     watch: {
       project_id(curVal, oldVal) {
         console.log("dsadas")
+        this.activities=[]
+        this.planboxshow=false
         this.getplan()
       },
       plan_typeid(curVal, oldVal){
@@ -346,7 +347,6 @@
         this.idplan.push(idsss)
       },
       getplan(){
-        this.fullscreenLoading=true
         const param = {
             method:'plan_query',
             project_id: this.project_id,
@@ -354,6 +354,8 @@
             sort:"desc"
           }
           this.$store.dispatch('Getplan', param).then((data) => {
+            this.fullscreenLoading=true
+            this.planboxshow=true
             console.log('plan', data)
             data.data.forEach(item=>{
               item["datayear"]=item.start_date.slice(0,4)
