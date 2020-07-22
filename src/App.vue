@@ -468,4 +468,10 @@ th {
   display: flex !important;
   justify-content: space-between !important;
 }
+element.style {
+    height: 10px;
+}
+.el-progress-bar__inner{
+    height: 10px;
+  }
 </style>

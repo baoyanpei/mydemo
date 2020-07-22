@@ -1,6 +1,10 @@
 <template>
     <div style="margin-top: 20px">
-      <el-row :gutter="10" v-loading.fullscreen.lock="fullscreenLoading">
+      <el-row :gutter="10"
+              v-loading="fullscreenLoading"
+              element-loading-text="拼命加载中"
+              element-loading-spinner="el-icon-loading"
+              element-loading-background="rgba(0, 0, 0, 0.8)">
         <el-col :span="4">
           <planindex></planindex>
         </el-col>
@@ -8,13 +12,14 @@
           <!--顶部导航栏-->
           <div class="boxtop">
             <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">{{this.firsttitletype}}>计划列表>{{this.bannertitle}}</span></div>
+            <el-progress v-show="progressshow" :percentage="progressnum" :format="format" style="width: 500px;height: 10px;float: left;margin-top: 10px;margin-left: 15px"></el-progress>
             <div class="boxtop_right" @click="getnewplan">新增计划</div>
           </div>
           <!--时间线-->
           <div class="block" style="float: left;background-color: #DFDFDF">
             <el-timeline :reverse="reverse">
               <el-timeline-item v-for="(activity, index) in activities" :key="index" class="linespan">
-                <span style="position: absolute;top: -6px;left: 25px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 180px;" @click="showtitle(activity)" :class="{active:indexspan==activity.id}">{{activity.title}}</span>
+                <span style="position: absolute;top: -6px;left: 25px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 175px;" @click="showtitle(activity)" :class="{active:indexspan==activity.id}">{{activity.title}}</span>
                 <span style="position: absolute;top: -6px;left: -40px;">{{activity.datayear}}</span>
               </el-timeline-item>
             </el-timeline>
@@ -130,6 +135,8 @@
     data() {
       return {
         reverse: true,
+        progressnum:0,//进度条
+        progressshow:false,
         planboxshow:true,
         idplan:[],
         mytaskbox:[],
@@ -171,32 +178,50 @@
       project_id(curVal, oldVal) {
         console.log("dsadas")
         this.activities=[]
+        this.progressnum=0
+        this.progressshow=false
         this.planboxshow=false
         this.getplan()
       },
       plan_typeid(curVal, oldVal){
-        this.fullscreenLoading=true
+        this.planboxshow=false
+        this.progressnum=0
+        this.bannertitle=""
         console.log("监听事件plan_typeid",curVal)
         if(curVal==1){
           this.firsttitletype="年计划"
+          this.activities=[]
+          this.fullscreenLoading=true
         }
         if(curVal==2){
           this.firsttitletype="月计划"
+          this.activities=[]
+          this.fullscreenLoading=true
         }
         if(curVal==3){
           this.firsttitletype="周计划"
+          this.activities=[]
+          this.fullscreenLoading=true
         }
         if(curVal==4){
           this.firsttitletype="日计划"
+          this.activities=[]
+          this.fullscreenLoading=true
         }
         if(curVal==5){
           this.firsttitletype="施工组织计划"
+          this.activities=[]
+          this.fullscreenLoading=true
         }
         if(curVal==6){
           this.firsttitletype="施工计划"
+          this.activities=[]
+          this.fullscreenLoading=true
         }
         if(curVal==0){
           this.firsttitletype="其他"
+          this.activities=[]
+          this.fullscreenLoading=true
         }
         this.planchangeid()
       }
@@ -220,6 +245,7 @@
       },
       planchangeid(){
         this.planchanidtype=this.plan_typeid
+        this.fullscreenLoading=false
         this.getplan()
       },
       getcomment(){
@@ -256,7 +282,6 @@
       },
       jumpfnc(index){
         console.log("跳转实施任务1-1",index.work_id)
-        this.fullscreenLoading=true
         this.planindexworkid=index.work_id
         this.smalltaskfnc()
       },
@@ -322,7 +347,6 @@
           }
           this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
           })
-        this.fullscreenLoading=false
       })
       },
       thirdinterface(){
@@ -347,6 +371,7 @@
         this.idplan.push(idsss)
       },
       getplan(){
+        this.progressshow=true
         const param = {
             method:'plan_query',
             project_id: this.project_id,
@@ -354,8 +379,14 @@
             sort:"desc"
           }
           this.$store.dispatch('Getplan', param).then((data) => {
-            this.fullscreenLoading=true
-            this.planboxshow=true
+            this.progressnum=15
+            if(data.count==0){
+              console.log("plan数据为空")
+              this.planboxshow=false
+            }else {
+              console.log("plan数据不为空")
+              this.planboxshow=true
+            }
             console.log('plan', data)
             data.data.forEach(item=>{
               item["datayear"]=item.start_date.slice(0,4)
@@ -383,7 +414,7 @@
             })
             for(let o=0;o<data.data.length;o++){
               if(this.idplan[0]==data.data[o].id){
-                console.log("idplan有值",data.data[o])
+                this.progressnum=30
                 this.firstactivities=[]
                 this.activities=data.data
                 this.firstactivities.push(data.data[o])
@@ -419,6 +450,7 @@
             parent_id:this.fatherid
           }
           this.$store.dispatch('Getplan', param).then((data) => {
+            this.progressnum=80
             console.log('plan22222', data)
             this.sonplanbox=data.data
             this.sonplanbox.forEach(item=>{
@@ -471,6 +503,7 @@
           }
           this.$store.dispatch('Getplan', param).then((data) => {
             // this.getalltask()
+            this.progressnum=70
             console.log('实施任务', data)
             this.taskplanbox=[]
             this.taskplanbox=data.data
@@ -512,7 +545,7 @@
             }
             console.log("实施任务有什么",this.taskplanbox)
             this.plansonloading=false
-            this.fullscreenLoading=false
+            this.progressnum=100
           })
       },
       getplane3(){//任务状态
@@ -527,6 +560,7 @@
           this.span1=data.data.sub_work_count//实施任务
           this.span2=data.data.sub_finished//完成任务
           this.span3=data.data.sub_work_count-data.data.sub_finished//超时任务
+          this.progressnum=60
         })
       },
       showtitle(index){
@@ -541,6 +575,9 @@
         this.getplan2()
         this.getplane3()
         this.getcomment()
+      },
+      format(percentage) {
+        return percentage === 100 ? ('加载已完成',this.progressshow=false ): `${percentage}%`;
       }
     }
   }
@@ -607,5 +644,8 @@
   }
   .nohave{
     background-color: #ff6700;
+  }
+  .el-progress-bar__inner{
+    height: 10px;
   }
 </style>

@@ -33,6 +33,7 @@
             <el-form-item prop="GroupList">
               <span>设备类型：</span>
              <el-cascader v-model="value" :options="options" @change="handleChange" :show-all-levels="false"></el-cascader>
+              <!--<el-cascader v-model="labeloptionsvalue" :options="labeloptions" @change="handleChange" :show-all-levels="false"></el-cascader>-->
             </el-form-item>
           </el-form>
           <hr class="hr1" />
@@ -105,21 +106,12 @@
         span2:"",
         span3:"",
         imgUrl2:"",
-        options:[{
-              value: '111',
-              label: '反馈1'
-            },{
-              value: '222',
-              label: '反馈2'
-            },{
-              value: '222',
-              label: '反馈3'
-            }],
+        options:[],
         tableData:[],
         deviceid:'',
         projectname:"",
         imgUrl1:"",
-        erval:[]
+        erval:[],
       }
     },
     computed: {
@@ -148,7 +140,7 @@
     },
     methods:{
       handleChange(e){
-        console.log("改变",e,e[0])
+        console.log("改变",e)
         this.deviceid=e[0]
         this.gettable()
       },
@@ -172,11 +164,10 @@
           console.log("配电箱设备222",data)//YJPDX001
           this.tableData=[]
           for(let i=0;i<data.length;i++){
-            this.options.push({label:data[i].type_name,value:data[0].device_type})
+            this.options.push({label:data[i].type_name,value:data[i].device_type})
           }
-          this.value=this.options[0].label
           this.deviceid=this.options[0].value
-          console.log("liebiao",this.value)
+          console.log("liebiao",)
           this.gettable()
         }).catch(() => {
         })
