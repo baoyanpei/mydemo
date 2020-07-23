@@ -25,8 +25,9 @@
             </el-timeline>
           </div>
           <!--计划信息栏-->
+          <div class="displayplanbox" v-if="planboxshow_none"><span>暂无计划</span></div>
           <div class="planbox"
-               v-show="planboxshow"
+               v-if="planboxshow"
                v-loading="plansonloading"
               element-loading-text="拼命加载中"
               element-loading-spinner="el-icon-loading"
@@ -88,6 +89,8 @@
               <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">子计划</span>
             <br>
             <!--所属计划粗略描述-->
+            <!--<div class="sonplanboxnone"><span>暂无子计划</span></div>-->
+            <div class="sonplanboxnone" v-show="sonplanboxnoneshow"><span>暂无子计划</span></div>
             <div class="objjjj" v-for="obj in this.sonplanbox">
                 <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;" @click="jumpson(obj)">
                     <div class="round" style="margin-top: 25px;margin-right:15px;width: 50px;height: 50px;background-color: #e5e5e5;border-radius: 25px;float:left;text-align: center;line-height: 50px;font-size: 20px;">{{obj.sonnum}}</div>
@@ -105,6 +108,7 @@
             <el-divider></el-divider>
               <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">实施任务</span>
             <br><br>
+            <div class="sonplanboxnone" v-show="taskplanboxnoneshow"><span>暂无实施计划</span></div>
             <div class="objjjj" v-for="obj in this.taskplanbox">
                 <div class="smallplan" :class="{'nohave':(obj.onshow=='none')}" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
                     <div class="round" style="margin-top: 25px;margin-right:15px;width: 50px;height: 50px;background-color: #e5e5e5;border-radius: 25px;float:left;text-align: center;line-height: 50px;font-size: 20px;">{{obj.sonnum}}</div>
@@ -163,7 +167,10 @@
         postdata:[],
         firstbox:[],
         fullscreenLoading:false,
-        plansonloading:false
+        plansonloading:false,
+        planboxshow_none:true,
+        sonplanboxnoneshow:false,//子计划为空时显示的文字
+        taskplanboxnoneshow:false
       };
     },
     computed:{
@@ -179,8 +186,8 @@
         console.log("dsadas")
         this.activities=[]
         this.progressnum=0
-        this.progressshow=false
         this.planboxshow=false
+        this.planboxshow_none=true
         this.getplan()
       },
       plan_typeid(curVal, oldVal){
@@ -281,6 +288,11 @@
         this.$router.push({path:'/newplan'})
       },
       jumpfnc(index){
+        this.fullscreenLoading=true
+        setTimeout(() => {
+          this.fullscreenLoading=false
+          this.$message('当前网络状态较差');
+        }, 5000)
         console.log("跳转实施任务1-1",index.work_id)
         this.planindexworkid=index.work_id
         this.smalltaskfnc()
@@ -347,6 +359,7 @@
           }
           this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
           })
+        this.fullscreenLoading=false
       })
       },
       thirdinterface(){
@@ -371,7 +384,6 @@
         this.idplan.push(idsss)
       },
       getplan(){
-        this.progressshow=true
         const param = {
             method:'plan_query',
             project_id: this.project_id,
@@ -379,13 +391,16 @@
             sort:"desc"
           }
           this.$store.dispatch('Getplan', param).then((data) => {
-            this.progressnum=15
             if(data.count==0){
               console.log("plan数据为空")
+              this.planboxshow_none=true
               this.planboxshow=false
             }else {
+              this.progressshow=true
+              this.planboxshow_none=false
               console.log("plan数据不为空")
               this.planboxshow=true
+              this.progressnum=15
             }
             console.log('plan', data)
             data.data.forEach(item=>{
@@ -452,6 +467,13 @@
           this.$store.dispatch('Getplan', param).then((data) => {
             this.progressnum=80
             console.log('plan22222', data)
+            if(data.data.length==0){
+              console.log('plan22222---count', data)
+              this.sonplanboxnoneshow=true
+            }
+            else {
+              this.sonplanboxnoneshow=false
+            }
             this.sonplanbox=data.data
             this.sonplanbox.forEach(item=>{
               item["sonnum"]=this.sonplanbox.indexOf(item)+1
@@ -505,6 +527,11 @@
             // this.getalltask()
             this.progressnum=70
             console.log('实施任务', data)
+            if(data.data.length==0){
+              this.taskplanboxnoneshow=true
+            }else {
+              this.taskplanboxnoneshow=false
+            }
             this.taskplanbox=[]
             this.taskplanbox=data.data
             this.taskplanbox.forEach(item=>{
@@ -559,7 +586,7 @@
           this.span4=data.data.sub_count-data.data.sub_work_count    //子任务
           this.span1=data.data.sub_work_count//实施任务
           this.span2=data.data.sub_finished//完成任务
-          this.span3=data.data.sub_work_count-data.data.sub_finished//超时任务
+          this.span3=data.data.sub_timeout//超时任务
           this.progressnum=60
         })
       },
@@ -630,9 +657,17 @@
     width: 100%;
     height: 100px;
   }
+  .displayplanbox{
+    width: 100%;
+    height: 700px;
+    line-height: 400px;
+    text-align: center;
+    font-size: 30px;
+    color: #aaaaaa;
+  }
     .active {
-   background-color: #ffffff;
-    padding-bottom: 35px;
+      background-color: #ffffff;
+      padding-bottom: 35px;
       color: #1abc9c;
 }
   .showcomment{
@@ -647,5 +682,13 @@
   }
   .el-progress-bar__inner{
     height: 10px;
+  }
+  .sonplanboxnone{
+    width: 100%;
+    height: 150px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 150px;
+    color: #aaaaaa;
   }
 </style>

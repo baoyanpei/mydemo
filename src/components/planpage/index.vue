@@ -78,8 +78,8 @@
     margin-top: 5px;
     line-height: 40px;
     text-align: center;
-    border: 1px solid #EEEEEE;
-    color: #D8D8D8;
+    border: 1px solid #A0A0A0;
+    color: #A0A0A0;
   }
   .active{
     background-color: #1abc9c;

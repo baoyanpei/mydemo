@@ -1,13 +1,13 @@
 <template>
     <div>
       <el-row :gutter="10" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-col :span="4">
-          <planindex></planindex>
-        </el-col>
-        <el-col :span="20" style="background-color: #F9F9F9">
+        <!--<el-col :span="4">-->
+          <!--&lt;!&ndash;<planindex></planindex>&ndash;&gt;-->
+        <!--</el-col>-->
+        <el-col :span="24" style="background-color: #F9F9F9;">
            <div class="boxtop">
-            <div class="boxtop_left">新增计划</div>
-            <div class="boxtop_right">新增计划</div>
+            <div class="boxtop_left" @click="comebackplan()">返回计划列表</div>
+            <!--<div class="boxtop_right">新增计划</div>-->
           </div>
           <div class="plantoon" v-show="leftindexshow">
             <el-cascader v-model="jihuavalue" :options="optionstype" @change="handleChangetypetid" style="width: 150px;border: none;"></el-cascader>
@@ -1352,6 +1352,9 @@
       },
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${ file.name }？`);
+      },
+      comebackplan(){
+        this.$router.push({path:'/indexplan'})
       }
     }
   }
@@ -1369,9 +1372,9 @@
     width: 150px;
     height: 35px;
     margin-top: 7px;
+    margin-left: 100px;
     line-height: 35px;
     text-align: center;
-    margin-left: 15px;
     color: #ffffff;
     border-radius: 10px;
     float: left;
@@ -1394,6 +1397,7 @@
     float: left;
     margin-bottom: 15px;
     margin-top: 10px;
+    margin-left: 100px;
     padding: 30px 0;
   }
   .plantoonspan{

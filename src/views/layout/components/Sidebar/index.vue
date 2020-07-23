@@ -50,7 +50,8 @@
         <span slot="title">BIM管理</span>
       </el-menu-item>
       <el-menu-item index="/indexplan">
-        <i class="el-icon-notebook-1" style="width:16px;font-size: 18px;"></i>
+        <!--<i class="el-icon-notebook-1" style="width:16px;font-size: 18px;"></i>-->
+        <font-awesome-icon icon="network-wired" />
         <span slot="title">计划管理</span>
       </el-menu-item>
       <!--
