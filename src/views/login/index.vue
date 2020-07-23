@@ -80,9 +80,12 @@
             :loading="loading"
             type="primary"
             class="btnLogin"
-            style="width:100%;margin-bottom:30px;"
+            style="width:100%;margin-bottom:10px;"
             @click.native.prevent="handleLogin"
           >登 录</el-button>
+          <el-row
+            style="color:white;font-size:14px;color:#dddddd;line-height:20px;"
+          >如果关注了易正建造信息管控平台微信公众号，请在公众号查看；未关注公众号，请查看手机短信</el-row>
         </div>
       </div>
       <!-- <div class="loginFormType">
@@ -136,7 +139,7 @@ export default {
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('短信验证码至少为6位数字'))
+        callback(new Error('验证码至少为6位数字'))
       } else {
         callback()
       }
@@ -185,7 +188,7 @@ export default {
   },
   computed: {
     btnSmsCodeText: function() {
-      return this.time > 0 ? this.time + 's 后重新获取' : '获取短信验证码'
+      return this.time > 0 ? this.time + 's 后重新获取' : '获取验证码'
     }
   },
   created() {
@@ -354,7 +357,7 @@ export default {
             .dispatch('GetSmsCode', this.loginForm.username)
             .then(() => {
               this.$message({
-                message: '短信验证码已经发出！',
+                message: '验证码已经发出！',
                 type: 'success'
               })
             })

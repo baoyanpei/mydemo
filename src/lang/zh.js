@@ -73,7 +73,7 @@ export default {
     title: "智慧建筑信息管控平台",
     logIn: "登录",
     username: "手机号码",
-    password: "短信验证码",
+    password: "验证码",
     any: "随便填",
     thirdparty: "第三方登录",
     thirdpartyTips: "本地不能模拟，请结合自己业务进行模拟！！！"
