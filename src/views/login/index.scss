@@ -1,7 +1,7 @@
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-$bg:#e5e5e5; //#283443;
-$light_gray:#eee;
+$bg: #e5e5e5; //#283443;
+$light_gray: #eee;
 $cursor: #333333;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -17,13 +17,13 @@ $cursor: #333333;
 .title_name {
   text-align: center;
   font-size: 30px;
-  color: #FFFFFF;
+  color: #ffffff;
   font-weight: 500;
 }
 
 .loadLoginCss {
   .el-loading-spinner .el-loading-text {
-    color: #FFFFFF;
+    color: #ffffff;
     margin: 3px 0;
     font-size: 24px;
   }
@@ -51,11 +51,10 @@ $cursor: #333333;
   }
 
   .qrcode_question {
-    color: #EEEEEE;
+    color: #eeeeee;
     font-size: 14px;
     padding-top: 10px;
     text-align: right;
-
   }
 
   // background-color: $bg;
@@ -78,8 +77,6 @@ $cursor: #333333;
     -moz-opacity: 0.45;
     -khtml-opacity: 0.45;
   }
-
-
 
   .el-input {
     display: inline-block;
@@ -113,7 +110,7 @@ $cursor: #333333;
 
   .btnSmsCode {
     line-height: 14px;
-    padding: 10px 14px;
+    padding: 10px 30px;
     border-radius: 2px;
   }
 
@@ -128,13 +125,11 @@ $cursor: #333333;
   }
 }
 
-$bg:#29BB9C;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #29bb9c;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
-
-
   .loginFormBg {
     background-color: #000000;
     height: 350px;
@@ -161,8 +156,6 @@ $light_gray:#eee;
     float: left;
     position: absolute;
     padding: 35px 10px 50px 10px;
-
-
   }
 
   #wx_default_tip {
@@ -182,7 +175,7 @@ $light_gray:#eee;
 
     .el-form-item {
       border: 1px solid rgba(255, 255, 255, 0.1);
-      background: #FFFFFF;
+      background: #ffffff;
       border-radius: 2px;
       color: #454545;
       margin-bottom: 25px;
@@ -223,7 +216,13 @@ $light_gray:#eee;
     border-color: #2cbcfb;
 
     background: -moz-linear-gradient(top, #5dd7f9 0%, #2cbcfb 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #5dd7f9), color-stop(100%, #2cbcfb));
+    background: -webkit-gradient(
+      linear,
+      left top,
+      left bottom,
+      color-stop(0%, #5dd7f9),
+      color-stop(100%, #2cbcfb)
+    );
     background: -webkit-linear-gradient(top, #5dd7f9 0%, #2cbcfb 100%);
     background: -o-linear-gradient(top, #5dd7f9 0%, #2cbcfb 100%);
     background: -ms-linear-gradient(top, #5dd7f9 0%, #2cbcfb 100%);
@@ -235,7 +234,13 @@ $light_gray:#eee;
     background-color: #bcdae5;
     border-color: #5dd7f9;
     background: -moz-linear-gradient(top, #2cbcfb 0%, #5dd7f9 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2cbcfb), color-stop(100%, #5dd7f9));
+    background: -webkit-gradient(
+      linear,
+      left top,
+      left bottom,
+      color-stop(0%, #2cbcfb),
+      color-stop(100%, #5dd7f9)
+    );
     background: -webkit-linear-gradient(top, #2cbcfb 0%, #5dd7f9 100%);
     background: -o-linear-gradient(top, #2cbcfb 0%, #5dd7f9 100%);
     background: -ms-linear-gradient(top, #2cbcfb 0%, #5dd7f9 100%);
@@ -243,7 +248,7 @@ $light_gray:#eee;
   }
 
   .el-form-item__error {
-    color: #fffF00;
+    color: #ffff00;
     font-size: 12px;
     line-height: 1;
     padding-top: 8px;
