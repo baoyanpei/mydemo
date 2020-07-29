@@ -297,8 +297,8 @@
       },
       previewfnc(val) { //预览
         console.log("预览",val)
-        // window.open("http://admin.yidebim.com" + val.url)
-        // window.location.href="http://admin.yidebim.com"+val.url
+        window.open("http://admin.yidebim.com" + val.url)
+        window.location.href="http://admin.yidebim.com"+val.url
       },
       downloadfnc(val) { //下载
         window.open("http://admin.yidebim.com" + val.url + "?t=download")

@@ -1,175 +1,177 @@
 <template>
-    <div>
-      <el-row :gutter="10" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-col :span="24" style="background-color: #F9F9F9;">
-           <div class="boxtop">
-            <div class="boxtop_left" @click="comebackplan()">返回计划列表</div>
-            <!--<div class="boxtop_right">新增计划</div>-->
-          </div>
-          <div class="plantoon" v-show="leftindexshow">
-            <el-cascader v-model="jihuavalue" :options="optionstype" @change="handleChangetypetid" style="width: 150px;border: none;"></el-cascader>
-            <el-input v-model="input" placeholder="请输入计划名称" style="width: 320px"></el-input>
-            <div class="planstyle">
-              <el-date-picker
-                v-model="value1"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期" style="width: 480px;margin-top: 20px">
-              </el-date-picker>
-            </div>
-            <el-input type="textarea" v-model="desc" :rows="10"></el-input>
-            <div @click="releaseplan" style="width: 100%;height: 40px;text-align: center;line-height: 40px;background-color: #169BD5;color: #ffffff;margin-top: 20px;border-radius: 10px">
-              发布实施任务</div>
-            <div style="width: 600px;margin-top: 10px;color: #34ba9c"><i class="el-icon-circle-plus-outline" style="float: left;display: block;margin-top: 10px;"></i><span style="float: left;display: block;margin-top: 7px" @click="sonplanshow">添加所属计划</span>
-              <el-cascader style="float: left;margin-left: 15px;width: 300px" v-show="plannewshow" v-model="plannewvalue" :options="plannewop" @change="plannewhandleChange"></el-cascader>
-            </div>
-            <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
-          </div>
-          <!--//暂无实施计划-->
-          <div class="newplanxijie">
-            <div class="nulldiv" v-show="planshow">
-              暂无计划内容
-            </div>
-            <!--有计划-->
-            <!--<div class="newplanxijie_1_top" v-show="planshow2">新增实施计划</div>-->
-            <div v-for="item in this.numbox">
-                <div class="newplanxijie_1" v-show="planshow2">
-                  <div class="newplanxijie_1_box">
-                    <span class="newplanxijie_1_box_span1">{{item.name}}</span>
-                    <span style="display: block;color: #0a76a4;line-height: 70px">实施计划</span>
-                    <!--<div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">-->
-                    <div class="jump"  @click="releasefnc(item.name)">
-                      <i class="el-icon-right fabuimg" v-if="item.blockshow1" style="font-size: 30px;color: #ffffff"></i>
-                      <span class="fabuon" v-if="item.blockshow2">已发布</span>
-                    </div>
-                  </div>
+    <el-dialog title="添加新计划" :visible.sync="addnewplandialog" width="95%" @close="closeneeplandialog">
+        <div>
+          <el-row :gutter="10" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+            <el-col :span="24" style="background-color: #F9F9F9;">
+               <!--<div class="boxtop">-->
+                <!--<div class="boxtop_left" @click="comebackplan()">返回计划列表</div>-->
+                <!--&lt;!&ndash;<div class="boxtop_right">新增计划</div>&ndash;&gt;-->
+              <!--</div>-->
+              <div class="plantoon" v-show="leftindexshow">
+                <el-cascader v-model="jihuavalue" :options="optionstype" @change="handleChangetypetid" style="width: 150px;border: none;"></el-cascader>
+                <el-input v-model="input" placeholder="请输入计划名称" style="width: 320px"></el-input>
+                <div class="planstyle">
+                  <el-date-picker
+                    v-model="value1"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期" style="width: 480px;margin-top: 20px">
+                  </el-date-picker>
                 </div>
+                <el-input type="textarea" v-model="desc" :rows="10"></el-input>
+                <div @click="releaseplan" style="width: 100%;height: 40px;text-align: center;line-height: 40px;background-color: #169BD5;color: #ffffff;margin-top: 20px;border-radius: 10px">
+                  发布实施任务</div>
+                <div style="width: 600px;margin-top: 10px;color: #34ba9c"><i class="el-icon-circle-plus-outline" style="float: left;display: block;margin-top: 10px;"></i><span style="float: left;display: block;margin-top: 7px" @click="sonplanshow">添加所属计划</span>
+                  <el-cascader style="float: left;margin-left: 15px;width: 300px" v-show="plannewshow" v-model="plannewvalue" :options="plannewop" @change="plannewhandleChange"></el-cascader>
+                </div>
+                <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
+              </div>
+              <!--//暂无实施计划-->
+              <div class="newplanxijie">
+                <div class="nulldiv" v-show="planshow">
+                  暂无计划内容
+                </div>
+                <!--有计划-->
+                <!--<div class="newplanxijie_1_top" v-show="planshow2">新增实施计划</div>-->
+                <div v-for="item in this.numbox">
+                    <div class="newplanxijie_1" v-show="planshow2">
+                      <div class="newplanxijie_1_box">
+                        <span class="newplanxijie_1_box_span1">{{item.name}}</span>
+                        <span style="display: block;color: #0a76a4;line-height: 70px">实施计划</span>
+                        <!--<div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">-->
+                        <div class="jump"  @click="releasefnc(item.name)">
+                          <i class="el-icon-right fabuimg" v-if="item.blockshow1" style="font-size: 30px;color: #ffffff"></i>
+                          <span class="fabuon" v-if="item.blockshow2">已发布</span>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="faqijihua" v-show="faqijihuashow" style="width: 100%;height: 80px;float: left;text-align: center;line-height: 50px;margin-top: 20px">
+                    <div style=" box-shadow:0px 0px 30px #e5e5e5;width: 180px;color:#fff;border-radius:20px;height: 50px;background-color: #1ABC9C;margin: auto" @click="planinititate">发起计划</div>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-dialog
+            title="发布"
+            :visible.sync="dialogVisible"
+            width="40%"
+          @open="openeldialog" @close="closedialog">
+            <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
+              <iframe :src="iframeurl" v-show="iframeshow"  frameborder="0" style="padding-top:20px;position: absolute;background-color: #ffffff;top: -65px;right: -420px;width: 400px;height: 400px;"></iframe>
+              <div class="ding" v-show="dingshow" style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -270px;width: 250px;height: 400px;">
+                <el-cascader :props="props" :options="grouparr" :show-all-levels="false" @change="handleChange" style="display: block;margin: auto;"></el-cascader>
+                <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
+                  <el-button style="margin-left: 25px">取消</el-button>
+                  <el-button type="success" @click="grouparrqueren" style="float: right;margin-right: 25px">确认</el-button>
+                </div>
+              </div>
+
+              <!--<span style="margin-right: 20px">选择类别:</span>-->
+              <!--<el-cascader :options="gettypearr" @change="handleChangegettypearr" :show-all-levels="false"></el-cascader>-->
+              <!--<br><br>-->
+              <!--<span style="margin-right: 20px">计划类型:</span>-->
+              <!--<el-cascader :options="plangettypearr" v-model="plantypevalue" @change="changeplangettypearr" :show-all-levels="false"></el-cascader>-->
+              <!--<br><br>-->
+              <!--<span style="margin-right: 20px">介绍内容:</span>-->
+               <!--<el-input-->
+                <!--type="textarea"-->
+                <!--placeholder=""-->
+                <!--v-model="plantextarea"-->
+                <!--maxlength="200"-->
+                <!--style="width: 400px"-->
+                <!--show-word-limit>-->
+              <!--</el-input>-->
+              <!--<br><br>-->
+              <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+              <span style="margin-right: 20px">发布标题:</span>
+              <el-input
+                type="textarea"
+                placeholder="请输入200字以内的作品介绍"
+                v-model="textareaindex"
+                maxlength="200"
+                style="width: 400px"
+                show-word-limit>
+              </el-input>
             </div>
-            <div class="faqijihua" v-show="faqijihuashow" style="width: 100%;height: 80px;float: left;text-align: center;line-height: 50px;margin-top: 20px">
-                <div style=" box-shadow:0px 0px 30px #e5e5e5;width: 180px;color:#fff;border-radius:20px;height: 50px;background-color: #1ABC9C;margin: auto" @click="planinititate">发起计划</div>
+              <div v-if="shigongzuzhishow">
+                 <span style="margin-right: 20px">组织计划:</span>
+                 <el-cascader style="width: 400px" :options="organizationarr" v-model="organizationvalue" @change="handleChangegetorganization"></el-cascader>
+              </div>
+              <br><br>
+              <!--<div style="width: 100%;height: 40px;">-->
+                 <!--<span class="plantoonspan" style="float: left">计划时间:</span>-->
+                  <!--<el-date-picker-->
+                    <!--v-model="plantime"-->
+                    <!--type="daterange"-->
+                    <!--range-separator="至"-->
+                    <!--start-placeholder="开始日期"-->
+                    <!--end-placeholder="结束日期" style="width: 350px;float: left;margin-left: 25px">-->
+                  <!--</el-date-picker>-->
+              <!--</div>-->
+
             </div>
-          </div>
-        </el-col>
-      </el-row>
-
-    <el-dialog
-      title="发布"
-      :visible.sync="dialogVisible"
-      width="40%"
-    @open="openeldialog" @close="closedialog">
-      <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
-        <iframe :src="iframeurl" v-show="iframeshow"  frameborder="0" style="padding-top:20px;position: absolute;background-color: #ffffff;top: -65px;right: -420px;width: 400px;height: 400px;"></iframe>
-        <div class="ding" v-show="dingshow" style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -270px;width: 250px;height: 400px;">
-          <el-cascader :props="props" :options="grouparr" :show-all-levels="false" @change="handleChange" style="display: block;margin: auto;"></el-cascader>
-          <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
-            <el-button style="margin-left: 25px">取消</el-button>
-            <el-button type="success" @click="grouparrqueren" style="float: right;margin-right: 25px">确认</el-button>
-          </div>
+            <div class="fabudiv" style="width: 100%;padding-bottom: 20px;">
+              <span style="margin-right: 20px;float: left;">添加附件:</span>
+              <el-upload
+                class="upload-demo"
+                action="https://xcx.tddata.net/upload"
+                :on-success="successupload"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :before-remove="beforeRemove"
+                  multiple
+                :limit="8"
+                :on-exceed="handleExceed"
+                :file-list="fileList"
+              style="width: 500px;">
+                <el-button size="small" type="primary" @click="clickupload(2)">点击上传</el-button>
+                <div slot="tip" class="el-upload__tip" style="display: none;">只能上传jpg/png文件，且不超过500kb</div>
+              </el-upload>
+            </div>
+            <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+              <span style="margin-right: 50px">类型:</span>
+              <el-cascader :options="leibieoptions" @change="handleChangegetleixin" :show-all-levels="false"></el-cascader>
+            </div>
+            <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+              <span style="margin-right: 50px">建筑:</span>
+              <el-cascader :options="building" @change="buildingchange" :show-all-levels="false" style="width:350px;"></el-cascader>
+            </div>
+            <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+              <span style="margin-right: 50px">地点:</span>
+              <el-cascader :options="didianarr" @change="didianarrchange" :show-all-levels="false" style="width:350px;"></el-cascader>
+              <el-button type="primary" @click="findbim">查看BIM</el-button>
+            </div>
+            <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+              <span style="margin-right: 50px;opacity: 0;">地点:</span>
+              <el-input v-model="beizhuinput" placeholder="请输入备注信息" style="width:400px;"></el-input>
+            </div>
+            <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+              <span style="margin-right: 10px;">指定负责人:</span>
+              <el-button type="primary" @click="addperson()">添加人员</el-button>
+              <span v-for="item in this.fabu_people">
+                <span style="margin-right: 10px">{{item.name}}</span>
+              </span>
+            </div>
+            <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+              <span style="margin-right:40px;float: left">重要性:</span>
+              <el-rate v-model="zhongyaoxing" @change="startchange" :max="3" style="float: left"></el-rate>
+            </div>
+            <el-button type="primary" @click="fabufnc()" style="width: 100%;margin-top: 20px;">发布</el-button>
+          </el-dialog>
         </div>
-
-        <!--<span style="margin-right: 20px">选择类别:</span>-->
-        <!--<el-cascader :options="gettypearr" @change="handleChangegettypearr" :show-all-levels="false"></el-cascader>-->
-        <!--<br><br>-->
-        <!--<span style="margin-right: 20px">计划类型:</span>-->
-        <!--<el-cascader :options="plangettypearr" v-model="plantypevalue" @change="changeplangettypearr" :show-all-levels="false"></el-cascader>-->
-        <!--<br><br>-->
-        <!--<span style="margin-right: 20px">介绍内容:</span>-->
-         <!--<el-input-->
-          <!--type="textarea"-->
-          <!--placeholder=""-->
-          <!--v-model="plantextarea"-->
-          <!--maxlength="200"-->
-          <!--style="width: 400px"-->
-          <!--show-word-limit>-->
-        <!--</el-input>-->
-        <!--<br><br>-->
-        <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 20px">发布标题:</span>
-        <el-input
-          type="textarea"
-          placeholder="请输入200字以内的作品介绍"
-          v-model="textareaindex"
-          maxlength="200"
-          style="width: 400px"
-          show-word-limit>
-        </el-input>
-      </div>
-        <div v-if="shigongzuzhishow">
-           <span style="margin-right: 20px">组织计划:</span>
-           <el-cascader style="width: 400px" :options="organizationarr" v-model="organizationvalue" @change="handleChangegetorganization"></el-cascader>
-        </div>
-        <br><br>
-        <!--<div style="width: 100%;height: 40px;">-->
-           <!--<span class="plantoonspan" style="float: left">计划时间:</span>-->
-            <!--<el-date-picker-->
-              <!--v-model="plantime"-->
-              <!--type="daterange"-->
-              <!--range-separator="至"-->
-              <!--start-placeholder="开始日期"-->
-              <!--end-placeholder="结束日期" style="width: 350px;float: left;margin-left: 25px">-->
-            <!--</el-date-picker>-->
-        <!--</div>-->
-
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 20px;">
-        <span style="margin-right: 20px;float: left;">添加附件:</span>
-        <el-upload
-          class="upload-demo"
-          action="https://xcx.tddata.net/upload"
-          :on-success="successupload"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :before-remove="beforeRemove"
-            multiple
-          :limit="8"
-          :on-exceed="handleExceed"
-          :file-list="fileList"
-        style="width: 500px;">
-          <el-button size="small" type="primary" @click="clickupload(2)">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip" style="display: none;">只能上传jpg/png文件，且不超过500kb</div>
-        </el-upload>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 50px">类型:</span>
-        <el-cascader :options="leibieoptions" @change="handleChangegetleixin" :show-all-levels="false"></el-cascader>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 50px">建筑:</span>
-        <el-cascader :options="building" @change="buildingchange" :show-all-levels="false" style="width:350px;"></el-cascader>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 50px">地点:</span>
-        <el-cascader :options="didianarr" @change="didianarrchange" :show-all-levels="false" style="width:350px;"></el-cascader>
-        <el-button type="primary" @click="findbim">查看BIM</el-button>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 50px;opacity: 0;">地点:</span>
-        <el-input v-model="beizhuinput" placeholder="请输入备注信息" style="width:400px;"></el-input>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 10px;">指定负责人:</span>
-        <el-button type="primary" @click="addperson()">添加人员</el-button>
-        <span v-for="item in this.fabu_people">
-          <span style="margin-right: 10px">{{item.name}}</span>
-        </span>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right:40px;float: left">重要性:</span>
-        <el-rate v-model="zhongyaoxing" @change="startchange" :max="3" style="float: left"></el-rate>
-      </div>
-      <el-button type="primary" @click="fabufnc()" style="width: 100%;margin-top: 20px;">发布</el-button>
-    </el-dialog>
-    </div>
+     </el-dialog>
 </template>
 
 <script>
- import planindex from '../../components/planpage/index'
- import moment from 'moment'
+   import planindex from '../../components/planpage/index'
+   import moment from 'moment'
   export default {
-    name: 'newplan',
-    data() {
-      return {
+    name: 'index',
+    data(){
+      return{
+        addnewplandialog:false,
         plannewvalue:'',
         leftindexshow:false,
         faqijihuashow:false,
@@ -375,15 +377,28 @@
       },
       fatherid(){
         return this.$store.state.plantypeid.fatherid
-      }
+      },
+      newplandialog() {
+        return this.$store.state.plantypeid.newplanshow
+      },
     },
-    watch: {
+    watch:{
       project_id(curVal, oldVal) {
         console.log('项目id改变',curVal,oldVal)
         this.getstyle()
       },
       titlebox(curVal){
-        console.log('titlebox',curVal)
+        console.log('titlebox',curVal,this.leftshow)
+        if(curVal.length!==0){
+          this.leftindexshow=false
+          this.planshow=false
+          this.planshow2=true
+          this.numbox=this.titlebox
+        }
+        else {
+          this.leftindexshow=true
+          this.numbox=[]
+        }
       },
       leftshow(index){
         this.leftshowfnc(index)
@@ -395,6 +410,10 @@
       plan_typeid(curVal, oldVal){
         console.log("监听事件plan_typeid",curVal)
         this.$router.push({path:'/indexplan'})
+      },
+      newplandialog(curVal, oldVal){
+        // console.log("公用样式组件",curVal,oldVal)
+        this.addnewplandialog=curVal
       }
     },
     mounted(){
@@ -409,7 +428,7 @@
       if(this.leftshow=="none"){
           this.leftindexshow=true
         }
-        console.log("leftshow的表现状态",this.fatherid)
+        console.log("leftshow的表现状态---大四----",this.leftshow)
         this.oneparentid=this.fatherid
       }
     },
@@ -417,12 +436,12 @@
       planindex
     },
     methods: {
+      closeneeplandialog(){
+        this.$store.commit("newplanshowchangefasle")
+      },
       planinititate(){
         this.$router.push({
             name: 'yearsplan',
-            // query: {
-            //   taskid:index.id
-            // }
           })
       },
       fatheridchange(){
@@ -805,6 +824,7 @@
         }
         this.$store.dispatch('Getplan', _param).then((data) => {
           console.log("任务发布成功",data)//work_id
+          this.loading=false
           for(let i=0;i<this.numbox.length;i++){
             if(this.textareaindex==this.numbox[i].name){
               this.numbox[i].block="donot"//blockshow1 blockshow2
@@ -816,7 +836,6 @@
           this.planindexworkid=data.work_id
           this.smalltaskfnc()
           this.fabusuccessfnc()
-          this.loading=false
         })
       },
       smalltaskfnc() {//获取任务列表接口
