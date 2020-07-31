@@ -12,7 +12,7 @@
           <!--顶部导航栏-->
           <div class="boxtop">
             <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">{{this.firsttitletype}}>计划列表>{{this.bannertitle}}</span></div>
-            <el-progress v-show="progressshow" :percentage="progressnum" :format="format" style="width: 500px;height: 10px;float: left;margin-top: 10px;margin-left: 15px"></el-progress>
+            <el-progress v-show="progressshow" :percentage="progressnum" :format="format" class="jindutiao"></el-progress>
             <div class="boxtop_right" @click="getnewplan">新增计划</div>
           </div>
           <!--添加定位属性-->
@@ -33,7 +33,7 @@
                  :page-size="pagesize"
                   @current-change='pagechange'
                   @size-change='handleSizeChange'
-                style="margin-top: 15px"
+                   class="fenyeclass"
                 v-show="pagingshow">
                 </el-pagination>
               </div>
@@ -57,30 +57,52 @@
                           </div>
                           <h1 style="font-size: 20px;margin-left: 15px;float: left;color: #000000;margin-top: 15px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 380px;">{{item.title}}</h1>
                         </div>
+
                         <div class="planboxtop_left_2" style="width: 100%;height: 50%;overflow: hidden">
                           <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-date"></i>计划时间:{{item.start_date}}-{{item.created_time}}</span>
                           <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-coin"></i>计划类别:{{item.firstlittertype}}</span>
                           <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-user"></i>发起人:{{item.person_name}}</span>
                         </div>
                       </div>
-                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #BC0000;float: right;margin-top: 10px;">
-                        <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span3}}</span>
-                        <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">超时任务</span>
-                      </div>
-                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #008525;float: right;margin-top: 10px;">
-                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span2}}</span>
-                        <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">完成任务</span>
-                      </div>
-                      <div class="implementation" style="position:relative;margin-left:10px;width: 80px;height: 60px;background-color: #F2F2F2;float: right;margin-top: 10px;">
-                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span1}}</span>
-                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">实施任务</span>
-                      </div>
-                      <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #0081FE;float: right;margin-top: 10px;">
-                        <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span4}}</span>
-                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子计划</span>
+                      <div class="modelaaa">
+                          <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #BC0000;float: right;margin-top: 10px;">
+                            <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span3}}</span>
+                            <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">超时任务</span>
+                          </div>
+                          <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #008525;float: right;margin-top: 10px;">
+                             <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span2}}</span>
+                            <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">完成任务</span>
+                          </div>
+                          <div class="implementation" style="position:relative;margin-left:10px;width: 80px;height: 60px;background-color: #F2F2F2;float: right;margin-top: 10px;">
+                             <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span1}}</span>
+                             <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">实施任务</span>
+                          </div>
+                          <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #0081FE;float: right;margin-top: 10px;">
+                            <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span4}}</span>
+                             <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子计划</span>
+                          </div>
                       </div>
 
                     </div>
+                  <div class="modelbbb">
+                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #BC0000;float: left;margin-top: 10px;">
+                        <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span3}}</span>
+                        <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">超时任务</span>
+                      </div>
+                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #008525;float: left;margin-top: 10px;">
+                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span2}}</span>
+                        <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">完成任务</span>
+                      </div>
+                      <div class="implementation" style="position:relative;margin-left:10px;width: 80px;height: 60px;background-color: #F2F2F2;float: left;margin-top: 10px;">
+                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span1}}</span>
+                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">实施任务</span>
+                      </div>
+                      <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #0081FE;float: left;margin-top: 10px;">
+                        <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span4}}</span>
+                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子计划</span>
+                      </div>
+                  </div>
+                  <div class="nullbox"></div>
                      <el-divider></el-divider>
                     <span style="display: block;float: left;font-size: 14px;color:#AAAAAA;font-weight: 700;margin-left: 15px;">计划内容</span>
                     <br>
@@ -111,7 +133,7 @@
                         <div class="round">{{obj.sonnum}}</div>
                         <div class="smallplan_box">
                             <div class="smallplan_box_top" style="width: 100%;height: 30px;margin-bottom: 15px">
-                              <span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;" >{{obj.title}}</span>
+                              <span class="sonplantitle">{{obj.title}}</span>
                               <div class="planstybox" style="width:110px;height: 30px;background-color: #1abc9c;text-align: center;line-height: 30px;float: right;color: #ffffff">{{obj.typename}}</div>
                             </div>
                           <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
@@ -130,7 +152,7 @@
                         <div class="round" >{{obj.sonnum}}</div>
                         <div class="smallplan_box">
                             <div class="smallplan_box_top"  style="width: 100%;height: 30px;margin-bottom: 15px">
-                              <span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;" @click="jumpfnc(obj)">{{obj.title}}</span>
+                              <span class="sonplantitle" @click="jumpfnc(obj)">{{obj.title}}</span>
                               <div class="planstybox" :class="{'timeouttask':(obj.timeout==1),'finishedtask':(obj.status==1)}">{{obj.typename}}</div>
                             </div>
                           <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
@@ -196,7 +218,8 @@
         sonplanboxnoneshow:false,//子计划为空时显示的文字
         taskplanboxnoneshow:false,
         pageshowtitle:0,
-        lastsonplanid:0
+        lastsonplanid:0,
+        curHeight:0
       };
     },
     computed:{
@@ -444,6 +467,7 @@
             limit:10
           }
           this.$store.dispatch('Getplan', param).then((data) => {
+            this.beforeMount()
             console.log("plan111",data)
             this.infonum=data.count
             if(data.count==0){
@@ -708,6 +732,11 @@
       },
       handleSizeChange(index){
         console.log("eeeindex",index)
+      },
+      beforeMount() {
+        var h = document.documentElement.clientHeight || document.body.clientHeight;
+        this.curHeight =h; //减去页面上固定高度height
+        // console.log("浏览器屏幕高度",this.curHeight)
       }
     }
   }
@@ -776,7 +805,14 @@
   .block{
     float: left;
     background-color: #F5F5F5;
-    width: 18.5%
+    height: 665px;
+    width: 18.5%;
+    position: relative;
+  }
+  .fenyeclass{
+    position: absolute;
+    bottom: 0;
+    margin: auto;
   }
     .active {
       background-color: #ffffff;
@@ -817,6 +853,19 @@
     line-height: 50px;
     font-size: 20px;
   }
+  .modelaaa{
+      display: block;
+    }
+    .modelbbb{
+      display: none;
+    }
+  .jindutiao{
+    width: 500px;
+    height: 10px;
+    float: left;
+    margin-top: 10px;
+    margin-left: 15px
+  }
   .smallplan_box{
     width: 90%;
     height: 100px;
@@ -847,6 +896,16 @@
   .timeouttask{
     background-color: #BC0000;
     color: #ffffff;
+  }
+  .sonplantitle{
+    font-size: 16px;
+    font-weight: 700;
+    float: left;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 650px;
   }
   .activitytitle{
   position: absolute;
@@ -889,6 +948,60 @@
       width: 15%
     }
 }
+  @media screen and (max-width: 1280px){
+     .planbox{
+        width: 70%;
+        position: sticky;
+        float: left;
+        margin-left: 10px;
+      }
+    .sonplantitle{
+      font-size: 16px;
+      font-weight: 700;
+      float: left;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+      text-overflow: ellipsis;
+      width: 600px;
+    }
+    .nullbox{
+      width: 100%;
+      height: 80px;
+    }
+    .modelaaa{
+      display: none;
+    }
+    .modelbbb{
+      display: block;
+    }
+    .boxtop{
+      width: 1080px;
+      height: 50px;
+      background-color: #F5F5F5;
+      overflow: hidden;
+    }
+    .boxtop_right{
+      float: right;
+      width: 150px;
+      height: 35px;
+      margin-top: 7px;
+      line-height: 35px;
+      text-align: center;
+      background-color: #34ba9c;
+      margin-right: 25px;
+      color: #ffffff;
+      border-radius: 5px;
+    }
+    .jindutiao{
+      width: 300px;
+      height: 10px;
+      float: left;
+      margin-top: 10px;
+      margin-left: 15px;
+      display: none;
+    }
+  }
 </style>
 <!--<div class="objjjj" v-for="obj in this.taskplanbox">-->
   <!--<div class="smallplan" :class="{'nohave':(obj.onshow=='none'),'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">-->
