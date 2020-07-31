@@ -673,6 +673,9 @@
         this.getplan2()
         this.getplane3()
         this.getcomment()
+        setTimeout(() => {
+          this.plansonloading=false
+        }, 6000)
       },
       format(percentage) {
         return percentage === 100 ? ('加载已完成',this.progressshow=false ): `${percentage}%`;
