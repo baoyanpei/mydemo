@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-top: 20px">
+    <div>
       <el-row :gutter="10"
               v-loading="fullscreenLoading"
               element-loading-text="拼命加载中"
@@ -8,7 +8,7 @@
         <el-col :span="3">
           <planindex></planindex>
         </el-col>
-        <el-col :span="21" style="margin:0 auto;">
+        <el-col :span="21" style="margin:0 auto;margin-left: -10px;">
           <!--顶部导航栏-->
           <div class="boxtop">
             <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">{{this.firsttitletype}}>计划列表>{{this.bannertitle}}</span></div>
@@ -25,6 +25,17 @@
                     <span style="position: absolute;top: 15px;left: 25px;font-size: 13px;color: #AAAAAA">{{activity.datayear}}</span>
                   </el-timeline-item>
                 </el-timeline>
+                <el-pagination background
+                 layout="prev, pager, next"
+                 :current-page="currpage"
+                 :total="infonum"
+                 :page-sizes='[1,2,3]'
+                 :page-size="pagesize"
+                  @current-change='pagechange'
+                  @size-change='handleSizeChange'
+                style="margin-top: 15px"
+                v-show="pagingshow">
+                </el-pagination>
               </div>
               <!--计划信息栏-->
               <div class="displayplanbox" v-if="planboxshow_none"><span>暂无计划</span></div>
@@ -40,7 +51,7 @@
                     <div class="planboxtop">
                       <div class="planboxtop_left" style="width: 590px;height: 100%;float: left">
                         <div class="planboxtop_left_1" style="width: 100%;height: 50%;;overflow: hidden">
-                          <div  @click="releasetemplatefnc(item)" class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #1bb1f4;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">
+                          <div  @click="releasetemplatefnc(item)" class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #0081FE ;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">
                             <i class="el-icon-edit-outline"></i>
                             <span>发布实施任务</span>
                           </div>
@@ -56,7 +67,7 @@
                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span3}}</span>
                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">超时任务</span>
                       </div>
-                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #1ABC9C;float: right;margin-top: 10px;">
+                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #008525;float: right;margin-top: 10px;">
                          <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span2}}</span>
                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">完成任务</span>
                       </div>
@@ -64,7 +75,7 @@
                          <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span1}}</span>
                          <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">实施任务</span>
                       </div>
-                      <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #1BB1F4;float: right;margin-top: 10px;">
+                      <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #0081FE;float: right;margin-top: 10px;">
                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span4}}</span>
                          <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子计划</span>
                       </div>
@@ -86,7 +97,7 @@
                       </div>
                   </div>
                   <!--上传评论-->
-                  <div class="comments" style="width: 120px;height:35px;margin-top:8px;background-color:#1BB1F4;float: left;text-align: center;line-height: 35px;color: #ffffff;margin-left: 15px" @click="commentclick()">
+                  <div class="comments" style="width: 120px;height:35px;margin-top:8px;background-color:#0081FE ;float: left;text-align: center;line-height: 35px;color: #ffffff;margin-left: 15px" @click="commentclick()">
                     <i class="el-icon-chat-square"></i>
                     <span>评论</span>
                   </div>
@@ -115,12 +126,12 @@
                 <div class="sonplanboxnone" v-show="taskplanboxnoneshow"><span>暂无实施计划</span></div>
                 <!--//status：-1未处理，0处理中，1完成-->
                 <div class="objjjj" v-for="obj in this.taskplanbox">
-                    <div class="smallplan" :class="{'nohave':(obj.onshow=='none'),'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">
-                        <div class="round" :class="{'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">{{obj.sonnum}}</div>
-                        <div class="smallplan_box" :class="{'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">
+                    <div class="smallplan" :class="{'nohave':(obj.onshow=='none')}">
+                        <div class="round" >{{obj.sonnum}}</div>
+                        <div class="smallplan_box">
                             <div class="smallplan_box_top"  style="width: 100%;height: 30px;margin-bottom: 15px">
                               <span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;" @click="jumpfnc(obj)">{{obj.title}}</span>
-                              <div class="planstybox" :class="{'timeouttask':(obj.timeout==1)}">{{obj.typename}}</div>
+                              <div class="planstybox" :class="{'timeouttask':(obj.timeout==1),'finishedtask':(obj.status==1)}">{{obj.typename}}</div>
                             </div>
                           <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
                           <br>
@@ -146,6 +157,11 @@
     },
     data() {
       return {
+        currpage:1,
+        infonum:0,
+        pagesize:10,
+        indexplanpage:1,
+        pagingshow:false,
         reverse: true,
         progressnum:0,//进度条
         progressshow:false,
@@ -197,6 +213,7 @@
     watch: {
       project_id(curVal, oldVal) {
         console.log("dsadas")
+        this.pagingshow=false
         this.activities=[]
         this.progressnum=0
         this.planboxshow=false
@@ -212,6 +229,7 @@
         this.planboxshow=false
         this.progressnum=0
         this.bannertitle=""
+        this.pagingshow=false
         console.log("监听事件plan_typeid",curVal,this.sonplanid)
         if(curVal==1){
           this.firsttitletype="年计划"
@@ -421,10 +439,13 @@
             method:'plan_query',
             project_id: this.project_id,
             type:this.planchanidtype,
-            sort:"desc"
+            sort:"desc",
+            page:this.indexplanpage,
+            limit:10
           }
           this.$store.dispatch('Getplan', param).then((data) => {
             console.log("plan111",data)
+            this.infonum=data.count
             if(data.count==0){
               console.log("plan数据为空")
               this.planboxshow_none=true
@@ -432,7 +453,7 @@
             }else {
               this.progressshow=true
               this.planboxshow_none=false
-              console.log("plan数据不为空")
+              this.pagingshow=true
               this.planboxshow=true
               this.progressnum=15
             }
@@ -679,6 +700,14 @@
       },
       format(percentage) {
         return percentage === 100 ? ('加载已完成',this.progressshow=false ): `${percentage}%`;
+      },
+      pagechange(e){
+        console.log("eeeee",e)
+        this.indexplanpage=e
+        this.getplan()
+      },
+      handleSizeChange(index){
+        console.log("eeeindex",index)
       }
     }
   }
@@ -695,7 +724,7 @@
     position: relative;
   }
   .boxtop_left{
-    background-color:#1bb1f4;
+    background-color:#0081FE ;
     padding: 0 20px;
     height: 35px;
     margin-top: 7px;
@@ -720,7 +749,7 @@
   }
 .linespan{
   width: 200px;
-  height: 50px;
+  height: 42px;
   margin-top: 20px;
   line-height: 30px;
   font-size: 15px;
@@ -752,7 +781,7 @@
     .active {
       background-color: #ffffff;
       padding-bottom: 35px;
-      color: #1abc9c;
+      color: #0081FE;
     }
   .showcomment{
     width: 100%;
@@ -798,11 +827,11 @@
   .planstybox{
     width:110px;
     height: 30px;
-    background-color: #1abc9c;
+    background-color: #C5C5C5;
     text-align: center;
     line-height: 30px;
     float: right;
-    color: #ffffff
+    color: #000000;
   }
   .smallplan{
     width: 95%;
@@ -812,11 +841,11 @@
     margin-left: 15px;
   }
   .finishedtask{
-    background-color: #1abc9c;
+    background-color: #008525;
     color: #ffffff;
   }
   .timeouttask{
-    background-color: red;
+    background-color: #BC0000;
     color: #ffffff;
   }
   .activitytitle{
@@ -861,3 +890,17 @@
     }
 }
 </style>
+<!--<div class="objjjj" v-for="obj in this.taskplanbox">-->
+  <!--<div class="smallplan" :class="{'nohave':(obj.onshow=='none'),'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">-->
+      <!--<div class="round" :class="{'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">{{obj.sonnum}}</div>-->
+      <!--<div class="smallplan_box" :class="{'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">-->
+          <!--<div class="smallplan_box_top"  style="width: 100%;height: 30px;margin-bottom: 15px">-->
+            <!--<span style="font-size: 16px;font-weight: 700;float: left;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 650px;" @click="jumpfnc(obj)">{{obj.title}}</span>-->
+            <!--<div class="planstybox" :class="{'timeouttask':(obj.timeout==1)}">{{obj.typename}}</div>-->
+          <!--</div>-->
+        <!--<span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>-->
+        <!--<br>-->
+        <!--&lt;!&ndash;<span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>&ndash;&gt;-->
+      <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
