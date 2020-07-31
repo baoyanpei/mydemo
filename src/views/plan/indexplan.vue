@@ -5,10 +5,10 @@
               element-loading-text="拼命加载中"
               element-loading-spinner="el-icon-loading"
               element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-col :span="4">
+        <el-col :span="3">
           <planindex></planindex>
         </el-col>
-        <el-col :span="20">
+        <el-col :span="21" style="margin:0 auto;">
           <!--顶部导航栏-->
           <div class="boxtop">
             <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">{{this.firsttitletype}}>计划列表>{{this.bannertitle}}</span></div>
@@ -18,14 +18,14 @@
           <!--添加定位属性-->
           <div class="positionbox">
               <!--时间线-->
-              <div class="block" style="float: left;background-color: #DFDFDF">
-            <el-timeline :reverse="reverse">
-              <el-timeline-item v-for="(activity, index) in activities" :key="index" class="linespan">
-                <span style="position: absolute;top: -6px;left: 25px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 175px;" @click="showtitle(activity)" :class="{active:indexspan==activity.id}">{{activity.title}}</span>
-                <span style="position: absolute;top: -6px;left: -40px;">{{activity.datayear}}</span>
-              </el-timeline-item>
-            </el-timeline>
-          </div>
+              <div class="block">
+                <el-timeline :reverse="reverse">
+                  <el-timeline-item v-for="(activity, index) in activities" :key="index" class="linespan">
+                    <span class="activitytitle" @click="showtitle(activity)" :class="{active:indexspan==activity.id}">{{activity.title}}</span>
+                    <span style="position: absolute;top: 15px;left: 25px;font-size: 13px;color: #AAAAAA">{{activity.datayear}}</span>
+                  </el-timeline-item>
+                </el-timeline>
+              </div>
               <!--计划信息栏-->
               <div class="displayplanbox" v-if="planboxshow_none"><span>暂无计划</span></div>
               <div class="planbox"
@@ -46,34 +46,36 @@
                           </div>
                           <h1 style="font-size: 20px;margin-left: 15px;float: left;color: #000000;margin-top: 15px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 380px;">{{item.title}}</h1>
                         </div>
-                        <!--<span @click="onnewplanshowchangefnc">111</span>-->
                         <div class="planboxtop_left_2" style="width: 100%;height: 50%;overflow: hidden">
                           <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-date"></i>计划时间:{{item.start_date}}-{{item.created_time}}</span>
                           <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-coin"></i>计划类别:{{item.firstlittertype}}</span>
                           <span style="line-height: 30px;display: block;float: left;margin-top: 10px;margin-left: 15px;font-size: 14px;"><i class="el-icon-user"></i>发起人:{{item.person_name}}</span>
                         </div>
                       </div>
-                      <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #1BB1F4;float: left;margin-top: 10px;">
-                        <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span4}}</span>
-                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子计划</span>
-                      </div>
-                      <div class="implementation" style="position:relative;margin-left:10px;width: 80px;height: 60px;background-color: #F2F2F2;float: left;margin-top: 10px;">
-                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span1}}</span>
-                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">实施任务</span>
-                      </div>
-                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #1ABC9C;float: left;margin-top: 10px;">
-                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span2}}</span>
-                        <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">完成任务</span>
-                      </div>
-                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #BC0000;float: left;margin-top: 10px;">
+                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #BC0000;float: right;margin-top: 10px;">
                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span3}}</span>
                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">超时任务</span>
                       </div>
+                      <div class="implementation" style="position:relative;color:#fff;width: 80px;margin-left:10px;height: 60px;background-color: #1ABC9C;float: right;margin-top: 10px;">
+                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span2}}</span>
+                        <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">完成任务</span>
+                      </div>
+                      <div class="implementation" style="position:relative;margin-left:10px;width: 80px;height: 60px;background-color: #F2F2F2;float: right;margin-top: 10px;">
+                         <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span1}}</span>
+                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 7px">实施任务</span>
+                      </div>
+                      <div class="implementation" style="position:relative;width: 80px;height: 60px;background-color: #1BB1F4;float: right;margin-top: 10px;">
+                        <span class="implementation_span1" style="font-size: 30px;position: absolute;bottom: 23px;left: 27px;">{{span4}}</span>
+                         <span class="implementation_span2" style="position: absolute;bottom: 5px;right: 14px">子计划</span>
+                      </div>
+
                     </div>
                      <el-divider></el-divider>
                     <span style="display: block;float: left;font-size: 14px;color:#AAAAAA;font-weight: 700;margin-left: 15px;">计划内容</span>
                     <br>
-                    <p style="color: #000000;font-size: 16px;margin-left: 15px;">{{item.content}}</p>
+                  <div v-for="obj in item.classcontent">
+                     <p style="color: #000000;font-size: 16px;margin-left: 15px;">{{obj}}</p>
+                  </div>
                     <el-divider></el-divider>
                 </div>
                 <!--显示评论-->
@@ -92,11 +94,9 @@
                  <br><br><br><br>
                   <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">子计划</span>
                 <br>
-                <!--所属计划粗略描述-->
-                <!--<div class="sonplanboxnone"><span>暂无子计划</span></div>-->
                 <div class="sonplanboxnone" v-show="sonplanboxnoneshow"><span>暂无子计划</span></div>
                 <div class="objjjj" v-for="obj in this.sonplanbox">
-                    <div class="smallplan" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;" @click="jumpson(obj)">
+                    <div class="smallplan" @click="jumpson(obj)">
                         <div class="round">{{obj.sonnum}}</div>
                         <div class="smallplan_box">
                             <div class="smallplan_box_top" style="width: 100%;height: 30px;margin-bottom: 15px">
@@ -115,7 +115,7 @@
                 <div class="sonplanboxnone" v-show="taskplanboxnoneshow"><span>暂无实施计划</span></div>
                 <!--//status：-1未处理，0处理中，1完成-->
                 <div class="objjjj" v-for="obj in this.taskplanbox">
-                    <div class="smallplan" :class="{'nohave':(obj.onshow=='none'),'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}" style="width: 100%;height: 100px;margin-top: 10px;margin-left: 15px;">
+                    <div class="smallplan" :class="{'nohave':(obj.onshow=='none'),'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">
                         <div class="round" :class="{'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">{{obj.sonnum}}</div>
                         <div class="smallplan_box" :class="{'finishedtask':(obj.status==1),'timeouttask':(obj.timeout==1)}">
                             <div class="smallplan_box_top"  style="width: 100%;height: 30px;margin-bottom: 15px">
@@ -179,7 +179,8 @@
         planboxshow_none:true,
         sonplanboxnoneshow:false,//子计划为空时显示的文字
         taskplanboxnoneshow:false,
-        pageshowtitle:0
+        pageshowtitle:0,
+        lastsonplanid:0
       };
     },
     computed:{
@@ -188,6 +189,9 @@
       },
       plan_typeid(){
         return this.$store.state.plantypeid.count
+      },
+      sonplanid(){
+        return this.$store.state.plantypeid.sonplanid
       },
     },
     watch: {
@@ -199,11 +203,16 @@
         this.planboxshow_none=true
         this.getplan()
       },
+      sonplanid(curVal){
+        console.log("传输过来的sonplanid",curVal)
+        this.lastsonplanid=curVal
+        // console.log("传输过来的222222",this.activities)
+      },
       plan_typeid(curVal, oldVal){
         this.planboxshow=false
         this.progressnum=0
         this.bannertitle=""
-        console.log("监听事件plan_typeid",curVal)
+        console.log("监听事件plan_typeid",curVal,this.sonplanid)
         if(curVal==1){
           this.firsttitletype="年计划"
           this.activities=[]
@@ -311,7 +320,7 @@
            this.$message('当前网络状态较差');
            return
           }
-        }, 5000)
+        }, 8000)
         console.log("跳转实施任务1-1",index.work_id)
         this.planindexworkid=index.work_id
         this.smalltaskfnc()
@@ -395,10 +404,12 @@
           console.log("第三接口",this.thirdinfo)
         })
       },
-      jumpson(index){
+      jumpson(index){//子计划跳转
+        this.lastsonplanid=0
         console.log("子计划",index)
         this.planchanidtype=index.type
         this.sonplanjump(index.id)
+        this.$store.commit('sonplanchange',index.id)
         this.$store.commit('planidchange',index.type)
       },
       sonplanjump(idsss){
@@ -413,6 +424,7 @@
             sort:"desc"
           }
           this.$store.dispatch('Getplan', param).then((data) => {
+            console.log("plan111",data)
             if(data.count==0){
               console.log("plan数据为空")
               this.planboxshow_none=true
@@ -426,7 +438,8 @@
             }
             console.log('plan', data)
             data.data.forEach(item=>{
-              item["datayear"]=item.start_date.slice(0,4)
+              item["classcontent"]=item.content.split("\n")
+              item["datayear"]=item.start_date.slice(0,11)
               if(item.type==1){
                 item["firstlittertype"]="年计划"
               }
@@ -477,6 +490,18 @@
               this.getplan2()//子计划
               this.getplane3()//任务状态
               this.getcomment()//该计划的评论
+            }
+            if(this.lastsonplanid==0){
+              console.log("还没有传输数据",this.lastsonplanid)
+            }
+            if(this.lastsonplanid!==0){
+              console.log("传输过来了数据",this.lastsonplanid)
+              for(let i=0;i<this.activities.length;i++){
+                if(this.lastsonplanid==this.activities[i].id){
+                  console.log("子任务跳转过来的数据",this.activities[i])
+                  this.showtitle(this.activities[i])
+                }
+              }
             }
           })
       },
@@ -660,7 +685,7 @@
   .boxtop{
     width: 100%;
     height: 50px;
-    background-color: #D8D8D8;
+    background-color: #F5F5F5;
     overflow: hidden;
   }
   .positionbox{
@@ -699,12 +724,10 @@
   position: relative;
 }
   .planbox{
-    width: 980px;
-    /*height: 2000px;*/
-    /*position: absolute;*/
-    /*top:0;*/
-    /*left:250px;*/
+    width: 80%;
+    position: sticky;
     float: left;
+    margin-left: 10px;
   }
   .planboxtop{
     width: 100%;
@@ -712,17 +735,22 @@
   }
   .displayplanbox{
     width: 100%;
-    height: 700px;
+    height: 800px;
     line-height: 400px;
     text-align: center;
     font-size: 30px;
     color: #aaaaaa;
   }
+  .block{
+    float: left;
+    background-color: #F5F5F5;
+    width: 18.5%
+  }
     .active {
       background-color: #ffffff;
       padding-bottom: 35px;
       color: #1abc9c;
-}
+    }
   .showcomment{
     width: 100%;
     height: 50px;
@@ -744,12 +772,10 @@
     line-height: 150px;
     color: #aaaaaa;
   }
-  .smallplan{
-    background-color: #ebebeb;
-  }
   .round{
     margin-top: 25px;
     margin-right:15px;
+    margin-left: 15px;
     width: 50px;
     height: 50px;
     background-color: #e5e5e5;
@@ -760,11 +786,11 @@
     font-size: 20px;
   }
   .smallplan_box{
-    width: 800px;
+    width: 90%;
     height: 100px;
-    /*background-color: #e5e5e5;*/
     float: left;
     padding: 10px
+
   }
   .planstybox{
     width:110px;
@@ -775,6 +801,13 @@
     float: right;
     color: #ffffff
   }
+  .smallplan{
+    width: 95%;
+    height: 100px;
+    background-color:#F5F5F5;
+    margin-top: 10px;
+    margin-left: 15px;
+  }
   .finishedtask{
     background-color: #1abc9c;
     color: #ffffff;
@@ -783,4 +816,45 @@
     background-color: red;
     color: #ffffff;
   }
+  .activitytitle{
+  position: absolute;
+    top: -6px;
+    left: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 175px;
+    font-weight: 800;
+    font-size: 16px
+  }
+@media screen and (max-width: 1440px){
+  .activitytitle{
+    position: absolute;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 160px;
+    font-weight: 800;
+    font-size: 16px
+  }
+}
+  @media screen and (min-width: 2047px){
+  .activitytitle{
+    position: absolute;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 300px;
+    font-weight: 800;
+    font-size: 16px
+  }
+}
+  @media screen and (min-width: 2559px){
+    .block{
+      float: left;
+      background-color: #F5F5F5;
+      width: 15%
+    }
+}
 </style>

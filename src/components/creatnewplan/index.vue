@@ -388,7 +388,7 @@
         this.getstyle()
       },
       titlebox(curVal){
-        console.log('titlebox',curVal,this.leftshow)
+        console.log('titlebox',curVal,this.leftshow,this.fatherid)
         if(curVal.length!==0){
           this.leftindexshow=false
           this.planshow=false
@@ -796,7 +796,7 @@
       },
       fabufnc(){//发布任务
         this.loading=true
-        console.log("父id",this.fatherid,this.oneparentid)
+        console.log("父id",this.fatherid)
         let firstdaytime=moment(this.plantime[0]).format('YYYY-MM-DD')
         let endtime=moment(this.plantime[1]).format('YYYY-MM-DD')
         let namebox=""
@@ -819,11 +819,12 @@
           content:"",
           start_date:firstdaytime,
           end_date:endtime,
-          parent_id:this.oneparentid,
+          parent_id:this.fatherid,
           struct_id:this.structid
         }
         this.$store.dispatch('Getplan', _param).then((data) => {
           console.log("任务发布成功",data)//work_id
+           console.log("任务发布成功再随便打印点什么",data)//work_id
           this.loading=false
           for(let i=0;i<this.numbox.length;i++){
             if(this.textareaindex==this.numbox[i].name){

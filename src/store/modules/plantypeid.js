@@ -27,12 +27,16 @@ const plantypeid = {
     titlebox:[],
     leftshow:"none",
     fatherid:0,
-    newplanshow:false
+    newplanshow:false,
+    sonplanid:0
   },
   mutations:{
     planidchange(state,step){
         state.count=step
       },
+    sonplanchange(state,step){
+      state.sonplanid=step
+    },
     titleboxchange(state,step){
       state.titlebox=step
     },

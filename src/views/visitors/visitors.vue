@@ -113,6 +113,7 @@
     data(){
       return{
         loading: false,
+        publiclabel:"",
         carcolor:[],//汽车颜色
         worktimeForm: {
           InoutDaterange: [
@@ -128,7 +129,8 @@
         pagesize:20,
         currpage:1,
         infonum:0,
-        currentPage:1
+        currentPage:1,
+        publictable:[]
       }
     },
     computed: {
@@ -168,8 +170,22 @@
       dateChangeHandle(e){
         console.log(e)
       },
-      groupChangeHandle(){
-
+      groupChangeHandle(index){
+        // this.tableData=this.publictable
+        let num=index[0]
+        let publicarr=[]
+        console.log("改变什么了",index)
+        // for(let i=0;i<this.optionGroups.length;i++){
+        //   if(num==this.optionGroups[i].value){
+        //     this.publiclabel=this.optionGroups[i].label
+        //   }
+        // }
+        // for(let i=0;i<this.tableData.length;i++){
+        //   if (this.publiclabel==this.tableData[i].reason){
+        //     publicarr.push(this.tableData[i])
+        //   }
+        // }
+        // this.tableData=publicarr
       },
       handleSubmit(){
         const sTime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
@@ -205,6 +221,10 @@
       this.pagesize = e
     },
       getvisitor(sTime,eTime){
+       const firsttime = moment(this.worktimeForm.InoutDaterange[0]).format('YYYY-MM-DD 00:00:00')
+       const endtime = moment(this.worktimeForm.InoutDaterange[1]).format('YYYY-MM-DD 23:59:59')
+        sTime=firsttime
+        eTime=endtime
         const param = {
             method: 'query',
             project_id: this.project_id,
@@ -215,14 +235,29 @@
           }
           this.$store.dispatch('vistor', param).then((data) => {
             console.log("访客",data)
+            let optionarr=[]
             this.infonum=data.count
             this.tableData=data.data
+            this.publictable=data.data
             this.tableData.forEach(item=>{
               item["carnum"]=this.tableData.indexOf(item)+1
             })
             for(let i=0;i<this.tableData.length;i++){
-              this.optionGroups.push({label:this.tableData[i].reason,value:i})
+              // this.optionGroups.push({label:this.tableData[i].reason,value:i})
+              optionarr.push(this.tableData[i].reason)
             }
+            for(let i=0;i<optionarr.length;i++){
+              for(let j=0;j<optionarr.length;j++){
+                if(optionarr[i]==optionarr[j]){
+                  optionarr.splice(j,1)
+                }
+              }
+            }
+            for (let i=0;i<optionarr.length;i++){
+              optionarr.splice(i,1,{label:optionarr[i],value:i})
+            }
+            this.optionGroups=optionarr
+            console.log("帅选后的数组",optionarr)
           })
       }
     }

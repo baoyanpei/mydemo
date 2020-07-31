@@ -143,51 +143,11 @@ export const constantRouterMap = [{
         }
       },
       {
-        path: 'yearsplan',
-        component: () => import('@/views/plan/yearsplan'),
-        name: 'yearsplan',
+        path: 'dataindex',//indexplan
+        component: () => import('@/views/DataManagement/index'),
+        name: 'dataindex',
         meta: {
-          title: 'yearsplan',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
-        path: 'monthplan',
-        component: () => import('@/views/plan/monthplan'),
-        name: 'monthplan',
-        meta: {
-          title: 'monthplan',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
-        path: 'weeksplan',
-        component: () => import('@/views/plan/weeksplan'),
-        name: 'weeksplan',
-        meta: {
-          title: 'weeksplan',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
-        path: 'dayplan',
-        component: () => import('@/views/plan/dayplan'),
-        name: 'dayplan',
-        meta: {
-          title: 'dayplan',
-          icon: 'dashboard',
-          noCache: true
-        }
-      },
-      {
-        path: 'constructionplan',
-        component: () => import('@/views/plan/constructionplan'),
-        name: 'constructionplan',
-        meta: {
-          title: 'constructionplan',
+          title: 'dataindex',
           icon: 'dashboard',
           noCache: true
         }
