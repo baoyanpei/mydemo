@@ -13,12 +13,13 @@
           <div class="boxtop">
             <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">{{this.firsttitletype}}>计划列表>{{this.bannertitle}}</span></div>
             <el-progress v-show="progressshow" :percentage="progressnum" :format="format" class="jindutiao"></el-progress>
-            <div class="boxtop_right" @click="getnewplan">新增计划</div>
+            <a href="javascript:void(0)"><div class="boxtop_right" @click="getnewplan">新增计划</div></a>
           </div>
           <!--添加定位属性-->
           <div class="positionbox">
               <!--时间线-->
-              <div class="block">
+              <div class="blockall">
+                <div class="block">
                 <el-timeline :reverse="reverse">
                   <el-timeline-item v-for="(activity, index) in activities" :key="index" class="linespan">
                     <span class="activitytitle" @click="showtitle(activity)" :class="{active:indexspan==activity.id}">{{activity.title}}</span>
@@ -37,6 +38,7 @@
                 v-show="pagingshow">
                 </el-pagination>
               </div>
+            </div>
               <!--计划信息栏-->
               <div class="displayplanbox" v-if="planboxshow_none"><span>暂无计划</span></div>
               <div class="planbox"
@@ -53,7 +55,7 @@
                         <div class="planboxtop_left_1" style="width: 100%;height: 50%;;overflow: hidden">
                           <div  @click="releasetemplatefnc(item)" class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #0081FE ;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">
                             <i class="el-icon-edit-outline"></i>
-                            <span>发布实施任务</span>
+                            <a href="javascript:void(0)"><span>发布实施任务</span></a>
                           </div>
                           <h1 style="font-size: 20px;margin-left: 15px;float: left;color: #000000;margin-top: 15px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 380px;">{{item.title}}</h1>
                         </div>
@@ -129,18 +131,18 @@
                 <br>
                 <div class="sonplanboxnone" v-show="sonplanboxnoneshow"><span>暂无子计划</span></div>
                 <div class="objjjj" v-for="obj in this.sonplanbox">
-                    <div class="smallplan" @click="jumpson(obj)">
+                  <a href="javascript:void(0)"><div class="smallplan" @click="jumpson(obj)">
                         <div class="round">{{obj.sonnum}}</div>
                         <div class="smallplan_box">
                             <div class="smallplan_box_top" style="width: 100%;height: 30px;margin-bottom: 15px">
                               <span class="sonplantitle">{{obj.title}}</span>
-                              <div class="planstybox" style="width:110px;height: 30px;background-color: #1abc9c;text-align: center;line-height: 30px;float: right;color: #ffffff">{{obj.typename}}</div>
+                              <div class="planstybox">{{obj.typename}}</div>
                             </div>
                           <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
                           <br>
                           <!--<span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>-->
                         </div>
-                    </div>
+                    </div></a>
                 </div>
                 <el-divider></el-divider>
                   <span style="display: block;float: left;font-size: 14px;font-weight: 700;color:#AAAAAA;margin-left: 15px;">实施任务</span>
@@ -152,7 +154,7 @@
                         <div class="round" >{{obj.sonnum}}</div>
                         <div class="smallplan_box">
                             <div class="smallplan_box_top"  style="width: 100%;height: 30px;margin-bottom: 15px">
-                              <span class="sonplantitle" @click="jumpfnc(obj)">{{obj.title}}</span>
+                              <a href="javascript:void(0)"><span class="sonplantitle" @click="jumpfnc(obj)">{{obj.title}}</span></a>
                               <div class="planstybox" :class="{'timeouttask':(obj.timeout==1),'finishedtask':(obj.status==1)}">{{obj.typename}}</div>
                             </div>
                           <span class="smallplanspan" style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;" :title=obj.content>{{obj.content}}</span>
@@ -165,6 +167,7 @@
           </div>
         </el-col>
       </el-row>
+      <!--<div class="backtop" v-show="backtopshow" @click="backtopfnc">回到顶部</div>-->
     </div>
 </template>
 
@@ -219,7 +222,9 @@
         taskplanboxnoneshow:false,
         pageshowtitle:0,
         lastsonplanid:0,
-        curHeight:0
+        curHeight:0,
+        scroll:'',
+        backtopshow:false
       };
     },
     computed:{
@@ -296,6 +301,7 @@
       if (this.project_id !== null) {
         this.getplan()
       }
+      window.addEventListener('scroll', this.menu)
     },
     methods:{
       onnewplanshowchangefnc(){//公共样式显示
@@ -304,6 +310,8 @@
         this.$store.commit("titleboxchange",[])
       },
       releasetemplatefnc(index){//发布实施任务
+        this.fullscreenLoading=false
+        this.plansonloading=false
         console.log("发布实施任务",index)
         let box=this.firstactivities[0].content.split("\n")
         for(let i=0;i<box.length;i++){//{name:this.numbox[i],block:"have",blockshow1:true,blockshow2:false}
@@ -737,12 +745,35 @@
         var h = document.documentElement.clientHeight || document.body.clientHeight;
         this.curHeight =h; //减去页面上固定高度height
         // console.log("浏览器屏幕高度",this.curHeight)
+      },
+       menu() {
+        this.scroll = document.documentElement.scrollTop || document.body.scrollTop;
+        if(this.scroll<500){
+          this.backtopshow=false
+        }
+        if(this.scroll>500){
+          console.log("高度大于一百")
+          this.backtopshow=true
+         // document.querySelector('block').style.opacity="0.8";
+        }
+       },
+      backtopfnc(){
+        document.documentElement.scrollTop=0
+        document.body.scrollTop=0
       }
     }
   }
 </script>
 
 <style scoped>
+  .planstybox{
+    width:110px;height: 30px;background-color: #1abc9c;text-align: center;line-height: 30px;float: right;color: #ffffff
+  }
+  .backtop{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+  }
   .boxtop{
     width: 100%;
     height: 50px;
@@ -785,10 +816,13 @@
   position: relative;
 }
   .planbox{
-    width: 80%;
+    width: 81%;
     position: sticky;
     float: left;
+    height: 665px;
     margin-left: 10px;
+    overflow-y: auto;
+    overflow-x:hidden;
   }
   .planboxtop{
     width: 100%;
@@ -802,12 +836,17 @@
     font-size: 30px;
     color: #aaaaaa;
   }
+  .blockall{
+    float: left;
+    width: 18%;
+    height: 665px;
+    position: relative;
+    background-color: #F5F5F5;
+    overflow: auto;
+  }
   .block{
     float: left;
-    background-color: #F5F5F5;
-    height: 665px;
-    width: 18.5%;
-    position: relative;
+    width: 100%;
   }
   .fenyeclass{
     position: absolute;
@@ -873,15 +912,6 @@
     padding: 10px
 
   }
-  .planstybox{
-    width:110px;
-    height: 30px;
-    background-color: #C5C5C5;
-    text-align: center;
-    line-height: 30px;
-    float: right;
-    color: #000000;
-  }
   .smallplan{
     width: 95%;
     height: 100px;
@@ -936,11 +966,16 @@
     overflow: hidden;
     display: inline-block;
     text-overflow: ellipsis;
-    width: 300px;
+    width: 330px;
     font-weight: 800;
     font-size: 16px
   }
 }
+  /*.active {*/
+      /*background-color: #ffffff;*/
+      /*padding-bottom: 35px;*/
+      /*color: #0081FE;*/
+    /*}*/
   @media screen and (min-width: 2559px){
     .block{
       float: left;
@@ -955,6 +990,21 @@
         float: left;
         margin-left: 10px;
       }
+   .planstybox{
+    width:110px;
+     height: 30px;
+     background-color: #1abc9c;
+     text-align: center;
+     line-height: 30px;
+     float: right;
+     color: #ffffff
+  }
+    .smallplan_box{
+      width: 85%;
+      height: 100px;
+      float: left;
+      padding: 10px
+    }
     .sonplantitle{
       font-size: 16px;
       font-weight: 700;
@@ -963,7 +1013,7 @@
       overflow: hidden;
       display: inline-block;
       text-overflow: ellipsis;
-      width: 600px;
+      width: 450px;
     }
     .nullbox{
       width: 100%;
@@ -1001,6 +1051,9 @@
       margin-left: 15px;
       display: none;
     }
+    /*.el-col-21{*/
+      /*width: 1240px;*/
+    /*}*/
   }
 </style>
 <!--<div class="objjjj" v-for="obj in this.taskplanbox">-->

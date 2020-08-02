@@ -1,10 +1,10 @@
 @media screen and (max-width: 1280px){
   .nav-bar{
-    width: 1370px;
+    width: 1280px;
   }
-    .custom-theme .el-col-21 {
-      width: 60%
-    }
+  .nav-title{
+    display: none;
+  }
 }
 .nav-bar {
   .el-input__inner {
