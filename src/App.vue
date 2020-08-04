@@ -448,9 +448,6 @@ th {
 
 /* loading 文字颜色*/
 .el-loading-spinner .el-loading-text {
-  /* color: #FFFFFF; */
-  /* margin: 3px 0; */
-  /* font-size: 14px; */
 }
 
 /* loading 旋转的圆圈的颜色*/
@@ -470,6 +467,7 @@ th {
 }
 element.style {
     height: 10px;
+
 }
 .el-progress-bar__inner{
     height: 10px;

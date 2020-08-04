@@ -95,21 +95,21 @@
           <div v-show="jinjianshow">
               <span style="margin-left: 20px">类别:</span>
               <template>
-              <el-select v-model="value" @change="jinjianleibie" placeholder="所有" style="width: 120px" class="btn1">
+              <el-select v-model="value" clearable @change="jinjianleibie" placeholder="所有" style="width: 120px" class="btn1">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.label"></el-option>
               </el-select>
               </template>
 
               <span style="margin-left: 35px">类型:</span>
               <template>
-              <el-select v-model="value2" @change="jinjianleixing" placeholder="所有" style="width: 120px" class="btn1">
+              <el-select v-model="value2" clearable @change="jinjianleixing" placeholder="所有" style="width: 120px" class="btn1">
                 <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.label2"></el-option>
               </el-select>
               </template>
 
               <span style="margin-left: 20px">状态:</span>
               <template>
-              <el-select v-model="value3" @change="jinjianzhuangtai" placeholder="所有" style="width: 120px" class="btn1">
+              <el-select v-model="value3" clearable @change="jinjianzhuangtai" placeholder="所有" style="width: 120px" class="btn1">
                 <el-option v-for="item in options3" :key="item.value3" :label="item.label" :value="item.label"></el-option>
               </el-select>
               </template>
@@ -158,6 +158,35 @@
       <!--我的任务-->
       <el-tab-pane :label="secondtitle" name="second" style="height: 700px; overflow:scroll;">
         <div class="taskbox1">
+          <!--筛选条件-->
+          <el-input v-model="chaxuninput" placeholder="请输入姓名，标题搜索" clearable style="width: 420px;margin-left: 20px">
+            <el-button slot="append" @click="mytaskkeyselectfnc" style="background-color:#409EFF;width: 100px;color: #fff;">查询</el-button>
+          </el-input>
+          <span style="font-size: 14px;margin-left: 50px" @click="jinjianclick">精简筛选条件&nbsp;&nbsp;<i class="el-icon-arrow-down"></i></span>
+          <div style="width: 100%;height: 10px;background-color: #fff"></div>
+          <div v-show="jinjianshow">
+              <span style="margin-left: 20px">类别:</span>
+              <template>
+              <el-select v-model="value" disabled  @change="jinjianleibie" placeholder="所有" style="width: 120px" class="btn1">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.label"></el-option>
+              </el-select>
+              </template>
+
+              <span style="margin-left: 35px">类型:</span>
+              <template>
+              <el-select v-model="value2" disabled  @change="jinjianleixing" placeholder="所有" style="width: 120px" class="btn1">
+                <el-option v-for="item in options2" :key="item.value2" :label="item.label2" :value="item.label2"></el-option>
+              </el-select>
+              </template>
+
+              <span style="margin-left: 20px">状态:</span>
+              <template>
+              <el-select v-model="statevalue" clearable  @change="mytaskkeyselectfnc(statevalue)" placeholder="所有" style="width: 120px" class="btn1">
+                <el-option v-for="item in mytaskoptions" :key="item.statevalue" :label="item.label" :value="item.label"></el-option>
+              </el-select>
+              </template>
+          </div>
+
           <div class="details" v-for="(item,index) in boxinfo1" :key="index" @click="infoshow(item)"> <!--任务信息模块-->
             <div class="details_top">
               <img src="/static/icon/BrowserPreview_tmp%20(2).png" alt="" style="width: 25px;height: 25px;margin-left: 10px;margin-top: 5px;float: left;">
@@ -200,19 +229,19 @@
     </el-tabs>
   </div>
   <div class="rilitop">
-    <div class="taskstate" style="background-color: #1abc9c;">
-      <span class="taskstatespan1">5</span>
-      <span class="taskstatespan2">进行中</span>
+    <div class="taskstate" style="background-color: #1abc9c;width: 210px">
+      <span class="taskstatespan1">{{tasknumbers1}}</span>
+      <span class="taskstatespan2">我的待办</span>
       <img src="../../../static/taskindex/进行中.png" alt="">
     </div>
-    <div class="taskstate" style="background-color: #bc1a1a">
-      <span class="taskstatespan1">2</span>
-      <span class="taskstatespan2">待认领</span>
+    <div class="taskstate" style="background-color: #3692ff">
+      <span class="taskstatespan1">{{tasknumbers2}}</span>
+      <span class="taskstatespan2">进行中</span>
       <img src="../../../static/taskindex/待认领.png" alt="" style="width: 55px;height: 60px;margin-top: 20px">
     </div>
-    <div class="taskstate" style="background-color: #3692ff">
-       <span class="taskstatespan1">2</span>
-      <span class="taskstatespan2">已发布</span>
+    <div class="taskstate" style="background-color: #bc1a1a;width: 210px">
+       <span class="taskstatespan1">{{tasknumbers3}}</span>
+      <span class="taskstatespan2">所有待办</span>
       <img src="../../../static/taskindex/发布.png" alt="" style="width: 55px;height: 55px;margin-top: 20px">
     </div>
   </div>
@@ -304,6 +333,8 @@
         thirdinfo:[],
         infonum:0,
         listbox:[],
+        mytaskoptions:[{label:"待办",value:"TodoList"},{label:"待认领",value:"BackLog"},{label:"待阅",value:"MatterRead"}],//我的任务状态
+        statevalue:"",
         boxinfo:[{
           maxnum:3,
           title:'',
@@ -348,7 +379,10 @@
           defaultView: 'month', // 显示默认视图
           eventClick: this.eventClick, // 点击事件
           dayClick: this.dayClick // 点击日程表上面某一天
-        }
+        },
+        tasknumbers1:0,//我的待办
+        tasknumbers2:0,//进行中
+        tasknumbers3:0,//所有待办
       }
     },
     created:function (){
@@ -373,12 +407,14 @@
         this.currpage = 1
         this.thirdinterface()
         this.mytaskfnc()
+        this.getstatefenc()
         // this.allpersondata()
         // console.log("this.person_info",this.person_info)
       },
     },
     mounted(){
       if (this.project_id !== null) {
+        this.getstatefenc()
         this.currpage = 1
         this.mytaskfnc()
         this.getPerson()
@@ -408,6 +444,18 @@
         this.fabu_people=[]
         this.fileList=[]
         this.zhongyaoxing=null
+      },
+      getstatefenc(){
+        const param = {
+          method:'get_task_numbers',
+          project_id: this.project_id
+        }
+        this.$store.dispatch('Allpersondata', param).then((data) => {
+          console.log("代办数量",data.data)
+          this.tasknumbers1=data.data.TodoList//我的待办
+          this.tasknumbers2=data.data.myStarted//进行中
+          this.tasknumbers3=data.data.myAll//所有待办
+        })
       },
       eventClick(event){
         console.log("日历点击成功",event)
@@ -1000,22 +1048,34 @@
         }
         console.log("更改选择条件",this.qtype_word,this.flow_word)
         const _param = {
-        method: 'query_task_all_list',
-        project_id: this.project_id,
-        flow_id:this.flow_word,//value
-        qtype:this.qtype_word,//完成未完成
-        questions_type:this.value2,//安全，技术平台
-        keyword:this.chaxuninput,//输入框
-        page:this.currpage
-      }
+          method: 'query_task_all_list',
+          project_id: this.project_id,
+          flow_id:this.flow_word,//value
+          qtype:this.qtype_word,//完成未完成
+          questions_type:this.value2,//安全，技术平台
+          keyword:this.chaxuninput,//输入框
+          page:this.currpage
+        }
       this.$store.dispatch('Allpersondata', _param).then((data) => {
           console.log("查询按钮",data)
+          if(data.data.length==0){
+            this.boxinfo1=[]
+            this.infonum=0
+            this.bannertitle="任务大厅("+0+")"
+            console.log("查询数据为空")
+            this.$message({
+              message: '没有查询到符合条件的数据',
+              type: 'warning'
+            });
+            return
+          }
           this.infonum=data.count
           this.bannertitle="任务大厅("+data.count+")"
-        this.boxinfo1=[]
-        this.boxinfo=data.data
+          this.boxinfo1=[]
+          this.boxinfo=data.data
         //事件监听flowid,判断任务类型
         this.boxinfo.forEach(item=>{
+          item["created"]=item.startTime
           if(item.flowId==="Meeting01"){
             item.stateall='会议'
           }
@@ -1051,6 +1111,67 @@
       },
       releasefnc(){
         this.dialogVisible=true
+      },
+      mytaskkeyselectfnc(index){
+        console.log("我的任务选择状态",index)
+        let indexvalue="TodoList,BackLog,MatterRead"
+        for(let i=0;i<this.mytaskoptions.length;i++){
+          if(index==this.mytaskoptions[i].label){
+            indexvalue=this.mytaskoptions[i].value
+          }
+        }
+        const _param = {
+            method: 'get_todo_list',
+            project_id: this.project_id,
+            qtype:indexvalue,
+            keyword:this.chaxuninput
+        }
+        this.$store.dispatch('GetAllInstList', _param).then((data) => {
+          console.log("我的任务查询出来的数据",data)
+          if(data.length==0){
+            this.boxinfo1=[]
+            this.infonum2=0
+            this.secondtitle="任务大厅("+0+")"
+            console.log("查询数据为空")
+            this.$message({
+              message: '没有查询到符合条件的数据',
+              type: 'warning'
+            });
+            return
+          }
+          data.forEach(item=>{
+              item["aaaid"]=data.indexOf(item)
+            })
+            this.secondtitle="我的任务("+data.length+")"
+            this.infonum2=data.length
+            this.boxinfo=[]
+            this.boxinfo1=[]
+            this.boxinfo=data
+            this.events=[]
+            //事件监听flowid,判断任务类型
+            this.boxinfo.forEach(item=>{
+              if(item.flowId==="Meeting01"){
+                item.stateall='会议'
+              }
+              if(item.flowId==="Documents01"){
+                item.stateall='资料'
+              }
+              if(item.flowId==="PlanFlow01"){
+                item.stateall='计划'
+              }
+              if(item.flowId==="ProblemFindSolve01"){
+                item.stateall='任务'
+              }
+              if(item.flowId==="SafetyInspection01"){
+                item.stateall='安全巡检'
+              }
+              if(item.flowId==="Notice01"){
+                item.stateall='通知'
+              }
+            })
+            //页面刷新自动去第一页
+            this.secondpage()
+        })
       },
       mytaskfnc(){
         const _param = {
@@ -1098,8 +1219,14 @@
       mytask(tab, event){
         if(tab.name=='second'){
           this.mytaskfnc()
+          this.chaxuninput=""
+          this.value1=""
+          this.value2=""
+          this.value3=""
         }else {
           this.allpersondata()
+          this.statevalue=""
+          this.chaxuninput=""
         }
       },
       successupload(response,file, fileList){//图片样式更改
@@ -1146,7 +1273,7 @@
     float: left;
   }
   .taskstate{
-    width: 160px;
+    width: 190px;
     height: 100%;
     border-radius: 15px;
     margin-right: 15px;

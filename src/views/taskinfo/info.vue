@@ -69,7 +69,7 @@
                <!--整改信息-->
               <div class="zhenggai">
                 <div class="rectification_infobox">
-                  <span style="line-height: 40px;display: block;float: left;font-size: 20px">第{{item[0].count}}条整改数据</span>
+                  <span style="line-height: 40px;display: block;float: left;font-size: 20px">第{{item[0].count}}条执行情况</span>
                   <span style="display: block;float: right;line-height: 40px;margin-right: 15px">{{item[0].date}}</span>
                 </div>
                 <!--处理人名字-->

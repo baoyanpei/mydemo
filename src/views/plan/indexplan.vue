@@ -4,16 +4,19 @@
               v-loading="fullscreenLoading"
               element-loading-text="拼命加载中"
               element-loading-spinner="el-icon-loading"
-              element-loading-background="rgba(0, 0, 0, 0.8)">
+              element-loading-background="rgba(0, 0, 0, 0.8)"
+      >
         <el-col :span="3">
           <planindex></planindex>
         </el-col>
         <el-col :span="21" style="margin:0 auto;margin-left: -10px;">
           <!--顶部导航栏-->
           <div class="boxtop">
+            <newplandialog></newplandialog>
             <div class="boxtop_left"><span style="margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 300px;">{{this.firsttitletype}}>计划列表>{{this.bannertitle}}</span></div>
             <el-progress v-show="progressshow" :percentage="progressnum" :format="format" class="jindutiao"></el-progress>
-            <a href="javascript:void(0)"><div class="boxtop_right" @click="getnewplan">新增计划</div></a>
+            <!--<a href="javascript:void(0)"><div class="boxtop_right" @click="getnewplan">新增计划</div></a>-->
+            <el-button type="primary" class="boxtop_right" @click="getnewplan" :loading=btnloding>新增计划</el-button>
           </div>
           <!--添加定位属性-->
           <div class="positionbox">
@@ -46,17 +49,18 @@
                    v-loading="plansonloading"
                   element-loading-text="拼命加载中"
                   element-loading-spinner="el-icon-loading"
-                  element-loading-background="rgba(0, 0, 0, 0.8)">
+                  element-loading-background="rgba(0, 0, 0, 0.8)"
+              >
                 <!--头部-->
-                <newplandialog></newplandialog>
                 <div class="itemactovi" v-for="item in this.firstactivities">
                     <div class="planboxtop">
                       <div class="planboxtop_left" style="width: 590px;height: 100%;float: left">
                         <div class="planboxtop_left_1" style="width: 100%;height: 50%;;overflow: hidden">
-                          <div  @click="releasetemplatefnc(item)" class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #0081FE ;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">
-                            <i class="el-icon-edit-outline"></i>
-                            <a href="javascript:void(0)"><span>发布实施任务</span></a>
-                          </div>
+                          <!--<div  @click="releasetemplatefnc(item)" class="taskbtn" style="width: 130px;height:30px;margin-top:10px;background-color: #0081FE ;text-align: center;line-height: 30px;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">-->
+                            <!--<i class="el-icon-edit-outline"></i>-->
+                            <!--<a href="javascript:void(0)"><span>发布实施任务</span></a>-->
+                          <!--</div>-->
+                          <el-button type="primary" class="taskbtn" icon="el-icon-edit-outline" :loading=btnloding @click="releasetemplatefnc(item)" style="line-height: 10px;width: 145px;height:35px;margin-top:10px;background-color: #0081FE ;text-align: center;margin-left: 15px;border-radius: 5px;color: #ffffff;float: left">发布实施任务</el-button>
                           <h1 style="font-size: 20px;margin-left: 15px;float: left;color: #000000;margin-top: 15px;white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 380px;">{{item.title}}</h1>
                         </div>
 
@@ -182,6 +186,7 @@
     },
     data() {
       return {
+        btnloding:true,//按钮是否可以被点击
         currpage:1,
         infonum:0,
         pagesize:10,
@@ -241,6 +246,8 @@
     watch: {
       project_id(curVal, oldVal) {
         console.log("dsadas")
+        this.firsttitletype="年计划"
+        this.bannertitle=""
         this.pagingshow=false
         this.activities=[]
         this.progressnum=0
@@ -254,6 +261,7 @@
         // console.log("传输过来的222222",this.activities)
       },
       plan_typeid(curVal, oldVal){
+        this.btnloding=true
         this.planboxshow=false
         this.progressnum=0
         this.bannertitle=""
@@ -284,7 +292,7 @@
           this.activities=[]
           this.fullscreenLoading=true
         }
-        if(curVal==6){
+        if(curVal==7){
           this.firsttitletype="施工计划"
           this.activities=[]
           this.fullscreenLoading=true
@@ -532,6 +540,7 @@
               }
             }
             if(this.idplan.length==0){
+              this.btnloding=false
               console.log("idplan为空")
               this.firstactivities=[]
               this.activities=data.data
@@ -556,6 +565,7 @@
                 }
               }
             }
+
           })
       },
       getplan2(){
@@ -695,6 +705,7 @@
               }
             }
             console.log("实施任务有什么",this.taskplanbox)
+            this.btnloding=false
             this.plansonloading=false
             this.progressnum=100
           })
@@ -800,7 +811,8 @@
     width: 150px;
     height: 35px;
     margin-top: 7px;
-    line-height: 35px;
+    line-height: 15px;
+    font-size: 16px;
     text-align: center;
     background-color: #34ba9c;
     margin-right: 25px;
@@ -863,7 +875,7 @@
     height: 50px;
     margin-left: 15px;
     padding-left: 20px;
-    line-height: 50px;
+    line-height: 20px;
   }
   .nohave{
     background-color: #ff6700;
