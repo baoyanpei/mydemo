@@ -37,7 +37,7 @@
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
       </el-menu-item>-->
-      <el-menu-item index="/lot5/index">
+      <el-menu-item index="/loT6/index">
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
       </el-menu-item>
@@ -118,12 +118,12 @@ import SidebarItem from './SidebarItem'
 
 export default {
   components: {
-    SidebarItem
+    SidebarItem,
   },
   data() {
     return {
       // isCollapse: true,
-      collapseTransition: false
+      collapseTransition: false,
     }
   },
   computed: {
@@ -133,13 +133,13 @@ export default {
     },
     sidebar() {
       return this.$store.state.app.sidebar
-    }
+    },
   },
   methods: {
-    mouseOver: function() {
+    mouseOver: function () {
       this.sidebar.opened = true
     },
-    mouseLeave: function() {
+    mouseLeave: function () {
       this.sidebar.opened = false
     },
     handleOpen(key, keyPath) {
@@ -149,7 +149,7 @@ export default {
     handleClose(key, keyPath) {
       console.log(key, keyPath)
       this.sidebar.opened = faltruese
-    }
-  }
+    },
+  },
 }
 </script>
