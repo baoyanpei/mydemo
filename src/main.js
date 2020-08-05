@@ -31,6 +31,11 @@ import "echarts/theme/infographic";
 
 import VueClipboard from "vue-clipboard2";
 
+// 百度地图
+import BaiduMap from 'vue-baidu-map'
+Vue.use(BaiduMap, {
+    ak: 'Ck9tcoakuY1GT18k7KONFBl6I5a2tGX9'
+});
 // 拖拽弹窗
 import elDragDialog from "./directive/el-dragDialog/index";
 

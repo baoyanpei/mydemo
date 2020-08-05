@@ -153,6 +153,16 @@ export const constantRouterMap = [{
         }
       },
       {
+        path: 'equipmentManagement',
+        component: () => import('@/views/equipment/index'),
+        name: 'equipmentManagement',
+        meta: {
+          title: 'equipmentManagement',
+          icon: 'dashboard',
+          noCache: true
+        }
+      },
+      {
         path: 'safety-inspection',
         component: () => import('@/views/safety/rixunjian'),
         name: 'safety-inspection',

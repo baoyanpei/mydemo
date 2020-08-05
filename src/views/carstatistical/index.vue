@@ -30,6 +30,10 @@
             </el-form-item>
           </el-form>
           <hr class="hr1" />
+          <el-dialog title="进出车辆图片预览" :visible.sync="dialogVisible">
+            <!--<iframe :src=iframeurl frameborder="0" class="iframeclass"></iframe>-->
+            <img :src=iframeurl alt="" style="width: 100%">
+          </el-dialog>
           <el-table
             ref="singleTable"
             :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
@@ -97,6 +101,8 @@
     data(){
       return{
         loading: false,
+        dialogVisible:false,
+        iframeurl:'',
         carcolor:[],//汽车颜色
         worktimeForm: {
           InoutDaterange: [
@@ -218,12 +224,17 @@
         window.open(this.tabelurlstring)
       },
       previewtp(e){//车辆图片预览
-        window.open(e.pic)//?t=download
+        this.dialogVisible=true
+        this.iframeurl=e.pic
+        console.log(this.iframeurl)
+        // window.open(e.pic)//?t=download
       },
       downloadtp(e) {//车辆图片下载
+        console.log("车牌牌牌牌牌牌",e)
+        let name=e.lisence+"——"+e.created_time
         let url=e.pic
         url=url.replace("http://w.yidebim.com:8899/","")
-        this.downloadIamge(url, 'pic')
+        this.downloadIamge(url, name)
       },
       downloadIamge(imgsrc, name) {//下载图片地址和图片名
         var image = new Image();
@@ -250,11 +261,16 @@
       },
       handleSizeChange(e){
         this.pagesize = e
+      },
+      handleClose(){
+
       }
     }
   }
 </script>
 
 <style scoped>
-
+  .iframeclass{
+    width: 100%;
+  }
 </style>

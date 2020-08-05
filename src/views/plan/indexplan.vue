@@ -1,6 +1,6 @@
 <template>
     <div>
-      <el-row :gutter="10"
+      <el-row
               v-loading="fullscreenLoading"
               element-loading-text="拼命加载中"
               element-loading-spinner="el-icon-loading"

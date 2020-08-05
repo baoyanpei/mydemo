@@ -3,7 +3,9 @@
 </style>
 <template>
 <div>
-  <div class="left">
+  <el-row>
+  <el-col :span="12" style="">
+    <div class="left">
     <el-button type="success" class="Release_task" @click="releasefnc">发布任务</el-button>
     <el-dialog
       title="发布"
@@ -228,26 +230,30 @@
       </el-tab-pane>
     </el-tabs>
   </div>
-  <div class="rilitop">
-    <div class="taskstate" style="background-color: #1abc9c;width: 210px">
-      <span class="taskstatespan1">{{tasknumbers1}}</span>
-      <span class="taskstatespan2">我的待办</span>
-      <img src="../../../static/taskindex/进行中.png" alt="">
-    </div>
-    <div class="taskstate" style="background-color: #3692ff">
-      <span class="taskstatespan1">{{tasknumbers2}}</span>
-      <span class="taskstatespan2">进行中</span>
-      <img src="../../../static/taskindex/待认领.png" alt="" style="width: 55px;height: 60px;margin-top: 20px">
-    </div>
-    <div class="taskstate" style="background-color: #bc1a1a;width: 210px">
-       <span class="taskstatespan1">{{tasknumbers3}}</span>
-      <span class="taskstatespan2">所有待办</span>
-      <img src="../../../static/taskindex/发布.png" alt="" style="width: 55px;height: 55px;margin-top: 20px">
-    </div>
+  </el-col>
+  <el-col :span="12" style="">
+    <div class="rilitop">
+      <div class="taskstate" style="background-color: #1abc9c;margin-left: 0">
+        <span class="taskstatespan1">{{tasknumbers1}}</span>
+        <span class="taskstatespan2">我的待办</span>
+        <img src="../../../static/taskindex/进行中.png" alt="">
+      </div>
+      <div class="taskstate" style="background-color: #3692ff">
+        <span class="taskstatespan1">{{tasknumbers2}}</span>
+        <span class="taskstatespan2">进行中</span>
+        <img src="../../../static/taskindex/待认领.png" alt="" style="width: 55px;height: 60px;margin-top: 20px">
+      </div>
+      <div class="taskstate" style="background-color: #bc1a1a;">
+         <span class="taskstatespan1">{{tasknumbers3}}</span>
+        <span class="taskstatespan2">所有待办</span>
+        <img src="../../../static/taskindex/发布.png" alt="" style="width: 55px;height: 55px;margin-top: 20px">
+      </div>
   </div>
-  <div class="rili">
-    <full-calendar :config="config" @event-selected="eventClick()" @dateClick="nowdayfnc()" :events="events"></full-calendar>
-  </div>
+    <div class="rili">
+      <full-calendar :config="config" @event-selected="eventClick()" @dateClick="nowdayfnc()" :events="events"></full-calendar>
+    </div>
+  </el-col>
+</el-row>
 </div>
 </template>
 
@@ -1266,14 +1272,15 @@
     float: left;
   }
   .rilitop{
-    width: 750px;
+    width: 100%;
     height: 80px;
-    margin-left: 15px;
     margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
     float: left;
   }
   .taskstate{
-    width: 190px;
+    width: 30%;
     height: 100%;
     border-radius: 15px;
     margin-right: 15px;
@@ -1298,10 +1305,9 @@
     color: #ffffff;
   }
   .rili{
-    width: 750px;
+    width: 100%;
     padding: 10px;
     box-shadow:0px 0px 30px #4a4c4b;
-    margin-left: 15px;
     margin-top: 25px;
     float: left;
   }
