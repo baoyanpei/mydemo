@@ -7,7 +7,8 @@
         v-model="project_id"
         placeholder="请选择"
         style="width: 210px;"
-        @change="ProjectChangeHandle">
+        @change="ProjectChangeHandle"
+      >
         <el-option
           v-for="item in project_option"
           :key="item.value"
@@ -110,24 +111,24 @@ export default {
     Screenfull,
     LangSelect,
     ThemePicker,
-    BindBimButton
+    BindBimButton,
   },
   data() {
     return {
       isBindBIM: true,
       bim_name_desc: '',
-      orgName: ''
+      orgName: '',
     }
   },
   computed: {
     ...mapGetters(['sidebar', 'name', 'avatar']),
     project_id: {
-      get: function() {
+      get: function () {
         return this.$store.state.project.project_id
       },
-      set: function(newValue) {
+      set: function (newValue) {
         this.$store.state.project.project_id = newValue
-      }
+      },
     },
     project_option() {
       return this.$store.state.project.project_option
@@ -144,16 +145,16 @@ export default {
     //   }
     // },
     currentProject: {
-      get: function() {
+      get: function () {
         return this.$store.state.project.currentProject
       },
-      set: function(newValue) {
+      set: function (newValue) {
         this.$store.state.project.currentProject = newValue
-      }
+      },
     },
     BindBimDataChanged() {
       return this.$store.state.bindBim.BindBimDataChanged
-    }
+    },
   },
   watch: {
     project_id(curVal, oldVal) {
@@ -170,7 +171,7 @@ export default {
     BindBimDataChanged(curVal, oldVal) {
       console.log('BindBimDataChanged')
       this.GetOutsysInfo(this.project_id)
-    }
+    },
   },
   mounted() {
     // console.log("project_idproject_idproject_idproject_idproject_id", this.project_id)
@@ -186,11 +187,12 @@ export default {
     },
     tongxunluHandle() {
       this.$router.push({
-        path: '/tongxunlu'
+        path: '/tongxunlu',
       })
     },
     openScreenHandle() {
-      window.open(`/#/screen3?project_id=${this.project_id}`, '_blank')
+      // window.open(`/#/screen3?project_id=${this.project_id}`, '_blank')
+      window.open(`/#/screen3V3?project_id=${this.project_id}`, '_blank')
     },
     openDoorScreenHandle() {
       window.open(
@@ -202,20 +204,20 @@ export default {
     },
     openercode() {
       this.$router.push({
-        path: '/generateercode'
+        path: '/generateercode',
       })
     },
     userHandler() {
       this.$store
         .dispatch('SetHuiyiFullCalendarDialog', {
-          isShow: true
+          isShow: true,
         })
         .then(() => {})
         .catch(() => {})
     },
     ProjectChangeHandle(projectID) {
       // console.log("aaa", projectID)
-      this.project_list.forEach(projectInfo => {
+      this.project_list.forEach((projectInfo) => {
         if (projectInfo.project_id === projectID) {
           Cookies.set('PROJECT_ID', projectID)
           // this.org_name = projectInfo.org_name
@@ -229,9 +231,9 @@ export default {
         this.isBindBIM = true
         const param = {
           method: 'get_outsys_info',
-          project_id: project_id
+          project_id: project_id,
         }
-        this.$store.dispatch('GetOutsysInfo', param).then(res => {
+        this.$store.dispatch('GetOutsysInfo', param).then((res) => {
           console.log('GetOutsysInfo - res', res, res.access_code === undefined)
           if (res.access_code === undefined || res.access_code === '') {
             this.isBindBIM = false
@@ -255,8 +257,8 @@ export default {
         }
       }
       this.orgName = _orgName
-    }
-  }
+    },
+  },
 }
 </script>
 
