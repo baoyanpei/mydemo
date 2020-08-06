@@ -76,13 +76,13 @@ export default {
         dbjd: '-',
         xcjl: '-',
         dggd: '-',
-        sbsj: '-'
+        sbsj: '-',
       },
       tdDataList: [],
       noTJTdTip: '',
       hasDevice: true,
       currentIndex: 0,
-      timerChangeData: null
+      timerChangeData: null,
     }
   },
   props: {},
@@ -110,18 +110,25 @@ export default {
     showData() {
       if (this.tdDataList.length > 0) {
         const currentDisplayData = this.tdDataList[this.currentIndex]
-        const familyLocation = JSON.parse(currentDisplayData.family_location)
+        // console.log('this.tdDataList', this.tdDataList)
+        let displayHeight = '-'
+
+        if (currentDisplayData.family_location !== '') {
+          const familyLocation = JSON.parse(currentDisplayData.family_location)
+          displayHeight = familyLocation.displayHeight
+        }
+
         const mqttData = currentDisplayData.mqttData
         if (mqttData !== '') {
           this.tdData.device_name = currentDisplayData.device_name
-          this.tdData.tdgd = familyLocation.displayHeight
+          this.tdData.tdgd = displayHeight
           this.tdData.dbjd = mqttData.rotate // 回转
           this.tdData.xcjl = mqttData.extent // 幅度  小车距离
           this.tdData.dggd = mqttData.height // 吊钩高度
           this.tdData.sbsj = moment(mqttData.created_time).format('HH:mm:ss')
         } else {
           this.tdData.device_name = currentDisplayData.device_name
-          this.tdData.tdgd = familyLocation.displayHeight
+          this.tdData.tdgd = displayHeight
           this.tdData.dbjd = '-' // 回转
           this.tdData.xcjl = '-' // 幅度  小车距离
           this.tdData.dggd = '-' // 吊钩高度
@@ -151,11 +158,11 @@ export default {
     noDevice() {
       this.hasDevice = false
       this.noTJTdTip = '未配置塔机'
-    }
+    },
   },
   watch: {},
   mounted() {
     //   console.log("persion_data.entry_pic", this.persion_data.entry_pic)
-  }
+  },
 }
 </script>
