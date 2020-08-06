@@ -319,7 +319,7 @@
           </div>
         </div>
       </div>
-      <div class="noanzhuang">未安装设备</div>
+      <div class="noanzhuang" v-show="noassass">未安装设备</div>
     </div>
     <div class="yizheng-logo">
       <img v-if="img_src!==''" :src="img_src" />
@@ -537,6 +537,7 @@ export default {
       allwaterdevicedid: 0, //总水表id
       alleledevicedid: 0, //总电表id
       asasasas: true,
+      noassass:false,
       img_src: ''
     }
   },
@@ -858,10 +859,12 @@ export default {
         data => {
           this.carbox = data.data
           this.asasasas = true
+          this.noassass=false
           console.log('进出车辆日志', this.carbox)
         },
         () => {
           this.asasasas = false
+          this.noassass=true
         }
       )
     },

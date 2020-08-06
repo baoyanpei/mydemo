@@ -321,6 +321,12 @@ export default {
 </script>
 <style>
 /*表格*/
+body .el-table th.gutter{
+    display: table-cell!important;
+  }
+body .el-table colgroup.gutter{
+    display: table-cell!important;
+  }
 table td,
 th {
   border: 0px solid #000 !important;

@@ -45,10 +45,10 @@
         <font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />
         <span slot="title">巡检管理</span>
       </el-menu-item>
-      <el-menu-item index="/equipmentManagement">
-        <!--<font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />-->
-        <span slot="title">设备管理</span>
-      </el-menu-item>
+      <!--<el-menu-item index="/equipmentManagement">-->
+        <!--&lt;!&ndash;<font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />&ndash;&gt;-->
+        <!--<span slot="title">设备管理</span>-->
+      <!--</el-menu-item>-->
       <el-menu-item index="/modelSelect/index">
         <font-awesome-icon icon="map-marked" />
         <span slot="title">BIM管理</span>
@@ -58,10 +58,10 @@
         <font-awesome-icon icon="network-wired" />
         <span slot="title">计划管理</span>
       </el-menu-item>
-      <el-menu-item index="/dataindex">
-        <font-awesome-icon icon="calendar-alt" />
-        <span slot="title">资料管理</span>
-      </el-menu-item>
+      <!--<el-menu-item index="/dataindex">-->
+        <!--<font-awesome-icon icon="calendar-alt" />-->
+        <!--<span slot="title">资料管理</span>-->
+      <!--</el-menu-item>-->
       <!--
       <el-menu-item index="/main1">
         <i class="el-icon-location"></i>
