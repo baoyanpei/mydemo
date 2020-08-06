@@ -21,15 +21,14 @@
               </el-select>
               <el-button style="float: right;margin-right: 30px;margin-top: 13px">打印设备二维码</el-button>
             </div>
-             <div id="allmap" style="width: 800px;height: 400px;border: 1px solid #000000"></div>
-            <!--<el-tabs v-model="activeName" type="card" @tab-click="smallhandleClick">-->
-              <!--<el-tab-pane label="设备信息" name="first">用户管理</el-tab-pane>-->
-              <!--<el-tab-pane label="设备位置" name="second">-->
-                <!--<div id="allmap" style="width: 800px;height: 400px;border: 1px solid #000000"></div>-->
-              <!--</el-tab-pane>-->
-              <!--<el-tab-pane label="巡检记录" name="third">角色管理</el-tab-pane>-->
-              <!--<el-tab-pane label="标定BIM位置" name="fourth">定时任务补偿</el-tab-pane>-->
-            <!--</el-tabs>-->
+            <el-tabs v-model="activeName" type="card" @tab-click="smallhandleClick">
+              <el-tab-pane label="设备信息" name="first">用户管理</el-tab-pane>
+              <el-tab-pane label="设备位置" name="second">
+                 <div id="allmap" ref="newmap" style="width: 800px;height: 400px;border: 1px solid #000000"></div>
+              </el-tab-pane>
+              <el-tab-pane label="巡检记录" name="third">角色管理</el-tab-pane>
+              <el-tab-pane label="标定BIM位置" name="fourth">定时任务补偿</el-tab-pane>
+            </el-tabs>
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -40,6 +39,8 @@
 <script>
   export default {
     name: 'index',
+    components:{
+    },
     data() {
         return {
           tabPosition: 'left',//el-tab 方向
@@ -62,7 +63,6 @@
         },
       },
       mounted(){
-        this.map()
         if (this.project_id !== null) {
           this.getshebei()
         }
@@ -123,17 +123,17 @@
         }
       },
       map () {
-        console.log("这是地图")
-        var map = new BMap.Map("allmap");    // 创建Map实例
-         map.centerAndZoom(new BMap.Point(121.551257,38.890002), 11);  // 初始化地图,设置中心点坐标和地图级别
-          //添加地图类型控件
-          map.addControl(new BMap.MapTypeControl({
-              mapTypes:[
-                  BMAP_NORMAL_MAP,
-                  BMAP_HYBRID_MAP
-              ]}));
-          map.setCurrentCity("大连");          // 设置地图显示的城市 此项是必须设置的
-          map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+        console.log("这是地图",this.$refs.newmap[0])
+       let map = new window.BMap.Map(this.$refs.newmap[0]) // 创建Map实例
+        map.centerAndZoom(new window.BMap.Point(116.404, 39.915), 11) // 初始化地图,设置中心点坐标和地图级别
+        map.addControl(new window.BMap.MapTypeControl({ // 添加地图类型控件
+          mapTypes: [
+            window.BMAP_NORMAL_MAP,
+            window.BMAP_HYBRID_MAP
+          ]
+        }))
+        map.setCurrentCity('北京') // 设置地图显示的城市 此项是必须设置的
+        map.enableScrollWheelZoom(true)// 开启鼠标滚轮缩放
       }
     }
   }

@@ -1310,6 +1310,7 @@
     box-shadow:0px 0px 30px #4a4c4b;
     margin-top: 25px;
     float: left;
+    overflow-x: auto;
   }
   .Release_task{
     position: absolute;

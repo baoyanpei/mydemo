@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="添加新计划" :visible.sync="addnewplandialog" width="95%" :modal-append-to-body='false' @close="closeneeplandialog" v-dialogDrag>
+    <el-dialog title="添加新计划" :visible.sync="addnewplandialog" width="95%"  @close="closeneeplandialog" v-dialogDrag>
         <div>
           <el-row :gutter="10" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
             <el-col :span="24" style="background-color: #F9F9F9;">

@@ -63,6 +63,28 @@
           })
       },
       planidtran(index){
+        console.log("dsadsadsa",index)
+        if(index==1){
+          this.$store.commit('planindexfirstnamefnc',"年计划")
+        }
+        if(index==2){
+          this.$store.commit('planindexfirstnamefnc',"月计划")
+        }
+        if(index==3){
+          this.$store.commit('planindexfirstnamefnc',"周计划")
+        }
+        if(index==4){
+          this.$store.commit('planindexfirstnamefnc',"日计划")
+        }
+        if(index==5){
+          this.$store.commit('planindexfirstnamefnc',"施工组织计划")
+        }
+        if(index==7){
+          this.$store.commit('planindexfirstnamefnc',"施工计划")
+        }
+        if(index==0){
+          this.$store.commit('planindexfirstnamefnc',"其他计划")
+        }
         this.nowid=index
         this.$store.commit('planidchange',index)
       }

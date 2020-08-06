@@ -1,6 +1,6 @@
 <template>
     <div>
-      <el-row
+      <el-row :gutter="10"
               v-loading="fullscreenLoading"
               element-loading-text="拼命加载中"
               element-loading-spinner="el-icon-loading"
@@ -22,7 +22,7 @@
           <div class="positionbox">
               <!--时间线-->
               <div class="blockall">
-                <div class="block">
+                <div class="block" style="padding-left: 30px">
                 <el-timeline :reverse="reverse">
                   <el-timeline-item v-for="(activity, index) in activities" :key="index" class="linespan">
                     <span class="activitytitle" @click="showtitle(activity)" :class="{active:indexspan==activity.id}">{{activity.title}}</span>
@@ -44,13 +44,14 @@
             </div>
               <!--计划信息栏-->
               <div class="displayplanbox" v-if="planboxshow_none"><span>暂无计划</span></div>
-              <div class="planbox"
-                   v-if="planboxshow"
-                   v-loading="plansonloading"
-                  element-loading-text="拼命加载中"
-                  element-loading-spinner="el-icon-loading"
-                  element-loading-background="rgba(0, 0, 0, 0.8)"
-              >
+              <van-skeleton title :row="10" v-if=skeletonshow style="margin-top: 15px"/>
+              <div class="planbox" v-show="modelshow">
+                   <!--v-if="planboxshow"-->
+                   <!--v-loading="plansonloading"-->
+                  <!--element-loading-text="拼命加载中"-->
+                  <!--element-loading-spinner="el-icon-loading"-->
+                  <!--element-loading-background="rgba(0, 0, 0, 0.8)"-->
+              <!--&gt;-->
                 <!--头部-->
                 <div class="itemactovi" v-for="item in this.firstactivities">
                     <div class="planboxtop">
@@ -176,6 +177,9 @@
 </template>
 
 <script>
+  import Vue from 'vue';
+  import { Skeleton } from 'vant';
+  Vue.use(Skeleton);
  import planindex from '../../components/planpage/index'
  import newplandialog from '../../components/creatnewplan/index'
   export default {
@@ -186,7 +190,9 @@
     },
     data() {
       return {
-        btnloding:true,//按钮是否可以被点击
+        btnloding:false,//按钮是否可以被点击
+        skeletonshow:false,
+        modelshow:false,
         currpage:1,
         infonum:0,
         pagesize:10,
@@ -242,10 +248,15 @@
       sonplanid(){
         return this.$store.state.plantypeid.sonplanid
       },
+      planindexfirstname(){
+        return this.$store.state.plantypeid.planindexfirstname
+      }
     },
     watch: {
       project_id(curVal, oldVal) {
-        console.log("dsadas")
+        console.log("dsadas",this.plan_typeid)
+        this.planchanidtype=1
+        this.modelshow=false
         this.firsttitletype="年计划"
         this.bannertitle=""
         this.pagingshow=false
@@ -255,18 +266,23 @@
         this.planboxshow_none=true
         this.getplan()
       },
+      planindexfirstname(curVal){
+        console.log("*********",curVal)
+        this.firsttitletype=curVal
+      },
       sonplanid(curVal){
         console.log("传输过来的sonplanid",curVal)
         this.lastsonplanid=curVal
         // console.log("传输过来的222222",this.activities)
       },
       plan_typeid(curVal, oldVal){
-        this.btnloding=true
+        console.log("监听事件plan_typeid!!!!!",curVal)
+        this.planboxshow_none=true
         this.planboxshow=false
+        this.modelshow=false
         this.progressnum=0
         this.bannertitle=""
         this.pagingshow=false
-        console.log("监听事件plan_typeid",curVal,this.sonplanid)
         if(curVal==1){
           this.firsttitletype="年计划"
           this.activities=[]
@@ -444,7 +460,6 @@
             data:this.firstbox[0]
           }
           this.$store.dispatch('SetInfoDialog', param).then((data) => {}).catch(() => {
-            console.log("------打开页面返回信息",data)
           })
         this.pageshowtitle=1
         this.fullscreenLoading=false
@@ -483,7 +498,6 @@
             limit:10
           }
           this.$store.dispatch('Getplan', param).then((data) => {
-            this.beforeMount()
             console.log("plan111",data)
             this.infonum=data.count
             if(data.count==0){
@@ -541,6 +555,7 @@
             }
             if(this.idplan.length==0){
               this.btnloding=false
+              // this.skeletonshow=false
               console.log("idplan为空")
               this.firstactivities=[]
               this.activities=data.data
@@ -552,6 +567,10 @@
               this.getplan2()//子计划
               this.getplane3()//任务状态
               this.getcomment()//该计划的评论
+            }
+            if(this.activities!==[]){
+              console.log("这里是bu空的")
+              this.skeletonshow=true
             }
             if(this.lastsonplanid==0){
               console.log("还没有传输数据",this.lastsonplanid)
@@ -705,6 +724,8 @@
               }
             }
             console.log("实施任务有什么",this.taskplanbox)
+            this.skeletonshow=false
+            this.modelshow=true
             this.btnloding=false
             this.plansonloading=false
             this.progressnum=100
@@ -726,6 +747,8 @@
         })
       },
       showtitle(index){
+        this.skeletonshow=true
+        this.modelshow=false
         this.plansonloading=true
         this.getcommentbox=[]
         this.indexspan = index.id
@@ -751,11 +774,6 @@
       },
       handleSizeChange(index){
         console.log("eeeindex",index)
-      },
-      beforeMount() {
-        var h = document.documentElement.clientHeight || document.body.clientHeight;
-        this.curHeight =h; //减去页面上固定高度height
-        // console.log("浏览器屏幕高度",this.curHeight)
       },
        menu() {
         this.scroll = document.documentElement.scrollTop || document.body.scrollTop;
@@ -857,7 +875,7 @@
     overflow: auto;
   }
   .block{
-    float: left;
+    float: right;
     width: 100%;
   }
   .fenyeclass{
@@ -957,7 +975,7 @@
     overflow: hidden;
     display: inline-block;
     text-overflow: ellipsis;
-    width: 175px;
+    width: 190px;
     font-weight: 800;
     font-size: 16px
   }
@@ -978,17 +996,21 @@
     overflow: hidden;
     display: inline-block;
     text-overflow: ellipsis;
-    width: 330px;
+    width: 260px;
     font-weight: 800;
     font-size: 16px
   }
 }
-  /*.active {*/
-      /*background-color: #ffffff;*/
-      /*padding-bottom: 35px;*/
-      /*color: #0081FE;*/
-    /*}*/
   @media screen and (min-width: 2559px){
+     .activitytitle{
+      position: absolute;
+      overflow: hidden;
+      display: inline-block;
+      text-overflow: ellipsis;
+      width: 340px;
+      font-weight: 800;
+      font-size: 16px
+    }
     .block{
       float: left;
       background-color: #F5F5F5;
