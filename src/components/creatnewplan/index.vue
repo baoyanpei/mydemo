@@ -53,11 +53,8 @@
               </div>
             </el-col>
           </el-row>
-          <el-dialog
-            title="发布"
-            :visible.sync="dialogVisible"
-            width="40%"
-          @open="openeldialog" @close="closedialog">
+          <!--<el-dialog title="添加新计划" :visible.sync="addnewplandialog" width="95%"  @close="closeneeplandialog" v-dialogDrag>-->
+          <el-dialog title="发布" :visible.sync="dialogVisible" width="40%" :modal-append-to-body='false' @open="openeldialog" @close="closedialog">
             <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
               <iframe :src="iframeurl" v-show="iframeshow"  frameborder="0" style="padding-top:20px;position: absolute;background-color: #ffffff;top: -65px;right: -420px;width: 400px;height: 400px;"></iframe>
               <div class="ding" v-show="dingshow" style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -270px;width: 250px;height: 400px;">
@@ -550,7 +547,14 @@
           })
       },
       releaseplan(){//提交计划
-         this.numbox=[]
+        if(this.jihuavalue.length==0){
+          this.$message({
+            message: '计划类型不得为空',
+            type: 'warning'
+          });
+        }else{
+          console.log("有计划value")
+                this.numbox=[]
           this.numbox=this.desc.split("\n")
           console.log("实施计划的盒子",this.numbox)
           for(let i=0;i<this.numbox.length;i++){
@@ -583,6 +587,7 @@
             this.planshow=false
             this.planshow2=true
           })
+        }
       },
       releasefnc(index){//发布任务弹窗
         this.dialogVisible=true
@@ -766,7 +771,6 @@
             this.grouparr.push([this.projectPersonList[i].group_name_level[0],this.projectPersonList[i].group_name_level[1]])//拿到全部人员
         }
         for(let j=0;j<this.grouparr.length;j++){
-          // console.log("bianli---->",j,this.grouparr[j][0])
           if(this.aaaa.indexOf(this.grouparr[j][0]) == -1){//去除重复数组
             this.aaaa.push(this.grouparr[j][0])
           }
@@ -886,19 +890,36 @@
         this.dingshow=false
       },
       handleChange(value) {//选择指定人员
-        // this.grouparr    projectPersonList
         console.log("选择人员",value);
+        this.fabu_people=[]
+        let newarr=[]
         for(let i=0;i<value.length;i++){
-          this.fabu_people.push({name:'',id:value[i][2]})
+          newarr.push(value[i][2])
         }
-        for(let i=0;i<this.fabu_people.length;i++){
-          for(let j=0;j<this.projectPersonList.length;j++){
-            if(this.fabu_people[i].id==this.projectPersonList[j].person_id){
-              this.fabu_people[i].name=this.projectPersonList[j].name
+        for(let i=0;i<this.projectPersonList.length;i++){
+          for(let j=0;j<newarr.length;j++){
+            if(this.projectPersonList[i].person_id==newarr[j]){
+              this.fabu_people.push(this.projectPersonList[i])
+              console.log("dsadsadsadasdasdas",this.projectPersonList[i])
             }
           }
         }
-        console.log("获取到的ID",this.fabu_people)
+        // let peopleidarr=[]
+        // for(let i=0;i<value.length;i++){
+        //   this.fabu_people.push({name:'',id:value[i][2]})
+        //   peopleidarr.push(value[i][2])
+        // }
+        // console.log("1111111111111",peopleidarr)
+        // for(let o=0;o<this.projectPersonList.length;o++){
+        //   for (let p=0;p<peopleidarr.length;p++){
+        //     if(this.projectPersonList[o].person_id==peopleidarr[p]){
+        //       peopleidarr[p].splice(p,1,{name:this.projectPersonList[o].name,id:peopleidarr[p]})
+        //     }
+        //   }
+        // }
+        // this.fabu_people=peopleidarr
+        // console.log("222222222222",peopleidarr)
+        // console.log("获取到的ID",this.fabu_people)
       },
       handleChangegettypearr(index){//更换类别
         console.log("index类别",index)

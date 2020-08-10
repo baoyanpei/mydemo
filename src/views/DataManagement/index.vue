@@ -108,6 +108,5 @@
   }
   .tabeldiv{
     padding-left: 100px;
-    margin-top: -60px;
   }
 </style>
