@@ -325,9 +325,16 @@
       if (this.project_id !== null) {
         this.getplan()
       }
-      window.addEventListener('scroll', this.menu)
+      this.getwidthfnc()
     },
     methods:{
+      getwidthfnc(){
+        console.log("获取浏览器的高度",document.documentElement.clientHeight-85)
+        let ttt=document.querySelector(".blockall")
+        let aaa=document.querySelector(".planbox")
+        aaa.style.height=document.documentElement.clientHeight-90+"px"
+        ttt.style.height=document.documentElement.clientHeight-90+"px"
+      },
       onnewplanshowchangefnc(){//公共样式显示
         console.log("公共样式显示")
         this.$store.commit("newplanshowchange")
