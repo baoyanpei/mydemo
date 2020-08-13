@@ -216,7 +216,6 @@
         var point = new BMap.Point(103.840755,36.066746);
         // 创建点坐标
         map.centerAndZoom("兰州", 15);
-
         function addMarker(point){
           var marker = new BMap.Marker(point);
           map.addOverlay(marker);
@@ -224,7 +223,6 @@
         map.enableScrollWheelZoom(true)//开启鼠标滚轮缩放
         var label = new BMap.Label("我是兰州市政府",{offset:new BMap.Size(20,-10)});
         marker.setLabel(label);
-
       },
       addmappointfnc(){
         var map = new BMap.Map("allmap");   //初始化map, 绑定id=allmap

@@ -15,7 +15,7 @@
             <el-button type="primary" round style="float: right;margin-top: 7px;background-color: #409EFF;">上传资料</el-button>
           </div>
           <!--标签页-->
-          <el-tabs :tab-position="tabPosition" style="height: 200px;">
+          <el-tabs :tab-position="tabPosition" style="min-height: 200px">
             <el-tab-pane label="国家标准">
               <!--内容主体-->
               <!--搜索框-->
@@ -32,27 +32,28 @@
                 <el-radio-button label="城建市政">城建市政</el-radio-button>
                 <el-radio-button label="交通路桥">交通路桥</el-radio-button>
               </el-radio-group>
+               <!--表格-->
+                <div class="tabeldiv">
+                  <el-table ref="singleTable" :data="tableData" highlight-current-row :header-cell-style="{'text-align':'center'}" :cell-style="{'text-align':'center'}" style="width: 100%;border-collapse:collapse;" @selection-change="handleSelectionChange">
+                    <el-table-column type="selection" width="55"></el-table-column>
+                    <el-table-column label="日期" width="120">
+                      <template slot-scope="scope">{{ scope.row.date }}</template>
+                    </el-table-column>
+                    <el-table-column prop="name" label="姓名" width="120"></el-table-column>
+                    <el-table-column prop="address" label="地址" width="200"></el-table-column>
+                  </el-table>
+                </div>
+              <!--表格结束-->
             </el-tab-pane>
             <el-tab-pane label="行业便准">配置管理</el-tab-pane>
           </el-tabs>
-          <!--表格-->
-          <div class="tabeldiv">
-            <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" :header-cell-style="headClass" style="width: 100%;border-collapse:collapse;" @selection-change="handleSelectionChange">
-              <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column label="日期" width="120">
-                <template slot-scope="scope">{{ scope.row.date }}</template>
-              </el-table-column>
-              <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-              <el-table-column prop="address" label="地址" width="200"></el-table-column>
-            </el-table>
-          </div>
-            <!--表格结束-->
         </el-col>
       </el-row>
     </div>
 </template>
 
 <script>
+  //Datamanagement 资料接口
   import Vue from 'vue';
   import { DropdownMenu, DropdownItem } from 'vant';
 
@@ -89,7 +90,32 @@
         }],
       }
     },
+    computed:{
+      project_id() {
+        return this.$store.state.project.project_id
+      }
+    },
+    watch:{
+      project_id(curVal, oldVal) {
+        console.log("curVal111111111",curVal,oldVal)
+      }
+    },
+    mounted(){
+      if (this.project_id !== null) {
+        console.log("这里可以执行了啊..........",this.project_id)
+        this.getdata()
+      }
+    },
     methods:{
+      getdata(){
+        const param = {
+          method:'doc_type',
+          project_id: this.project_id
+        }
+        this.$store.dispatch('Datamanagement', param).then((data) => {
+          console.log("资料数据",data)
+        })
+      },
       handleSelectionChange(val) {
         console.log("handleSelectionChange_val",val)
       },

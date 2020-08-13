@@ -1025,6 +1025,18 @@
     }
 }
   @media screen and (max-width: 1280px){
+    .boxtop_right{
+      float: right;
+      width: 150px;
+      height: 35px;
+      margin-top: 7px;
+      line-height: 20px;
+      text-align: center;
+      background-color: #34ba9c;
+      margin-right: 25px;
+      color: #ffffff;
+      border-radius: 5px;
+    }
      .planbox{
         width: 70%;
         position: sticky;
@@ -1071,18 +1083,6 @@
       height: 50px;
       background-color: #F5F5F5;
       overflow: hidden;
-    }
-    .boxtop_right{
-      float: right;
-      width: 150px;
-      height: 35px;
-      margin-top: 7px;
-      line-height: 35px;
-      text-align: center;
-      background-color: #34ba9c;
-      margin-right: 25px;
-      color: #ffffff;
-      border-radius: 5px;
     }
     .jindutiao{
       width: 300px;

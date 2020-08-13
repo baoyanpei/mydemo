@@ -147,3 +147,11 @@ export function plan(data) {//计划
     data:data,
   })
 }
+//资料管理
+export function datamanagement(data) {//计划
+  return request({
+    url:'/api/oa/doc',
+    method:'post',
+    data:data,
+  })
+}

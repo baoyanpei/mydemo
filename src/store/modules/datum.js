@@ -9,7 +9,8 @@ import {
   allinfodictionary,
   queryLocationHis,
   safeinspection,
-  plan
+  plan,
+  datamanagement
 } from '@/api/datum'
 
 const datum = {
@@ -154,6 +155,18 @@ const datum = {
     },param){
       return new Promise((resolve, reject) => {
         plan(param).then(response => {
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    //资料
+    Datamanagement({
+      commit
+    },param){
+      return new Promise((resolve, reject) => {
+        datamanagement(param).then(response => {
           resolve(response)
         }).catch(error => {
           reject(error)

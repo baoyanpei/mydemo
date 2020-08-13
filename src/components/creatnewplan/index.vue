@@ -1,8 +1,8 @@
 <template>
-    <el-dialog title="添加新计划" :visible.sync="addnewplandialog" width="95%"  @close="closeneeplandialog" v-dialogDrag>
+    <el-dialog title="添加新计划" :visible.sync="addnewplandialog" :width="dialogwidth" @close="closeneeplandialog" v-dialogDrag>
         <div>
           <el-row :gutter="10" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-            <el-col :span="24" style="background-color: #F9F9F9;">
+            <el-col :span="24" style="background-color: #ebebeb;margin: auto;">
                <!--<div class="boxtop">-->
                 <!--<div class="boxtop_left" @click="comebackplan()">返回计划列表</div>-->
                 <!--&lt;!&ndash;<div class="boxtop_right">新增计划</div>&ndash;&gt;-->
@@ -28,8 +28,8 @@
                 <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
               </div>
               <!--//暂无实施计划-->
-              <div class="newplanxijie">
-                <div class="nulldiv" v-show="planshow">
+              <div class="newplanxijie" v-if="newplanxijieshow">
+                <div class="nulldiv" v-if="planshow">
                   暂无计划内容
                 </div>
                 <!--有计划-->
@@ -54,11 +54,11 @@
             </el-col>
           </el-row>
           <!--<el-dialog title="添加新计划" :visible.sync="addnewplandialog" width="95%"  @close="closeneeplandialog" v-dialogDrag>-->
-          <el-dialog title="发布" :visible.sync="dialogVisible" width="40%" :modal-append-to-body='false' @open="openeldialog" @close="closedialog">
+          <el-dialog title="发布" :visible.sync="dialogVisible" width="580px" :modal-append-to-body='false' @open="openeldialog" @close="closedialog">
             <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
               <iframe :src="iframeurl" v-show="iframeshow"  frameborder="0" style="padding-top:20px;position: absolute;background-color: #ffffff;top: -65px;right: -420px;width: 400px;height: 400px;"></iframe>
               <div class="ding" v-show="dingshow" style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -270px;width: 250px;height: 400px;">
-                <el-cascader :props="props" :options="grouparr" :show-all-levels="false" @change="handleChange" style="display: block;margin: auto;"></el-cascader>
+                <el-cascader :props="props" :options="grouparr" @change="handleChange" style="display: block;margin: auto;" clearable filterable></el-cascader>
                 <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
                   <el-button style="margin-left: 25px">取消</el-button>
                   <el-button type="success" @click="grouparrqueren" style="float: right;margin-right: 25px">确认</el-button>
@@ -168,6 +168,8 @@
     name: 'index',
     data(){
       return{
+        newplanxijieshow:false,
+        dialogwidth:"680px",
         addnewplandialog:false,
         plannewvalue:'',
         leftindexshow:false,
@@ -402,6 +404,8 @@
       },
       fatherid(curVal, oldVal){
         console.log("接受到父亲id改变",curVal, oldVal)
+        this.newplanxijieshow=true
+        this.dialogwidth="720px"
         this.fatheridchange()
       },
       plan_typeid(curVal, oldVal){
@@ -435,6 +439,12 @@
     methods: {
       closeneeplandialog(){
         this.$store.commit("newplanshowchangefasle")
+        this.dialogwidth="720px"
+        this.newplanxijieshow=false
+        this.jihuavalue=""
+        this.input=""
+        this.value1=""
+        this.desc=""
       },
       planinititate(){
         this.$router.push({
@@ -547,6 +557,16 @@
           })
       },
       releaseplan(){//提交计划
+        // this.numbox=[]
+        // this.numbox=this.desc.split("\n")
+        // console.log("实施计划的盒子",this.numbox)
+        // for(let i=0;i<this.numbox.length;i++){
+        //   this.numbox.splice(i,1,{name:this.numbox[i],block:"have",blockshow1:true,blockshow2:false})
+        // }
+        // this.newplanxijieshow=true
+        // this.dialogwidth="1220px"
+        // this.planshow=false
+        // this.planshow2=true
         if(this.jihuavalue.length==0){
           this.$message({
             message: '计划类型不得为空',
@@ -554,7 +574,7 @@
           });
         }else{
           console.log("有计划value")
-                this.numbox=[]
+          this.numbox=[]
           this.numbox=this.desc.split("\n")
           console.log("实施计划的盒子",this.numbox)
           for(let i=0;i<this.numbox.length;i++){
@@ -576,6 +596,8 @@
             type:this.typetid,
           }
           this.$store.dispatch('Getplan', param).then((data) => {
+            this.newplanxijieshow=true
+            this.dialogwidth="1220px"
             console.log('新建计划提交状态', data)
             this.oneparentid=data.id
             this.loading=false
@@ -1431,12 +1453,12 @@
   }
   .plantoon{
     width: 500px;
-    background-color: #fff;
+    background-color: #ffffff;
     float: left;
     margin-bottom: 15px;
     margin-top: 10px;
-    margin-left: 100px;
-    padding: 30px 0;
+    margin-left: 60px;
+    padding: 30px 10px;
   }
   .plantoonspan{
     line-height: 30px;
@@ -1449,7 +1471,7 @@
     float: left;
   }
   .newplanxijie{
-    width: 700px;
+    width: 450px;
     margin-left: 15px;
     float: left;
     background-color: #ffffff;
@@ -1513,5 +1535,16 @@
     font-size: 15px;
     font-weight: 500;
     line-height: 40px;
+  }
+  @media screen and (max-width: 1280px){
+    .newplanxijie{
+      width: 450px;
+      margin-left: 15px;
+      float: left;
+      background-color: #ffffff;
+      margin-bottom: 15px;
+      margin-top: 10px;
+      padding: 10px;
+    }
   }
 </style>

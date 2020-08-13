@@ -15,7 +15,7 @@
       <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
         <iframe :src="iframeurl" v-show="iframeshow"  frameborder="0" style="padding-top:20px;position: absolute;background-color: #ffffff;top: -65px;right: -420px;width: 400px;height: 400px;"></iframe>
         <div class="ding" v-show="dingshow" style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -270px;width: 250px;height: 400px;">
-          <el-cascader :props="props" :options="grouparr" :show-all-levels="false" @change="handleChange" style="display: block;margin: auto;"></el-cascader>
+          <el-cascader :props="props" :options="grouparr" :show-all-levels="false" @change="handleChange" clearable filterable style="display: block;margin: auto;"></el-cascader>
           <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
             <el-button style="margin-left: 25px">取消</el-button>
             <el-button type="success" @click="grouparrqueren" style="float: right;margin-right: 25px">确认</el-button>
@@ -249,8 +249,15 @@
         <img src="../../../static/taskindex/发布.png" alt="" style="width: 55px;height: 55px;margin-top: 20px">
       </div>
   </div>
+
+      <!--@event-render="eventRender"-->
+
     <div class="rili">
-      <full-calendar :config="config" @event-selected="eventClick()" @dateClick="nowdayfnc()" :events="events"></full-calendar>
+      <full-calendar :config="config"
+                     @event-render="eventRender"
+                     @pre-click="prefnc()"
+                     @day-click="nowdayfnc()" :events="events">
+      </full-calendar>
     </div>
   </el-col>
 </el-row>
@@ -258,12 +265,25 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import 'fullcalendar/dist/locale/zh-cn'
   import { getToken } from '@/utils/auth'
   export default {
     name: 'index',
     data() {
       return {
+        datanum:0,
+        nowMonth:0,
+        nowYear:0,
+        firsttime:{
+          year:0,
+          month:0
+        },
+        lasttime:{
+          year:0,
+          month:0
+        },
+        publicindexnum:0,
         infonum2:0,
         currpage2:1,
         pagesize2:20,
@@ -376,15 +396,18 @@
         postdata:[],
         events: [],
         config: {
-          buttonText: { today: '今天', month: '月', week: '周', day: '日' },
+          buttonText: { today: '今天', month: '月', week: '周', day: '日',prev:'<', next:'>' },
           locale: 'zh-cn',
           editable: false, // 是否允许修改事件
           selectable: false,
+          navLinks: true,
           eventLimit: 4, // 事件个数
           allDaySlot: false, // 是否显示allDay
           defaultView: 'month', // 显示默认视图
           eventClick: this.eventClick, // 点击事件
-          dayClick: this.dayClick // 点击日程表上面某一天
+          dayClick: this.nowdayfnc,// 点击日程表上面某一天
+          changeMonth:this.changeMonth,
+          prevClick:this.prevclickfnc
         },
         tasknumbers1:0,//我的待办
         tasknumbers2:0,//进行中
@@ -463,11 +486,38 @@
           this.tasknumbers3=data.data.myAll//所有待办
         })
       },
-      eventClick(event){
-        console.log("日历点击成功",event)
+      eventClick(event,jsEvent,view ){
+        console.log("日历点击成功",event,jsEvent,view)
+        const param = {
+          show: true,
+          data:event.workid
+        }
+        this.$store.dispatch('SetInfoDialog', param).then(() => {}).catch(() => {
+        })
+      },
+      hoveritem1(){
+        console.log("111111111")
+      },
+      hoveritem2(){
+        console.log("222222222")
+      },
+      moreClick(){
+        console.log("dsadsadsadsadasdsadsadsadsadasdsaaaaaaaaaaaaaaaaaa")
+      },
+      eventRender(val){//事件渲染就开始触发
+        // console.log("33333333",val)
       },
       nowdayfnc(data){
-        console.log("当天",data)
+        console.log("这是哪一天",data)
+      },
+      prefnc(){
+        console.log("dsadsadasdasdasdsa")
+      },
+      changeMonth (start, end, current) {
+           console.log('changeMonth', start.format(), end.format(), current.format())
+      },
+      prevclickfnc(){
+        console.log("prev被点击了")
       },
       jinjianclick(){//精简条件显示开关
         this.jinjianshow=!this.jinjianshow
@@ -614,7 +664,6 @@
             this.grouparr.push([this.projectPersonList[i].group_name_level[0],this.projectPersonList[i].group_name_level[1]])//拿到全部人员
         }
         for(let j=0;j<this.grouparr.length;j++){
-          // console.log("bianli---->",j,this.grouparr[j][0])
           if(this.aaaa.indexOf(this.grouparr[j][0]) == -1){//去除重复数组
             this.aaaa.push(this.grouparr[j][0])
           }
@@ -691,19 +740,20 @@
         this.dingshow=false
       },
       handleChange(value) {//选择指定人员
-        // this.grouparr    projectPersonList
         console.log("选择人员",value);
+        this.fabu_people=[]
+        let newarr=[]
         for(let i=0;i<value.length;i++){
-          this.fabu_people.push({name:'',id:value[i][2]})
+          newarr.push(value[i][2])
         }
-        for(let i=0;i<this.fabu_people.length;i++){
-          for(let j=0;j<this.projectPersonList.length;j++){
-            if(this.fabu_people[i].id==this.projectPersonList[j].person_id){
-              this.fabu_people[i].name=this.projectPersonList[j].name
+        for(let i=0;i<this.projectPersonList.length;i++){
+          for(let j=0;j<newarr.length;j++){
+            if(this.projectPersonList[i].person_id==newarr[j]){
+              this.fabu_people.push(this.projectPersonList[i])
+              console.log("dsadsadsadasdasdas",this.projectPersonList[i])
             }
           }
         }
-        console.log("获取到的ID",this.fabu_people)
       },
       handleChangegettypearr(index){//更换类别
         console.log("index类别",index)
@@ -867,10 +917,10 @@
           background: 'rgba(0, 0, 0, 0.7)'
         });
         const _param = {
-        method: 'get_nodes_users_list',
-        project_id: this.project_id,
-        work_ids:this.postdata
-      }
+          method: 'get_nodes_users_list',
+          project_id: this.project_id,
+          work_ids:this.postdata
+        }
       this.$store.dispatch('Allpersondata', _param).then((data) => {
          // console.log("第二接口返回成功",data.data)
         this.listbox=data.data
@@ -940,41 +990,57 @@
           }
           box.push(item)
         })
-        if(this.boxinfo.length==20){
-            for (let i=0;i<this.boxinfo.length;i++){//我的任务日历渲染
-          if(this.boxinfo[i].statecolor=="red"){
-            this.events.push({
-            title: this.boxinfo[i].title, // 事件内容
-            start: this.boxinfo[i].created, // 事件开始时间
-            end: this.boxinfo[i].created, // 事件结束时间
-            color: '#FF0000', // 事件的显示颜色
-            })
-          }
-          if(this.boxinfo[i].statecolor=="yellow"){
-            this.events.push({
-            title: this.boxinfo[i].title, // 事件内容
-            start: this.boxinfo[i].created, // 事件开始时间
-            end: this.boxinfo[i].created, // 事件结束时间
-            color: '#9ACD32' // 事件的显示颜色
-            })
-          }
-          if(this.boxinfo[i].statecolor=="green"){
-            this.events.push({
-            title: this.boxinfo[i].title, // 事件内容
-            start: this.boxinfo[i].created, // 事件开始时间
-            end: this.boxinfo[i].created, // 事件结束时间
-            color: '#008000' // 事件的显示颜色
-            })
-          }
-          if(this.boxinfo[i].statecolor=="gray"){
-            this.events.push({
-            title: this.boxinfo[i].title, // 事件内容
-            start: this.boxinfo[i].created, // 事件开始时间
-            end: this.boxinfo[i].created, // 事件结束时间
-            color: '#BABABA' // 事件的显示颜色
-            })
-          }
-        }
+        if(this.boxinfo.length==20){//title   created   created    statecolor
+          this.calendarmytask()
+          // const _param = {
+          //   method: 'query_task_all_list',
+          //   project_id: this.project_id,
+          //   bt:'2020-08-01',
+          //   et:'2020-09-10',
+          //   limit:1000
+          // }
+          // this.$store.dispatch('Allpersondata', _param).then((data) => {
+          //   console.log("这是接受日历的新接口返回的数据",data)
+          // })
+          //任务大厅日历渲染
+        //     for (let i=0;i<this.boxinfo.length;i++){
+        //       if(this.boxinfo[i].statecolor=="red"){
+        //         this.events.push({
+        //         title: this.boxinfo[i].title, // 事件内容
+        //         start: this.boxinfo[i].created, // 事件开始时间
+        //         end: this.boxinfo[i].created, // 事件结束时间
+        //         color: '#FF0000', // 事件的显示颜色
+        //         workid:this.boxinfo[i]
+        //         })
+        //       }
+        //       if(this.boxinfo[i].statecolor=="yellow"){
+        //         this.events.push({
+        //         title: this.boxinfo[i].title, // 事件内容
+        //         start: this.boxinfo[i].created, // 事件开始时间
+        //         end: this.boxinfo[i].created, // 事件结束时间
+        //         color: '#9ACD32', // 事件的显示颜色
+        //         workid:this.boxinfo[i]
+        //         })
+        //       }
+        //       if(this.boxinfo[i].statecolor=="green"){
+        //         this.events.push({
+        //         title: this.boxinfo[i].title, // 事件内容
+        //         start: this.boxinfo[i].created, // 事件开始时间
+        //         end: this.boxinfo[i].created, // 事件结束时间
+        //         color: '#008000', // 事件的显示颜色
+        //         workid:this.boxinfo[i]
+        //         })
+        //       }
+        //       if(this.boxinfo[i].statecolor=="gray"){
+        //         this.events.push({
+        //         title: this.boxinfo[i].title, // 事件内容
+        //         start: this.boxinfo[i].created, // 事件开始时间
+        //         end: this.boxinfo[i].created, // 事件结束时间
+        //         color: '#BABABA', // 事件的显示颜色
+        //         workid:this.boxinfo[i]
+        //         })
+        //       }
+        // }
         }else {
             for (let i=0;i<this.boxinfo.length;i++){//我的任务日历渲染
             if(this.boxinfo[i].statecolor=="red"){
@@ -982,7 +1048,8 @@
               title: this.boxinfo[i].title, // 事件内容
               start: this.boxinfo[i].sendTime, // 事件开始时间
               end: this.boxinfo[i].sendTime, // 事件结束时间
-              color: '#FF0000' // 事件的显示颜色
+              color: '#FF0000', // 事件的显示颜色
+              workid:this.boxinfo[i]
               })
             }
             if(this.boxinfo[i].statecolor=="yellow"){
@@ -990,7 +1057,8 @@
               title: this.boxinfo[i].title, // 事件内容
               start: this.boxinfo[i].sendTime, // 事件开始时间
               end: this.boxinfo[i].sendTime, // 事件结束时间
-              color: '#9ACD32' // 事件的显示颜色
+              color: '#9ACD32', // 事件的显示颜色
+              workid:this.boxinfo[i]
               })
             }
             if(this.boxinfo[i].statecolor=="green"){
@@ -998,7 +1066,8 @@
               title: this.boxinfo[i].title, // 事件内容
               start: this.boxinfo[i].sendTime, // 事件开始时间
               end: this.boxinfo[i].sendTime, // 事件结束时间
-              color: '#008000' // 事件的显示颜色
+              color: '#008000', // 事件的显示颜色
+              workid:this.boxinfo[i]
               })
             }
             if(this.boxinfo[i].statecolor=="gray"){
@@ -1006,14 +1075,186 @@
               title: this.boxinfo[i].title, // 事件内容
               start: this.boxinfo[i].sendTime, // 事件开始时间
               end: this.boxinfo[i].sendTime, // 事件结束时间
-              color: '#BABABA' // 事件的显示颜色
+              color: '#BABABA', // 事件的显示颜色
+              workid:this.boxinfo[i]
               })
             }
           }
         }
         this.boxinfo1 = box
+        console.log("这是events",this.events)
       })
       },
+      calendarmytask(){//任务大厅日历
+        let now=new Date()
+        var nowMonth = now.getMonth(); //前一个月
+         if(now.getMonth()<10){
+            nowMonth = "0"+now.getMonth()
+          }
+        var nowYear = now.getFullYear(); //当前年
+        let lastmonth=now.getMonth()+2; //后一个月
+        if(lastmonth<10){
+          lastmonth="0"+JSON.stringify(lastmonth)
+        }
+        let sTime=nowYear+"-"+nowMonth+"-22";//当月第一天的前七天至少是22号
+        let eTime=nowYear+"-"+lastmonth+"-07";//月末的七天后
+        const _param = {
+            method: 'query_task_all_list',
+            project_id: this.project_id,
+            bt:sTime,
+            et:eTime,
+            limit:10000
+          }
+          this.$store.dispatch('Allpersondata', _param).then((data) => {//statecolor
+            console.log("这是接受日历的新接口返回的数据",data)
+            let newarr=[]
+            newarr=data.data
+            newarr.forEach(item=>{
+              item["created"]=item.startTime
+              if(item.flowId==="Meeting01"){
+                item.stateall='会议'
+              }
+              if(item.flowId==="ProblemFindSolve01"){
+                item.stateall='任务'
+              }
+              if(item.flowId==="SafetyInspection01"){
+                item.stateall='安全巡检'
+              }
+              if(item.flowId==="Notice01"){
+                item.stateall='通知'
+              }
+              if(item.flowId==="Documents01"){
+                item.stateall='资料'
+              }
+              if(item.flowId==="PlanFlow01"){
+                item.stateall='计划'
+              }
+            })
+            //第二步
+            // this.postdata=[]
+            let postdatanewarr=[]
+            newarr.forEach(item=>{
+               // this.postdata.push(item.workId)
+              postdatanewarr.push(item.workId)
+               item.imgurl='https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id='+item.workId+'&w=220'
+            })
+            console.log("日历数组",newarr)
+            const _param = {
+              method: 'get_nodes_users_list',
+              project_id: this.project_id,
+              work_ids:postdatanewarr
+            }
+            this.$store.dispatch('Allpersondata', _param).then((data) => {
+              this.listbox=data.data
+              let mar1=[]
+              let map1= new Map()
+              for(var i in this.listbox){
+                map1.set(i,this.listbox[i])//添加key值
+              }
+              let box = []
+              newarr.forEach(item=>{
+                let workId = item.workId
+                item['obj']=map1.get(workId)//把接口2获取到的文档配置到数据中
+                item["state"]="1"//任务状态
+                item["xian"]=false//负责人显示
+                item["xian2"]=false//质检人显示
+                item["xian3"]=false//第二类人物类型
+                item["imgurl"]='https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id='+item.workId+'&w=220'
+                item["getinfo"]=map1.get(workId).info.flowNode[0]//获取到显示任务类型的配置数据
+                item["originator"] = map1.get(workId).Start[0].userName//获取懂啊key值对应的数据   info.priority
+                if(item.questions_type!=""){
+                  item["xian3"]=true
+                }
+                if(map1.get(workId).info!=undefined){
+                  item["value"]=map1.get(workId).info.priority//任务星级
+                }
+                if(item.obj.Node2!=undefined){
+                  item["person_id1"]=item.obj.Node1[0].userId//发起人ID
+                }
+                if(item.flowId!=null){
+                  item["flowId2"]=item.flowId.slice(0,item.flowId.length-2)//截取字符，判断任务类型，和接口文档匹配
+                }
+                  if(item.obj.info.comment_count==0){
+                    item["imgboxyuanshow"]=false
+                  }
+                  if(item.obj.info.comment_count!=0){
+                    item["imgboxyuanshow"]=true
+                  }
+                if(item.obj.Node2!=undefined){
+                  item["firstname"]=item.obj.Start[0].userName
+                  item["header"]=item.obj.Node2[0].userName//负责人
+                  item["person_id2"]=item.obj.Node2[0].userId//负责人ID
+                  item.xian=true
+                }else {
+                  item.xian=false
+                }
+                if(item.obj.Node5!=undefined){
+                  item["qualiter"]=item.obj.Node5[0].userName//质检人
+                  item["person_id3"]=item.obj.Node5[0].userId//负责人ID
+                  item.xian2=true
+                }else {
+                  item.xian2=false
+                }
+                //和第三接口配置文档进行匹配
+                if(this.thirdinfo[item.flowId2]!=""){
+                 let _config = this.thirdinfo[item.flowId2]
+                  let _node = _config[item.getinfo]
+                  if (_node !== undefined){
+                    item.state = _node.status
+                    item["statecolor"]=_node.color
+                  }else{
+                    // item.state = item.getinfo
+                    item.state = "已完成"
+                  }
+                }
+                box.push(item)
+              })
+              //title   created   created    statecolor
+          //任务大厅日历渲染
+              for (let i=0;i<newarr.length;i++){
+                if(newarr[i].statecolor=="red"){
+                  this.events.push({
+                  title: newarr[i].title, // 事件内容
+                  start: newarr[i].created, // 事件开始时间
+                  end: newarr[i].created, // 事件结束时间
+                  color: '#FF0000', // 事件的显示颜色
+                  workid:newarr[i]
+                  })
+                }
+                if(newarr[i].statecolor=="yellow"){
+                  this.events.push({
+                  title: newarr[i].title, // 事件内容
+                  start: newarr[i].created, // 事件开始时间
+                  end: newarr[i].created, // 事件结束时间
+                  color: '#9ACD32', // 事件的显示颜色
+                  workid:newarr[i]
+                  })
+                }
+                if(newarr[i].statecolor=="green"){
+                  this.events.push({
+                  title: newarr[i].title, // 事件内容
+                  start: newarr[i].created, // 事件开始时间
+                  end: newarr[i].created, // 事件结束时间
+                  color: '#008000', // 事件的显示颜色
+                  workid:newarr[i]
+                  })
+                }
+                if(newarr[i].statecolor=="gray"){
+                  this.events.push({
+                  title: newarr[i].title, // 事件内容
+                  start: newarr[i].created, // 事件开始时间
+                  end: newarr[i].created, // 事件结束时间
+                  color: '#BABABA', // 事件的显示颜色
+                  workid:newarr[i]
+                  })
+                }
+          }
+        newarr = box
+        console.log("这是events",this.events)
+      })
+          })
+      },
+
       thirdinterface(){
         const _param = {
           method: 'cfg_nodes',
@@ -1179,6 +1420,39 @@
             this.secondpage()
         })
       },
+      rightbtnfnc(){
+        console.log("这是右边的按钮")
+      },
+      leftbtnfnc(){
+        this.datanum+=1
+        console.log("这是左边的按钮",this.datanum)
+        if(this.publicindexnum==0){
+          let now=new Date()
+          this.nowYear = now.getFullYear(); //当前年
+          this.nowMonth = now.getMonth(); //前一个月
+        }
+        this.nowMonth=this.nowMonth-1
+        let lastMonth=0
+        lastMonth=this.nowMonth+2
+        if(this.nowMonth==0){
+          this.datanum=0
+          this.nowMonth=12
+          lastMonth=2
+          this.nowYear-=1
+        }
+        this.publicindexnum=1
+        if(lastMonth<10){
+          lastMonth="0"+lastMonth
+        }
+        if(this.nowMonth<10){
+          this.nowMonth="0"+this.nowMonth
+        }
+        console.log("-----",this.nowYear,this.nowMonth,lastMonth)
+        // let lastmonth=now.getMonth()+2; //后一个月
+        // let sTime=nowYear+"-"+nowMonth+"-22";//当月第一天的前七天至少是22号
+        // let eTime=nowYear+"-"+lastmonth+"-07";//月末的七天后
+        // console.log(sTime,eTime)
+      },
       mytaskfnc(){
         const _param = {
             method: 'get_todo_list',
@@ -1187,6 +1461,10 @@
           }
           this.$store.dispatch('GetAllInstList', _param).then((data) => {
             console.log("我的任务",data)
+            let btnright=document.querySelector(".fc-corner-right")
+            btnright.onclick=this.rightbtnfnc
+            let btnleft=document.querySelector(".fc-corner-left")
+            btnleft.onclick=this.leftbtnfnc
             data.forEach(item=>{
               item["aaaid"]=data.indexOf(item)
             })
