@@ -1,56 +1,68 @@
 <!DOCTYPE html>
-<html >
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-	 
-	<head>
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<title></title>
-		<style>
-			.msg{
-				 
-				color:#E71313; text-align: center; 
-				font-family:Microsoft Yahei; font-size: 16px;
-				background-repeat: no-repeat;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="login_container">登录中</div>
-	</body>
-	<script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
-	 
- 
-	 
+<html>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<head>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<title></title>
+	<style>
+		.msg {
+
+			color: #E71313;
+			text-align: center;
+			font-family: Microsoft Yahei;
+			font-size: 16px;
+			background-repeat: no-repeat;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="login_container">登录中</div>
+</body>
+<script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
+
 <script>
 
-function getQueryString(name)
-{
-	var url= window.location.href;
-	var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-	var num = url.indexOf("?");
-	url = url.substr(num + 1);
-	var result = url.substr(0).match(reg);
-	if(result != null) {
-		return unescape(result[2]); 
-	} else {
-		return '';
+	function getQueryString(name) {
+		var url = window.location.href;
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var num = url.indexOf("?");
+		url = url.substr(num + 1);
+		var result = url.substr(0).match(reg);
+		if (result != null) {
+			return unescape(result[2]);
+		} else {
+			return '';
+		}
 	}
-} 
-code =getQueryString("code")
-state =getQueryString("state")
-//https://open.weixin.qq.com/connect/qrconnect?appid=wx8b4f74263bc9ba20&redirect_uri=http%3a%2f%2fwx.yidebim.com%2fwxqrcodelogin_back.html&response_type=code&scope=snsapi_login&state=11#wechat_redirect
-var obj = new WxLogin({
- self_redirect:true,
- id:"login_container", 
- appid: "wx8b4f74263bc9ba20", 
- scope: "snsapi_login", 
- redirect_uri: "http://admin.yidebim.com",
- state: "11",
- style: "",
- href: ""
- });
+	code = getQueryString("code")
+	state = getQueryString("state")
+	//https://open.weixin.qq.com/connect/qrconnect?appid=wx8b4f74263bc9ba20&redirect_uri=http%3a%2f%2fwx.yidebim.com%2fwxqrcodelogin_back.html&response_type=code&scope=snsapi_login&state=11#wechat_redirect
+	var obj = new WxLogin({
+		self_redirect: true,
+		id: "login_container",
+		appid: "wxc595eadd01112ceb",
+		scope: "snsapi_login",
+		redirect_uri: "https://admin.tddata.net",
+		state: "11",
+		style: "",
+		href: ""
+	});
 
- </script> 
+	// var obj = new WxLogin({
+	// 	self_redirect: true,
+	// 	id: "login_container",
+	// 	appid: "wx8b4f74263bc9ba20",
+	// 	scope: "snsapi_login",
+	// 	redirect_uri: "http://admin.yidebim.com",
+	// 	state: "11",
+	// 	style: "",
+	// 	href: ""
+	// });
+</script>
+
 </html>

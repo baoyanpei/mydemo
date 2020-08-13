@@ -117,7 +117,7 @@ import moment from 'moment'
 import {
   getSmsCodeTime,
   setSmsCodeTime,
-  removeSmsCodeTime
+  removeSmsCodeTime,
 } from '@/utils/smscode'
 import { validateMobileNumber } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
@@ -126,7 +126,7 @@ import LangSelect from '@/components/LangSelect'
 export default {
   name: 'Login',
   components: {
-    LangSelect
+    LangSelect,
     // SocialSign
   },
   data() {
@@ -148,7 +148,7 @@ export default {
       loginType: 'mobile', // mobile qrcode
       loginForm: {
         username: '',
-        password: ''
+        password: '',
       },
       time: 0,
       second: 0,
@@ -158,38 +158,38 @@ export default {
         {
           required: true,
           trigger: 'blur',
-          validator: validateUsername
-        }
+          validator: validateUsername,
+        },
       ],
       rulePassword: [
         {
           required: true,
           trigger: 'blur',
-          validator: validatePassword
-        }
+          validator: validatePassword,
+        },
       ],
       smsCodeRule: {
         username: [
           {
             required: true,
             trigger: 'blur',
-            validator: validateUsername
-          }
-        ]
+            validator: validateUsername,
+          },
+        ],
       },
       passwordType: 'password',
       loading: false,
       showDialog: false,
       btnSmsCode: {
-        disable: false
+        disable: false,
       },
-      loadingFull: null
+      loadingFull: null,
     }
   },
   computed: {
-    btnSmsCodeText: function() {
+    btnSmsCodeText: function () {
       return this.time > 0 ? this.time + 's 后重新获取' : '获取验证码'
-    }
+    },
   },
   created() {
     // window.addEventListener('hashchange', this.afterQRScan)
@@ -219,18 +219,18 @@ export default {
     if (code !== '' && state !== '') {
       const param = {
         code: code,
-        state: state
+        state: state,
       }
       this.loadingFull = this.$loading({
         lock: true,
         text: '正在验证登录，请稍后...',
         // spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)',
-        customClass: 'loadLoginCss'
+        customClass: 'loadLoginCss',
       })
       this.$store
         .dispatch('loginByWXQRCode', param)
-        .then(res => {
+        .then((res) => {
           this.loading = false
           // console.log('result', res)
           this.loadingFull.close()
@@ -241,13 +241,13 @@ export default {
               this.$router.push({
                 name: 'wxbindtip',
                 params: {
-                  status_code: res.status_code
-                }
+                  status_code: res.status_code,
+                },
               })
             } else {
               this.$message({
                 message: res.msg,
-                type: 'error'
+                type: 'error',
               })
             }
           }
@@ -268,7 +268,7 @@ export default {
       state: 'qrcode',
       style: '',
       href:
-        'data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHsKICBkaXNwbGF5OiBub25lOwp9CgouaW1wb3dlckJveCAucXJjb2RlIHsKICB3aWR0aDogMTYwcHg7CiAgYm9yZGVyOiAwcHg7Cn0KCi5pbXBvd2VyQm94IC5zdGF0dXNfdHh0LAouaW1wb3dlckJveCAuc3RhdHVzIHAgewogIGNvbG9yOiB3aGl0ZTsKfQo='
+        'data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHsKICBkaXNwbGF5OiBub25lOwp9CgouaW1wb3dlckJveCAucXJjb2RlIHsKICB3aWR0aDogMTYwcHg7CiAgYm9yZGVyOiAwcHg7Cn0KCi5pbXBvd2VyQm94IC5zdGF0dXNfdHh0LAouaW1wb3dlckJveCAuc3RhdHVzIHAgewogIGNvbG9yOiB3aGl0ZTsKfQo=',
     })
   },
   destroyed() {
@@ -295,7 +295,7 @@ export default {
       }
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true
           this.$store
@@ -308,11 +308,11 @@ export default {
               console.log('from1234', from)
               if (from !== undefined && from !== '') {
                 this.$router.push({
-                  path: from
+                  path: from,
                 })
               } else {
                 this.$router.push({
-                  path: '/main'
+                  path: '/main',
                 })
               }
             })
@@ -350,7 +350,7 @@ export default {
     getSmsCode() {
       setSmsCodeTime(moment().format('X'))
       this.$refs.loginForm.clearValidate(['username', 'password'])
-      this.$refs.loginForm.validateField('username', valid => {
+      this.$refs.loginForm.validateField('username', (valid) => {
         if (valid === '') {
           this.start()
           this.$store
@@ -358,7 +358,7 @@ export default {
             .then(() => {
               this.$message({
                 message: '验证码已经发出！',
-                type: 'success'
+                type: 'success',
               })
             })
             .catch(() => {
@@ -388,7 +388,7 @@ export default {
       //   }
       // });
     },
-    timer: function() {
+    timer: function () {
       if (this.time > 0) {
         this.time--
         setTimeout(this.timer, 1000)
@@ -396,15 +396,15 @@ export default {
         this.btnSmsCode.disabled = false
       }
     },
-    start: function() {
+    start: function () {
       this.time = this.second
       this.timer()
     },
-    stop: function() {
+    stop: function () {
       this.time = 0
       this.btnSmsCode.disabled = false
-    }
-  }
+    },
+  },
 }
 </script>
 

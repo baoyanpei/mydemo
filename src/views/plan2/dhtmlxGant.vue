@@ -21,32 +21,36 @@ export default {
         data: [
           {
             id: 1,
-            text: 'Task #1',
-            start_date: '15-04-2020',
-            personName: '张总',
-            duration: 3,
+            text: '2020年土木科技研发 2020年年计划',
+            start_date: '2020-08-01',
+            personName: '张垚',
+            duration: 13,
             progress: 0.9,
           },
           {
             id: 2,
             text: 'Task #2',
-            start_date: '18-04-2020',
+            start_date: '2020-08-04',
             personName: '李总',
             duration: 3,
-            progress: 0.4,
+            progress: 1,
           },
           {
             id: 3,
             text: 'Task #2-1',
-            start_date: '20-04-2020',
+            start_date: '2020-08-06',
             personName: '赵总',
             duration: 3,
             progress: 0.4,
             parent: 2,
           },
         ],
-        links: [{ id: 1, source: 1, target: 2, type: '0' }],
+        links: [
+          { id: 1, source: 1, target: 2, type: '0' },
+          { id: 2, source: 2, target: 3, type: '0' },
+        ],
       },
+      messages: [],
     }
   },
   computed: {},
@@ -54,6 +58,7 @@ export default {
   created() {},
   mounted() {
     // 在时间线上增加一行年份显示
+    gantt.config.xml_date = '%Y-%m-%d'
     gantt.config.subscales = [
       {
         unit: 'year',
@@ -71,6 +76,13 @@ export default {
     gantt.parse(this.tasks)
   },
   destroyed() {},
-  methods: {},
+  methods: {
+    addMessage(message) {
+      this.messages.unshift(message)
+      if (this.messages.length > 40) {
+        this.messages.pop()
+      }
+    },
+  },
 }
 </script>

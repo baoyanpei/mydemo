@@ -167,7 +167,6 @@ const project = {
       let initProject = null;
       projects.forEach(project => {
         // console.log("__PROJECT_ID", __PROJECT_ID, project.project_id)
-        console.log("project123", project);
         let _label = "";
         // 全称小于10不为空用全称，否则用缩写
         if (
