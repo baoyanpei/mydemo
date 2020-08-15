@@ -57,8 +57,26 @@
               <el-col :span="8">
                 年龄：{{age}}
               </el-col>
-              <el-col :span="14">
+              <el-col :span="5">
                 学历：-
+              </el-col>
+              <el-col :span="11">
+              <div v-if="personInfoDialog.opShow">
+                <el-button v-if="BtnKaiChuDisable===false" type="danger"
+                  @click.native.prevent="handlePersonQuitLeftLogSubmit()" class="btn-kaichu" size="mini">开除</el-button>
+                <el-button v-if="BtnKaiChuDisable===true" type="danger" class="btn-kaichu" size="mini" disabled>开除</el-button>
+
+                <el-button v-if="BtnZhuXiaoKaDisable===false" type="warning" @click.native.prevent="handleZhuXiaoKaSubmit()"
+                  class="btn-zhuxiaoka" size="mini">注销卡</el-button>
+                <el-button v-if="BtnZhuXiaoKaDisable===true" type="warning" class="btn-zhuxiaoka" size="mini" disabled>注销卡
+                </el-button>
+
+                <el-button v-if="BtnKaiChu===false" type="warning" @click.native.prevent="handleChiZhiSubmit()"
+                  class="btn-chizhi" size="mini">辞职
+                </el-button>
+                <el-button v-if="BtnKaiChu===true" type="warning" class="btn-chizhi" disabled size="mini">辞职
+                </el-button>
+              </div>
               </el-col>
             </el-row>
             <el-row :gutter="24">
@@ -81,7 +99,6 @@
               <el-col :span="24">
                 身份证号：{{idcard_no}}
               </el-col>
-
             </el-row>
             <el-divider>健康信息</el-divider>
 
@@ -128,24 +145,7 @@
 
           </el-col>
         </el-row>
-        <div v-if="personInfoDialog.opShow">
-          <el-button v-if="BtnKaiChuDisable===false" type="danger"
-            @click.native.prevent="handlePersonQuitLeftLogSubmit()" class="btn-kaichu" size="mini">开除</el-button>
-          <el-button v-if="BtnKaiChuDisable===true" type="danger" class="btn-kaichu" size="mini" disabled>开除</el-button>
 
-          <el-button v-if="BtnZhuXiaoKaDisable===false" type="warning" @click.native.prevent="handleZhuXiaoKaSubmit()"
-            class="btn-zhuxiaoka" size="mini">注销卡</el-button>
-          <el-button v-if="BtnZhuXiaoKaDisable===true" type="warning" class="btn-zhuxiaoka" size="mini" disabled>注销卡
-          </el-button>
-
-          <el-button v-if="BtnKaiChu===false" type="warning" @click.native.prevent="handleChiZhiSubmit()"
-            class="btn-chizhi" size="mini">辞职
-          </el-button>
-          <el-button v-if="BtnKaiChu===true" type="warning" class="btn-chizhi" disabled size="mini">辞职
-          </el-button>
-
-
-        </div>
         <el-button type="success" @click.native.prevent="handleWorktimeLogSubmit()" size="mini"
           style="position:absolute;top:85px;right:20px;">上工日志</el-button>
         <el-button type="success" @click.native.prevent="handlePersonHealthDaySubmit()" size="mini"

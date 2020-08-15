@@ -150,7 +150,7 @@ export function plan(data) {//计划
 //资料管理
 export function datamanagement(data) {//计划
   return request({
-    url:'/api/oa/doc',
+    url:'/api/doc/project',
     method:'post',
     data:data,
   })

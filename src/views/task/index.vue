@@ -991,7 +991,23 @@
           box.push(item)
         })
         if(this.boxinfo.length==20){//title   created   created    statecolor
-          this.calendarmytask()
+          let btnright=document.querySelector(".fc-corner-right")
+          btnright.onclick=this.rightbtnfnc
+          let btnleft=document.querySelector(".fc-corner-left")
+          btnleft.onclick=this.leftbtnfnc
+          let now=new Date()
+          var nowMonth = now.getMonth(); //前一个月
+           if(now.getMonth()<10){
+              nowMonth = "0"+now.getMonth()
+            }
+          var nowYear = now.getFullYear(); //当前年
+          let lastmonth=now.getMonth()+2; //后一个月
+          if(lastmonth<10){
+            lastmonth="0"+JSON.stringify(lastmonth)
+          }
+          let sTime=nowYear+"-"+nowMonth+"-22";//当月第一天的前七天至少是22号
+          let eTime=nowYear+"-"+lastmonth+"-07";//月末的七天后
+          this.calendarmytask(sTime,eTime)
           // const _param = {
           //   method: 'query_task_all_list',
           //   project_id: this.project_id,
@@ -1042,6 +1058,7 @@
         //       }
         // }
         }else {
+          this.events=[]
             for (let i=0;i<this.boxinfo.length;i++){//我的任务日历渲染
             if(this.boxinfo[i].statecolor=="red"){
               this.events.push({
@@ -1085,19 +1102,7 @@
         console.log("这是events",this.events)
       })
       },
-      calendarmytask(){//任务大厅日历
-        let now=new Date()
-        var nowMonth = now.getMonth(); //前一个月
-         if(now.getMonth()<10){
-            nowMonth = "0"+now.getMonth()
-          }
-        var nowYear = now.getFullYear(); //当前年
-        let lastmonth=now.getMonth()+2; //后一个月
-        if(lastmonth<10){
-          lastmonth="0"+JSON.stringify(lastmonth)
-        }
-        let sTime=nowYear+"-"+nowMonth+"-22";//当月第一天的前七天至少是22号
-        let eTime=nowYear+"-"+lastmonth+"-07";//月末的七天后
+      calendarmytask(sTime,eTime){//任务大厅日历
         const _param = {
             method: 'query_task_all_list',
             project_id: this.project_id,
@@ -1210,6 +1215,7 @@
                 box.push(item)
               })
               //title   created   created    statecolor
+              this.events=[]
           //任务大厅日历渲染
               for (let i=0;i<newarr.length;i++){
                 if(newarr[i].statecolor=="red"){
@@ -1421,37 +1427,78 @@
         })
       },
       rightbtnfnc(){
-        console.log("这是右边的按钮")
+        this.datanum+=1
+        console.log("这是右边的按钮",this.datanum)
+        if(this.publicindexnum==0){
+          let now=new Date()
+          this.firsttime.year=now.getFullYear(); //当前年
+          this.lasttime.year = now.getFullYear(); //当前年
+          this.firsttime.month = now.getMonth(); //前一个月
+          this.lasttime.month = now.getMonth()+2;
+        }
+        this.firsttime.month=parseInt(this.firsttime.month)
+        this.lasttime.month=parseInt(this.lasttime.month)
+        this.firsttime.month+=1//上翻每点击一下，月份减一
+        this.lasttime.month+=1
+        if(this.firsttime.month==13){
+          this.datanum=0
+          this.firsttime.month=1
+          this.firsttime.year+=1
+        }
+        if(this.lasttime.month==13){
+          this.datanum=0
+          this.lasttime.month=1
+          this.lasttime.year+=1
+        }
+         this.publicindexnum=1
+          if(this.firsttime.month<10){
+            this.firsttime.month="0"+this.firsttime.month
+          }
+          if(this.lasttime.month<10){
+            this.lasttime.month="0"+this.lasttime.month
+          }
+          let Stime=this.firsttime.year+"-"+this.firsttime.month+"-22"
+          let Etime=this.lasttime.year+"-"+this.lasttime.month+"-07"
+          // console.log("<",Stime)
+          // console.log("<",Etime)
+          this.calendarmytask(Stime,Etime)
       },
       leftbtnfnc(){
         this.datanum+=1
         console.log("这是左边的按钮",this.datanum)
         if(this.publicindexnum==0){
           let now=new Date()
-          this.nowYear = now.getFullYear(); //当前年
-          this.nowMonth = now.getMonth(); //前一个月
+          this.firsttime.year=now.getFullYear(); //当前年
+          this.lasttime.year = now.getFullYear(); //当前年
+          this.firsttime.month = now.getMonth(); //前一个月
+          this.lasttime.month = now.getMonth()+2;
         }
-        this.nowMonth=this.nowMonth-1
-        let lastMonth=0
-        lastMonth=this.nowMonth+2
-        if(this.nowMonth==0){
+        this.firsttime.month=parseInt(this.firsttime.month)
+        this.lasttime.month=parseInt(this.lasttime.month)
+        this.firsttime.month-=1//上翻每点击一下，月份减一
+        this.lasttime.month-=1
+        if(this.firsttime.month==0){
           this.datanum=0
-          this.nowMonth=12
-          lastMonth=2
-          this.nowYear-=1
+          this.firsttime.month=12
+          this.firsttime.year-=1
         }
-        this.publicindexnum=1
-        if(lastMonth<10){
-          lastMonth="0"+lastMonth
+        if(this.lasttime.month==0){
+          this.datanum=0
+          this.lasttime.month=12
+          this.lasttime.year-=1
         }
-        if(this.nowMonth<10){
-          this.nowMonth="0"+this.nowMonth
+         this.publicindexnum=1
+        if(this.firsttime.month<10){
+          this.firsttime.month="0"+this.firsttime.month
         }
-        console.log("-----",this.nowYear,this.nowMonth,lastMonth)
-        // let lastmonth=now.getMonth()+2; //后一个月
-        // let sTime=nowYear+"-"+nowMonth+"-22";//当月第一天的前七天至少是22号
-        // let eTime=nowYear+"-"+lastmonth+"-07";//月末的七天后
-        // console.log(sTime,eTime)
+        if(this.lasttime.month<10){
+          this.lasttime.month="0"+this.lasttime.month
+        }
+        let Stime=this.firsttime.year+"-"+this.firsttime.month+"-22"
+        let Etime=this.lasttime.year+"-"+this.lasttime.month+"-07"
+        // console.log("<",Stime)
+        // console.log("<",Etime)
+        this.calendarmytask(Stime,Etime)
       },
       mytaskfnc(){
         const _param = {
@@ -1461,10 +1508,6 @@
           }
           this.$store.dispatch('GetAllInstList', _param).then((data) => {
             console.log("我的任务",data)
-            let btnright=document.querySelector(".fc-corner-right")
-            btnright.onclick=this.rightbtnfnc
-            let btnleft=document.querySelector(".fc-corner-left")
-            btnleft.onclick=this.leftbtnfnc
             data.forEach(item=>{
               item["aaaid"]=data.indexOf(item)
             })
