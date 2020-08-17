@@ -15,7 +15,7 @@
       </el-col>
       <el-col :span="21">
         <!--顶部导航栏-->
-        <el-row>
+        <el-row style="padding:0px 0px 10px 0px;background-color:#f5f5f5;">
           <newplandialog></newplandialog>
           <div class="boxtop_left">
             <span
@@ -81,7 +81,7 @@
               <div class="itemactovi" v-for="item in this.firstactivities" :key="item.id">
                 <el-row class="planboxtop">
                   <el-col
-                    :span="12"
+                    :span="14"
                     class="planboxtop_left"
                     style="width: 650px;height: 100%;float: left"
                   >
@@ -125,7 +125,7 @@
                       </span>
                     </div>
                   </el-col>
-                  <el-col :lg="24" :xl="12" class="modelaaa">
+                  <el-col :lg="24" :xl="10" class="modelaaa">
                     <div
                       class="implementation"
                       style="position:relative;margin-left:5px;width: 130px;height: 60px;background-color: #0081FE;float: left;margin-top: 10px;;margin-bottom: 10px;color:#FFFFFF"
