@@ -1,0 +1,369 @@
+.plan-index {
+  .planstybox {
+    width: 100px;
+    height: 25px;
+    background-color: #1abc9c;
+    text-align: center;
+    line-height: 25px;
+    float: right;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .planboxtop_left_2 {
+    color: #666666;
+  }
+  .plan-title {
+    font-size: 28px;
+    margin: 12px 0px 0px 9px;
+    color: #000000;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 480px;
+  }
+
+  .plan-content-title {
+    font-size: 16px;
+    color: #565e64;
+    font-weight: 600;
+    margin: 10px 0px 10px 5px;
+  }
+  .plan-content {
+    font-size: 12px;
+    p {
+      color: #666666;
+      font-size: 14px;
+      margin: 0px 0px 5px 5px;
+    }
+  }
+  .plan-comment-area {
+    width: 100%;
+    display: inline-block;
+    padding-top: 10px;
+    margin-bottom: 10px;
+  }
+  .plan-content-area {
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .el-divider--horizontal {
+    display: block;
+    height: 1px;
+    width: 100%;
+    margin: 1px 0px 1px 0px;
+  }
+  .backtop {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+  }
+  .boxtop {
+    width: 100%;
+    height: 50px;
+    background-color: #f5f5f5;
+    overflow: hidden;
+  }
+  .positionbox {
+    position: relative;
+  }
+  .boxtop_left {
+    background-color: #0081fe;
+    padding: 0 20px;
+    height: 35px;
+    margin-top: 7px;
+    line-height: 35px;
+    text-align: center;
+    margin-left: 15px;
+    color: #ffffff;
+    border-radius: 20px;
+    float: left;
+  }
+  .boxtop_right {
+    float: right;
+    width: 150px;
+    height: 35px;
+    margin-top: 7px;
+    line-height: 15px;
+    font-size: 16px;
+    text-align: center;
+    background-color: #34ba9c;
+    margin-right: 25px;
+    color: #ffffff;
+    border-radius: 5px;
+  }
+  .linespan {
+    width: 200px;
+    height: 42px;
+    margin-top: 20px;
+    line-height: 30px;
+    font-size: 15px;
+    position: relative;
+  }
+  .planbox {
+    width: 81%;
+    position: sticky;
+    float: left;
+    height: 665px;
+    margin-left: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .planboxtop {
+    width: 100%;
+    height: 100px;
+  }
+  .displayplanbox {
+    width: 100%;
+    height: 800px;
+    line-height: 400px;
+    text-align: center;
+    font-size: 30px;
+    color: #aaaaaa;
+  }
+  .blockall {
+    float: left;
+    width: 18%;
+    height: 665px;
+    position: relative;
+    background-color: #f5f5f5;
+    overflow: auto;
+  }
+  .block {
+    float: right;
+    width: 100%;
+  }
+  .fenyeclass {
+    position: absolute;
+    bottom: 0;
+    margin: auto;
+  }
+  .active {
+    background-color: #ffffff;
+    padding-bottom: 35px;
+    color: #0081fe;
+  }
+  .showcomment {
+    width: 100%;
+    // height: 50px;
+    color: #666666;
+    line-height: 20px;
+    font-size: 14px;
+    margin: 0px 0px 0px 5px;
+  }
+  .nohave {
+    background-color: #ff6700;
+  }
+  .el-progress-bar__inner {
+    height: 10px;
+  }
+  .sonplanboxnone {
+    width: 100%;
+    height: 150px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 150px;
+    color: #aaaaaa;
+  }
+  .round {
+    margin-right: 15px;
+    margin-left: 15px;
+    width: 40px;
+    height: 40px;
+    background-color: #f6f6f6;
+    border-radius: 25px;
+    float: left;
+    text-align: center;
+    line-height: 40px;
+    font-size: 20px;
+    color: #999999;
+    font-weight: 300;
+  }
+  .modelaaa {
+    display: block;
+    width: 550px;
+    float: left;
+  }
+  .modelbbb {
+    display: none;
+  }
+  .jindutiao {
+    width: 500px;
+    height: 10px;
+    float: left;
+    margin-top: 10px;
+    margin-left: 15px;
+  }
+  .smallplan_box {
+    width: 90%;
+    float: left;
+    padding: 10px;
+    background-color: #f6f6f6;
+  }
+
+  .smallplan {
+    width: 95%;
+    height: 75px;
+    // background-color: #f5f5f5;
+    margin-top: 10px;
+    margin-left: 15px;
+  }
+  .finishedtask {
+    background-color: #008525;
+    color: #ffffff;
+  }
+  .timeouttask {
+    background-color: #bc0000;
+    color: #ffffff;
+  }
+  .sonplantitle {
+    font-size: 16px;
+    color: #555555;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 650px;
+    padding-top: 5px;
+  }
+  .smallplan_box_top {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 5px;
+  }
+  .smallplanspan {
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 700px;
+    font-size: 14px;
+    color: #999999;
+  }
+  .activitytitle {
+    position: absolute;
+    top: -6px;
+    // left: 25px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 190px;
+    font-weight: 800;
+    font-size: 16px;
+  }
+  @media screen and (max-width: 1440px) {
+    .activitytitle {
+      position: absolute;
+      overflow: hidden;
+      display: inline-block;
+      text-overflow: ellipsis;
+      width: 160px;
+      font-weight: 800;
+      font-size: 16px;
+    }
+  }
+  @media screen and (min-width: 2047px) {
+    .activitytitle {
+      position: absolute;
+      overflow: hidden;
+      display: inline-block;
+      text-overflow: ellipsis;
+      width: 260px;
+      font-weight: 800;
+      font-size: 16px;
+    }
+  }
+  @media screen and (min-width: 2559px) {
+    .activitytitle {
+      position: absolute;
+      overflow: hidden;
+      display: inline-block;
+      text-overflow: ellipsis;
+      width: 340px;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .block {
+      float: left;
+      background-color: #f5f5f5;
+      width: 15%;
+    }
+  }
+  @media screen and (max-width: 1280px) {
+    .boxtop_right {
+      float: right;
+      width: 150px;
+      height: 35px;
+      margin-top: 7px;
+      line-height: 20px;
+      text-align: center;
+      background-color: #34ba9c;
+      margin-right: 25px;
+      color: #ffffff;
+      border-radius: 5px;
+    }
+    .planbox {
+      width: 70%;
+      position: sticky;
+      float: left;
+      margin-left: 10px;
+    }
+    .planstybox {
+      width: 110px;
+      height: 30px;
+      background-color: #1abc9c;
+      text-align: center;
+      line-height: 30px;
+      float: right;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .smallplan_box {
+      width: 85%;
+      float: left;
+      padding: 10px;
+      background-color: #f5f5f5;
+    }
+    .sonplantitle {
+      font-size: 16px;
+      font-weight: 700;
+      float: left;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+      text-overflow: ellipsis;
+      width: 450px;
+    }
+    .nullbox {
+      width: 100%;
+      height: 80px;
+    }
+    .modelaaa {
+      display: none;
+    }
+    .modelbbb {
+      display: block;
+    }
+    .boxtop {
+      width: 1080px;
+      height: 50px;
+      background-color: #f5f5f5;
+      overflow: hidden;
+    }
+    .jindutiao {
+      width: 300px;
+      height: 10px;
+      float: left;
+      margin-top: 10px;
+      margin-left: 15px;
+      display: none;
+    }
+    /*.el-col-21{*/
+    /*width: 1240px;*/
+    /*}*/
+  }
+}
