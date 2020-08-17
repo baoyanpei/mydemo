@@ -1,4 +1,7 @@
 .plan-index {
+  // .el-row {
+  //   margin: 0px;
+  // }
   .planstybox {
     width: 100px;
     height: 25px;
@@ -103,17 +106,17 @@
     position: relative;
   }
   .planbox {
-    width: 81%;
+    width: 100%;
+    padding-right: 10px;
     position: sticky;
     float: left;
-    height: 665px;
-    margin-left: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    height: 100%;
+    margin-right: 10px;
+    overflow: auto;
   }
   .planboxtop {
-    width: 100%;
-    height: 100px;
+    // width: 100%;
+    // height: 100px;
   }
   .displayplanbox {
     width: 100%;
@@ -124,15 +127,16 @@
     color: #aaaaaa;
   }
   .blockall {
-    float: left;
-    width: 18%;
-    height: 665px;
-    position: relative;
+    // float: left;
+    // width: 18%;
+    // height: 100%;
+    // position: relative;
     background-color: #f5f5f5;
     overflow: auto;
   }
   .block {
-    float: right;
+    // float: right;
+    // height: 100%;
     width: 100%;
   }
   .fenyeclass {
@@ -182,9 +186,9 @@
     font-weight: 300;
   }
   .modelaaa {
-    display: block;
-    width: 550px;
-    float: left;
+    // display: block;
+    // width: 550px;
+    // float: left;
   }
   .modelbbb {
     display: none;
@@ -255,115 +259,116 @@
     font-weight: 800;
     font-size: 16px;
   }
-  @media screen and (max-width: 1440px) {
-    .activitytitle {
-      position: absolute;
-      overflow: hidden;
-      display: inline-block;
-      text-overflow: ellipsis;
-      width: 160px;
-      font-weight: 800;
-      font-size: 16px;
-    }
-  }
-  @media screen and (min-width: 2047px) {
-    .activitytitle {
-      position: absolute;
-      overflow: hidden;
-      display: inline-block;
-      text-overflow: ellipsis;
-      width: 260px;
-      font-weight: 800;
-      font-size: 16px;
-    }
-  }
-  @media screen and (min-width: 2559px) {
-    .activitytitle {
-      position: absolute;
-      overflow: hidden;
-      display: inline-block;
-      text-overflow: ellipsis;
-      width: 340px;
-      font-weight: 800;
-      font-size: 16px;
-    }
-    .block {
-      float: left;
-      background-color: #f5f5f5;
-      width: 15%;
-    }
-  }
-  @media screen and (max-width: 1280px) {
-    .boxtop_right {
-      float: right;
-      width: 150px;
-      height: 35px;
-      margin-top: 7px;
-      line-height: 20px;
-      text-align: center;
-      background-color: #34ba9c;
-      margin-right: 25px;
-      color: #ffffff;
-      border-radius: 5px;
-    }
-    .planbox {
-      width: 70%;
-      position: sticky;
-      float: left;
-      margin-left: 10px;
-    }
-    .planstybox {
-      width: 110px;
-      height: 30px;
-      background-color: #1abc9c;
-      text-align: center;
-      line-height: 30px;
-      float: right;
-      color: #ffffff;
-      font-weight: 600;
-    }
-    .smallplan_box {
-      width: 85%;
-      float: left;
-      padding: 10px;
-      background-color: #f5f5f5;
-    }
-    .sonplantitle {
-      font-size: 16px;
-      font-weight: 700;
-      float: left;
-      white-space: nowrap;
-      overflow: hidden;
-      display: inline-block;
-      text-overflow: ellipsis;
-      width: 450px;
-    }
-    .nullbox {
-      width: 100%;
-      height: 80px;
-    }
-    .modelaaa {
-      display: none;
-    }
-    .modelbbb {
-      display: block;
-    }
-    .boxtop {
-      width: 1080px;
-      height: 50px;
-      background-color: #f5f5f5;
-      overflow: hidden;
-    }
-    .jindutiao {
-      width: 300px;
-      height: 10px;
-      float: left;
-      margin-top: 10px;
-      margin-left: 15px;
-      display: none;
-    }
-    /*.el-col-21{*/
-    /*width: 1240px;*/
-    /*}*/
-  }
+  // @media screen and (max-width: 1440px) {
+  //   .activitytitle {
+  //     position: absolute;
+  //     overflow: hidden;
+  //     display: inline-block;
+  //     text-overflow: ellipsis;
+  //     width: 160px;
+  //     font-weight: 800;
+  //     font-size: 16px;
+  //   }
+  // }
+  // @media screen and (min-width: 2047px) {
+  //   .activitytitle {
+  //     position: absolute;
+  //     overflow: hidden;
+  //     display: inline-block;
+  //     text-overflow: ellipsis;
+  //     width: 260px;
+  //     font-weight: 800;
+  //     font-size: 16px;
+  //   }
+  // }
+
+  // @media screen and (min-width: 2559px) {
+  //   .activitytitle {
+  //     position: absolute;
+  //     overflow: hidden;
+  //     display: inline-block;
+  //     text-overflow: ellipsis;
+  //     width: 340px;
+  //     font-weight: 800;
+  //     font-size: 16px;
+  //   }
+  //   .block {
+  //     float: left;
+  //     background-color: #f5f5f5;
+  //     width: 15%;
+  //   }
+  // }
+  // @media screen and (max-width: 1280px) {
+  //   .boxtop_right {
+  //     float: right;
+  //     width: 150px;
+  //     height: 35px;
+  //     margin-top: 7px;
+  //     line-height: 20px;
+  //     text-align: center;
+  //     background-color: #34ba9c;
+  //     margin-right: 25px;
+  //     color: #ffffff;
+  //     border-radius: 5px;
+  //   }
+  //   .planbox {
+  //     width: 70%;
+  //     position: sticky;
+  //     float: left;
+  //     margin-left: 10px;
+  //   }
+  //   .planstybox {
+  //     width: 110px;
+  //     height: 30px;
+  //     background-color: #1abc9c;
+  //     text-align: center;
+  //     line-height: 30px;
+  //     float: right;
+  //     color: #ffffff;
+  //     font-weight: 600;
+  //   }
+  //   .smallplan_box {
+  //     width: 85%;
+  //     float: left;
+  //     padding: 10px;
+  //     background-color: #f5f5f5;
+  //   }
+  //   .sonplantitle {
+  //     font-size: 16px;
+  //     font-weight: 700;
+  //     float: left;
+  //     white-space: nowrap;
+  //     overflow: hidden;
+  //     display: inline-block;
+  //     text-overflow: ellipsis;
+  //     width: 450px;
+  //   }
+  //   .nullbox {
+  //     width: 100%;
+  //     height: 80px;
+  //   }
+  //   .modelaaa {
+  //     display: none;
+  //   }
+  //   .modelbbb {
+  //     display: block;
+  //   }
+  //   .boxtop {
+  //     width: 1080px;
+  //     height: 50px;
+  //     background-color: #f5f5f5;
+  //     overflow: hidden;
+  //   }
+  //   .jindutiao {
+  //     width: 300px;
+  //     height: 10px;
+  //     float: left;
+  //     margin-top: 10px;
+  //     margin-left: 15px;
+  //     display: none;
+  //   }
+  //   /*.el-col-21{*/
+  //   /*width: 1240px;*/
+  //   /*}*/
+  // }
 }
