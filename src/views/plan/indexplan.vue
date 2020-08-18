@@ -44,11 +44,12 @@
               <Timeline
                 :timeline-items="dataTimeline"
                 :message-when-no-items="messageWhenNoItems"
-                :unique-year="true"
+                :unique-year="false"
                 :show-day-and-month="false"
                 order="desc"
+                v-on:dataTimeClick="dataTimeClick"
               />
-              <el-timeline :reverse="reverse">
+              <!-- <el-timeline :reverse="reverse">
                 <el-timeline-item
                   v-for="(activity, index) in activities"
                   :key="index"
@@ -63,7 +64,7 @@
                     style="position: absolute;top: 15px;left: 25px;font-size: 13px;color: #AAAAAA"
                   >{{activity.datayear}}</span>
                 </el-timeline-item>
-              </el-timeline>
+              </el-timeline>-->
               <!-- <el-pagination
                 background
                 layout="prev, pager, next"
@@ -190,7 +191,7 @@
                 <el-row>
                   <el-divider></el-divider>
                 </el-row>
-                <el-row style="display: block;">
+                <el-row style="display: block;padding-left:5px;">
                   <div class="plan-content-title">计划内容</div>
                   <div class="plan-content">
                     <div v-for="(obj,index) in item.classcontent" :key="index">
@@ -300,7 +301,7 @@ import { Skeleton } from 'vant'
 Vue.use(Skeleton)
 import planindex from './planpage/index'
 import newplandialog from '../../components/creatnewplan/index'
-import Timeline from 'timeline-vuejs'
+import Timeline from './components/Timeline'
 export default {
   name: 'yearsplan',
   components: {
@@ -357,25 +358,8 @@ export default {
       scroll: '',
       backtopshow: false,
 
-      messageWhenNoItems: 'There arent items',
-      dataTimeline: [
-        {
-          from: new Date(2017, 5, 22),
-          title: '测试计划2',
-          showDayAndMonth: false,
-          description: '2020-12-01',
-        },
-        {
-          from: new Date(2017, 8),
-          title: '12313',
-          description: '2020-12-02.',
-        },
-        {
-          from: new Date(2016, 11),
-          title: 'adsdas',
-          description: '2020-12-02',
-        },
-      ],
+      messageWhenNoItems: '正在加载数据',
+      dataTimeline: [],
     }
   },
   computed: {
@@ -665,7 +649,6 @@ export default {
         limit: this.pagesize,
       }
       this.$store.dispatch('Getplan', param).then((data) => {
-        console.log('plan111', data)
         this.infonum = data.count
         if (data.count == 0) {
           console.log('plan数据为空')
@@ -679,6 +662,8 @@ export default {
           this.progressnum = 15
         }
         console.log('plan', data)
+        this.dataTimeline = []
+        let _i = 0
         data.data.forEach((item) => {
           item['classcontent'] = item.content.split('\n')
           item['datayear'] = item.start_date.slice(0, 11)
@@ -703,6 +688,20 @@ export default {
           if (item.type == 0) {
             item['firstlittertype'] = '其他'
           }
+          const _dateArray = item.start_date.split('-')
+
+          let isSelected = _i === 0 ? 1 : 0
+          let color = _i === 0 ? '' : '#cecece'
+          this.dataTimeline.push({
+            from: new Date(_dateArray[0], _dateArray[1] - 1, _dateArray[2]),
+            title: `${item.title}`,
+            // showDayAndMonth: false,
+            description: item.start_date,
+            data: item,
+            isSelected: isSelected,
+            color: color,
+          })
+          _i = _i + 1
         })
         for (let o = 0; o < data.data.length; o++) {
           if (this.idplan[0] == data.data[o].id) {
@@ -731,6 +730,7 @@ export default {
           this.bannertitle = data.data[0].title
           this.fatherid = data.data[0].id
           this.plan3id = data.data[0].id
+
           this.getplan2() //子计划
           this.getplane3() //任务状态
           this.getcomment() //该计划的评论
@@ -748,6 +748,7 @@ export default {
             if (this.lastsonplanid == this.activities[i].id) {
               console.log('子任务跳转过来的数据', this.activities[i])
               this.showtitle(this.activities[i])
+              this.dataTimelineData(this.activities[i])
             }
           }
         }
@@ -913,6 +914,7 @@ export default {
       })
     },
     showtitle(index) {
+      console.log('index', index)
       this.skeletonshow = true
       this.modelshow = false
       this.plansonloading = true
@@ -958,6 +960,22 @@ export default {
     backtopfnc() {
       document.documentElement.scrollTop = 0
       document.body.scrollTop = 0
+    },
+    dataTimeClick(itemSelected) {
+      console.log('dataTimeClick123', itemSelected)
+      this.dataTimelineData(itemSelected.data)
+    },
+    dataTimelineData(itemData) {
+      this.dataTimeline.forEach((item) => {
+        if (item.data.id === itemData.id) {
+          item.isSelected = 1
+          item.color = ''
+          this.showtitle(item.data)
+        } else {
+          item.isSelected = 0
+          item.color = '#cecece'
+        }
+      })
     },
   },
 }

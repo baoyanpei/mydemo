@@ -46,11 +46,13 @@
     display: inline-block;
     padding-top: 10px;
     margin-bottom: 10px;
+    margin-left: 5px;
   }
   .plan-content-area {
     width: 100%;
     display: inline-block;
     margin-bottom: 10px;
+    padding-left: 5px;
   }
   .el-divider--horizontal {
     display: block;
@@ -268,16 +270,43 @@
     display: none;
   }
   .timeline-item .item {
-    border-left: 5px solid #ccd5db;
+    border-left: 1px dashed #ccd5db;
     padding: 10px 0 20px 15px;
     position: relative;
   }
   .timeline .wrapper-item .section-year {
     padding: 23px 15px 15px 5px;
   }
-  .timeline .wrapper-item[data-v-30ba92e0] {
+  .timeline .wrapper-item {
     display: grid;
     grid-template-columns: 70px 1fr;
+  }
+
+  .timeline-item .title-item {
+    margin: 0;
+    padding: 5px 0;
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 130px;
+    overflow: hidden;
+  }
+
+  .timeline-item .description-item {
+    font-weight: 100;
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .timeline-item .dot {
+    display: block;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    left: -8px;
+    top: 26px;
   }
   // @media screen and (max-width: 1440px) {
   //   .activitytitle {
