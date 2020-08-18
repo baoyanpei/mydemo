@@ -35,6 +35,12 @@
             @click="getnewplan"
             :loading="btnloding"
           >新增计划</el-button>
+          <el-button
+            type="primary"
+            class="boxtop_right"
+            @click="getnewplanV2"
+            :loading="btnloding"
+          >新增计划v2</el-button>
         </el-row>
         <!--添加定位属性-->
         <el-row class="displayplanbox" v-if="planboxshow_none">
@@ -298,6 +304,7 @@ import planindex from './planpage/index'
 import newplandialog from '../../components/creatnewplan/index'
 import Timeline from './components/Timeline'
 import moment from 'moment'
+import Cookies from 'js-cookie'
 export default {
   name: 'yearsplan',
   components: {
@@ -534,6 +541,14 @@ export default {
       this.$store.commit('titleboxchange', [])
       this.$store.commit('newplanshowchange')
     },
+    getnewplanV2() {
+      this.$router.push({
+        path: '/newplanV2',
+        query: {
+          plan_typeid: this.plan_typeid,
+        },
+      })
+    },
     jumpfnc(index) {
       this.fullscreenLoading = true
       setTimeout(() => {
@@ -637,12 +652,20 @@ export default {
       this.sonplanjump(index.id)
       this.$store.commit('sonplanchange', index.id)
       this.$store.commit('planidchange', index.type)
+      Cookies.set('CurrentPlanType', index.type)
     },
     sonplanjump(idsss) {
       this.idplan = []
       this.idplan.push(idsss)
     },
     getplan() {
+      let cookiePlayType = Cookies.get('CurrentPlanType')
+      if (cookiePlayType !== undefined) {
+        this.planchanidtype = cookiePlayType
+        // this.dataTimelineData(this.activities[i])
+      }
+      console.log('this.planchanidtype123', this.planchanidtype)
+
       this.messageWhenNoItems = '正在加载数据'
       this.searchPlanTips = '正在查询计划'
       const param = {
@@ -749,6 +772,28 @@ export default {
         if (this.activities !== []) {
           console.log('这里是bu空的')
           this.skeletonshow = true
+          let curVal = this.planchanidtype
+          if (curVal == 1) {
+            this.firsttitletype = '年计划'
+          }
+          if (curVal == 2) {
+            this.firsttitletype = '月计划'
+          }
+          if (curVal == 3) {
+            this.firsttitletype = '周计划'
+          }
+          if (curVal == 4) {
+            this.firsttitletype = '日计划'
+          }
+          if (curVal == 5) {
+            this.firsttitletype = '施工组织计划'
+          }
+          if (curVal == 7) {
+            this.firsttitletype = '施工计划'
+          }
+          if (curVal == 0) {
+            this.firsttitletype = '其他'
+          }
         }
         if (this.lastsonplanid == 0) {
           console.log('还没有传输数据', this.lastsonplanid)

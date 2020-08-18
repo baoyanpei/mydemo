@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie'
 export default {
   name: 'yearsplan',
   data() {
@@ -61,18 +62,51 @@ export default {
       }
       this.$store.dispatch('Getplan', param).then((data) => {
         this.titlebox = data.data
-        console.log('this.titlebox', this.titlebox)
+        console.log('this.titlebox1', this.titlebox)
         for (let i = 0; i < this.titlebox.length; i++) {
           if (this.titlebox[i].tid == 6) {
             this.titlebox.splice(i, 1)
           }
         }
         this.nowid = this.titlebox[0].tid
-        console.log('this.titlebox', this.titlebox)
+
+        const _plan_typeid = this.$route.query.plan_typeid
+        console.log('_plan_typeid', _plan_typeid)
+        if (_plan_typeid !== undefined) {
+          this.nowid = _plan_typeid
+        }
+        console.log('this.nowid1111', this.nowid)
+        // console.log('this.titlebox2', this.titlebox)
+        let cookiePlayType = Cookies.get('CurrentPlanType')
+        if (cookiePlayType !== undefined) {
+          this.nowid = parseInt(cookiePlayType)
+          if (this.nowid == 1) {
+            this.$store.commit('planindexfirstnamefnc', '年计划')
+          }
+          if (this.nowid == 2) {
+            this.$store.commit('planindexfirstnamefnc', '月计划')
+          }
+          if (this.nowid == 3) {
+            this.$store.commit('planindexfirstnamefnc', '周计划')
+          }
+          if (this.nowid == 4) {
+            this.$store.commit('planindexfirstnamefnc', '日计划')
+          }
+          if (this.nowid == 5) {
+            this.$store.commit('planindexfirstnamefnc', '施工组织计划')
+          }
+          if (this.nowid == 7) {
+            this.$store.commit('planindexfirstnamefnc', '施工计划')
+          }
+          if (this.nowid == 0) {
+            this.$store.commit('planindexfirstnamefnc', '其他计划')
+          }
+        }
       })
     },
     planidtran(index) {
       console.log('dsadsadsa', index)
+      // this.$store.commit('planidchange', 0)
       if (index == 1) {
         this.$store.commit('planindexfirstnamefnc', '年计划')
       }
@@ -95,6 +129,7 @@ export default {
         this.$store.commit('planindexfirstnamefnc', '其他计划')
       }
       this.nowid = index
+      Cookies.set('CurrentPlanType', index)
       this.$store.commit('planidchange', index)
     },
   },

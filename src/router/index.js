@@ -137,6 +137,16 @@ export const constantRouterMap = [
         }
       },
       {
+        path: "newplanV2",
+        component: () => import("@/views/plan/newplanV2"),
+        name: "newplanV2",
+        meta: {
+          title: "newplanV2",
+          icon: "dashboard",
+          noCache: true
+        }
+      },
+      {
         path: "indexplan", //indexplan
         component: () => import("@/views/plan/indexplan"),
         name: "indexplan",

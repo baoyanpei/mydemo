@@ -23,42 +23,43 @@ import Cookies from "js-cookie";
 import hasPermissionToOperation from "@/utils/permissionUrl"; // 权限判断函数
 const plantypeid = {
   state: {
-    count:1,
-    titlebox:[],
-    leftshow:"none",
-    fatherid:0,
-    newplanshow:false,
-    sonplanid:0,
-    planindexfirstname:""
+    count: 1,
+    titlebox: [],
+    leftshow: "none",
+    fatherid: 0,
+    newplanshow: false,
+    sonplanid: 0,
+    planindexfirstname: ""
   },
-  mutations:{
-    planidchange(state,step){
-        state.count=step
-      },
-    sonplanchange(state,step){
-      state.sonplanid=step
+  mutations: {
+    planidchange(state, step) {
+      console.log("stepstepstep", step);
+      state.count = step;
     },
-    titleboxchange(state,step){
-      state.titlebox=step
+    sonplanchange(state, step) {
+      state.sonplanid = step;
     },
-    leftshowfnc(state){
-      state.leftshow="have"
+    titleboxchange(state, step) {
+      state.titlebox = step;
     },
-    leftnoshowfnc(state){
-       state.leftshow="none"
+    leftshowfnc(state) {
+      state.leftshow = "have";
     },
-    fatheridchange(state,step){
-      state.fatherid=step
+    leftnoshowfnc(state) {
+      state.leftshow = "none";
     },
-    newplanshowchange(state,step){
-      state.newplanshow=true
+    fatheridchange(state, step) {
+      state.fatherid = step;
     },
-    newplanshowchangefasle(state,step){
-      state.newplanshow=false
+    newplanshowchange(state, step) {
+      state.newplanshow = true;
     },
-    planindexfirstnamefnc(state,step){
-      state.planindexfirstname=step
+    newplanshowchangefasle(state, step) {
+      state.newplanshow = false;
+    },
+    planindexfirstnamefnc(state, step) {
+      state.planindexfirstname = step;
     }
   }
-}
+};
 export default plantypeid;
