@@ -5,7 +5,7 @@
   <div class="planpage-index">
     <div
       class="grid-content bg-purple tjfx-menu"
-      style="border-right:1px solid #eeeeee; padding: 5px;min-height:500px;padding-top:7px;"
+      style="border-right:0px solid #eeeeee; padding: 10px 5px 5px 10px;"
     >
       <el-row type="flex" class="row-bg">
         <div class="publictitle">

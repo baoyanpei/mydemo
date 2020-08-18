@@ -37,14 +37,18 @@
           >新增计划</el-button>
         </el-row>
         <!--添加定位属性-->
-        <el-row class="positionbox">
+        <el-row class="displayplanbox" v-if="planboxshow_none">
+          <span>{{searchPlanTips}}</span>
+        </el-row>
+        <el-row class="positionbox" v-show="!planboxshow_none">
           <!--时间线-->
           <el-col :span="4" class="blockall">
             <div class="block" style="padding-left: 0px">
               <Timeline
                 :timeline-items="dataTimeline"
                 :message-when-no-items="messageWhenNoItems"
-                :unique-year="false"
+                :unique-year="true"
+                :unique-time-line="true"
                 :show-day-and-month="false"
                 order="desc"
                 v-on:dataTimeClick="dataTimeClick"
@@ -81,9 +85,9 @@
           </el-col>
           <el-col :span="20">
             <!--计划信息栏-->
-            <div class="displayplanbox" v-if="planboxshow_none">
+            <!-- <div class="displayplanbox" v-if="planboxshow_none">
               <span>暂无计划</span>
-            </div>
+            </div>-->
             <van-skeleton title :row="10" v-if="skeletonshow" style="margin-top: 15px" />
             <div class="planbox" v-show="modelshow">
               <div class="itemactovi" v-for="item in this.firstactivities" :key="item.id">
@@ -233,11 +237,11 @@
                 </div>-->
               </div>
               <el-divider></el-divider>
-              <div class="plan-content-area">
+              <div class="plan-content-area" v-show="!sonplanboxnoneshow">
                 <div class="plan-content-title">所属计划</div>
-                <div class="sonplanboxnone" v-show="sonplanboxnoneshow">
+                <!-- <div class="sonplanboxnone" v-show="sonplanboxnoneshow">
                   <span>暂无子计划</span>
-                </div>
+                </div>-->
                 <div class="objjjj" v-for="obj in this.sonplanbox" :key="obj.id">
                   <a href="javascript:void(0)">
                     <div class="smallplan" @click="jumpson(obj)">
@@ -311,6 +315,7 @@ export default {
   },
   data() {
     return {
+      searchPlanTips: '',
       btnloding: false, //按钮是否可以被点击
       skeletonshow: false,
       modelshow: false,
@@ -378,7 +383,7 @@ export default {
   },
   watch: {
     project_id(curVal, oldVal) {
-      console.log('dsadas', this.plan_typeid)
+      console.log('plan_typeid', this.plan_typeid)
       this.planchanidtype = 1
       this.modelshow = false
       this.firsttitletype = '年计划'
@@ -640,6 +645,8 @@ export default {
       this.idplan.push(idsss)
     },
     getplan() {
+      this.messageWhenNoItems = '正在加载数据'
+      this.searchPlanTips = '正在查询计划'
       const param = {
         method: 'plan_query',
         project_id: this.project_id,
@@ -654,6 +661,7 @@ export default {
           console.log('plan数据为空')
           this.planboxshow_none = true
           this.planboxshow = false
+          this.searchPlanTips = '当前没有' + this.firsttitletype
         } else {
           this.progressshow = true
           this.planboxshow_none = false
@@ -703,6 +711,7 @@ export default {
           })
           _i = _i + 1
         })
+
         for (let o = 0; o < data.data.length; o++) {
           if (this.idplan[0] == data.data[o].id) {
             this.progressnum = 30
@@ -725,15 +734,19 @@ export default {
           console.log('idplan为空')
           this.firstactivities = []
           this.activities = data.data
-          this.firstactivities.push(this.activities[0])
-          this.indexspan = data.data[0].id
-          this.bannertitle = data.data[0].title
-          this.fatherid = data.data[0].id
-          this.plan3id = data.data[0].id
+          if (this.activities.length > 0) {
+            this.firstactivities.push(this.activities[0])
+            this.indexspan = data.data[0].id
+            this.bannertitle = data.data[0].title
+            this.fatherid = data.data[0].id
+            this.plan3id = data.data[0].id
 
-          this.getplan2() //子计划
-          this.getplane3() //任务状态
-          this.getcomment() //该计划的评论
+            this.getplan2() //子计划
+            this.getplane3() //任务状态
+            this.getcomment() //该计划的评论
+          } else {
+            this.messageWhenNoItems = ''
+          }
         }
         if (this.activities !== []) {
           console.log('这里是bu空的')
@@ -762,13 +775,12 @@ export default {
       }
       this.$store.dispatch('Getplan', param).then((data) => {
         this.progressnum = 80
-        console.log('plan22222', data)
         if (data.data.length == 0) {
-          console.log('plan22222---count', data)
           this.sonplanboxnoneshow = true
         } else {
           this.sonplanboxnoneshow = false
         }
+        console.log('sonplanboxnoneshow', this.sonplanboxnoneshow)
         this.sonplanbox = data.data
         this.sonplanbox.forEach((item) => {
           item['sonnum'] = this.sonplanbox.indexOf(item) + 1

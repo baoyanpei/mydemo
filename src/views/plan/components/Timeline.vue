@@ -6,7 +6,7 @@
         :key="timelineIndex"
         :class="wrapperItemClass(timelineIndex)"
       >
-        <div class="section-year">
+        <div class="section-year" :style="getYearColour(timelineContent.isSelected)">
           <p v-if="hasYear(timelineContent)" class="year">{{ getYear(timelineContent) }}</p>
         </div>
         <TimelineItem
@@ -75,6 +75,9 @@ export default {
       console.log('dataTimeLineItemClick', item)
       this.$emit('dataTimeClick', item)
       // this.$emit('dataTimeLineItemClick')
+    },
+    getYearColour(isSelected) {
+      return isSelected === 1 ? `color:rgb(45, 161, 191);` : ``
     },
     wrapperItemClass(timelineIndex) {
       const isSameYearPreviousAndCurrent = this.checkYearTimelineItem(

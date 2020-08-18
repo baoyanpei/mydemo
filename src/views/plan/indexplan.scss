@@ -291,12 +291,14 @@
     text-overflow: ellipsis;
     width: 130px;
     overflow: hidden;
+    text-align: left;
   }
 
   .timeline-item .description-item {
     font-weight: 100;
     margin: 0;
     font-size: 14px;
+    text-align: left;
   }
 
   .timeline-item .dot {
@@ -307,6 +309,11 @@
     border-radius: 50%;
     left: -8px;
     top: 26px;
+  }
+  .timeline {
+    p {
+      text-align: center;
+    }
   }
   // @media screen and (max-width: 1440px) {
   //   .activitytitle {
