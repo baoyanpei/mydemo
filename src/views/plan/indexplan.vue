@@ -40,7 +40,14 @@
         <el-row class="positionbox">
           <!--时间线-->
           <el-col :span="4" class="blockall">
-            <div class="block" style="padding-left: 30px">
+            <div class="block" style="padding-left: 0px">
+              <Timeline
+                :timeline-items="dataTimeline"
+                :message-when-no-items="messageWhenNoItems"
+                :unique-year="true"
+                :show-day-and-month="false"
+                order="desc"
+              />
               <el-timeline :reverse="reverse">
                 <el-timeline-item
                   v-for="(activity, index) in activities"
@@ -293,11 +300,13 @@ import { Skeleton } from 'vant'
 Vue.use(Skeleton)
 import planindex from './planpage/index'
 import newplandialog from '../../components/creatnewplan/index'
+import Timeline from 'timeline-vuejs'
 export default {
   name: 'yearsplan',
   components: {
     planindex,
     newplandialog,
+    Timeline,
   },
   data() {
     return {
@@ -347,6 +356,26 @@ export default {
       curHeight: 0,
       scroll: '',
       backtopshow: false,
+
+      messageWhenNoItems: 'There arent items',
+      dataTimeline: [
+        {
+          from: new Date(2017, 5, 22),
+          title: '测试计划2',
+          showDayAndMonth: false,
+          description: '2020-12-01',
+        },
+        {
+          from: new Date(2017, 8),
+          title: '12313',
+          description: '2020-12-02.',
+        },
+        {
+          from: new Date(2016, 11),
+          title: 'adsdas',
+          description: '2020-12-02',
+        },
+      ],
     }
   },
   computed: {

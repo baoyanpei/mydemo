@@ -32,14 +32,16 @@ import "echarts/theme/infographic";
 import VueClipboard from "vue-clipboard2";
 
 // 百度地图
-import BaiduMap from 'vue-baidu-map'
+import BaiduMap from "vue-baidu-map";
 Vue.use(BaiduMap, {
-    ak: 'Ck9tcoakuY1GT18k7KONFBl6I5a2tGX9'
+  ak: "Ck9tcoakuY1GT18k7KONFBl6I5a2tGX9"
 });
 // 拖拽弹窗
 import elDragDialog from "./directive/el-dragDialog/index";
 
 Vue.use(elDragDialog);
+
+import "../node_modules/timeline-vuejs/dist/timeline-vuejs.css";
 
 import {
   faUser,

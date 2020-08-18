@@ -259,6 +259,26 @@
     font-weight: 800;
     font-size: 16px;
   }
+
+  .timeline .wrapper-item {
+    margin-bottom: 0px;
+  }
+
+  .timeline-item .date-item {
+    display: none;
+  }
+  .timeline-item .item {
+    border-left: 5px solid #ccd5db;
+    padding: 10px 0 20px 15px;
+    position: relative;
+  }
+  .timeline .wrapper-item .section-year {
+    padding: 23px 15px 15px 5px;
+  }
+  .timeline .wrapper-item[data-v-30ba92e0] {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+  }
   // @media screen and (max-width: 1440px) {
   //   .activitytitle {
   //     position: absolute;
