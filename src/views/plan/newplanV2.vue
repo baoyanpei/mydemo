@@ -617,6 +617,8 @@ export default {
   },
   mounted() {
     if (this.project_id !== null) {
+      this.numbox = []
+
       const _plan_typeid = this.$route.query.plan_typeid
       console.log('_plan_typeid', _plan_typeid)
       if (_plan_typeid !== undefined) {
@@ -815,16 +817,16 @@ export default {
             type: this.planForm.planType, //this.typetid
           }
           console.log('plan_add - param:', param)
-          this.loading = false
-          this.planshow = false
-          this.planshow2 = true
-          return
+          // this.loading = false
+          // this.planshow = false
+          // this.planshow2 = true
+          // return
           this.$store.dispatch('Getplan', param).then((data) => {
             console.log('新建计划提交状态', data)
             this.oneparentid = data.id
             this.loading = false
             this.numbox = []
-            this.numbox = this.desc.split('\n')
+            this.numbox = this.planForm.planContent.split('\n')
             for (let i = 0; i < this.numbox.length; i++) {
               this.numbox.splice(i, 1, {
                 name: this.numbox[i],
@@ -833,6 +835,7 @@ export default {
                 blockshow2: false,
               })
             }
+            console.log('this.numboxthis.numboxthis.numbox', this.numbox)
             this.planshow = false
             this.planshow2 = true
           })
