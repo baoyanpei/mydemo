@@ -38,13 +38,27 @@
                 <el-col :span="12">
                   <div class="item-label">计划类型:</div>
                   <el-form-item>
-                    <el-cascader
+                    <!-- <el-cascader
                       v-model="planForm.planType"
                       :options="optionstype"
                       @change="handleChangetypetid"
                       style="width: 220px;"
                       size="mini"
-                    ></el-cascader>
+                    ></el-cascader>-->
+
+                    <el-select
+                      v-model="planForm.planType"
+                      placeholder="请选择类型"
+                      size="mini"
+                      @change="handleChangetypetid"
+                    >
+                      <el-option
+                        v-for="item in optionstype"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      ></el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -394,13 +408,7 @@ export default {
       input: '', //标题名字
       jihuavalue: [], //计划类别
       value1: '', //日期
-      optionstype: [
-        {
-          //计划下拉标签
-          value: 'zhinan',
-          label: '指南',
-        },
-      ],
+      optionstype: [],
       desc: '', //内容
       typetid: 0,
       loading: false,
@@ -612,7 +620,7 @@ export default {
       const _plan_typeid = this.$route.query.plan_typeid
       console.log('_plan_typeid', _plan_typeid)
       if (_plan_typeid !== undefined) {
-        this.planForm.planType = _plan_typeid
+        this.planForm.planType = parseInt(_plan_typeid)
       }
 
       this.getstyle()
@@ -648,8 +656,8 @@ export default {
       // console.log("左边状态",this.leftshow)
     },
     handleChangetypetid(value) {
-      console.log('ddddddd', value[0])
-      this.typetid = value[0]
+      console.log('ddddddd', value)
+      this.typetid = value
     },
     sonplanshow() {
       this.loading = true
@@ -764,8 +772,9 @@ export default {
         this.optionstype = data.data
         this.optionstype.forEach((item) => {
           item['label'] = item.name
-          item['value'] = item.tid
+          item['value'] = parseInt(item.tid)
         })
+        console.log('this.optionstype', this.optionstype)
         this.plangettypearr = this.optionstype
       })
     },
@@ -803,7 +812,7 @@ export default {
             content: this.planForm.planContent, //this.desc
             start_date: startDate,
             end_date: endDate,
-            type: this.planForm.planType[0], //this.typetid
+            type: this.planForm.planType, //this.typetid
           }
           console.log('plan_add - param:', param)
           this.loading = false
