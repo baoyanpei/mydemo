@@ -28,8 +28,8 @@
           <el-form ref="planForm" :model="planForm" size="mini" :inline="false">
             <el-row>
               <div class="item-label">计划名称:</div>
-              <el-form-item>
-                <el-input v-model="input" placeholder="请输入计划名称"></el-input>
+              <el-form-item prop="planTitle" :rules="rulePlanTitle">
+                <el-input v-model="planForm.planTitle" name="planTitle" placeholder="请输入计划名称"></el-input>
               </el-form-item>
             </el-row>
             <el-row>
@@ -37,7 +37,7 @@
                 <div class="item-label">计划类型:</div>
                 <el-form-item>
                   <el-cascader
-                    v-model="jihuavalue"
+                    v-model="planForm.planType"
                     :options="optionstype"
                     @change="handleChangetypetid"
                     style="width: 220px;"
@@ -47,9 +47,10 @@
               </el-col>
               <el-col :span="12">
                 <div class="item-label">计划时间:</div>
-                <el-form-item>
+                <el-form-item prop="planTimeRange" :rules="rulePlanTimeRange">
                   <el-date-picker
-                    v-model="value1"
+                    v-model="planForm.planTimeRange"
+                    name="planTimeRange"
                     type="daterange"
                     range-separator="至"
                     start-placeholder="开始日期"
@@ -62,15 +63,27 @@
             </el-row>
             <el-row>
               <div class="item-label">计划内容:</div>
-              <el-form-item>
-                <el-input type="textarea" v-model="desc" :rows="10"></el-input>
+              <el-form-item prop="planContent" :rules="rulePlanContent">
+                <el-input
+                  type="textarea"
+                  v-model="planForm.planContent"
+                  name="planContent"
+                  :rows="10"
+                ></el-input>
               </el-form-item>
             </el-row>
             <el-row>
-              <div
-                @click="releaseplan"
+              <!-- <div
+                @click="submitPlan"
                 style="width: 100%;height: 36px;text-align: center;line-height: 36px;background-color: #169BD5;color: #ffffff;margin-top: 5px;border-radius: 5px;font-size:14px;cursor:pointer;"
-              >发布实施任务</div>
+              >发布实施任务</div>-->
+
+              <el-button
+                type="primary"
+                :loading="loading"
+                @click.native.prevent="submitPlan()"
+                class="btn-submit-plan"
+              >发布实施任务</el-button>
             </el-row>
             <el-row>
               <div style="width: 600px;margin-top: 10px;color: #34ba9c">
@@ -289,7 +302,51 @@ import moment from 'moment'
 export default {
   name: 'newplan',
   data() {
+    const validatePlanTitle = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入计划名称'))
+      } else {
+        callback()
+      }
+    }
+    const validatePlanTimeRange = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请选择计划时间'))
+      } else {
+        callback()
+      }
+    }
+    const validatePlanContent = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入计划内容'))
+      } else {
+        callback()
+      }
+    }
+
     return {
+      rulePlanTitle: [
+        {
+          required: true,
+          trigger: 'blur',
+          validator: validatePlanTitle,
+        },
+      ],
+      rulePlanTimeRange: [
+        {
+          required: true,
+          trigger: 'blur',
+          validator: validatePlanTimeRange,
+        },
+      ],
+
+      rulePlanContent: [
+        {
+          required: true,
+          trigger: 'blur',
+          validator: validatePlanContent,
+        },
+      ],
       plannewvalue: '',
       leftindexshow: true,
       faqijihuashow: false,
@@ -311,7 +368,12 @@ export default {
         { label: '施工计划', value: 7, children: [] },
         { label: '其他', value: 0, children: [] },
       ],
-      planForm: {},
+      planForm: {
+        planTitle: '', // 计划标题
+        planType: 1,
+        planTimeRange: '',
+        planContent: '',
+      },
       plantextarea: '', //计划内容
       plantime: '',
       plantypevalue: '',
@@ -533,6 +595,12 @@ export default {
   },
   mounted() {
     if (this.project_id !== null) {
+      const _plan_typeid = this.$route.query.plan_typeid
+      console.log('_plan_typeid', _plan_typeid)
+      if (_plan_typeid !== undefined) {
+        this.planForm.planType = _plan_typeid
+      }
+
       this.getstyle()
       if (this.leftshow == 'have') {
         // this.leftindexshow = false
@@ -687,53 +755,58 @@ export default {
         this.plangettypearr = this.optionstype
       })
     },
-    releaseplan() {
-      //提交计划
-      this.numbox = []
-      this.numbox = this.desc.split('\n')
-      console.log('实施计划的盒子', this.numbox)
-      for (let i = 0; i < this.numbox.length; i++) {
-        // blockshow:true,blockshow:false
-        this.numbox.splice(i, 1, {
-          name: this.numbox[i],
-          block: 'have',
-          blockshow1: true,
-          blockshow2: false,
-        })
-      }
-      console.log('新数组', this.numbox)
-      this.faqijihuashow = true
-      let firstdaytime = moment(this.value1[0]).format('YYYY-MM-DD')
-      let endtime = moment(this.value1[1]).format('YYYY-MM-DD')
-      this.loading = true
-      const param = {
-        method: 'plan_add',
-        project_id: this.project_id,
-        title: this.input,
-        content: this.desc,
-        start_date: firstdaytime,
-        end_date: endtime,
-        type: this.typetid,
-      }
-      console.log('plan_add - param:', param)
-      this.loading = false
-      return
-      this.$store.dispatch('Getplan', param).then((data) => {
-        console.log('新建计划提交状态', data)
-        this.oneparentid = data.id
-        this.loading = false
-        this.numbox = []
-        this.numbox = this.desc.split('\n')
-        for (let i = 0; i < this.numbox.length; i++) {
-          this.numbox.splice(i, 1, {
-            name: this.numbox[i],
-            block: 'have',
-            blockshow1: true,
-            blockshow2: false,
+    submitPlan() {
+      this.$refs.planForm.validate((valid) => {
+        console.log('valid', valid)
+        if (valid) {
+          //提交计划
+          this.numbox = []
+          this.numbox = this.desc.split('\n')
+          console.log('实施计划的盒子', this.numbox)
+          for (let i = 0; i < this.numbox.length; i++) {
+            // blockshow:true,blockshow:false
+            this.numbox.splice(i, 1, {
+              name: this.numbox[i],
+              block: 'have',
+              blockshow1: true,
+              blockshow2: false,
+            })
+          }
+          console.log('新数组', this.numbox)
+          this.faqijihuashow = true
+          let firstdaytime = moment(this.value1[0]).format('YYYY-MM-DD')
+          let endtime = moment(this.value1[1]).format('YYYY-MM-DD')
+          this.loading = true
+          const param = {
+            method: 'plan_add',
+            project_id: this.project_id,
+            title: this.planForm.planTitle, //this.input
+            content: this.desc,
+            start_date: firstdaytime,
+            end_date: endtime,
+            type: this.typetid,
+          }
+          console.log('plan_add - param:', param)
+          this.loading = false
+          return
+          this.$store.dispatch('Getplan', param).then((data) => {
+            console.log('新建计划提交状态', data)
+            this.oneparentid = data.id
+            this.loading = false
+            this.numbox = []
+            this.numbox = this.desc.split('\n')
+            for (let i = 0; i < this.numbox.length; i++) {
+              this.numbox.splice(i, 1, {
+                name: this.numbox[i],
+                block: 'have',
+                blockshow1: true,
+                blockshow2: false,
+              })
+            }
+            this.planshow = false
+            this.planshow2 = true
           })
         }
-        this.planshow = false
-        this.planshow2 = true
       })
     },
     releasefnc(index) {

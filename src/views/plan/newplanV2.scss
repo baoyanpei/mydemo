@@ -120,4 +120,37 @@
     font-size: 12px;
     padding: 5px;
   }
+
+  .el-button--primary {
+    color: #fff;
+    background-color: #409eff;
+    border-color: #409eff;
+  }
+
+  .el-button--primary:hover {
+    color: #fff;
+    background-color: #409eff;
+    border-color: #409eff;
+  }
+
+  .el-button--primary:focus,
+  .el-button--primary:hover {
+    background: #409eff;
+    border-color: #409eff;
+  }
+
+  .btn-submit-plan {
+    width: 100%;
+    margin: 10px 0px 0px 0px;
+  }
+
+  .el-form-item__error {
+    color: #f56c6c;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 4px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
 }
