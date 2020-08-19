@@ -58,7 +58,7 @@
         <font-awesome-icon icon="network-wired" />
         <span slot="title">计划管理</span>
       </el-menu-item>
-      <el-menu-item index="/dataindex">
+      <el-menu-item index="/material">
         <font-awesome-icon icon="calendar-alt" />
         <span slot="title">资料管理</span>
       </el-menu-item>

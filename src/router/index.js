@@ -157,11 +157,11 @@ export const constantRouterMap = [
         }
       },
       {
-        path: "dataindex", //indexplan
-        component: () => import("@/views/DataManagement/index"),
-        name: "dataindex",
+        path: "material", //indexplan
+        component: () => import("@/views/mayerial/material"),
+        name: "material",
         meta: {
-          title: "dataindex",
+          title: "material",
           icon: "dashboard",
           noCache: true
         }
