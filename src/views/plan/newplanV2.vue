@@ -9,8 +9,9 @@
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
+      style="height:100%"
     >
-      <el-col :span="3" style="padding:0px 0px 0px 5px;">
+      <el-col :span="3" style="padding:0px 0px 0px 5px;height: 100%;background-color:#FFFFFF;">
         <planindex></planindex>
       </el-col>
       <el-col :span="21" style="background-color: #F9F9F9;">
@@ -24,123 +25,136 @@
         <!-- <div class="boxtop">
           <div class="boxtop_left" @click="comebackplan()">返回计划列表</div>
         </div>-->
-        <div class="plantoon" v-show="leftindexshow">
-          <el-form ref="planForm" :model="planForm" size="mini" :inline="false">
-            <el-row>
-              <div class="item-label">计划名称:</div>
-              <el-form-item prop="planTitle" :rules="rulePlanTitle">
-                <el-input v-model="planForm.planTitle" name="planTitle" placeholder="请输入计划名称"></el-input>
-              </el-form-item>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <div class="item-label">计划类型:</div>
-                <el-form-item>
-                  <el-cascader
-                    v-model="planForm.planType"
-                    :options="optionstype"
-                    @change="handleChangetypetid"
-                    style="width: 220px;"
-                    size="mini"
-                  ></el-cascader>
+        <el-row style="position:relative;" class="main-area">
+          <div class="plantoon" v-show="leftindexshow">
+            <el-form ref="planForm" :model="planForm" size="mini" :inline="false">
+              <el-row>
+                <div class="item-label">计划名称:</div>
+                <el-form-item prop="planTitle" :rules="rulePlanTitle">
+                  <el-input v-model="planForm.planTitle" name="planTitle" placeholder="请输入计划名称"></el-input>
                 </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <div class="item-label">计划时间:</div>
-                <el-form-item prop="planTimeRange" :rules="rulePlanTimeRange">
-                  <el-date-picker
-                    v-model="planForm.planTimeRange"
-                    name="planTimeRange"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    style="width: 230px;"
-                    size="mini"
-                  ></el-date-picker>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                  <div class="item-label">计划类型:</div>
+                  <el-form-item>
+                    <el-cascader
+                      v-model="planForm.planType"
+                      :options="optionstype"
+                      @change="handleChangetypetid"
+                      style="width: 220px;"
+                      size="mini"
+                    ></el-cascader>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <div class="item-label">计划时间:</div>
+                  <el-form-item prop="planTimeRange" :rules="rulePlanTimeRange">
+                    <el-date-picker
+                      v-model="planForm.planTimeRange"
+                      name="planTimeRange"
+                      type="daterange"
+                      range-separator="至"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期"
+                      style="width: 230px;"
+                      size="mini"
+                    ></el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <div class="item-label">计划内容:</div>
+                <el-form-item prop="planContent" :rules="rulePlanContent">
+                  <el-input
+                    type="textarea"
+                    v-model="planForm.planContent"
+                    name="planContent"
+                    :rows="10"
+                  ></el-input>
                 </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <div class="item-label">计划内容:</div>
-              <el-form-item prop="planContent" :rules="rulePlanContent">
-                <el-input
-                  type="textarea"
-                  v-model="planForm.planContent"
-                  name="planContent"
-                  :rows="10"
-                ></el-input>
-              </el-form-item>
-            </el-row>
-            <el-row>
-              <!-- <div
+              </el-row>
+              <el-row>
+                <!-- <div
                 @click="submitPlan"
                 style="width: 100%;height: 36px;text-align: center;line-height: 36px;background-color: #169BD5;color: #ffffff;margin-top: 5px;border-radius: 5px;font-size:14px;cursor:pointer;"
-              >发布实施任务</div>-->
+                >发布实施任务</div>-->
 
-              <el-button
-                type="primary"
-                :loading="loading"
-                @click.native.prevent="submitPlan()"
-                class="btn-submit-plan"
-              >发布实施任务</el-button>
-            </el-row>
-            <el-row>
-              <div style="width: 600px;margin-top: 10px;color: #34ba9c">
-                <i
-                  class="el-icon-circle-plus-outline"
-                  style="float: left;display: block;margin-top: 7px;"
-                ></i>
-                <span
-                  style="float: left;display: block;margin-top: 7px;cursor:pointer;font-size:14px;"
-                  @click="sonplanshow"
-                >添加所属计划</span>
-                <el-cascader
-                  style="float: left;margin-left: 15px;width: 260px"
-                  v-show="plannewshow"
-                  v-model="plannewvalue"
-                  :options="plannewop"
-                  @change="plannewhandleChange"
-                  size="mini"
-                ></el-cascader>
-              </div>
-            </el-row>
-          </el-form>
-
-          <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
-        </div>
-        <!--//暂无实施计划-->
-        <div class="newplanxijie">
-          <div class="nulldiv" v-show="planshow">暂无计划内容</div>
-          <!--有计划-->
-          <!--<div class="newplanxijie_1_top" v-show="planshow2">新增实施计划</div>-->
-          <div v-for="item in this.numbox">
-            <div class="newplanxijie_1" v-show="planshow2">
-              <div class="newplanxijie_1_box">
-                <span class="newplanxijie_1_box_span1">{{item.name}}</span>
-                <span style="display: block;color: #0a76a4;line-height: 70px">实施计划</span>
-                <!--<div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">-->
-                <div class="jump" @click="releasefnc(item.name)">
+                <el-button
+                  type="primary"
+                  :loading="loading"
+                  @click.native.prevent="submitPlan()"
+                  class="btn-submit-plan"
+                >发布实施任务</el-button>
+              </el-row>
+              <el-row>
+                <div style="width: 600px;margin-top: 10px;color: #34ba9c">
                   <i
-                    class="el-icon-right fabuimg"
-                    v-if="item.blockshow1"
-                    style="font-size: 30px;color: #ffffff"
+                    class="el-icon-circle-plus-outline"
+                    style="float: left;display: block;margin-top: 7px;"
                   ></i>
-                  <span class="fabuon" v-if="item.blockshow2">已发布</span>
+                  <span
+                    style="float: left;display: block;margin-top: 7px;cursor:pointer;font-size:14px;"
+                    @click="sonplanshow"
+                  >添加所属计划</span>
+                  <el-cascader
+                    style="float: left;margin-left: 15px;width: 260px"
+                    v-show="plannewshow"
+                    v-model="plannewvalue"
+                    :options="plannewop"
+                    @change="plannewhandleChange"
+                    size="mini"
+                  ></el-cascader>
+                </div>
+              </el-row>
+            </el-form>
+
+            <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
+          </div>
+
+          <!--//暂无实施计划-->
+          <div class="newplanxijie">
+            <div class="nulldiv" v-show="planshow">暂无计划内容</div>
+            <!--有计划-->
+            <!--<div class="newplanxijie_1_top" v-show="planshow2">新增实施计划</div>-->
+            <div class="plan-task-area" v-show="planshow2">
+              <div style="text-align:right;margin-bottom: 5px;">
+                <el-button type="primary">新增实施计划</el-button>
+              </div>
+              <div class="plan-task-list">
+                <div v-for="(item,index) in this.numbox" :key="index">
+                  <div class="newplanxijie_1">
+                    <div class="newplanxijie_1_box">
+                      <span class="newplanxijie_1_box_span1">{{item.name}}</span>
+                      <span
+                        style="display: block;color: #0a76a4;line-height: 50px;font-size:14px;"
+                      >实施计划</span>
+                      <!--<div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">-->
+                      <div class="jump" @click="releasefnc(item.name)">
+                        <i
+                          class="el-icon-right fabuimg"
+                          v-if="item.blockshow1"
+                          style="font-size: 30px;color: #ffffff"
+                        ></i>
+                        <span class="fabuon" v-if="item.blockshow2">已发布</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div
-            class="faqijihua"
-            v-show="faqijihuashow"
-            style="width: 100%;height: 80px;float: left;text-align: center;line-height: 50px;margin-top: 20px"
-          >
-            <div
-              style=" box-shadow:0px 0px 30px #e5e5e5;width: 180px;color:#fff;border-radius:20px;height: 50px;background-color: #1ABC9C;margin: auto"
-              @click="planinititate"
-            >发起计划</div>
-          </div>
+        </el-row>
+        <div
+          class="faqijihua"
+          style="width: 100%;height: 80px;float: left;text-align: center;line-height: 50px;margin-top: 20px"
+        >
+          <!-- <div
+            style=" box-shadow:0px 0px 30px #e5e5e5;width: 180px;color:#fff;border-radius:20px;height: 50px;background-color: #1ABC9C;margin: auto"
+            @click="planinititate"
+          >发起计划</div>-->
+
+          <el-button type="success" @click="planinititate()" round style="width:160px;">发起计划</el-button>
         </div>
       </el-col>
     </el-row>
@@ -369,10 +383,10 @@ export default {
         { label: '其他', value: 0, children: [] },
       ],
       planForm: {
-        planTitle: '', // 计划标题
+        planTitle: '1111', // 计划标题
         planType: 1,
         planTimeRange: '',
-        planContent: '',
+        planContent: '222222',
       },
       plantextarea: '', //计划内容
       plantime: '',
@@ -761,7 +775,7 @@ export default {
         if (valid) {
           //提交计划
           this.numbox = []
-          this.numbox = this.desc.split('\n')
+          this.numbox = this.planForm.planContent.split('\n')
           console.log('实施计划的盒子', this.numbox)
           for (let i = 0; i < this.numbox.length; i++) {
             // blockshow:true,blockshow:false
@@ -773,21 +787,28 @@ export default {
             })
           }
           console.log('新数组', this.numbox)
+
           this.faqijihuashow = true
-          let firstdaytime = moment(this.value1[0]).format('YYYY-MM-DD')
-          let endtime = moment(this.value1[1]).format('YYYY-MM-DD')
+          let startDate = moment(this.planForm.planTimeRange[0]).format(
+            'YYYY-MM-DD'
+          )
+          let endDate = moment(this.planForm.planTimeRange[1]).format(
+            'YYYY-MM-DD'
+          )
           this.loading = true
           const param = {
             method: 'plan_add',
             project_id: this.project_id,
             title: this.planForm.planTitle, //this.input
-            content: this.desc,
-            start_date: firstdaytime,
-            end_date: endtime,
-            type: this.typetid,
+            content: this.planForm.planContent, //this.desc
+            start_date: startDate,
+            end_date: endDate,
+            type: this.planForm.planType[0], //this.typetid
           }
           console.log('plan_add - param:', param)
           this.loading = false
+          this.planshow = false
+          this.planshow2 = true
           return
           this.$store.dispatch('Getplan', param).then((data) => {
             console.log('新建计划提交状态', data)
