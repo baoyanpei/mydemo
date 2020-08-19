@@ -158,7 +158,7 @@ export const constantRouterMap = [
       },
       {
         path: "material", //indexplan
-        component: () => import("@/views/mayerial/material"),
+        component: () => import("@/views/material/material"),
         name: "material",
         meta: {
           title: "material",
