@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+	
+<head>
+    <title>庆阳市妇女儿童医院-摄像头定位-绑定 2017版 </title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <script>
+    var mname="111";
+    var indexi=0;
+    var isboling = 0;//是否玻璃效果
+    </script>
+    <script type="text/javascript" src="http://view.yidebim.com:88/Viewer/xbim-product-type.debug.js"></script>
+    <script type="text/javascript" src="http://view.yidebim.com:88/Viewer/xbim-state.debug.js"></script>
+    <script type="text/javascript" src="http://view.yidebim.com:88/Viewer/xbim-shaders.debug.js"></script>
+    <script type="text/javascript" src="http://view.yidebim.com:88/Viewer/xbim-model-geometry.debug.js"></script>
+    <script type="text/javascript" src="http://view.yidebim.com:88/Viewer/xbim-model-handle.debug.js"></script>
+    <script type="text/javascript" src="http://view.yidebim.com:88/Viewer/xbim-binary-reader.debug.js"></script>
+    <script type="text/javascript" src="http://view.yidebim.com:88/Viewer/xbim-triangulated-shape.debug.js"></script>
+    <script type="text/javascript" src="http://view.yidebim.com:88/Viewer/xbim-viewer.debug.js"></script>
+    <script src="http://view.yidebim.com:88/Libs/jquery.js"></script>
+    <script src="http://view.yidebim.com:88/Libs/gl-matrix.js"></script>
+    <script src="http://view.yidebim.com:88/Libs/webgl-utils.js"></script>
+    <script src="http://view.yidebim.com:88/Plugins/NavigationCube/xbim-navigation-cube-shaders.debug.js"></script>
+    <script src="http://view.yidebim.com:88/Plugins/NavigationCube/xbim-navigation-cube.debug.js"></script>
+    
+    <script src="http://view.yidebim.com:88/Plugins/NavigationHome/xbim-navigation-home-textures.debug.js"></script>
+    <script src="http://view.yidebim.com:88/Plugins/NavigationHome/xbim-navigation-home.debug.js"></script>
+	<script src="http://view.yidebim.com:88/js/xbim.js"></script>
+	<script src="http://view.yidebim.com:88/js/jquery.min.js"></script>
+    <script src="http://view.yidebim.com:88/layer/layer.js"></script>
+    <link href="http://view.yidebim.com:88/Libs/jquery-ui-styles/jquery-ui.min.css" rel="stylesheet"/>
+ 
+    <link rel="stylesheet" href="http://view.yidebim.com:88/layui/css/layui.css"  media="all">
+
+    <link rel="stylesheet" href="http://view.yidebim.com:88/css/demo.css" type="text/css">
+	<link rel="stylesheet" href="http://view.yidebim.com:88/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <script type="text/javascript" src="http://view.yidebim.com:88/js/jquery.ztree.core.js"></script>
+    
+    <style>
+
+        html, body {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+            border: none;
+            margin-left: 25%;
+            margin-right: auto;
+            width: 75%;
+            top:-10px;
+           
+            height: 100%;
+            background: #fff; 
+			color:red;
+        }
+
+       
+		.layui-layer-rim{border: 12px solid #8D8D8D;
+ }
+.layui-layer-title {
+   
+    height: 22px;
+    line-height: 12px;
+     
+    font-size: 14px;
+    color: #fff;
+    overflow: hidden;
+    background-color: #8D8D8D;
+  
+	}
+.layui-layer{ background-color: #8D8D8D;
+}
+.layui-layer-setwin {
+    position: absolute;
+    right: 15px;
+    *right: 0;
+    top: 1px;
+    font-size: 0;
+    line-height: initial;
+}
+    </style>
+</head>
+	
+<div style="position: absolute;right:1px;">
+    <button class="layui-btn layui-btn-primary  layui-btn-sm" onclick="for (var i in types){ if (types[i] !== types.IFCSPACE) {viewer.setState(xState.UNDEFINED, types[i])}}">
+        显示全部
+    </button>
+    <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="if(isboling){viewer.resetStyles();isboling=0;} else{for (var i in types) { if (types[i] !== types.IFCSPACE) { viewer.setStyle(1, types[i]);}} ; isboling=1; }">
+        玻璃效果
+    </button> 
+    
+    <!-- <button class="layui-btn layui-btn-primary layui-btn-sm" onclick="viewer.resetStates();viewer.renderingMode ='x-ray'; viewer.setState(xState.HIGHLIGHTED, [3466227]);viewer.zoomTo(3466227);keepTarget = true; ">突出显示id=3466227的构件 </button>-->
+    <input type="radio" name="radioHiding" value="hideOne" title="隐藏自己"/>  隐藏自己
+    <input type="radio" name="radioHiding" value="hideType" title="隐藏同类"/>  隐藏同类
+    <input type="radio" name="radioHiding" value="noHide" title="不隐藏"/> 不隐藏 
+    <div id="models" style="color:red;"></div>
+    <div id="errLog" style="color: red"></div>	
+</div>
+<div class="layui-row"  style="height:100%">
+    <div class="layui-col-xs3" style=" height:100%;">
+            <select id="selmoden" style="width:100%;" lay-verify="required" onchange="funselmoden(this)">
+            
+            <option value="庆阳市妇女儿童医院-摄像头定位-绑定 2017版"  selected>庆阳市妇女儿童医院-摄像头定位-绑定 2017版</option>
+            <option value="庆阳市妇女儿童医院-门急诊医技楼-ID">庆阳市妇女儿童医院-门急诊医技楼-ID</option>
+            <option value="庆阳市妇女儿童医院-后勤保障楼二次测试-S-A">庆阳市妇女儿童医院-后勤保障楼二次测试-S-A</option>
+            </select>
+        <div style="position: absolute;top:20px;left:50px;color:red">
+            单击子节点选中，双击放大
+        </div>
+        <div class="zTreeDemoBackground">
+                <ul id="treeDemo" class="ztree"></ul>
+        </div>     
+    </div>
+    <div id="loadding" style="position: absolute;color:red;left: 40%;top:200px; height:20px;  ">加载中......</div>
+    <div style="position: absolute;top:0px;left:28%;color:red">
+          <span id="msg"></span><span id="bm_name"  style="color:red;padding-left:20px;"></span>
+    </div>
+    <canvas id="xBIM-viewer"></canvas> 
+    
+</div>
+
+<body>
+		
+  
+		
+    <script type="text/javascript">
+        //  mname = $("#selmoden").val(); 
+		var timers = 0;
+		var loaddingtime=setInterval(loadding_time,1000);
+		function loadding_time(){
+			timers++;
+			document.getElementById("loadding").innerHTML  ="已经加载"+timers+"秒";
+		}
+
+		
+        var models = [];
+
+        var viewer = new xViewer("xBIM-viewer");
+        var types = xProductType;
+        viewer.background = "#f00";//0094ff
+	    viewer.on("error", function (arg) {
+	        var container = viewer._canvas.parentNode;
+	        if (container) {
+	            //preppend error report
+	            container.innerHTML = "<pre style='color:red;'>" + arg.message + "</pre>" + container.innerHTML;
+	        }
+        });
+       
+	    viewer.on("pick", function(arg){
+	        var span = document.getElementById("msg");
+            if (span) { 
+                if (arg.id==undefined) return;
+                span.innerHTML = arg.id  ;
+                getbimdetail(arg.id,mname);
+                 
+                if(arg.id==3466227){openmovie();}
+                if(arg.id==2240471){openweather();}
+				
+            }
+			 
+            
+            span.innerHTML = "id:" + arg.id + ";";//+viewer.getProductType(arg.id)  ;
+            //console.log(arg);
+            //viewer.setState(xState.HIDDEN, viewer.getProductType(arg.id) );//隐藏点击的所有类别
+            //viewer.setState(xState.HIDDEN, [arg.id]); //只隐藏点击的组件
+            showhidden(arg.id); //点击是否隐藏
+        });
+        viewer.on("dblclick", function (args) {
+            viewer.resetStates();
+            viewer.renderingMode = "x-ray"; //normal   x-ray
+            var id = args.id;
+            viewer.setState(xState.HIGHLIGHTED, [id]); //突出显示HIGHLIGHTED 
+            
+            //viewer.zoomTo(id);
+            //keepTarget = true; 
+        });
+        viewer.on("loaded", function (model) {
+              window.clearInterval(loaddingtime);
+			  document.getElementById("loadding").innerHTML  ="";
+               
+              viewer.zoomTo(311733)
+			  
+        });
+		 
+	    viewer.on("fps", function(fps){
+            var span = document.getElementById("models");
+	        if (span){
+                span.innerHTML = "";
+	        }
+	    });
+		
+		 
+		 
+        viewer.load("/"+mname+".wexBIM", "test");
+		//viewer.load("tests/data/庆阳市妇女儿童医院-后勤保障楼-ID.wexBIM", "test");
+        viewer.start();
+
+        viewer.defineStyle(0, [255, 0, 0, 255]);  //red
+        viewer.defineStyle(1, [0, 0, 255, 100]);  //semitransparent blue
+        viewer.defineStyle(2, [255, 255, 255, 255]); //white
+
+        var cube = new xNavigationCube();
+        viewer.addPlugin(cube);
+
+        var home = new xNavigationHome();
+        viewer.addPlugin(home);
+        //点击是否隐藏
+        function showhidden(id) {
+            var radios = document.getElementsByName("radioHiding");
+            for (var i in radios) {
+                if (radios.hasOwnProperty(i)) {
+                    var radio = radios[i];
+                    if (radio.checked) {
+                        var val = radio.value;
+                        if (val === "noHiding") return;
+                        if (val === "hideOne") viewer.setState(xState.HIDDEN, [id]);
+                        if (val === "hideType") {
+                            var type = viewer.getProductType(id);
+                            viewer.setState(xState.HIDDEN, type);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        
+        
+        function funselmoden(obj){
+            mname = obj.value;
+           
+            viewer.unload(indexi);
+            viewer.load("/"+mname+".wexBIM", "test");
+            indexi++;
+            //viewer.start(indexi );
+            document.getElementById("loadding").innerHTML  ="加载中。。。。。。。。。";
+            loaddingtime=setInterval(loadding_time,1000);
+            setting.async.url = "bim/api/v1/user?id=0&name="+mname+"&method=search";
+             
+            $.fn.zTree.init($("#treeDemo"), setting);
+        }
+    </script>
+    <script type="text/javascript" src="js/ztree.js"></script>
+	</body>
+	
+</html>

@@ -1,0 +1,17 @@
+<script>
+function getQueryString(name)
+{
+	var url= window.location.href;
+	var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+	var num = url.indexOf("?");
+	url = url.substr(num + 1);
+	var result = url.substr(0).match(reg);
+	if(result != null) {
+		return unescape(result[2]); 
+	} else {
+		return '';
+	}
+} 
+
+window.location.href = "http://wx.yidebim.com/person.html?pid="+getQueryString("pid")+"&uid="+getQueryString("uid")+"&t="+getQueryString("t")+"&v="+Math.round(Math.random()*100);
+</script>

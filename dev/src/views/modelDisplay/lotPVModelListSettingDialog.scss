@@ -1,0 +1,16 @@
+.lot-pv-model-list-setting-dialog{
+    .el-transfer-panel {
+        width: 400px;
+        height: 550px;
+    }
+
+    .el-transfer-panel__list {
+
+        height: 500px !important;
+
+        .el-checkbox {
+            width: 100%;
+            margin-right: 0px;
+        }
+    }
+}

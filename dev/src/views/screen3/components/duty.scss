@@ -1,0 +1,55 @@
+.screen-duty {
+  position: absolute;
+  top:0px;
+  padding: 20px 0px 10px 0px;
+  width: 100%;
+  .noDutyTip {
+    line-height: 70px;
+    text-align: center;
+    font-size: 20px;
+    color: #aaaaaa;
+    width: 100%;
+  }
+
+  .list-duty {
+    padding-top: 5px;
+    padding-left: 25px;
+  }
+
+  .item-duty {
+    text-align: left;
+    line-height: 28px;
+    color: #E78163;
+    font-weight: 600;
+
+    .person-line {
+      width: 340px;
+      float: left;
+
+      .person-index {
+        float: left;
+        width: 50px;
+        ;
+      }
+
+      .person-zhibanren {
+        float: left;
+        width: 80px;
+        ;
+      }
+
+      .person-name {
+        float: left;
+        width: 80px;
+        ;
+      }
+
+      .person-mobile {
+        float: left;
+        width: 100px;
+      }
+    }
+
+  }
+
+}

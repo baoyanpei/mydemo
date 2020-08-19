@@ -1,0 +1,66 @@
+.screen-inout {
+  overflow: hidden;
+  .el-table .warning-row {
+    background: oldlace;
+  }
+
+  .el-table .success-row {
+    background: #f0f9eb;
+  }
+
+  .el-table {
+    background: transparent;
+    color: #FFFFFF;
+
+
+  }
+
+  .el-table .cell {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    white-space: nowrap;
+    /*禁止换行*/
+    // word-break: break-all;
+    overflow: hidden;
+    line-height: 23px;
+  }
+
+  .el-table thead {
+    color: #7ebce3;
+    font-weight: 500;
+  }
+
+  .screen-inout-table {
+    margin-top: 0px;
+  }
+
+  .el-table--enable-row-hover .el-table__body tr:hover>td {
+    background-color: transparent
+  }
+
+  .el-table th {
+    background-color: #903A33;
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+
+  .el-table tr {
+    background-color: transparent;
+  }
+
+  .el-table--striped .el-table__body tr.el-table__row--striped td {
+    background: #903A33;
+  }
+
+  .el-table td,
+  .el-table th.is-leaf {
+    border-bottom: 0px solid #EBEEF5;
+  }
+
+  .el-table::before {
+    content: '';
+    position: absolute;
+    background-color: transparent;
+    z-index: 1;
+  }
+}

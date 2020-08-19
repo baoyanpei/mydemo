@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="button" value="dianji" class="btn1">
+</body>
+</html>
+<script>
+  // var a=110000000
+  // console.log(Math.pow(2,8))//256
+  // console.log(parseInt(a,2))//384
+  // console.log(Math.pow(2,8)&parseInt(a,2))
+  // let arr=[]
+  // let btn=document.querySelector(".btn1")
+  // btn.addEventListener('click',function() {
+  //   arr.push('9')
+  //   console.log(arr)
+  // })
+
+  // var a=["张三","李四","王五","赵六","孙七"]
+  // a.forEach(item=>{
+  //   console.log(a.indexOf(item),item)
+  // })
+
+//   function timeout(ms) {
+//   return new Promise((resolve) => {
+//     setTimeout(resolve, ms, "finish");
+//   });
+// }
+// async function asyncTimeSys(){
+//     await timeout(1000);
+//     console.log("第一层异步结束！")
+//     await timeout(1000);
+//     console.log("第二层异步结束！")
+//     return "all finish";
+// }
+// asyncTimeSys().then((value)=>{
+//     console.log("最后",value);
+// });
+
+//   function fn1(){
+//      return new Promise(resolve=>{
+//         setTimeout(function(){
+//         let msg='wait me 3000';
+//          resolve(msg)
+//         },3000);
+//      });
+//   }
+// async function asyncCall(){
+//  var result=await fn1();
+//  console.log(result);
+// }
+// asyncCall();
+
+  let array=["1","22","41","53","22","88","41"]
+  let newarr=[]
+  for(var i=0;i<array.length;i++){
+    console.log(newarr.indexOf(array[i]),i,array[i])
+    if (newarr.indexOf(array[i]) == -1) {
+     newarr.push(array[i]);
+    }
+  }
+  console.log(newarr)
+//   function unique1(array){
+//  var n = []; //一个新的临时数组
+//  //遍历当前数组
+//  for(var i = 0; i < array.length; i++){
+//   //如果当前数组的第i已经保存进了临时数组，那么跳过，
+//   //否则把当前项push到临时数组里面
+//   if (n.indexOf(array[i]) == -1) n.push(array[i]);
+//  }
+//  return n;
+// }
+
+</script>

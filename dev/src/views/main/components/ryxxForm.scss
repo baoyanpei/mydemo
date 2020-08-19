@@ -1,0 +1,80 @@
+.ryxx-from {
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-top: 10px;
+
+  .order {
+    height: 30px;
+    line-height: 30px;
+  }
+
+  .order .line {
+    display: inline-block;
+    width: 80%;
+    border-top: 1px solid #ccc;
+    padding-bottom: 4px;
+  }
+
+  .order .txt {
+    color: #FFFFFF;
+    vertical-align: middle;
+    font-weight: 600;
+  }
+
+  .el-button--success {
+    color: #fff;
+    background-color: #29bb9c;
+    border-color: #29bb9c;
+  }
+  .upload-form-dialog{
+    left:60vw;
+  }
+  .rzzl-table {
+
+    .el-table,
+    .el-table__expanded-cell {
+      background-color: transparent;
+    }
+
+    .el-table th {
+      line-height: 14px;
+      font-size: 12px;
+      background-color: #FFFFFF;
+      color:#000000;
+    }
+
+    .el-table tr {
+      font-size: 12px;
+      background-color: transparent;
+      color:#FFFFFF;
+    }
+    .el-table tr:hover{
+      color:#000000;
+      cursor: pointer;
+    }
+
+    .el-table--medium td,
+    .el-table--medium th {
+      padding: 0px 0;
+    }
+
+    .el-table .cell,
+    .el-table th div,
+    .el-table--border td:first-child .cell,
+    .el-table--border th:first-child .cell {
+      padding-left: 0px;
+      text-align: center;
+    }
+
+    .el-table .cell,
+    .el-table th div {
+      padding-right: 0px;
+    }
+
+    .el-dialog__body {
+      padding: 5px 5px;
+      color: #FFFFFF;
+      font-size: 14px;
+    }
+  }
+}

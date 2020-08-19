@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--<img src="http://w.yidebim.com:8899/veh_pic/10004//%E7%94%98E12972_6386_20200414221951.jpg" id="testImg" alt="" style="width: 500px;height: 300px;">-->
+     <img src="http://w.yidebim.com:8899/veh_pic/10004//%E7%94%98E12972_6386_20200414221951.jpg" alt="" style="width: 500px;height: 300px;">
+      <input type="button" value="点击" onclick="tpdolownd()">
+</body>
+</html>
+<script>
+  function aaa() {
+    let time=new Date()
+    let year=time.getFullYear()
+    var month = time.getMonth()+1;//得到月份
+    var date = time.getDate();//得到日期
+    var hour = time.getHours();//得到小时
+    var minu = time.getMinutes();//得到分钟
+    var sec = time.getSeconds();//得到秒 2020-04-02 00:00:00
+    if (month < 10){month = "0" + month;}
+    if (date < 10) {date = "0" + date;}
+    if (hour < 10) {hour = "0" + hour;}
+    if (minu < 10){ minu = "0" + minu;}
+    if (sec < 10) {sec = "0" + sec;}
+    let starttime=year+"-"+month+"-"+date+" "+"00:00:00"
+    let endtime=year+"-"+month+"-"+date+" "+hour+":"+minu+":"+sec
+    console.log(starttime)
+    console.log(endtime)
+  }
+function tpdolownd(){
+          let url="http://w.yidebim.com:8899/veh_pic/10004//%E7%94%98E12972_6386_20200414221951.jpg"
+          let link = document.createElement('a')
+          link.href=url
+          link.setAttribute("download","照片.jpg")
+          document.body.appendChild(link)
+          link.click()
+}
+
+  let xxx="111"
+  let bbb="222"
+  console.log(xxx==bbb)
+  // console.log(year,month,date)
+  console.log(new Date())
+  console.log(new Date().getMonth())
+  // new Date().setMonth(new Date().getMonth() - 1)
+  // console.log(([]+{}).length)
+</script>

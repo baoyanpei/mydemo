@@ -1,0 +1,178 @@
+@media screen and (max-width: 1280px){
+  .nav-bar{
+    width: 1280px;
+  }
+  .nav-title{
+    display: none;
+  }
+}
+.nav-bar {
+  .el-input__inner {
+    background-color: #29bb9c;
+    border: 0px solid #d8dce5;
+    color: #ffffff;
+  }
+  .el-button {
+    margin-left: 5px;
+  }
+
+  .popper__arrow {
+    display: none;
+  }
+
+  .el-input--medium .el-input__inner {
+    height: 28px;
+  }
+
+  .el-popper[x-placement^=bottom] .popper__arrow {
+    top: -6px;
+    left: 100px !important;
+    margin-right: 3px;
+    border-top-width: 0;
+    border-bottom-color: #e6ebf5;
+  }
+
+  .navbar .el-button--medium {
+    padding: 5px 5px;
+  }
+
+  .navbar .el-button--primary {
+    color: #fff;
+    background-color: #464c5b;
+    border: 1px solid #464c5b;
+    border-radius: 0px;
+  }
+
+  .navbar .el-button--primary:hover {
+    color: #fff;
+    background-color: #29BB9C;
+    border-color: #29BB9C;
+    border: 1px solid #29BB9C;
+    border-radius: 0px;
+  }
+
+  .bim-toolbar1 {
+    line-height: 47px;
+
+    .el-button {
+      background-color: transparent;
+      color: #ffffff;
+    }
+
+    .el-button--medium {
+      padding: 2px 2px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 0px;
+    }
+  }
+
+  .navbar {
+    height: 35px;
+    line-height: 34px;
+    border-radius: 0px !important;
+    background-color: rgba(70, 76, 91, 1);
+
+    .nav-title {
+      // 标题
+      margin-left: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      font-family: '微软雅黑 Regular', '微软雅黑';
+      color: #FFFFFF;
+    }
+
+
+
+    .nav-xmmc {
+      margin-left: 30px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #FFFFFF;
+      font-family: '微软雅黑 Regular', '微软雅黑';
+    }
+
+    .dropdown-gcxm {
+
+      // 下拉
+      .el-button--mini {
+        padding: 5px 15px;
+      }
+    }
+
+    .bim-name-area {
+      width: 100px;
+      color: #ffffff;
+      font-weight: 600;
+      margin-left: 10px;
+      font-size: 14px;
+      // float: left;
+    }
+
+    .hamburger-container {
+      line-height: 58px;
+      height: 50px;
+      float: left;
+      padding: 0 10px;
+    }
+
+    .breadcrumb-container {
+      float: left;
+    }
+
+    .errLog-container {
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .right-menu {
+      float: right;
+      height: 100%;
+
+      &:focus {
+        outline: none;
+      }
+
+      .right-menu-item {
+        display: inline-block;
+        margin: 0 8px;
+      }
+
+      .screenfull {
+        height: 20px;
+      }
+
+      .international {
+        vertical-align: top;
+      }
+
+      .theme-switch {
+        vertical-align: 15px;
+      }
+
+      .avatar-container {
+        height: 50px;
+        margin-right: 30px;
+
+        .avatar-wrapper {
+          cursor: pointer;
+          margin-top: 5px;
+          position: relative;
+
+          .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+          }
+
+          .el-icon-caret-bottom {
+            position: absolute;
+            right: -20px;
+            top: 25px;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}

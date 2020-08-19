@@ -1,0 +1,78 @@
+.screen-gate {
+  padding: 10px 5px 10px 10px;
+  // margin: 30px 10px 20px 30px;
+  // border-radius: 30px;
+  // background-color: rgba(0, 0, 0, 0.1);
+  // border: 1px solid rgba(0, 0, 0, 0.1);
+  // float: left;
+  //   height: 17.5rem;
+  // width: 280px;
+  height:160px;
+
+  .photo {
+    width: 150px;
+    // height: 100px;
+    // margin: 10px;
+    // height: 21.5rem;
+    border: 1px solid #FFFFFF;
+    cursor: pointer;
+  }
+
+  .person-type-desc {
+    position: absolute;
+    bottom: 15px;
+    left: 20px;
+    font-size: 14px;
+    color: #FF0000;
+    font-weight: 800;
+
+  }
+
+  .info-name {
+    color: #FF9D4D;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: left;
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .info-name-link {
+      content: '';
+      cursor: pointer;
+    }
+  }
+
+  .info-qita {
+    color: #E78163;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 5px 0px 5px 0px;
+
+    span {
+      color: #FFFFFF;
+    }
+  }
+
+  .info-lichang {
+    color: #ffcc00;
+    font-size: 14px;
+    // line-height: 5rem;
+    // padding-top: 20px;
+    // padding-left: 120px;
+    padding-top: 10px;
+    text-align: center;
+    // margin-top: -10px;
+
+    span {
+      color: #FFFFFF;
+    }
+  }
+
+  .el-row {
+    margin: 0px !important;
+  }
+
+}

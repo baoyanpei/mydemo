@@ -1,0 +1,369 @@
+.detailed_information {
+  .topimgbox {
+    width: 100%;
+  }
+
+  .infobox {
+    position: relative;
+  }
+
+  .statebox_111 {
+    position: absolute;
+    left: -18px;
+    top: -5px;
+    width: 100px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 18px;
+    background-color: red;
+    color: #e5e5e5;
+  }
+
+  .titleword {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .faqiname{
+    margin-left: 30px;
+    display: block;
+    margin-top: 5px;
+    color: #c7c8c9;
+  }
+  .personbox {
+    margin-top: 10px;
+    width: 100%;
+    max-height: 100px;
+    overflow-y: scroll;
+  }
+
+  .person_right {
+    width: 100%;
+    float: left;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap
+  }
+
+  .person_left i {
+    font-size: 30px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .rectification_infobox {
+    width: 100%;
+    height: 40px;
+  }
+
+  .pername_box {
+    margin-top: 10px;
+    width: 100%;
+    height: 40px;
+  }
+
+  .pername_ball {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    float: left;
+    background-color: #e7e7e7;
+    margin-right: 10px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 18px;
+  }
+
+  .statered {
+    background-color: red;
+  }
+
+  .stategray {
+    background-color: #BABABA;
+  }
+
+  .stateyellow {
+    background-color: yellowgreen;
+  }
+
+  .stategreen {
+    background-color: green;
+  }
+
+  .commentsbox {
+    margin-top: 10px;
+    width: 100%;
+    height: 30px;
+  }
+
+  .comments_btn {
+    width: 15%;
+    height: 30px;
+    font-size: 18px;
+    text-align: center;
+    line-height: 30px;
+    float: right;
+    background-color: yellowgreen;
+    color: #fff;
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+    border: 1px solid transparent; //自定义边框
+    outline: none; //消除默认点击蓝色边框效果
+  }
+
+  .comments_input {
+    width: 85%;
+    height: 20px;
+  }
+
+  .receive_btn {
+    margin-top: 15px;
+    width: 100%;
+    height: 40px;
+    background-color: yellowgreen;
+    text-align: center;
+    line-height: 40px;
+    font-size: 18px;
+    color: #fff;
+  }
+
+  .person_smallbox {
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+    margin-right: 5px;
+    float: left;
+    background-color: #e5e5e5;
+    border-radius: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-top: 5px;
+  }
+
+  /*显示评论*/
+  .Displays_comment {
+    margin-top: 10px;
+    width: 100%;
+    height: 60px;
+    background-color: #F7F7F7;
+    padding: 8px;
+  }
+
+  .displays_name {
+    float: left;
+    display: block;
+    line-height: 20px;
+  }
+
+  .displays_time {
+    float: right;
+  }
+
+  /*.detailed_information{*/
+  /*max-height: 600px;*/
+  /*overflow-y: scroll;*/
+  /*}*/
+  .task_box_big {
+    max-height: 700px;
+    overflow-y: scroll;
+  }
+//el-upload-list el-upload-list--picture
+  /*待处理信息*/
+  .todoinfo {
+    width: 100%;
+    border: 1px solid #e5e5e5;
+    margin-top: 10px;
+  }
+  .el-upload-list{
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+  }
+/deep/ .el-upload-list__item{
+  width: 33%;
+}
+  .todobtn1 {
+    margin-top: 10px;
+    width: 10%;
+    height: 75px!important;
+    margin-left: 0;
+    background-color: #F2F6FC;
+    border: 1px solid #e5e5e5;
+    float: left;
+    text-align: center;
+    line-height: 75px;
+    font-size: 30px;
+  }
+
+  .submitbtn {
+    background-color: yellowgreen;
+    margin-top: 10px;
+    margin-right: 15px;
+    float: right;
+  }
+
+  .rectification_word {
+    display: block;
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 20px;
+  }
+  .topimgbox_img{
+    width: 136px;
+    float: left;
+    height: 150px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background-color: #1dc6f2;
+  }
+  .topimgbox_img img{
+    height: 100%;
+    width: 100%;
+  }
+  .imgbox_img1 {
+    width: 130px;
+    height: 200px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  .imgbox_img1 img{
+    height: 100%;
+    width: 100%;
+  }
+  .rectification_imgbox {
+    width: 100%;
+    margin-left: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+  }
+  .rectification {
+    height: auto;
+    clear: both;
+  }
+  .zhenggai{
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+    margin-top: 10px;
+  }
+  .qualityBox{
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+    margin-top: 10px;
+  }
+  .title_div{
+     margin-top: 10px;
+     width: 100%;
+     padding: 0 15px;
+     display: flex;
+  }
+  .audio_div{
+    width: 100%;
+    height: 60px;
+  }
+  .statebox222 {
+    margin-top: 10px;
+    width: 100%;
+    height: 80px;
+    border-radius: 15px;
+    border: 1px solid #e5e5e5;
+    padding: 0 15px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .yuan {
+    width: 30px;
+    height: 30px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    border: 1px solid #e5e5e5;
+    color: #e5e5e5;
+    text-align: center;
+    line-height: 30px;
+    font-size: 20px;
+    float: left;
+  }
+
+  .span_name {
+    width: 60px;
+    height: 40px;
+    margin-top: 35px;
+    text-align: center;
+    font-size: 14px;
+    float: left;
+    margin-left: 10px;
+  }
+
+  .line_div {
+    width: 40px;
+    height: 2px;
+    margin-top: 45px;
+    background-color: #e5e5e5;
+    float: left;
+  }
+
+  .status_box {}
+
+  .green {
+    border: 1px solid #1abc9c;
+    color: #1abc9c;
+  }
+
+  .spangreen {
+    color: #1abc9c;
+  }
+
+  .bggreen {
+    background-color: #1abc9c;
+  }
+
+
+  .el-row {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .el-col {
+    border-radius: 4px;
+  }
+
+  .bg-purple-dark {
+    background: yellowgreen;
+  }
+
+  .bg-purple {
+    background: yellowgreen;
+  }
+
+  .bg-purple-light {
+    background: yellowgreen;
+  }
+  .buttonred{
+    background-color: red;
+  }
+  .grid-content {
+    border-radius: 4px;
+    text-align: center;
+    line-height: 36px;
+    font-size: 20px;
+    color: #fff;
+    min-height: 36px;
+  }
+
+  .row-bg {
+    padding: 10px 0;
+    background-color: yellowgreen;
+  }
+  .fontstyle{
+    color: #000;
+  }
+  .greenword{
+    color: #1abc9c;
+  }
+
+}

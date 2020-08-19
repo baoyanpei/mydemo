@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+  function aaa() {
+    let now=new Date()
+    let nowMonth=0
+    if(now.getMonth()<10){
+      console.log("这是小于10的月")
+      nowMonth = "0"+now.getMonth()
+    }else {
+      console.log("这是大于10的月")
+      nowMonth = "0"+now.getMonth()
+    }
+    console.log(nowMonth)
+    // var nowMonth = "0"+now.getMonth(); //当前月   2020-08-05
+    // var nowYear = now.getFullYear(); //当前年
+    // let lastmonth=now.getMonth()+2
+    // let sTime=nowYear+"-"+nowMonth+"-22"
+    // let eTime=nowYear+"-"+lastmonth+"-07"
+
+    // if(nowMonth<10){
+    //   nowMonth="0"+"-"+nowMonth
+    //   // nowMonth.splice(1,'')
+    //   // console.log(typeof nowMonth)
+    //   // nowMonth.replace(/\d+/g,function(a){return (a.length==4)?a:((a.length==2)?a:("0"+a))})
+    // }
+  }
+  aaa()
+</script>

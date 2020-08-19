@@ -1,0 +1,51 @@
+.screen-meter-shui {
+  padding: 0px 15px;
+
+  .noMeterShuiTips {
+    line-height: 230px;
+    text-align: center;
+    font-size: 20px;
+    color: #aaaaaa;
+  }
+
+  .data-area {
+    padding-left: 30px;
+    padding-right: 30px;
+    height: 130px;
+
+    .item-box {
+      float: left;
+      font: 20px 'Roboto Slab', sans-serif;
+      font-weight: 600;
+      width: 21px;
+      height: 40px;
+      background-image: url(/static/screen/red/box1.png);
+      background-repeat: no-repeat;
+      color: #8EA9EF;
+      text-align: center;
+      //   height: 100%;
+      //   background-position: 0% 40%;
+    }
+
+    .total-today-label {
+      float: left;
+      width: 150px;
+      ;
+      padding: 5px 0px 5px 0px;
+      font-weight: 800px;
+    }
+
+    .total-used {
+      font-size: 16px;
+      padding: 10px 0px;
+    }
+
+    .total-today {
+      font-size: 18px;
+      color: #3960CB;
+      padding: 5px 0px;
+      font-family: 'Roboto Slab', sans-serif;
+      font-weight: 600;
+    }
+  }
+}
