@@ -1,0 +1,814 @@
+<style lang="scss">
+@import './plantaskDialog';
+</style>
+<template>
+  <div id="plan-task-dialog" class="plan-task-dialog">
+    <el-dialog
+      :modal="false"
+      width="600px"
+      top="10vh"
+      left="80"
+      :lock-scroll="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="true"
+      :visible.sync="PlanTaskDialog.show"
+      @opened="openedDialogHandle"
+      @close="closeDialogHandle"
+      :title="dialogTitle"
+      v-el-drag-dialog
+    >
+      <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
+        <iframe
+          :src="iframeurl"
+          v-show="iframeshow"
+          frameborder="0"
+          style="padding-top:20px;position: absolute;background-color: #ffffff;top: -65px;right: -420px;width: 400px;height: 400px;"
+        ></iframe>
+        <div
+          class="ding"
+          v-show="dingshow"
+          style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -290px;width: 250px;height: 400px;border: 1px solid #eeeeee;padding: 10px;"
+        >
+          <div style="padding:10px;">添加人员：</div>
+          <el-cascader
+            :props="props"
+            :options="grouparr"
+            :show-all-levels="false"
+            @change="handleChange"
+            style="display: block;margin: auto;"
+          ></el-cascader>
+          <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
+            <el-button style="margin-left: 25px">取消</el-button>
+            <el-button
+              type="success"
+              @click="grouparrqueren"
+              style="float: right;margin-right: 25px"
+            >确认</el-button>
+          </div>
+        </div>
+
+        <!--<span style="margin-right: 20px">选择类别:</span>-->
+        <!--<el-cascader :options="gettypearr" @change="handleChangegettypearr" :show-all-levels="false"></el-cascader>-->
+        <!--<br><br>-->
+        <!--<span style="margin-right: 20px">计划类型:</span>-->
+        <!--<el-cascader :options="plangettypearr" v-model="plantypevalue" @change="changeplangettypearr" :show-all-levels="false"></el-cascader>-->
+        <!--<br><br>-->
+        <!--<span style="margin-right: 20px">介绍内容:</span>-->
+        <!--<el-input-->
+        <!--type="textarea"-->
+        <!--placeholder=""-->
+        <!--v-model="plantextarea"-->
+        <!--maxlength="200"-->
+        <!--style="width: 400px"-->
+        <!--show-word-limit>-->
+        <!--</el-input>-->
+        <!--<br><br>-->
+        <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+          <span style="margin-right: 20px">发布标题:</span>
+          <el-input
+            type="textarea"
+            placeholder="请输入200字以内的作品介绍"
+            v-model="textareaindex"
+            maxlength="200"
+            style="width: 400px"
+            show-word-limit
+          ></el-input>
+        </div>
+        <div v-if="shigongzuzhishow">
+          <span style="margin-right: 20px">组织计划:</span>
+          <el-cascader
+            style="width: 400px"
+            :options="organizationarr"
+            v-model="organizationvalue"
+            @change="handleChangegetorganization"
+          ></el-cascader>
+        </div>
+        <br />
+        <br />
+        <!--<div style="width: 100%;height: 40px;">-->
+        <!--<span class="plantoonspan" style="float: left">计划时间:</span>-->
+        <!--<el-date-picker-->
+        <!--v-model="plantime"-->
+        <!--type="daterange"-->
+        <!--range-separator="至"-->
+        <!--start-placeholder="开始日期"-->
+        <!--end-placeholder="结束日期" style="width: 350px;float: left;margin-left: 25px">-->
+        <!--</el-date-picker>-->
+        <!--</div>-->
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 20px;">
+        <span style="margin-right: 20px;float: left;">添加附件:</span>
+        <el-upload
+          class="upload-demo"
+          action="https://xcx.tddata.net/upload"
+          :on-success="successupload"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          multiple
+          :limit="8"
+          :on-exceed="handleExceed"
+          :file-list="fileList"
+          style="width: 500px;"
+        >
+          <el-button size="small" type="primary" @click="clickupload(2)">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip" style="display: none;">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 50px">类型:</span>
+        <el-cascader
+          :options="leibieoptions"
+          @change="handleChangegetleixin"
+          :show-all-levels="false"
+        ></el-cascader>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 50px">建筑:</span>
+        <el-cascader
+          :options="building"
+          @change="buildingchange"
+          :show-all-levels="false"
+          style="width:350px;"
+        ></el-cascader>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 50px">地点:</span>
+        <el-cascader
+          :options="didianarr"
+          @change="didianarrchange"
+          :show-all-levels="false"
+          style="width:350px;"
+        ></el-cascader>
+        <el-button type="primary" @click="findbim">查看BIM</el-button>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 50px;opacity: 0;">地点:</span>
+        <el-input v-model="beizhuinput" placeholder="请输入备注信息" style="width:400px;"></el-input>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right: 10px;">指定负责人:</span>
+        <el-button type="primary" @click="addperson()">添加人员</el-button>
+        <span v-for="item in this.fabu_people">
+          <span style="margin-right: 10px">{{item.name}}</span>
+        </span>
+      </div>
+      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+        <span style="margin-right:40px;float: left">重要性:</span>
+        <el-rate v-model="zhongyaoxing" @change="startchange" :max="3" style="float: left"></el-rate>
+      </div>
+      <el-button type="primary" @click="fabufnc()" style="width: 100%;margin-top: 20px;">发布</el-button>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+let Base64 = require('js-base64').Base64
+
+import { Loading } from 'element-ui'
+
+export default {
+  components: {},
+  directives: {},
+  data() {
+    return {
+      loadingFull: false,
+      dialogTitle: '发布',
+      tipMessage: '',
+
+      didianarr: [],
+      optionmodel: '',
+      planindexworkid: 0,
+      oneparentid: 0,
+      organizationarr: [],
+      organizationvalue: '',
+      shigongzuzhishow: false,
+      structid: 0,
+
+      plantextarea: '', //计划内容
+      plantime: '',
+      plantypevalue: '',
+      typetid: 0,
+      loading: false,
+
+      numbox: [],
+      iframeurl: '',
+      iframeshow: false,
+      leibieoptions: [],
+      didian: [],
+      bimopen: [],
+
+      datalistfrom: {
+        title: '',
+        modify_count: 0,
+        check_count: 0,
+        basic: [
+          {
+            lx: 'basic',
+            id: 'questions_photo',
+            lable: '现场拍摄',
+            type: 'multi_attach',
+            value: [],
+          },
+          {
+            lx: 'basic',
+            id: 'questions_photo',
+            lable: '附件',
+            type: 'files',
+            value: [],
+          },
+          {
+            id: 'questions_remark',
+            lx: 'basic',
+            lable: '问题描述',
+            type: 'multi_text',
+            value: '',
+            voicelst: '',
+          },
+        ],
+        time: '',
+        address: '',
+        receive: [],
+        modify_check: [],
+        receiver: '',
+      },
+
+      bimitemid: '',
+      fabu_people: [],
+      fabustartvalue: '',
+      fabuquestions_type: '',
+      fabufncflowid: '',
+      aaaa: [],
+      grouparr: [],
+      props: { multiple: true },
+      dingshow: false,
+
+      buileding_fowlid: '',
+      building: [],
+      getcategory_flowid: '',
+      zhongyaoxing: null,
+      gettypearr: [],
+      beizhuinput: '',
+      fileList: [],
+      textareaindex: '',
+    }
+  },
+  computed: {
+    project_id: {
+      get: function () {
+        return this.$store.state.project.project_id
+      },
+      set: function (newValue) {
+        this.$store.state.project.project_id = newValue
+      },
+    },
+    PlanTaskDialog: {
+      get: function () {
+        return this.$store.state.plan.PlanTaskDialog
+      },
+      set: function (newValue) {
+        this.$store.state.plan.PlanTaskDialog = newValue
+      },
+    },
+    projectGroupList() {
+      //组别
+      return this.$store.state.project.projectGroupList
+    },
+    projectPersonList() {
+      //人员列表信息
+      return this.$store.state.project.projectPersonList
+    },
+  },
+  props: {},
+  created: function () {},
+  mounted() {},
+  watch: {},
+  methods: {
+    clearData() {},
+    openedDialogHandle() {
+      //打开发布任务窗口
+      console.log('施工组织计划', this.typetid)
+      if (this.typetid == 5 || this.typetid == 7) {
+        //||this.structid==5||this.structid==7
+        this.shigongzuzhishow = true
+      } else {
+        this.shigongzuzhishow = false
+      }
+      console.log('组别', this.projectGroupList)
+      console.log('stuckid', this.structid)
+      this.getcategory()
+      this.gettype()
+      this.getmodel()
+      this.getpersonlist()
+      this.getorganization()
+    },
+    closeDialogHandle() {
+      this.clearData()
+      this.dingshow = false
+      this.textareaindex = ''
+      this.gettypearr = null
+      this.leibieoptions = null
+      this.building = null
+      this.didianarr = null
+      this.beizhuinput = ''
+      this.fabu_people = []
+      this.fileList = []
+      this.zhongyaoxing = null
+    },
+    getcategory() {
+      //类别
+      this.leibieoptions = []
+      console.log('flow_id', this.getcategory_flowid)
+      const param = {
+        method: 'get_questions_type',
+        project_id: this.project_id,
+        flow_id: this.getcategory_flowid,
+      }
+      this.$store
+        .dispatch('SafeInspection', param)
+        .then((data) => {
+          console.log('要获取到的类别', data.data, typeof data.data)
+          if (typeof data.data == 'object') {
+            for (let i = 0; i < data.data.length; i++) {
+              this.leibieoptions.push({ label: data.data[i], value: i })
+            }
+          }
+        })
+        .catch(() => {
+          resolve()
+        })
+    },
+    handleChangegettypearr(index) {
+      //更换类别
+      console.log('index类别', index)
+      this.getcategory_flowid = this.gettypearr[index].flowid
+      this.fabufncflowid = this.gettypearr[index].flowid
+      this.getcategory()
+    },
+    getcategory() {
+      //类别
+      this.leibieoptions = []
+      console.log('flow_id', this.getcategory_flowid)
+      const param = {
+        method: 'get_questions_type',
+        project_id: this.project_id,
+        flow_id: this.getcategory_flowid,
+      }
+      this.$store
+        .dispatch('SafeInspection', param)
+        .then((data) => {
+          console.log('要获取到的类别', data.data, typeof data.data)
+          if (typeof data.data == 'object') {
+            for (let i = 0; i < data.data.length; i++) {
+              this.leibieoptions.push({ label: data.data[i], value: i })
+            }
+          }
+        })
+        .catch(() => {
+          resolve()
+        })
+    },
+    getmodel() {
+      //建筑模型
+      const param = {
+        method: 'project_items',
+        project_id: this.project_id,
+      }
+      this.$store.dispatch('GetItemInfoListByItemIDs', param).then((data) => {
+        console.log('建筑模型', data)
+        var aaa = []
+        //提出模型名字
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].name != '') {
+            aaa.push({ label: data[i].name, value: data[i].file_id })
+          }
+        }
+        this.building = aaa
+        console.log('建筑列表', this.building)
+      })
+    },
+    buildingchange(index) {
+      //更换建筑
+      console.log('地点index', index[0])
+      this.buileding_fowlid = index[0]
+      this.getdidian()
+    },
+    didianarrchange(index) {
+      //更换地点
+      this.bimopen = []
+      console.log('地点index', index[1])
+      this.bimitemid = index[1]
+      console.log('aaaaaaaaaaa', this.bimitemid)
+      for (let i = 0; i < this.didiandataarr.length; i++) {
+        if (index[1] == this.didiandataarr[i].id) {
+          this.bimopen.push(
+            this.didiandataarr[i].camera_info,
+            this.didiandataarr[i].id
+          )
+        }
+      }
+      console.log('bim-----', this.bimopen)
+      this.datalistfrom.address = {
+        id: 'questions_address',
+        lx: 'basic',
+        lable: '地点',
+        type: 'text',
+        value: index[1],
+        lat: '',
+        lon: '',
+        address: '',
+        address_id: '',
+        pvid: '',
+      }
+    },
+    findbim() {
+      console.log('this.projectid', this.bimopen)
+      if (this.bimopen.length != 0) {
+        this.iframeshow = !this.iframeshow
+        this.iframeurl =
+          'https://xcx.tddata.net/smz/#/xcx/pvshow?projectid=' +
+          this.project_id +
+          '&' +
+          'pvid=' +
+          this.bimopen[1] +
+          '&' +
+          'token=' +
+          getToken()
+      }
+    },
+    handleChangegetleixin(index) {
+      console.log(
+        'index获取到的类型',
+        index,
+        this.leibieoptions[index[0]].label
+      )
+      this.fabuquestions_type = this.leibieoptions[index[0]].label
+    },
+    successupload(response, file, fileList) {
+      //图片样式更改
+      console.log('图片信息返回', response)
+      // console.log("文件返回",response.filename)
+      let typestr = file.raw.type.toString()
+      let aaa = typestr.slice(0, 5)
+      if (aaa === 'image') {
+        this.datalistfrom.basic[0].value.push({
+          localsrc: '',
+          lx: 'image',
+          src: response.filename,
+        })
+      } else {
+        this.datalistfrom.basic[1].value.push({
+          name: response.url,
+          path: response.filename,
+        })
+      }
+    },
+    clickupload(e) {
+      console.log('上传-------', e)
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(
+        `当前限制选择8个文件，本次选择了 ${files.length} 个文件，共选择了 ${
+          files.length + fileList.length
+        } 个文件`
+      )
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    gettype() {
+      //类型
+      return new Promise((resolve, reject) => {
+        const param = {
+          method: 'get_flow_list',
+          project_id: this.project_id,
+        }
+        this.$store
+          .dispatch('SafeInspection', param)
+          .then((data) => {
+            console.log('要获取到的类型', data.data)
+            this.gettypearr = []
+            for (let i = 0; i < data.data.length; i++) {
+              if (data.data[i].flowId == 'PlanFlow01') {
+                this.gettypearr.push({
+                  label: '计划',
+                  value: i,
+                  flowid: data.data[i].flowId,
+                })
+              }
+              if (data.data[i].flowId == 'ProblemFindSolve01') {
+                this.gettypearr.push({
+                  label: '任务',
+                  value: i,
+                  flowid: data.data[i].flowId,
+                })
+              }
+              if (data.data[i].flowId == 'Meeting01') {
+                this.gettypearr.push({
+                  label: '会议',
+                  value: i,
+                  flowid: data.data[i].flowId,
+                })
+              }
+              if (data.data[i].flowId == 'Documents01') {
+                this.gettypearr.push({
+                  label: '资料',
+                  value: i,
+                  flowid: data.data[i].flowId,
+                })
+              }
+              if (data.data[i].flowId == 'Notice01') {
+                this.gettypearr.push({
+                  label: '通知',
+                  value: i,
+                  flowid: data.data[i].flowId,
+                })
+              }
+              if (data.data[i].flowId == 'SafetyInspection01') {
+                this.gettypearr.push({
+                  label: '安全',
+                  value: i,
+                  flowid: data.data[i].flowId,
+                })
+              }
+            }
+            console.log('getarr', this.gettypearr)
+          })
+          .catch(() => {
+            resolve()
+          })
+      })
+    },
+    getdidian() {
+      //地点     建筑---地点
+      return new Promise((resolve, reject) => {
+        const param = {
+          method: 'GetViewpointsByFileId',
+          file_id: this.buileding_fowlid,
+          project_id: this.project_id,
+        }
+        this.$store
+          .dispatch('GetItemInfoListByItemIDs', param)
+          .then((data) => {
+            console.log('地点data', data)
+            this.didiandataarr = data
+            this.didianarr = []
+            this.didian = []
+            var aaa = []
+            var newarr = []
+            //提出楼层
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].floor_name != '') {
+                aaa.push(data[i].floor_name)
+              }
+            }
+            for (let i = 0; i < aaa.length; i++) {
+              if (newarr.indexOf(aaa[i]) == -1) {
+                newarr.push(aaa[i])
+              }
+            }
+            for (let j = 0; j < newarr.length; j++) {
+              newarr.splice(j, 1, { label: newarr[j], value: j, children: [] })
+            }
+            // 楼层提出结束
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].floor_name != '') {
+                for (let j = 0; j < newarr.length; j++) {
+                  if (newarr[j].label == data[i].floor_name) {
+                    newarr[j].children.push({
+                      label: data[i].name,
+                      value: data[i].id,
+                      itemid: '第' + data[i].floor_name + '层' + data[i].name,
+                    })
+                  }
+                }
+              }
+            }
+            this.didianarr = newarr
+            console.log('地点数组', this.didianarr)
+            // console.log("aaa",newarr)
+          })
+          .catch(() => {
+            resolve()
+          })
+      })
+    },
+    addperson() {
+      this.grouparr = []
+      this.aaaa = []
+      for (let i = 0; i < this.projectPersonList.length; i++) {
+        this.grouparr.push([
+          this.projectPersonList[i].group_name_level[0],
+          this.projectPersonList[i].group_name_level[1],
+        ]) //拿到全部人员
+      }
+      for (let j = 0; j < this.grouparr.length; j++) {
+        // console.log("bianli---->",j,this.grouparr[j][0])
+        if (this.aaaa.indexOf(this.grouparr[j][0]) == -1) {
+          //去除重复数组
+          this.aaaa.push(this.grouparr[j][0])
+        }
+      }
+      for (let i = 0; i < this.grouparr.length; i++) {
+        for (let j = 0; j < this.aaaa.length; j++) {
+          if (this.aaaa[j] == this.grouparr[i][0]) {
+            this.aaaa.splice(j, 1, {
+              label: this.aaaa[j],
+              value: j,
+              children: [{ label: this.grouparr[i][1], value: '1' }],
+            })
+          }
+        }
+      }
+      console.log('人员信息', this.projectPersonList)
+      this.aaaa.forEach((item) => {
+        item.children[0]['children'] = []
+      })
+      for (let i = 0; i < this.projectPersonList.length; i++) {
+        for (let j = 0; j < this.aaaa.length; j++) {
+          if (
+            this.projectPersonList[i].group_name_level[1] ==
+            this.aaaa[j].children[0].label
+          ) {
+            this.aaaa[j].children[0].children.push({
+              label: this.projectPersonList[i].name,
+              value: this.projectPersonList[i].person_id,
+              personname: this.projectPersonList[i].name,
+            })
+          }
+        }
+      }
+      this.grouparr = this.aaaa
+      this.dingshow = true
+      console.log('this.aaaa', this.aaaa)
+      console.log('gettypearr', this.grouparr)
+    },
+    fabufnc() {
+      //发布任务
+      this.loading = true
+      // console.log('父id', this.fatherid, this.oneparentid)
+      let firstdaytime = moment(this.plantime[0]).format('YYYY-MM-DD')
+      let endtime = moment(this.plantime[1]).format('YYYY-MM-DD')
+      let namebox = ''
+      for (let i = 0; i < this.fabu_people.length; i++) {
+        namebox = namebox + '@' + this.fabu_people[i].name
+      }
+      this.datalistfrom.title = namebox + this.textareaindex
+      this.datalistfrom.receiver = this.fabu_people
+      const _param = {
+        method: 'plan_start_issue',
+        project_id: this.project_id,
+        questions_type: this.fabuquestions_type,
+        title: namebox + this.textareaindex,
+        flow_id: 'PlanFlow01',
+        priority: this.fabustartvalue,
+        form: this.datalistfrom,
+        subjectionId: '',
+        nosend: 1,
+        type: this.plantypevalue[0],
+        content: '',
+        start_date: firstdaytime,
+        end_date: endtime,
+        parent_id: this.oneparentid,
+        struct_id: this.structid,
+      }
+      this.$store.dispatch('Getplan', _param).then((data) => {
+        console.log('任务发布成功', data) //work_id
+        for (let i = 0; i < this.numbox.length; i++) {
+          if (this.textareaindex == this.numbox[i].name) {
+            this.numbox[i].block = 'donot' //blockshow1 blockshow2
+            this.numbox[i].blockshow1 = false
+            this.numbox[i].blockshow2 = true
+          }
+        }
+        console.log('numbox__donot', this.numbox)
+        this.planindexworkid = data.work_id
+        this.smalltaskfnc()
+        this.fabusuccessfnc()
+        this.loading = false
+      })
+    },
+    fabusuccessfnc() {
+      this.$alert('发布成功', '', {
+        confirmButtonText: '确定',
+        callback: (action) => {
+          this.$message({
+            type: 'info',
+            message: `action: ${action}`,
+          })
+        },
+      })
+      this.textarea = ''
+      this.gettypearr = null
+      this.leibieoptions = null
+      this.building = null
+      this.didianarr = null
+      this.beizhuinput = ''
+      this.fabu_people = []
+      this.fileList = []
+      this.zhongyaoxing = null
+      this.plantypevalue = ''
+      this.plantextarea = ''
+    },
+    grouparrqueren() {
+      this.dingshow = false
+    },
+    handleChange(value) {
+      //选择指定人员
+      // this.grouparr    projectPersonList
+      console.log('选择人员', value)
+      for (let i = 0; i < value.length; i++) {
+        this.fabu_people.push({ name: '', id: value[i][2] })
+      }
+      for (let i = 0; i < this.fabu_people.length; i++) {
+        for (let j = 0; j < this.projectPersonList.length; j++) {
+          if (this.fabu_people[i].id == this.projectPersonList[j].person_id) {
+            this.fabu_people[i].name = this.projectPersonList[j].name
+          }
+        }
+      }
+      console.log('获取到的ID', this.fabu_people)
+    },
+    startchange(index) {
+      //改变星级
+      console.log('改变星级别', index)
+      this.fabustartvalue = index
+    },
+    getpersonlist() {
+      //人员列表信息接口
+      const param = {
+        method: 'query_person_list',
+        project_id: this.project_id,
+      }
+      this.$store
+        .dispatch('QueryProjectPersons', param)
+        .then(() => {
+          console.log('人员信息projectPersonList', this.projectPersonList)
+        })
+        .catch(() => {})
+    },
+    handleChangegetorganization(val) {
+      console.log('组织计划val', val)
+      this.structid = val[1]
+    },
+    changeplangettypearr() {},
+    getorganization() {
+      const param = {
+        method: 'plan_struct',
+        project_id: this.project_id,
+      }
+      this.$store.dispatch('Getplan', param).then((data) => {
+        console.log('获取组织计划', data.data)
+        data.data.forEach((item) => {
+          item['label'] = item.text
+          item['value'] = item.id
+          if (item.children.length == 0) {
+            delete item.children
+          }
+          if (item.children !== undefined) {
+            item.children.forEach((obj) => {
+              obj['label'] = obj.text
+              obj['value'] = obj.id
+              if (obj.children.length == 0) {
+                delete obj.children
+              }
+            })
+          }
+        })
+        this.organizationarr = data.data
+        console.log('this.organizationarr', this.organizationarr)
+      })
+    },
+    smalltaskfnc() {
+      //获取任务列表接口
+      const _param = {
+        method: 'get_todo_list',
+        project_id: this.project_id,
+        qtype: 'TodoList,BackLog,MatterRead',
+      }
+      this.$store.dispatch('GetAllInstList', _param).then((data) => {
+        for (let i = 0; i < data.length; i++) {
+          if (this.planindexworkid == data[i].workId) {
+            console.log('提取到对应的任务', data[i])
+            const param = {
+              show: true,
+              data: data[i],
+            }
+            this.$store
+              .dispatch('SetInfoDialog', param)
+              .then(() => {})
+              .catch(() => {})
+          }
+        }
+        console.log('我的任务', data)
+      })
+    },
+  },
+}
+</script>
