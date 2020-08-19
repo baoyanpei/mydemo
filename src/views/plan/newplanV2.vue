@@ -14,47 +14,86 @@
         <planindex></planindex>
       </el-col>
       <el-col :span="21" style="background-color: #F9F9F9;">
-        <div class="boxtop">
+        <el-row style="padding:0px 0px 10px 0px;background-color:#f5f5f5;">
+          <div class="boxtop_left">
+            <span
+              style="font-size:14px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;"
+            >新增计划</span>
+          </div>
+        </el-row>
+        <!-- <div class="boxtop">
           <div class="boxtop_left" @click="comebackplan()">返回计划列表</div>
-          <!--<div class="boxtop_right">新增计划</div>-->
-        </div>
+        </div>-->
         <div class="plantoon" v-show="leftindexshow">
-          <el-cascader
-            v-model="jihuavalue"
-            :options="optionstype"
-            @change="handleChangetypetid"
-            style="width: 150px;border: none;"
-          ></el-cascader>
-          <el-input v-model="input" placeholder="请输入计划名称" style="width: 320px"></el-input>
-          <div class="planstyle">
-            <el-date-picker
-              v-model="value1"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              style="width: 480px;margin-top: 20px"
-            ></el-date-picker>
-          </div>
-          <el-input type="textarea" v-model="desc" :rows="10"></el-input>
-          <div
-            @click="releaseplan"
-            style="width: 100%;height: 40px;text-align: center;line-height: 40px;background-color: #169BD5;color: #ffffff;margin-top: 20px;border-radius: 10px"
-          >发布实施任务</div>
-          <div style="width: 600px;margin-top: 10px;color: #34ba9c">
-            <i
-              class="el-icon-circle-plus-outline"
-              style="float: left;display: block;margin-top: 10px;"
-            ></i>
-            <span style="float: left;display: block;margin-top: 7px" @click="sonplanshow">添加所属计划</span>
-            <el-cascader
-              style="float: left;margin-left: 15px;width: 300px"
-              v-show="plannewshow"
-              v-model="plannewvalue"
-              :options="plannewop"
-              @change="plannewhandleChange"
-            ></el-cascader>
-          </div>
+          <el-form ref="planForm" :model="planForm" size="mini" :inline="false">
+            <el-row>
+              <div class="item-label">计划名称:</div>
+              <el-form-item>
+                <el-input v-model="input" placeholder="请输入计划名称"></el-input>
+              </el-form-item>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <div class="item-label">计划类型:</div>
+                <el-form-item>
+                  <el-cascader
+                    v-model="jihuavalue"
+                    :options="optionstype"
+                    @change="handleChangetypetid"
+                    style="width: 220px;"
+                    size="mini"
+                  ></el-cascader>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <div class="item-label">计划时间:</div>
+                <el-form-item>
+                  <el-date-picker
+                    v-model="value1"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    style="width: 230px;"
+                    size="mini"
+                  ></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <div class="item-label">计划内容:</div>
+              <el-form-item>
+                <el-input type="textarea" v-model="desc" :rows="10"></el-input>
+              </el-form-item>
+            </el-row>
+            <el-row>
+              <div
+                @click="releaseplan"
+                style="width: 100%;height: 36px;text-align: center;line-height: 36px;background-color: #169BD5;color: #ffffff;margin-top: 5px;border-radius: 5px;font-size:14px;cursor:pointer;"
+              >发布实施任务</div>
+            </el-row>
+            <el-row>
+              <div style="width: 600px;margin-top: 10px;color: #34ba9c">
+                <i
+                  class="el-icon-circle-plus-outline"
+                  style="float: left;display: block;margin-top: 7px;"
+                ></i>
+                <span
+                  style="float: left;display: block;margin-top: 7px;cursor:pointer;font-size:14px;"
+                  @click="sonplanshow"
+                >添加所属计划</span>
+                <el-cascader
+                  style="float: left;margin-left: 15px;width: 260px"
+                  v-show="plannewshow"
+                  v-model="plannewvalue"
+                  :options="plannewop"
+                  @change="plannewhandleChange"
+                  size="mini"
+                ></el-cascader>
+              </div>
+            </el-row>
+          </el-form>
+
           <!--<el-cascader-panel :options="plannewop"></el-cascader-panel>-->
         </div>
         <!--//暂无实施计划-->
@@ -252,7 +291,7 @@ export default {
   data() {
     return {
       plannewvalue: '',
-      leftindexshow: false,
+      leftindexshow: true,
       faqijihuashow: false,
       planindexworkid: 0,
       oneparentid: 0,
@@ -272,6 +311,7 @@ export default {
         { label: '施工计划', value: 7, children: [] },
         { label: '其他', value: 0, children: [] },
       ],
+      planForm: {},
       plantextarea: '', //计划内容
       plantime: '',
       plantypevalue: '',
@@ -495,13 +535,13 @@ export default {
     if (this.project_id !== null) {
       this.getstyle()
       if (this.leftshow == 'have') {
-        this.leftindexshow = false
+        // this.leftindexshow = false
         this.planshow = false
         this.planshow2 = true
         this.numbox = this.titlebox
       }
       if (this.leftshow == 'none') {
-        this.leftindexshow = true
+        // this.leftindexshow = true
       }
       console.log('leftshow的表现状态', this.fatherid)
       this.oneparentid = this.fatherid
@@ -675,6 +715,9 @@ export default {
         end_date: endtime,
         type: this.typetid,
       }
+      console.log('plan_add - param:', param)
+      this.loading = false
+      return
       this.$store.dispatch('Getplan', param).then((data) => {
         console.log('新建计划提交状态', data)
         this.oneparentid = data.id
