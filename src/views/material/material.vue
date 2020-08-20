@@ -7,6 +7,7 @@
       :modal-append-to-body="false"
       @close="qkZwshow()"
     >
+      <div style="font-size:20px;margin-bottom:10px">附件</div>
       <span>点击下载，下载模板资料</span>
       <div class="projectsmall" v-for="item in getFlowWorkData" :key="item.id">
         <div v-show="item.name !== undefined">
@@ -23,6 +24,19 @@
         </div>
       </div>
       <div v-if="this.zwShow == 1" class="zwShow">该资料暂未上传附件</div>
+      <div style="font-size:20px;margin-bottom:10px">图片和视频</div>
+      <span v-for="(item,index) in getFlowWorkImg" :key="index">
+        <el-image
+          v-if="item.lx == 'image'"
+          style="width: 300px; height: 300px;margin-bottom:20px"
+          :src="'https://xcx.tddata.net'+item.src"
+          :preview-src-list="imgFdlist"
+        ></el-image>
+        <video v-if="item.lx == 'video'" controls>
+          <source :src="'https://xcx.tddata.net'+item.video" type="video/mp4" />
+        </video>
+      </span>
+      <div v-if="this.imgShow == 1" class="zwShow">该资料暂未上传图片和视频</div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="projectdialog = false">确 定</el-button>
       </span>
@@ -91,7 +105,7 @@
             :cell-style="{'text-align':'center'}"
           >
             <el-table-column prop="projectid" label="序号" width="55"></el-table-column>
-            <el-table-column prop="title" label="名称" width="250"></el-table-column>
+            <el-table-column prop="title" label="名称" width="500"></el-table-column>
             <el-table-column prop="state" label="状态" width="100"></el-table-column>
             <el-table-column prop="originator" label="上传人" width="100"></el-table-column>
             <el-table-column prop="lasttime" label="归档日期" width="180"></el-table-column>
@@ -105,6 +119,7 @@
       </el-tabs>
       <el-pagination
         background
+        hide-on-single-page
         layout="prev, pager, next"
         :total="infonum"
         :current-page="currpage"
@@ -241,7 +256,6 @@ export default {
       projectdialog: false,
       positonname: "国家资料",
       input: "",
-      positonname: "国家资料",
       secondtabshow: true,
       shangchuanshow: false,
       tabledata1show: true,
@@ -257,6 +271,8 @@ export default {
       workId: "",
       trackId: "",
       getFlowWorkData: [],
+      getFlowWorkImg: [],
+      imgFdlist: [],
       datalistfrom: {
         title: "",
         modify_count: 0,
@@ -292,6 +308,7 @@ export default {
         receiver: "",
       },
       zwShow: 0,
+      imgShow: 0,
     };
   },
   computed: {
@@ -301,8 +318,13 @@ export default {
   },
   watch: {
     project_id(curVal, oldVal) {
+      this.infonum = 0;
       console.log("curVal111111111", curVal, oldVal);
-      this.getdata();
+      if (this.positonname == "国家资料") {
+        this.getdata();
+      } else {
+        this.getprojectdata();
+      }
     },
   },
   mounted() {
@@ -519,6 +541,7 @@ export default {
 
     //获取国家资料表格
     gettable() {
+      this.infonum = 0;
       const param = {
         method: "query_doc_standard",
         project_id: this.project_id,
@@ -620,17 +643,34 @@ export default {
         track_id: this.trackId,
       };
       this.$store.dispatch("Allpersondata", _param).then((data) => {
-        this.getFlowWorkData = data.data.form.basic[1].value;
-        console.log("资料详情", this.getFlowWorkData);
-        console.log("资料详情类别", typeof this.getFlowWorkData);
-        if (this.getFlowWorkData[0].name == undefined) {
+        this.getFlowWorkData = [];
+        this.getFlowWorkImg = [];
+        data.data.form.basic.forEach((val) => {
+          if (val.type == "files") {
+            this.getFlowWorkData = val.value;
+          }
+          if (val.type == "multi_attach") {
+            this.getFlowWorkImg = val.value;
+          }
+        });
+        this.getFlowWorkImg.forEach((val) => {
+          this.imgFdlist.push("https://xcx.tddata.net" + val.src);
+        });
+        console.log("图片列表", this.getFlowWorkImg);
+        console.log("图片预览", this.imgFdlist);
+        console.log("附件列表", this.getFlowWorkData);
+        if (this.getFlowWorkData[0] == undefined) {
           this.zwShow = 1;
+        }
+        if (this.getFlowWorkImg[0] == undefined) {
+          this.imgShow = 1;
         }
       });
     },
     //情况资料详情状态
     qkZwshow() {
       this.zwShow = 0;
+      this.imgShow = 0;
     },
     getlistinfo() {
       const _param = {
@@ -728,7 +768,7 @@ export default {
   margin-top: 10px;
   font-size: 18px;
   margin-right: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .zwShow {
   @include cl;
