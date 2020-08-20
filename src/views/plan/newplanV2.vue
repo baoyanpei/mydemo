@@ -186,6 +186,7 @@
 import planindex from './planpage/index'
 import moment from 'moment'
 import PlantaskDialog from '@/views/plan/plantaskDialog'
+import Cookies from 'js-cookie'
 export default {
   name: 'newplan',
   data() {
@@ -430,6 +431,7 @@ export default {
   },
   methods: {
     async init() {
+      this.planInfo = null
       console.log('mounted - V2')
       this.numbox = []
       console.log('_plan_id_plan_id1', this.$route.query)
@@ -467,6 +469,12 @@ export default {
       //   //   taskid:index.id
       //   // }
       // })
+      if (this.planInfo !== null) {
+        console.log('this.oneparentidthis.oneparentid', this.oneparentid)
+        Cookies.set('CurrentPlanType', this.planInfo.type)
+        Cookies.set('CurrentPlanId', this.oneparentid)
+      }
+      this.$router.push({ path: '/indexplan' })
     },
     fatheridchange() {
       console.log('父级id变化', this.fatherid)

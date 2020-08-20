@@ -680,12 +680,18 @@ export default {
       this.idplan.push(idsss)
     },
     getplan() {
-      let cookiePlayType = Cookies.get('CurrentPlanType')
-      if (cookiePlayType !== undefined) {
-        this.planchanidtype = cookiePlayType
+      let cookiePlanType = Cookies.get('CurrentPlanType')
+      if (cookiePlanType !== undefined) {
+        this.planchanidtype = cookiePlanType
         // this.dataTimelineData(this.activities[i])
       }
       console.log('this.planchanidtype123', this.planchanidtype)
+
+      let cookiePlanId = Cookies.get('CurrentPlanId')
+      if (cookiePlanId !== undefined) {
+        this.lastsonplanid = cookiePlanId
+        // this.dataTimelineData(this.activities[i])
+      }
 
       this.messageWhenNoItems = '正在加载数据'
       this.searchPlanTips = '正在查询计划'
@@ -819,6 +825,7 @@ export default {
         if (this.lastsonplanid == 0) {
           console.log('还没有传输数据', this.lastsonplanid)
         }
+
         if (this.lastsonplanid !== 0) {
           console.log('传输过来了数据', this.lastsonplanid)
           for (let i = 0; i < this.activities.length; i++) {
