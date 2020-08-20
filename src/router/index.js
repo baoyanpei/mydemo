@@ -136,16 +136,16 @@ export const constantRouterMap = [
           noCache: true
         }
       },
-      {
-        path: "newplanV2",
-        component: () => import("@/views/plan/newplanV2"),
-        name: "newplanV2",
-        meta: {
-          title: "newplanV2",
-          icon: "dashboard",
-          noCache: true
-        }
-      },
+      // {
+      //   path: "newplanV2",
+      //   component: () => import("@/views/plan/newplanV2"),
+      //   name: "newplanV2",
+      //   meta: {
+      //     title: "newplanV2",
+      //     icon: "dashboard",
+      //     noCache: true
+      //   }
+      // },
       {
         path: "indexplan", //indexplan
         component: () => import("@/views/plan/indexplan"),
@@ -274,6 +274,26 @@ export const constantRouterMap = [
           title: "gzbsz",
           icon: "dashboard",
           noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/plan",
+    name: "plan",
+    component: Layout2,
+    redirect: "/modelDisplay/index",
+    children: [
+      {
+        path: "newplanV2", //pid:projectid,flist:floorlist
+        component: () => import("@/views/plan/newplanV2"),
+        name: "plan-index-v2",
+        meta: {
+          title: "计划任务",
+          icon: "building",
+          noCache: true,
+          requireAuth: false, // 是否需要信息验证
+          CheckCode: "model3d_index_admin" // 权限Code,通过服务器验证
         }
       }
     ]

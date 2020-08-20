@@ -95,6 +95,7 @@
                 >发布实施任务</div>-->
 
                 <el-button
+                  v-show="isShowSubmitPlanButton"
                   type="primary"
                   :loading="loading"
                   @click.native.prevent="submitPlan()"
@@ -275,6 +276,8 @@ export default {
 
       plangettypearr: [],
 
+      isShowSubmitPlanButton: true, // 是否显示"发布实施任务"的按钮
+
       // optionmodel: '',
       // dingshow: false,
       // optionGroups: [],
@@ -383,9 +386,9 @@ export default {
       //页面传来的title
       return this.$store.state.plantypeid.titlebox
     },
-    leftshow() {
-      return this.$store.state.plantypeid.leftshow
-    },
+    // leftshow() {
+    //   return this.$store.state.plantypeid.leftshow
+    // },
     fatherid() {
       return this.$store.state.plantypeid.fatherid
     },
@@ -393,7 +396,8 @@ export default {
   watch: {
     project_id(curVal, oldVal) {
       console.log('项目id改变', curVal, oldVal)
-      this.getstyle()
+      // this.getstyle()
+      this.init()
     },
     titlebox(curVal) {
       console.log('titlebox', curVal)
@@ -412,26 +416,7 @@ export default {
   },
   mounted() {
     if (this.project_id !== null) {
-      this.numbox = []
-
-      const _plan_typeid = this.$route.query.plan_typeid
-      console.log('_plan_typeid', _plan_typeid)
-      if (_plan_typeid !== undefined) {
-        this.planForm.planType = parseInt(_plan_typeid)
-      }
-
-      this.getstyle()
-      if (this.leftshow == 'have') {
-        // this.leftindexshow = false
-        this.planshow = false
-        this.planshow2 = true
-        this.numbox = this.titlebox
-      }
-      if (this.leftshow == 'none') {
-        // this.leftindexshow = true
-      }
-      console.log('leftshow的表现状态', this.fatherid)
-      this.oneparentid = this.fatherid
+      this.init()
     }
   },
   components: {
@@ -439,6 +424,57 @@ export default {
     PlantaskDialog,
   },
   methods: {
+    async init() {
+      console.log('mounted - V2')
+      this.numbox = []
+      console.log('_plan_id_plan_id1', this.$route.query)
+      const _plan_typeid = this.$route.query.plan_typeid // 类别
+      console.log('_plan_typeid', _plan_typeid)
+      if (_plan_typeid !== undefined) {
+        this.planForm.planType = parseInt(_plan_typeid)
+      }
+      const _plan_id = this.$route.query.plan_id // 类别
+
+      if (_plan_id !== undefined) {
+        this.isShowSubmitPlanButton = false
+        console.log('_plan_id_plan_id', _plan_id)
+        await this.getPlanByPlanId(_plan_id)
+        console.log('_planInfo345', this.planInfo)
+        this.planForm = {
+          planTitle: this.planInfo.title, // 计划标题
+          planType: this.planInfo.type,
+          planTimeRange: [this.planInfo.start_date, this.planInfo.end_date],
+          planContent: this.planInfo.content,
+        }
+        this.oneparentid = _plan_id
+        this.numbox = this.planForm.planContent.split('\n')
+        console.log('实施计划的盒子1122', this.numbox)
+        for (let i = 0; i < this.numbox.length; i++) {
+          // blockshow:true,blockshow:false
+          this.numbox.splice(i, 1, {
+            name: this.numbox[i],
+            block: 'have',
+            blockshow1: true,
+            blockshow2: false,
+          })
+        }
+        this.planshow = false
+        this.planshow2 = true
+      }
+
+      this.getstyle()
+      // if (this.leftshow == 'have') {
+      //   // this.leftindexshow = false
+      //   this.planshow = false
+      //   this.planshow2 = true
+      //   this.numbox = this.titlebox
+      // }
+      // if (this.leftshow == 'none') {
+      //   // this.leftindexshow = true
+      // }
+      // console.log('leftshow的表现状态', this.fatherid)
+      // this.oneparentid = this.fatherid
+    },
     planinititate() {
       // this.$router.push({
       //   name: 'yearsplan',
@@ -450,18 +486,42 @@ export default {
     fatheridchange() {
       console.log('父级id变化', this.fatherid)
     },
-    leftshowfnc() {
-      // console.log("左边状态",this.leftshow)
-    },
+    // leftshowfnc() {
+    //   // console.log("左边状态",this.leftshow)
+    // },
     handleChangetypetid(value) {
       console.log('ddddddd', value)
       this.typetid = value
     },
     sonplanshow() {
+      // 添加所属计划
       this.loading = true
       this.getplan()
     },
+    getPlanByPlanId(planId) {
+      return new Promise((resolve, reject) => {
+        const param = {
+          method: 'plan_query',
+          project_id: this.project_id,
+          ids: [planId],
+        }
+        this.$store.dispatch('Getplan', param).then((data) => {
+          console.log('plan_data1', data)
+          const _planInfo = data.data[0]
 
+          console.log('_planInfo123', _planInfo)
+          this.planInfo = {
+            project_id: this.project_id,
+            title: _planInfo.title,
+            content: _planInfo.content, //this.desc
+            start_date: _planInfo.start_date,
+            end_date: _planInfo.end_date,
+            type: _planInfo.type, //this.typetid
+          }
+          resolve()
+        })
+      })
+    },
     getplan() {
       const param = {
         method: 'plan_query',

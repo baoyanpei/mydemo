@@ -492,7 +492,18 @@ export default {
       this.$store.commit('newplanshowchange')
       this.$store.commit('titleboxchange', [])
     },
-    releasetemplatefnc(index) {
+    releasetemplatefnc(planInfo) {
+      console.log('releasetemplatefnc - 计划', planInfo)
+      console.log('plan_typeid', this.plan_typeid)
+      this.$router.push({
+        path: '/plan/newplanV2',
+        query: {
+          plan_typeid: this.plan_typeid,
+          plan_id: planInfo.id,
+        },
+      })
+
+      return
       //发布实施任务
       this.fullscreenLoading = false
       this.plansonloading = false
@@ -553,7 +564,7 @@ export default {
     },
     getnewplanV2() {
       this.$router.push({
-        path: '/newplanV2',
+        path: '/plan/newplanV2',
         query: {
           plan_typeid: this.plan_typeid,
         },

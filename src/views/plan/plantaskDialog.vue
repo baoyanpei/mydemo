@@ -20,7 +20,7 @@
       <div
         class="ding"
         v-show="dingshow"
-        style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -290px;width: 250px;height: 400px;border: 1px solid #eeeeee;padding: 10px;"
+        style="padding-top:20px;position: absolute;background-color: #fff;right: -290px;width: 250px;height: 400px;border: 1px solid #eeeeee;padding: 10px;"
       >
         <div style="padding:10px;">添加人员：</div>
         <el-cascader
@@ -31,14 +31,11 @@
           size="mini"
           style="display: block;margin: auto;"
         ></el-cascader>
-        <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
-          <el-button style="margin-left: 25px" size="mini">取消</el-button>
-          <el-button
-            type="success"
-            @click="grouparrqueren"
-            style="float: right;margin-right: 25px"
-            size="mini"
-          >确认</el-button>
+        <div
+          class="bottom"
+          style="position: absolute;bottom: 20px;text-align: center;width: 230px;"
+        >
+          <el-button type="success" @click="grouparrqueren" size="mini">关闭</el-button>
         </div>
       </div>
       <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
@@ -716,7 +713,7 @@ export default {
           // let endtime = moment(this.plantime[1]).format('YYYY-MM-DD')
           let namebox = ''
           for (let i = 0; i < this.fabu_people.length; i++) {
-            namebox = namebox + '@' + this.fabu_people[i].name
+            namebox = namebox + '@' + this.fabu_people[i].name + ','
           }
           this.datalistfrom.title = namebox + this.planTaskForm.taskContent
           this.datalistfrom.receiver = this.fabu_people
@@ -731,7 +728,7 @@ export default {
             subjectionId: '',
             nosend: 1,
             type: 6, //this.plantypevalue[0],
-            content: '',
+            content: this.planTaskForm.taskContent,
             start_date: this.planInfo.start_date,
             end_date: this.planInfo.end_date,
             parent_id: this.plan_id,
@@ -787,6 +784,7 @@ export default {
       //选择指定人员
       // this.grouparr    projectPersonList
       console.log('选择人员', value)
+      this.fabu_people = []
       for (let i = 0; i < value.length; i++) {
         this.fabu_people.push({ name: '', id: value[i][2] })
       }
