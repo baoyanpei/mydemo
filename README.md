@@ -150,3 +150,15 @@ projectid：项目id
 items：sketch模型的id，目前只允许单个，不能为多个
 token：用户登录后的token
 ```
+
+### 8. 流程表单规则定义
+
+```
+http://git.buskey.cn/BIM/server/wf_server/issues/8
+```
+
+### 16.计划任务管理
+
+```
+http://git.buskey.cn/BIM/server/wf_server/issues/16
+```
