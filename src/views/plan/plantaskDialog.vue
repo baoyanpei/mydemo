@@ -325,7 +325,10 @@ export default {
       this.planInfo = this.PlanTaskDialog.planInfo
       const item = this.PlanTaskDialog.item
       console.log('this.planInfo', this.planInfo)
-      this.typetid = this.planInfo.type
+      if (this.planInfo !== undefined) {
+        this.typetid = this.planInfo.type
+      }
+
       this.plan_id = this.PlanTaskDialog.plan_id
       if (item !== undefined) {
         this.planTaskForm.taskContent = item.name
@@ -715,6 +718,7 @@ export default {
           for (let i = 0; i < this.fabu_people.length; i++) {
             namebox = namebox + '@' + this.fabu_people[i].name + ','
           }
+          console.log('nameboxnamebox', namebox)
           this.datalistfrom.title = namebox + this.planTaskForm.taskContent
           this.datalistfrom.receiver = this.fabu_people
           const _param = {

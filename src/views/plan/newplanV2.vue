@@ -17,9 +17,8 @@
       <el-col :span="21" style="background-color: #F9F9F9;">
         <el-row style="padding:0px 0px 10px 0px;background-color:#f5f5f5;">
           <div class="boxtop_left">
-            <span
-              style="font-size:14px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;"
-            >新增计划</span>
+            <span class="label_op_type" v-if="isNewPlan">新增计划</span>
+            <span class="label_op_type" v-if="!isNewPlan">发布实施任务</span>
           </div>
         </el-row>
         <!-- <div class="boxtop">
@@ -31,7 +30,12 @@
               <el-row>
                 <div class="item-label">计划名称:</div>
                 <el-form-item prop="planTitle" :rules="rulePlanTitle">
-                  <el-input v-model="planForm.planTitle" name="planTitle" placeholder="请输入计划名称"></el-input>
+                  <el-input
+                    v-model="planForm.planTitle"
+                    name="planTitle"
+                    placeholder="请输入计划名称"
+                    :disabled="!isNewPlan"
+                  ></el-input>
                 </el-form-item>
               </el-row>
               <el-row>
@@ -51,6 +55,7 @@
                       placeholder="请选择类型"
                       size="mini"
                       @change="handleChangetypetid"
+                      :disabled="!isNewPlan"
                     >
                       <el-option
                         v-for="item in optionstype"
@@ -73,6 +78,7 @@
                       end-placeholder="结束日期"
                       style="width: 230px;"
                       size="mini"
+                      :disabled="!isNewPlan"
                     ></el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -85,6 +91,7 @@
                     v-model="planForm.planContent"
                     name="planContent"
                     :rows="10"
+                    :disabled="!isNewPlan"
                   ></el-input>
                 </el-form-item>
               </el-row>
@@ -95,14 +102,14 @@
                 >发布实施任务</div>-->
 
                 <el-button
-                  v-show="isShowSubmitPlanButton"
+                  v-show="isNewPlan"
                   type="primary"
                   :loading="loading"
                   @click.native.prevent="submitPlan()"
                   class="btn-submit-plan"
                 >发布实施任务</el-button>
               </el-row>
-              <el-row>
+              <el-row v-show="isNewPlan">
                 <div style="width: 600px;margin-top: 10px;color: #34ba9c">
                   <i
                     class="el-icon-circle-plus-outline"
@@ -134,7 +141,7 @@
             <!--<div class="newplanxijie_1_top" v-show="planshow2">新增实施计划</div>-->
             <div class="plan-task-area" v-show="planshow2">
               <div style="text-align:right;margin-bottom: 5px;">
-                <el-button type="primary">新增实施计划</el-button>
+                <el-button type="primary" @click="newPlanTask()">新增实施计划</el-button>
               </div>
               <div class="plan-task-list">
                 <div v-for="(item,index) in this.numbox" :key="index">
@@ -145,13 +152,11 @@
                         style="display: block;color: #0a76a4;line-height: 50px;font-size:14px;"
                       >实施计划</span>
                       <!--<div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">-->
-                      <div class="jump" @click="releasefnc(item)">
-                        <i
-                          class="el-icon-right fabuimg"
-                          v-if="item.blockshow1"
-                          style="font-size: 30px;color: #ffffff"
-                        ></i>
-                        <span class="fabuon" v-if="item.blockshow2">已发布</span>
+                      <div class="jump" @click="releasefnc(item)" v-if="item.blockshow1">
+                        <i class="el-icon-right fabuimg" style="font-size: 30px;color: #ffffff"></i>
+                      </div>
+                      <div class="labelIsTask" v-if="item.blockshow2">
+                        <span class="fabuon">已发布</span>
                       </div>
                     </div>
                   </div>
@@ -276,7 +281,7 @@ export default {
 
       plangettypearr: [],
 
-      isShowSubmitPlanButton: true, // 是否显示"发布实施任务"的按钮
+      isNewPlan: true, // 是否显示"发布实施任务"的按钮
 
       // optionmodel: '',
       // dingshow: false,
@@ -436,30 +441,10 @@ export default {
       const _plan_id = this.$route.query.plan_id // 类别
 
       if (_plan_id !== undefined) {
-        this.isShowSubmitPlanButton = false
+        this.isNewPlan = false
         console.log('_plan_id_plan_id', _plan_id)
         await this.getPlanByPlanId(_plan_id)
-        console.log('_planInfo345', this.planInfo)
-        this.planForm = {
-          planTitle: this.planInfo.title, // 计划标题
-          planType: this.planInfo.type,
-          planTimeRange: [this.planInfo.start_date, this.planInfo.end_date],
-          planContent: this.planInfo.content,
-        }
-        this.oneparentid = _plan_id
-        this.numbox = this.planForm.planContent.split('\n')
-        console.log('实施计划的盒子1122', this.numbox)
-        for (let i = 0; i < this.numbox.length; i++) {
-          // blockshow:true,blockshow:false
-          this.numbox.splice(i, 1, {
-            name: this.numbox[i],
-            block: 'have',
-            blockshow1: true,
-            blockshow2: false,
-          })
-        }
-        this.planshow = false
-        this.planshow2 = true
+        this.getPlanTaskShow(_plan_id)
       }
 
       this.getstyle()
@@ -584,6 +569,74 @@ export default {
         console.log('plannewop', this.plannewop)
       })
     },
+    getPlanTask(planId) {
+      return new Promise((resolve, reject) => {
+        const param = {
+          method: 'plan_query',
+          project_id: this.project_id,
+          type: 6,
+          parent_id: planId,
+        }
+        this.$store.dispatch('Getplan', param).then((data) => {
+          // this.getalltask()
+          console.log('实施任务 - data', data)
+          const _taskList = data.data
+          console.log('_taskList', _taskList)
+          resolve(_taskList)
+        })
+      })
+    },
+    async getPlanTaskShow(plan_id) {
+      let taskList = await this.getPlanTask(plan_id)
+      let taskMap = new Map()
+      taskList.forEach((task) => {
+        taskMap.set(task.content, task)
+        taskMap.set(task.title, task)
+      })
+      console.log('_planInfo345', this.planInfo)
+      console.log('taskMap', taskMap)
+      this.planForm = {
+        planTitle: this.planInfo.title, // 计划标题
+        planType: this.planInfo.type,
+        planTimeRange: [this.planInfo.start_date, this.planInfo.end_date],
+        planContent: this.planInfo.content,
+      }
+      this.oneparentid = plan_id
+      this.numbox = this.planForm.planContent.split('\n')
+      console.log('实施计划的盒子1122', this.numbox)
+      let planContentMap = new Map()
+      for (let i = 0; i < this.numbox.length; i++) {
+        // blockshow:true,blockshow:false
+        let hasTask = false
+        let _name = this.numbox[i]
+        if (taskMap.get(_name) !== undefined) {
+          hasTask = true
+        }
+        this.numbox.splice(i, 1, {
+          name: _name,
+          block: 'have',
+          blockshow1: !hasTask,
+          blockshow2: hasTask,
+        })
+        planContentMap.set(_name, i)
+      }
+      console.log('planContentMap', planContentMap)
+      taskList.forEach((task) => {
+        if (
+          planContentMap.get(task.content) === undefined &&
+          planContentMap.get(task.title) === undefined
+        ) {
+          this.numbox.push({
+            name: task.content !== '' ? task.content : task.title,
+            block: 'have',
+            blockshow1: false,
+            blockshow2: true,
+          })
+        }
+      })
+      this.planshow = false
+      this.planshow2 = true
+    },
     plannewhandleChange(val) {
       console.log('val', val)
       this.structid = val[0]
@@ -680,6 +733,21 @@ export default {
         planInfo: this.planInfo,
         plan_id: this.oneparentid,
 
+        // position: this.currentDevicePosition,
+        // rotate: this.currentDeviceRotate
+      }
+      console.log('paramparam', param)
+      // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
+      this.$store
+        .dispatch('ShowPlanTaskDialog', param)
+        .then(() => {})
+        .catch(() => {})
+    },
+    newPlanTask() {
+      const param = {
+        show: true,
+        plan_id: this.oneparentid,
+        planInfo: this.planInfo,
         // position: this.currentDevicePosition,
         // rotate: this.currentDeviceRotate
       }
