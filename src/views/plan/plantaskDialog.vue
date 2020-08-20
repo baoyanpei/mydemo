@@ -320,6 +320,8 @@ export default {
       // this.fabuquestions_type = '' // 类型
       this.planTaskForm.taskContent = ''
       this.planTaskForm.questions_type = ''
+
+      this.didianarr = []
     },
     openedDialogHandle() {
       console.log('this.PlanTaskDialog1', this.PlanTaskDialog)
@@ -356,7 +358,7 @@ export default {
       this.gettypearr = null
       this.leibieoptions = null
       this.building = null
-      this.didianarr = null
+
       this.beizhuinput = ''
       this.fabu_people = []
       this.fileList = []
@@ -447,6 +449,7 @@ export default {
       console.log('地点index', index[1])
       this.bimitemid = index[1]
       console.log('aaaaaaaaaaa', this.bimitemid)
+      console.log('didiandataarr123', this.didiandataarr)
       for (let i = 0; i < this.didiandataarr.length; i++) {
         if (index[1] == this.didiandataarr[i].id) {
           this.bimopen.push(
@@ -622,13 +625,18 @@ export default {
               }
             }
             for (let j = 0; j < newarr.length; j++) {
-              newarr.splice(j, 1, { label: newarr[j], value: j, children: [] })
+              newarr.splice(j, 1, {
+                label: '第' + newarr[j] + '层',
+                value: j,
+                floor_name: newarr[j],
+                children: [],
+              })
             }
             // 楼层提出结束
             for (let i = 0; i < data.length; i++) {
               if (data[i].floor_name != '') {
                 for (let j = 0; j < newarr.length; j++) {
-                  if (newarr[j].label == data[i].floor_name) {
+                  if (newarr[j].floor_name == data[i].floor_name) {
                     newarr[j].children.push({
                       label: data[i].name,
                       value: data[i].id,
@@ -764,7 +772,7 @@ export default {
       this.gettypearr = null
       this.leibieoptions = null
       this.building = null
-      this.didianarr = null
+      this.didianarr = []
       this.beizhuinput = ''
       this.fabu_people = []
       this.fileList = []
