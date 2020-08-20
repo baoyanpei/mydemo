@@ -739,20 +739,20 @@ export default {
             struct_id: this.structid,
           }
           console.log('_param - plan_start_issue', _param)
-          this.loading = false
-          return
+          // this.loading = false
           this.$store.dispatch('Getplan', _param).then((data) => {
             console.log('任务发布成功', data) //work_id
-            for (let i = 0; i < this.numbox.length; i++) {
-              if (this.planTaskForm.taskContent == this.numbox[i].name) {
-                this.numbox[i].block = 'donot' //blockshow1 blockshow2
-                this.numbox[i].blockshow1 = false
-                this.numbox[i].blockshow2 = true
-              }
-            }
-            console.log('numbox__donot', this.numbox)
-            this.planindexworkid = data.work_id
-            this.smalltaskfnc()
+            // return
+            // for (let i = 0; i < this.numbox.length; i++) {
+            //   if (this.planTaskForm.taskContent == this.numbox[i].name) {
+            //     this.numbox[i].block = 'donot' //blockshow1 blockshow2
+            //     this.numbox[i].blockshow1 = false
+            //     this.numbox[i].blockshow2 = true
+            //   }
+            // }
+            // console.log('numbox__donot', this.numbox)
+            // this.planindexworkid = data.work_id
+            // this.smalltaskfnc()
             this.fabusuccessfnc()
             this.loading = false
           })
@@ -762,13 +762,9 @@ export default {
     fabusuccessfnc() {
       this.$alert('发布成功', '', {
         confirmButtonText: '确定',
-        callback: (action) => {
-          this.$message({
-            type: 'info',
-            message: `action: ${action}`,
-          })
-        },
+        callback: (action) => {},
       })
+      this.closeThisDialog()
       this.textarea = ''
       this.gettypearr = null
       this.leibieoptions = null
@@ -780,6 +776,15 @@ export default {
       this.zhongyaoxing = null
       this.plantypevalue = ''
       this.plantextarea = ''
+    },
+    closeThisDialog() {
+      const param = {
+        show: false,
+      }
+      this.$store
+        .dispatch('ShowPlanTaskDialog', param)
+        .then(() => {})
+        .catch(() => {})
     },
     grouparrqueren() {
       this.dingshow = false
@@ -851,30 +856,30 @@ export default {
         console.log('this.organizationarr', this.organizationarr)
       })
     },
-    smalltaskfnc() {
-      //获取任务列表接口
-      const _param = {
-        method: 'get_todo_list',
-        project_id: this.project_id,
-        qtype: 'TodoList,BackLog,MatterRead',
-      }
-      this.$store.dispatch('GetAllInstList', _param).then((data) => {
-        for (let i = 0; i < data.length; i++) {
-          if (this.planindexworkid == data[i].workId) {
-            console.log('提取到对应的任务', data[i])
-            const param = {
-              show: true,
-              data: data[i],
-            }
-            this.$store
-              .dispatch('SetInfoDialog', param)
-              .then(() => {})
-              .catch(() => {})
-          }
-        }
-        console.log('我的任务', data)
-      })
-    },
+    // smalltaskfnc() {
+    //   //获取任务列表接口
+    //   const _param = {
+    //     method: 'get_todo_list',
+    //     project_id: this.project_id,
+    //     qtype: 'TodoList,BackLog,MatterRead',
+    //   }
+    //   this.$store.dispatch('GetAllInstList', _param).then((data) => {
+    //     for (let i = 0; i < data.length; i++) {
+    //       if (this.planindexworkid == data[i].workId) {
+    //         console.log('提取到对应的任务', data[i])
+    //         const param = {
+    //           show: true,
+    //           data: data[i],
+    //         }
+    //         this.$store
+    //           .dispatch('SetInfoDialog', param)
+    //           .then(() => {})
+    //           .catch(() => {})
+    //       }
+    //     }
+    //     console.log('我的任务', data)
+    //   })
+    // },
   },
 }
 </script>
