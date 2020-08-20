@@ -144,7 +144,7 @@
                         style="display: block;color: #0a76a4;line-height: 50px;font-size:14px;"
                       >实施计划</span>
                       <!--<div class="jump" :class="{'classdonot':item.block=='donot'}" @click="releasefnc(item.name)">-->
-                      <div class="jump" @click="releasefnc(item.name)">
+                      <div class="jump" @click="releasefnc(item)">
                         <i
                           class="el-icon-right fabuimg"
                           v-if="item.blockshow1"
@@ -254,7 +254,7 @@ export default {
         planTimeRange: '',
         planContent: '222222',
       },
-
+      planInfo: null,
       // input: '', //标题名字
       // jihuavalue: [], //计划类别
       // value1: '', //日期
@@ -271,7 +271,7 @@ export default {
       // currpage2: 1,
       // pagesize2: 20,
       // jinjianshow: false,
-      textareaindex: '',
+      // textareaindex: '',
 
       plangettypearr: [],
 
@@ -582,6 +582,7 @@ export default {
             end_date: endDate,
             type: this.planForm.planType, //this.typetid
           }
+          this.planInfo = param
           console.log('plan_add - param:', param)
           // this.loading = false
           // this.planshow = false
@@ -608,16 +609,21 @@ export default {
         }
       })
     },
-    releasefnc(index) {
+    releasefnc(item) {
       //发布任务弹窗
       // this.dialogVisible = true
-      this.textareaindex = index
+      // this.textareaindex = index
 
       const param = {
         show: true,
+        item: item,
+        planInfo: this.planInfo,
+        plan_id: this.oneparentid,
+
         // position: this.currentDevicePosition,
         // rotate: this.currentDeviceRotate
       }
+      console.log('paramparam', param)
       // this.$store.dispatch('SetVideoDialog', param).then(() => {}).catch(() => {})
       this.$store
         .dispatch('ShowPlanTaskDialog', param)

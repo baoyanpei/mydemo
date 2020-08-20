@@ -4,8 +4,8 @@
 <template>
   <div id="plan-task-dialog" class="plan-task-dialog">
     <el-dialog
-      :modal="false"
-      width="600px"
+      :modal="true"
+      width="560px"
       top="10vh"
       left="80"
       :lock-scroll="true"
@@ -17,147 +17,141 @@
       :title="dialogTitle"
       v-el-drag-dialog
     >
+      <div
+        class="ding"
+        v-show="dingshow"
+        style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -290px;width: 250px;height: 400px;border: 1px solid #eeeeee;padding: 10px;"
+      >
+        <div style="padding:10px;">添加人员：</div>
+        <el-cascader
+          :props="props"
+          :options="grouparr"
+          :show-all-levels="false"
+          @change="handleChange"
+          size="mini"
+          style="display: block;margin: auto;"
+        ></el-cascader>
+        <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
+          <el-button style="margin-left: 25px" size="mini">取消</el-button>
+          <el-button
+            type="success"
+            @click="grouparrqueren"
+            style="float: right;margin-right: 25px"
+            size="mini"
+          >确认</el-button>
+        </div>
+      </div>
       <div class="fabudiv" style="width: 100%;margin-bottom: 15px;position: relative;">
-        <iframe
+        <!-- <iframe
           :src="iframeurl"
           v-show="iframeshow"
           frameborder="0"
           style="padding-top:20px;position: absolute;background-color: #ffffff;top: -65px;right: -420px;width: 400px;height: 400px;"
-        ></iframe>
-        <div
-          class="ding"
-          v-show="dingshow"
-          style="padding-top:20px;position: absolute;background-color: #fff;top: -20px;right: -290px;width: 250px;height: 400px;border: 1px solid #eeeeee;padding: 10px;"
-        >
-          <div style="padding:10px;">添加人员：</div>
-          <el-cascader
-            :props="props"
-            :options="grouparr"
-            :show-all-levels="false"
-            @change="handleChange"
-            style="display: block;margin: auto;"
-          ></el-cascader>
-          <div class="bottom" style="position: absolute;bottom: 20px;width:100%;">
-            <el-button style="margin-left: 25px">取消</el-button>
-            <el-button
-              type="success"
-              @click="grouparrqueren"
-              style="float: right;margin-right: 25px"
-            >确认</el-button>
+        ></iframe>-->
+        <el-form ref="planTaskForm" :model="planTaskForm" label-width="100px">
+          <el-form-item prop="taskContent" label="发布内容：" :rules="ruleTaskContent">
+            <el-input
+              type="textarea"
+              name="taskContent"
+              placeholder="请输入发布内容"
+              v-model="planTaskForm.taskContent"
+              maxlength="200"
+              style="width: 400px"
+              show-word-limit
+            ></el-input>
+          </el-form-item>
+          <div v-if="shigongzuzhishow">
+            <el-form-item label="组织计划：">
+              <el-cascader
+                style="width: 400px"
+                :options="organizationarr"
+                v-model="organizationvalue"
+                @change="handleChangegetorganization"
+                size="mini"
+              ></el-cascader>
+            </el-form-item>
           </div>
-        </div>
+          <el-form-item label="添加附件：">
+            <el-upload
+              class="upload-demo"
+              action="https://xcx.tddata.net/upload"
+              :on-success="successupload"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :before-remove="beforeRemove"
+              multiple
+              :limit="8"
+              :on-exceed="handleExceed"
+              :file-list="fileList"
+            >
+              <el-button size="mini" type="success" @click="clickupload(2)">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip" style="display: none;">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+          </el-form-item>
+          <el-form-item prop="questions_type" label="类型：" :rules="ruleQuestionsType">
+            <!-- <el-cascader
+              :options="leibieoptions"
+              @change="handleChangegetleixin"
+              :show-all-levels="false"
+              size="mini"
+            ></el-cascader>-->
 
-        <!--<span style="margin-right: 20px">选择类别:</span>-->
-        <!--<el-cascader :options="gettypearr" @change="handleChangegettypearr" :show-all-levels="false"></el-cascader>-->
-        <!--<br><br>-->
-        <!--<span style="margin-right: 20px">计划类型:</span>-->
-        <!--<el-cascader :options="plangettypearr" v-model="plantypevalue" @change="changeplangettypearr" :show-all-levels="false"></el-cascader>-->
-        <!--<br><br>-->
-        <!--<span style="margin-right: 20px">介绍内容:</span>-->
-        <!--<el-input-->
-        <!--type="textarea"-->
-        <!--placeholder=""-->
-        <!--v-model="plantextarea"-->
-        <!--maxlength="200"-->
-        <!--style="width: 400px"-->
-        <!--show-word-limit>-->
-        <!--</el-input>-->
-        <!--<br><br>-->
-        <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-          <span style="margin-right: 20px">发布标题:</span>
-          <el-input
-            type="textarea"
-            placeholder="请输入200字以内的作品介绍"
-            v-model="textareaindex"
-            maxlength="200"
-            style="width: 400px"
-            show-word-limit
-          ></el-input>
-        </div>
-        <div v-if="shigongzuzhishow">
-          <span style="margin-right: 20px">组织计划:</span>
-          <el-cascader
-            style="width: 400px"
-            :options="organizationarr"
-            v-model="organizationvalue"
-            @change="handleChangegetorganization"
-          ></el-cascader>
-        </div>
-        <br />
-        <br />
-        <!--<div style="width: 100%;height: 40px;">-->
-        <!--<span class="plantoonspan" style="float: left">计划时间:</span>-->
-        <!--<el-date-picker-->
-        <!--v-model="plantime"-->
-        <!--type="daterange"-->
-        <!--range-separator="至"-->
-        <!--start-placeholder="开始日期"-->
-        <!--end-placeholder="结束日期" style="width: 350px;float: left;margin-left: 25px">-->
-        <!--</el-date-picker>-->
-        <!--</div>-->
+            <el-select
+              name="questions_type"
+              v-model="planTaskForm.questions_type"
+              placeholder="请选择类型"
+              size="mini"
+            >
+              <el-option
+                v-for="item in leibieoptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.label"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="建筑：">
+            <el-cascader
+              :options="building"
+              @change="buildingchange"
+              :show-all-levels="false"
+              style="width:300px;"
+              size="mini"
+            ></el-cascader>
+          </el-form-item>
+          <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
+            <el-form-item label="地点：">
+              <el-cascader
+                :options="didianarr"
+                @change="didianarrchange"
+                :show-all-levels="false"
+                style="width:300px;"
+                size="mini"
+              ></el-cascader>
+              <el-button type="primary" @click="findbim" size="mini">查看BIM</el-button>
+            </el-form-item>
+          </div>
+          <el-form-item label="备注：">
+            <el-input v-model="beizhuinput" placeholder="请输入备注" style="width:300px;" size="mini"></el-input>
+          </el-form-item>
+          <el-form-item label="指定负责人：">
+            <el-button type="success" @click="addperson()" size="mini">添加人员</el-button>
+            <span v-for="item in this.fabu_people" :key="item.id">
+              <span style="margin-right: 10px">{{item.name}}</span>
+            </span>
+          </el-form-item>
+          <el-form-item label="重要性：">
+            <el-rate v-model="zhongyaoxing" @change="startchange" :max="3" style="float: left"></el-rate>
+          </el-form-item>
+
+          <el-button
+            type="success"
+            @click="plantaskSubmit()"
+            style="width: 100%;margin-top: 20px;"
+            size="mini"
+          >发布</el-button>
+        </el-form>
       </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 20px;">
-        <span style="margin-right: 20px;float: left;">添加附件:</span>
-        <el-upload
-          class="upload-demo"
-          action="https://xcx.tddata.net/upload"
-          :on-success="successupload"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :before-remove="beforeRemove"
-          multiple
-          :limit="8"
-          :on-exceed="handleExceed"
-          :file-list="fileList"
-          style="width: 500px;"
-        >
-          <el-button size="small" type="primary" @click="clickupload(2)">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip" style="display: none;">只能上传jpg/png文件，且不超过500kb</div>
-        </el-upload>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 50px">类型:</span>
-        <el-cascader
-          :options="leibieoptions"
-          @change="handleChangegetleixin"
-          :show-all-levels="false"
-        ></el-cascader>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 50px">建筑:</span>
-        <el-cascader
-          :options="building"
-          @change="buildingchange"
-          :show-all-levels="false"
-          style="width:350px;"
-        ></el-cascader>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 50px">地点:</span>
-        <el-cascader
-          :options="didianarr"
-          @change="didianarrchange"
-          :show-all-levels="false"
-          style="width:350px;"
-        ></el-cascader>
-        <el-button type="primary" @click="findbim">查看BIM</el-button>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 50px;opacity: 0;">地点:</span>
-        <el-input v-model="beizhuinput" placeholder="请输入备注信息" style="width:400px;"></el-input>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right: 10px;">指定负责人:</span>
-        <el-button type="primary" @click="addperson()">添加人员</el-button>
-        <span v-for="item in this.fabu_people">
-          <span style="margin-right: 10px">{{item.name}}</span>
-        </span>
-      </div>
-      <div class="fabudiv" style="width: 100%;padding-bottom: 10px;">
-        <span style="margin-right:40px;float: left">重要性:</span>
-        <el-rate v-model="zhongyaoxing" @change="startchange" :max="3" style="float: left"></el-rate>
-      </div>
-      <el-button type="primary" @click="fabufnc()" style="width: 100%;margin-top: 20px;">发布</el-button>
     </el-dialog>
   </div>
 </template>
@@ -171,7 +165,36 @@ export default {
   components: {},
   directives: {},
   data() {
+    const validateTaskContent = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入计划名称'))
+      } else {
+        callback()
+      }
+    }
+    const validateQuestionsType = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请选择一个类型'))
+      } else {
+        callback()
+      }
+    }
+
     return {
+      ruleTaskContent: [
+        {
+          required: true,
+          trigger: 'blur',
+          validator: validateTaskContent,
+        },
+      ],
+      ruleQuestionsType: [
+        {
+          required: true,
+          trigger: 'blur',
+          validator: validateQuestionsType,
+        },
+      ],
       loadingFull: false,
       dialogTitle: '发布',
       tipMessage: '',
@@ -179,7 +202,7 @@ export default {
       didianarr: [],
       optionmodel: '',
       planindexworkid: 0,
-      oneparentid: 0,
+      // oneparentid: 0,
       organizationarr: [],
       organizationvalue: '',
       shigongzuzhishow: false,
@@ -187,7 +210,7 @@ export default {
 
       plantextarea: '', //计划内容
       plantime: '',
-      plantypevalue: '',
+      // plantypevalue: '',
       typetid: 0,
       loading: false,
 
@@ -236,7 +259,7 @@ export default {
       bimitemid: '',
       fabu_people: [],
       fabustartvalue: '',
-      fabuquestions_type: '',
+      // fabuquestions_type: '',
       fabufncflowid: '',
       aaaa: [],
       grouparr: [],
@@ -250,7 +273,14 @@ export default {
       gettypearr: [],
       beizhuinput: '',
       fileList: [],
-      textareaindex: '',
+      // textareaindex: '',
+
+      plan_id: 0,
+      planInfo: null, //计划的信息
+      planTaskForm: {
+        taskContent: '',
+        questions_type: '',
+      },
     }
   },
   computed: {
@@ -284,11 +314,28 @@ export default {
   mounted() {},
   watch: {},
   methods: {
-    clearData() {},
+    clearData() {
+      this.plan_id = 0
+      this.planInfo = null // 计划信息
+      // this.fabuquestions_type = '' // 类型
+      this.planTaskForm.taskContent = ''
+      this.planTaskForm.questions_type = ''
+    },
     openedDialogHandle() {
+      console.log('this.PlanTaskDialog1', this.PlanTaskDialog)
+      this.planInfo = this.PlanTaskDialog.planInfo
+      const item = this.PlanTaskDialog.item
+      console.log('this.planInfo', this.planInfo)
+      this.typetid = this.planInfo.type
+      this.plan_id = this.PlanTaskDialog.plan_id
+      if (item !== undefined) {
+        this.planTaskForm.taskContent = item.name
+      }
+
       //打开发布任务窗口
       console.log('施工组织计划', this.typetid)
       if (this.typetid == 5 || this.typetid == 7) {
+        // 施工组织计划 - 5 施工计划 - 7
         //||this.structid==5||this.structid==7
         this.shigongzuzhishow = true
       } else {
@@ -305,7 +352,7 @@ export default {
     closeDialogHandle() {
       this.clearData()
       this.dingshow = false
-      this.textareaindex = ''
+      // this.textareaindex = ''
       this.gettypearr = null
       this.leibieoptions = null
       this.building = null
@@ -333,18 +380,19 @@ export default {
               this.leibieoptions.push({ label: data.data[i], value: i })
             }
           }
+          console.log('this.leibieoptions', this.leibieoptions)
         })
         .catch(() => {
           resolve()
         })
     },
-    handleChangegettypearr(index) {
-      //更换类别
-      console.log('index类别', index)
-      this.getcategory_flowid = this.gettypearr[index].flowid
-      this.fabufncflowid = this.gettypearr[index].flowid
-      this.getcategory()
-    },
+    // handleChangegettypearr(index) {
+    //   //更换类别
+    //   console.log('index类别', index)
+    //   this.getcategory_flowid = this.gettypearr[index].flowid
+    //   this.fabufncflowid = this.gettypearr[index].flowid
+    //   this.getcategory()
+    // },
     getcategory() {
       //类别
       this.leibieoptions = []
@@ -423,27 +471,27 @@ export default {
     },
     findbim() {
       console.log('this.projectid', this.bimopen)
-      if (this.bimopen.length != 0) {
-        this.iframeshow = !this.iframeshow
-        this.iframeurl =
-          'https://xcx.tddata.net/smz/#/xcx/pvshow?projectid=' +
-          this.project_id +
-          '&' +
-          'pvid=' +
-          this.bimopen[1] +
-          '&' +
-          'token=' +
-          getToken()
-      }
+      // if (this.bimopen.length != 0) {
+      //   this.iframeshow = !this.iframeshow
+      //   this.iframeurl =
+      //     'https://xcx.tddata.net/smz/#/xcx/pvshow?projectid=' +
+      //     this.project_id +
+      //     '&' +
+      //     'pvid=' +
+      //     this.bimopen[1] +
+      //     '&' +
+      //     'token=' +
+      //     getToken()
+      // }
     },
-    handleChangegetleixin(index) {
-      console.log(
-        'index获取到的类型',
-        index,
-        this.leibieoptions[index[0]].label
-      )
-      this.fabuquestions_type = this.leibieoptions[index[0]].label
-    },
+    // handleChangegetleixin(index) {
+    //   console.log(
+    //     'index获取到的类型',
+    //     index,
+    //     this.leibieoptions[index[0]].label
+    //   )
+    //   this.fabuquestions_type = this.leibieoptions[index[0]].label
+    // },
     successupload(response, file, fileList) {
       //图片样式更改
       console.log('图片信息返回', response)
@@ -649,49 +697,57 @@ export default {
       console.log('this.aaaa', this.aaaa)
       console.log('gettypearr', this.grouparr)
     },
-    fabufnc() {
-      //发布任务
-      this.loading = true
-      // console.log('父id', this.fatherid, this.oneparentid)
-      let firstdaytime = moment(this.plantime[0]).format('YYYY-MM-DD')
-      let endtime = moment(this.plantime[1]).format('YYYY-MM-DD')
-      let namebox = ''
-      for (let i = 0; i < this.fabu_people.length; i++) {
-        namebox = namebox + '@' + this.fabu_people[i].name
-      }
-      this.datalistfrom.title = namebox + this.textareaindex
-      this.datalistfrom.receiver = this.fabu_people
-      const _param = {
-        method: 'plan_start_issue',
-        project_id: this.project_id,
-        questions_type: this.fabuquestions_type,
-        title: namebox + this.textareaindex,
-        flow_id: 'PlanFlow01',
-        priority: this.fabustartvalue,
-        form: this.datalistfrom,
-        subjectionId: '',
-        nosend: 1,
-        type: this.plantypevalue[0],
-        content: '',
-        start_date: firstdaytime,
-        end_date: endtime,
-        parent_id: this.oneparentid,
-        struct_id: this.structid,
-      }
-      this.$store.dispatch('Getplan', _param).then((data) => {
-        console.log('任务发布成功', data) //work_id
-        for (let i = 0; i < this.numbox.length; i++) {
-          if (this.textareaindex == this.numbox[i].name) {
-            this.numbox[i].block = 'donot' //blockshow1 blockshow2
-            this.numbox[i].blockshow1 = false
-            this.numbox[i].blockshow2 = true
+    plantaskSubmit() {
+      this.$refs.planTaskForm.validate((valid) => {
+        console.log('plantaskSubmit', valid)
+        if (valid) {
+          //发布任务
+          this.loading = true
+          // console.log('父id', this.fatherid, this.oneparentid)
+          // let firstdaytime = moment(this.plantime[0]).format('YYYY-MM-DD')
+          // let endtime = moment(this.plantime[1]).format('YYYY-MM-DD')
+          let namebox = ''
+          for (let i = 0; i < this.fabu_people.length; i++) {
+            namebox = namebox + '@' + this.fabu_people[i].name
           }
+          this.datalistfrom.title = namebox + this.planTaskForm.taskContent
+          this.datalistfrom.receiver = this.fabu_people
+          const _param = {
+            method: 'plan_start_issue',
+            project_id: this.project_id,
+            questions_type: this.planTaskForm.questions_type, //this.fabuquestions_type,
+            title: namebox + this.planTaskForm.taskContent,
+            flow_id: 'PlanFlow01',
+            priority: this.fabustartvalue,
+            form: this.datalistfrom,
+            subjectionId: '',
+            nosend: 1,
+            type: 6, //this.plantypevalue[0],
+            content: '',
+            start_date: this.planInfo.start_date,
+            end_date: this.planInfo.end_date,
+            parent_id: this.plan_id,
+            struct_id: this.structid,
+          }
+          console.log('_param - plan_start_issue', _param)
+          this.loading = false
+          return
+          this.$store.dispatch('Getplan', _param).then((data) => {
+            console.log('任务发布成功', data) //work_id
+            for (let i = 0; i < this.numbox.length; i++) {
+              if (this.planTaskForm.taskContent == this.numbox[i].name) {
+                this.numbox[i].block = 'donot' //blockshow1 blockshow2
+                this.numbox[i].blockshow1 = false
+                this.numbox[i].blockshow2 = true
+              }
+            }
+            console.log('numbox__donot', this.numbox)
+            this.planindexworkid = data.work_id
+            this.smalltaskfnc()
+            this.fabusuccessfnc()
+            this.loading = false
+          })
         }
-        console.log('numbox__donot', this.numbox)
-        this.planindexworkid = data.work_id
-        this.smalltaskfnc()
-        this.fabusuccessfnc()
-        this.loading = false
       })
     },
     fabusuccessfnc() {

@@ -94,8 +94,8 @@
             <!-- <div class="displayplanbox" v-if="planboxshow_none">
               <span>暂无计划</span>
             </div>-->
-            <van-skeleton title :row="10" v-if="skeletonshow" style="margin-top: 15px" />
-            <div class="planbox" v-show="modelshow">
+            <van-skeleton title :row="20" v-if="skeletonshow" style="margin-top: 15px" />
+            <div class="planbox" v-show="modelshow && !skeletonshow">
               <el-row>
                 <div class="itemactovi" v-for="item in this.firstactivities" :key="item.id">
                   <el-row class="planboxtop">
@@ -269,6 +269,16 @@
                       <div class="smallplan_box">
                         <div class="smallplan_box_top">
                           <a href="javascript:void(0)">
+                            <!-- <span
+                              v-if="obj.content!==''"
+                              class="sonplantitle"
+                              @click="jumpfnc(obj)"
+                            >{{obj.content}}</span>
+                            <span
+                              v-if="obj.content===''"
+                              class="sonplantitle"
+                              @click="jumpfnc(obj)"
+                            >{{obj.title}}</span>-->
                             <span class="sonplantitle" @click="jumpfnc(obj)">{{obj.title}}</span>
                           </a>
                           <div
@@ -276,11 +286,11 @@
                             :class="{'timeouttask':(obj.timeout==1),'finishedtask':(obj.status==1)}"
                           >{{obj.typename}}</div>
                         </div>
-                        <span
+                        <!-- <span
                           class="smallplanspan"
                           style="white-space: nowrap;overflow: hidden;display: inline-block;text-overflow: ellipsis;width: 700px;"
                           :title="obj.content"
-                        >{{obj.content}}</span>
+                        >{{obj.content}}</span>-->
                         <!--<span style="display: block;margin-top: 10px"><i class="el-icon-folder-add" style="margin-right: 10px"></i>发布实施任务 <span style="margin-left: 10px;margin-right: 10px;color: #BABABA;">|</span> <i class="el-icon-chat-dot-square" style="margin-right: 10px"></i> 评论</span>-->
                       </div>
                     </div>

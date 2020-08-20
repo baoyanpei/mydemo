@@ -1,2 +1,16 @@
 .plan-task-dialog {
+  .el-button--success {
+    color: #fff;
+    background-color: #1abc9c;
+    border-color: #1abc9c;
+  }
+
+  .el-form-item {
+    margin-bottom: 15px;
+  }
+
+  .el-rate {
+    height: 20px;
+    line-height: 47px;
+  }
 }
