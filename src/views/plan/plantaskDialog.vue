@@ -159,6 +159,7 @@ let Base64 = require('js-base64').Base64
 
 import { Loading } from 'element-ui'
 import { getToken } from '@/utils/auth'
+import moment from 'moment'
 export default {
   components: {},
   directives: {},
@@ -743,6 +744,12 @@ export default {
           console.log('nameboxnamebox', namebox)
           this.datalistfrom.title = namebox + this.planTaskForm.taskContent
           this.datalistfrom.receiver = this.fabu_people
+          this.datalistfrom.time = {
+            id: 'questions_time',
+            lable: '记录时间',
+            type: 'text',
+            value: moment().format('YYYY-MM-DD HH:mm:ss'), //'2019-11-05 20:16:37',
+          }
           const _param = {
             method: 'plan_start_issue',
             project_id: this.project_id,
@@ -760,6 +767,7 @@ export default {
             parent_id: this.plan_id,
             struct_id: this.structid,
           }
+
           console.log('_param - plan_start_issue', _param)
           // this.loading = false
           // return
