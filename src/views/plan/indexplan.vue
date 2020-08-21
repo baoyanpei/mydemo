@@ -386,8 +386,16 @@ export default {
     project_id() {
       return this.$store.state.project.project_id
     },
-    plan_typeid() {
-      return this.$store.state.plantypeid.count
+    // plan_typeid() {
+    //   return this.$store.state.plantypeid.count
+    // },
+    plan_typeid: {
+      get: function () {
+        return this.$store.state.plantypeid.count
+      },
+      set: function (newValue) {
+        this.$store.state.plantypeid.count = newValue
+      },
     },
     sonplanid() {
       return this.$store.state.plantypeid.sonplanid
@@ -690,6 +698,7 @@ export default {
       let cookiePlanType = Cookies.get('CurrentPlanType')
       if (cookiePlanType !== undefined) {
         this.planchanidtype = cookiePlanType
+        this.plan_typeid = cookiePlanType
       }
       console.log('this.planchanidtype123', this.planchanidtype)
 
