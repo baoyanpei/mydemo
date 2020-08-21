@@ -143,6 +143,7 @@
 
           <el-button
             type="success"
+            :loading="loading"
             @click="plantaskSubmit()"
             style="width: 100%;margin-top: 20px;"
             size="mini"
@@ -157,7 +158,7 @@
 let Base64 = require('js-base64').Base64
 
 import { Loading } from 'element-ui'
-
+import { getToken } from '@/utils/auth'
 export default {
   components: {},
   directives: {},
@@ -489,18 +490,22 @@ export default {
       console.log('this.datalistfrom.address', this.datalistfrom.address)
     },
     findbim() {
-      console.log('this.projectid', this.bimopen)
+      console.log('this.bimopen', this.bimopen)
+      if (this.bimopen.length === 0) {
+        this.$message({
+          message: '请先选择建筑，再选择地点',
+          type: 'error',
+        })
+        return
+      }
+      const viewUrl = `/#/xcx/pvshow?projectid=${this.project_id}&pvid=${
+        this.bimopen[1]
+      }&token=${getToken()}`
+      // console.log('viewUrl', viewUrl)
+      window.open(viewUrl)
       // if (this.bimopen.length != 0) {
       //   this.iframeshow = !this.iframeshow
-      //   this.iframeurl =
-      //     'https://xcx.tddata.net/smz/#/xcx/pvshow?projectid=' +
-      //     this.project_id +
-      //     '&' +
-      //     'pvid=' +
-      //     this.bimopen[1] +
-      //     '&' +
-      //     'token=' +
-      //     getToken()
+      //   this.iframeurl = viewUrl
       // }
     },
     // handleChangegetleixin(index) {
@@ -759,6 +764,7 @@ export default {
           // this.loading = false
           this.$store.dispatch('Getplan', _param).then((data) => {
             console.log('任务发布成功', data) //work_id
+            this.loading = false
             // return
             // for (let i = 0; i < this.numbox.length; i++) {
             //   if (this.planTaskForm.taskContent == this.numbox[i].name) {
@@ -774,17 +780,15 @@ export default {
               .dispatch('SetPlanAddTaskSuccess', {})
               .then((result) => {})
             this.fabusuccessfnc()
-            this.loading = false
           })
         }
       })
     },
     fabusuccessfnc() {
-      this.$alert('发布成功', '', {
-        confirmButtonText: '确定',
-        callback: (action) => {},
+      this.$message({
+        message: '实施任务发布成功！',
+        type: 'success',
       })
-
       this.textarea = ''
       this.gettypearr = null
       this.leibieoptions = null
