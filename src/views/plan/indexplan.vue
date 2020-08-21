@@ -848,6 +848,8 @@ export default {
             }
           }
         }
+        Cookies.remove('CurrentPlanType')
+        Cookies.remove('CurrentPlanId')
       })
     },
     getplan2() {
