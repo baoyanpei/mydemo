@@ -255,10 +255,10 @@ export default {
         // { label: '其他', value: 0, children: [] },
       ],
       planForm: {
-        planTitle: '1111', // 计划标题
+        planTitle: '', // 计划标题
         planType: 1,
         planTimeRange: '',
-        planContent: '222222',
+        planContent: '',
       },
       planInfo: null,
       // input: '', //标题名字
