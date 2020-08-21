@@ -105,7 +105,6 @@ export default {
       })
     },
     planidtran(index) {
-      console.log('dsadsadsa', index)
       // this.$store.commit('planidchange', 0)
       if (index == 1) {
         this.$store.commit('planindexfirstnamefnc', '年计划')
@@ -130,7 +129,12 @@ export default {
       }
       this.nowid = index
       Cookies.set('CurrentPlanType', index)
-      this.$store.commit('planidchange', index)
+      console.log('this.$route.params', this.$route.name)
+      if (this.$route.name == 'indexplan') {
+        this.$store.commit('planidchange', index)
+      } else {
+        this.$router.push({ path: '/indexplan' })
+      }
     },
   },
 }

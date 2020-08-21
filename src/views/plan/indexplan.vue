@@ -22,25 +22,25 @@
               style="font-size:14px;margin-left: 15px;line-height: 35px;white-space: nowrap;display:inline-block;overflow: hidden;;text-overflow: ellipsis;width: 260px;"
             >{{this.firsttitletype}}>计划列表>{{this.bannertitle}}</span>
           </div>
-          <el-progress
+          <!-- <el-progress
             v-show="progressshow"
             :percentage="progressnum"
             :format="format"
             class="jindutiao"
-          ></el-progress>
+          ></el-progress>-->
           <!--<a href="javascript:void(0)"><div class="boxtop_right" @click="getnewplan">新增计划</div></a>-->
-          <el-button
+          <!-- <el-button
             type="primary"
             class="boxtop_right"
             @click="getnewplan"
             :loading="btnloding"
-          >新增计划</el-button>
+          >新增计划</el-button>-->
           <el-button
             type="primary"
             class="boxtop_right"
             @click="getnewplanV2"
             :loading="btnloding"
-          >新增计划v2</el-button>
+          >新增计划</el-button>
         </el-row>
         <!--添加定位属性-->
         <el-row class="displayplanbox" v-if="planboxshow_none">
@@ -503,8 +503,8 @@ export default {
         },
       })
 
-      return
       //发布实施任务
+      /*
       this.fullscreenLoading = false
       this.plansonloading = false
       console.log('发布实施任务', index)
@@ -523,6 +523,7 @@ export default {
       this.$store.commit('leftshowfnc')
       this.$store.commit('newplanshowchange')
       // this.$router.push({path:'/newplan'})
+      */
     },
     planchangeid() {
       this.planchanidtype = this.plan_typeid
@@ -665,34 +666,38 @@ export default {
         console.log('第三接口', this.thirdinfo)
       })
     },
-    jumpson(index) {
+    jumpson(plan) {
       //子计划跳转
+      console.log('子计划', plan)
       this.lastsonplanid = 0
-      console.log('子计划', index)
-      this.planchanidtype = index.type
-      this.sonplanjump(index.id)
-      this.$store.commit('sonplanchange', index.id)
-      this.$store.commit('planidchange', index.type)
-      Cookies.set('CurrentPlanType', index.type)
+      this.planchanidtype = plan.type
+      this.sonplanjump(plan.id)
+      this.$store.commit('sonplanchange', plan.id)
+      this.$store.commit('planidchange', plan.type)
+      Cookies.set('CurrentPlanType', plan.type)
+      Cookies.set('CurrentPlanId', plan.id)
+      // this.$router.push({ path: '/indexplan' })
+      location.reload()
     },
     sonplanjump(idsss) {
       this.idplan = []
       this.idplan.push(idsss)
     },
     getplan() {
+      console.log('getplangetplangetplangetplan - 111')
       let cookiePlanType = Cookies.get('CurrentPlanType')
       if (cookiePlanType !== undefined) {
         this.planchanidtype = cookiePlanType
-        // this.dataTimelineData(this.activities[i])
       }
       console.log('this.planchanidtype123', this.planchanidtype)
 
       let cookiePlanId = Cookies.get('CurrentPlanId')
       if (cookiePlanId !== undefined) {
         this.lastsonplanid = cookiePlanId
-        // this.dataTimelineData(this.activities[i])
+        this.sonplanjump(cookiePlanId)
       }
-
+      Cookies.remove('CurrentPlanType')
+      Cookies.remove('CurrentPlanId')
       this.messageWhenNoItems = '正在加载数据'
       this.searchPlanTips = '正在查询计划'
       const param = {
@@ -718,11 +723,13 @@ export default {
           this.progressnum = 15
         }
         console.log('plan', data)
+        let planList = data.data
+        console.log('planListplanList 123', planList)
         this.dataTimeline = []
         let _i = 0
-        data.data.forEach((item) => {
+        planList.forEach((item) => {
           item['classcontent'] = item.content.split('\n')
-          item['datayear'] = item.start_date.slice(0, 11)
+          // item['datayear'] = item.start_date.slice(0, 11)
           if (item.type == 1) {
             item['firstlittertype'] = '年计划'
           }
@@ -760,20 +767,21 @@ export default {
           _i = _i + 1
         })
 
-        for (let o = 0; o < data.data.length; o++) {
-          if (this.idplan[0] == data.data[o].id) {
+        for (let o = 0; o < planList.length; o++) {
+          if (this.idplan[0] == planList[o].id) {
             this.progressnum = 30
             this.firstactivities = []
-            this.activities = data.data
-            this.firstactivities.push(data.data[o])
-            this.indexspan = data.data[o].id
-            this.bannertitle = data.data[o].title
-            this.fatherid = data.data[o].id
-            this.plan3id = data.data[o].id
+            this.activities = planList
+            this.firstactivities.push(planList[o])
+            this.indexspan = planList[o].id
+            this.bannertitle = planList[o].title
+            this.fatherid = planList[o].id
+            this.plan3id = planList[o].id
+            console.log('getplan2 - getplan2 -getplan2 -getplan2')
             this.getplan2() //子计划
             this.getplane3() //任务状态
             this.getcomment() //该计划的评论
-            this.idplan = []
+            // this.idplan = []
           }
         }
         if (this.idplan.length == 0) {
@@ -781,14 +789,14 @@ export default {
           // this.skeletonshow=false
           console.log('idplan为空')
           this.firstactivities = []
-          this.activities = data.data
+          this.activities = planList
           if (this.activities.length > 0) {
             this.firstactivities.push(this.activities[0])
-            this.indexspan = data.data[0].id
-            this.bannertitle = data.data[0].title
-            this.fatherid = data.data[0].id
-            this.plan3id = data.data[0].id
-
+            this.indexspan = planList[0].id
+            this.bannertitle = planList[0].title
+            this.fatherid = planList[0].id
+            this.plan3id = planList[0].id
+            console.log('getplan2 - getplan2 -getplan2 -getplan2 11111')
             this.getplan2() //子计划
             this.getplane3() //任务状态
             this.getcomment() //该计划的评论
@@ -831,19 +839,22 @@ export default {
           for (let i = 0; i < this.activities.length; i++) {
             if (this.lastsonplanid == this.activities[i].id) {
               console.log('子任务跳转过来的数据', this.activities[i])
-              this.showtitle(this.activities[i])
-              this.dataTimelineData(this.activities[i])
+              // this.showtitle(this.activities[i])
+              this.dataTimelineData(this.activities[i], true)
+              // this.showtitle(this.activities[i])
             }
           }
         }
       })
     },
     getplan2() {
+      console.log('getplan2getplan2 -123')
       const param = {
         method: 'plan_query',
         project_id: this.project_id,
         parent_id: this.fatherid,
       }
+      this.sonplanbox = []
       this.$store.dispatch('Getplan', param).then((data) => {
         this.progressnum = 80
         if (data.data.length == 0) {
@@ -997,7 +1008,6 @@ export default {
       })
     },
     showtitle(index) {
-      console.log('index', index)
       this.skeletonshow = true
       this.modelshow = false
       this.plansonloading = true
@@ -1008,6 +1018,7 @@ export default {
       this.firstactivities.push(index)
       this.bannertitle = index.title
       this.plan3id = index.id
+      console.log('showtitleshowtitleshowtitle 123')
       this.getplan2()
       this.getplane3()
       this.getcomment()
@@ -1046,14 +1057,16 @@ export default {
     },
     dataTimeClick(itemSelected) {
       console.log('dataTimeClick123', itemSelected)
-      this.dataTimelineData(itemSelected.data)
+      this.dataTimelineData(itemSelected.data, true)
     },
-    dataTimelineData(itemData) {
+    dataTimelineData(itemData, isShowTitle) {
       this.dataTimeline.forEach((item) => {
         if (item.data.id === itemData.id) {
           item.isSelected = 1
           item.color = ''
-          this.showtitle(item.data)
+          if (isShowTitle === true) {
+            this.showtitle(item.data)
+          }
         } else {
           item.isSelected = 0
           item.color = '#cecece'

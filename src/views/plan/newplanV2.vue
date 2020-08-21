@@ -122,9 +122,8 @@
                   <el-cascader
                     style="float: left;margin-left: 15px;width: 260px"
                     v-show="plannewshow"
-                    v-model="plannewvalue"
+                    v-model="plan_parent"
                     :options="plannewop"
-                    @change="plannewhandleChange"
                     size="mini"
                   ></el-cascader>
                 </div>
@@ -235,7 +234,7 @@ export default {
           validator: validatePlanContent,
         },
       ],
-      plannewvalue: '',
+      plan_parent: [],
       leftindexshow: true,
       faqijihuashow: false,
 
@@ -246,14 +245,14 @@ export default {
 
       structid: 0,
       plannewop: [
-        { label: '年计划', value: 1, children: [] },
-        { label: '月计划', value: 2, children: [] },
-        { label: '周计划', value: 3, children: [] },
-        { label: '日计划', value: 4, children: [] },
-        { label: '施工组织计划', value: 5, children: [] },
-        { label: '施工任务', value: 6, children: [] },
-        { label: '施工计划', value: 7, children: [] },
-        { label: '其他', value: 0, children: [] },
+        // { label: '年计划', value: 1, children: [] },
+        // { label: '月计划', value: 2, children: [] },
+        // { label: '周计划', value: 3, children: [] },
+        // { label: '日计划', value: 4, children: [] },
+        // { label: '施工组织计划', value: 5, children: [] },
+        // { label: '施工任务', value: 6, children: [] },
+        // { label: '施工计划', value: 7, children: [] },
+        // { label: '其他', value: 0, children: [] },
       ],
       planForm: {
         planTitle: '1111', // 计划标题
@@ -516,62 +515,84 @@ export default {
       })
     },
     getplan() {
+      this.plannewop = []
       const param = {
         method: 'plan_query',
         project_id: this.project_id,
       }
+      console.log('this.optionstype', this.optionstype)
+      let _plannewop = []
+      this.optionstype.forEach((item) => {
+        item['children'] = []
+        _plannewop.push(item)
+      })
+
+      console.log('this.plannewop 123', _plannewop)
       this.$store.dispatch('Getplan', param).then((data) => {
         console.log('下拉框data', data)
-        for (let i = 0; i < data.data.length; i++) {
-          if (data.data[i].type == 1) {
-            this.plannewop[0].children.push({
-              label: data.data[i].title,
-              value: i,
-            })
-          }
-          if (data.data[i].type == 2) {
-            this.plannewop[1].children.push({
-              label: data.data[i].title,
-              value: i,
-            })
-          }
-          if (data.data[i].type == 3) {
-            this.plannewop[2].children.push({
-              label: data.data[i].title,
-              value: i,
-            })
-          }
-          if (data.data[i].type == 4) {
-            this.plannewop[3].children.push({
-              label: data.data[i].title,
-              value: i,
-            })
-          }
-          if (data.data[i].type == 5) {
-            this.plannewop[4].children.push({
-              label: data.data[i].title,
-              value: i,
-            })
-          }
-          if (data.data[i].type == 6) {
-            this.plannewop[5].children.push({
-              label: data.data[i].title,
-              value: i,
-            })
-          }
-          if (data.data[i].type == 7) {
-            this.plannewop[6].children.push({
-              label: data.data[i].title,
-              value: i,
-            })
-          }
-          if (data.data[i].type == 0) {
-            this.plannewop[6].children.push({
-              label: data.data[i].title,
-              value: i,
-            })
-          }
-        }
+        let _planList = data.data
+        _planList.forEach((plan) => {
+          _plannewop.forEach((item) => {
+            if (plan.type === item.value) {
+              item.children.push({
+                label: plan.title,
+                value: plan.id,
+              })
+            }
+          })
+        })
+        console.log('this.plannewop 234', _plannewop)
+        // for (let i = 0; i < data.data.length; i++) {
+        //   if (data.data[i].type == 1) {
+        //     this.plannewop[0].children.push({
+        //       label: data.data[i].title,
+        //       value: i,
+        //     })
+        //   }
+        //   if (data.data[i].type == 2) {
+        //     this.plannewop[1].children.push({
+        //       label: data.data[i].title,
+        //       value: i,
+        //     })
+        //   }
+        //   if (data.data[i].type == 3) {
+        //     this.plannewop[2].children.push({
+        //       label: data.data[i].title,
+        //       value: i,
+        //     })
+        //   }
+        //   if (data.data[i].type == 4) {
+        //     this.plannewop[3].children.push({
+        //       label: data.data[i].title,
+        //       value: i,
+        //     })
+        //   }
+        //   if (data.data[i].type == 5) {
+        //     this.plannewop[4].children.push({
+        //       label: data.data[i].title,
+        //       value: i,
+        //     })
+        //   }
+        //   if (data.data[i].type == 6) {
+        //     this.plannewop[5].children.push({
+        //       label: data.data[i].title,
+        //       value: i,
+        //     })
+        //   }
+        //   if (data.data[i].type == 7) {
+        //     this.plannewop[6].children.push({
+        //       label: data.data[i].title,
+        //       value: i,
+        //     })
+        //   }
+        //   if (data.data[i].type == 0) {
+        //     this.plannewop[6].children.push({
+        //       label: data.data[i].title,
+        //       value: i,
+        //     })
+        //   }
+        // }
+        this.plannewop = _plannewop
         this.plannewshow = true
         this.loading = false
         console.log('plannewop', this.plannewop)
@@ -645,10 +666,10 @@ export default {
       this.planshow = false
       this.planshow2 = true
     },
-    plannewhandleChange(val) {
-      console.log('val', val)
-      this.structid = val[0]
-    },
+    // plannewhandleChange(val) {
+    //   console.log('val', val)
+    //   this.structid = val[0]
+    // },
 
     getstyle() {
       //获取计划类型
@@ -702,6 +723,10 @@ export default {
             start_date: startDate,
             end_date: endDate,
             type: this.planForm.planType, //this.typetid
+          }
+          console.log('this.plan_parent', this.plan_parent)
+          if (this.plan_parent.length === 2) {
+            param['parent_id'] = this.plan_parent[1]
           }
           this.planInfo = param
           console.log('plan_add - param:', param)
