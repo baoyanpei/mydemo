@@ -421,6 +421,7 @@ export default {
     },
     plan_typeid(curVal, oldVal) {
       console.log('监听事件plan_typeid!!!!!', curVal)
+      // this.idplan = []
       this.planboxshow_none = true
       this.planboxshow = false
       this.modelshow = false
@@ -684,6 +685,7 @@ export default {
       this.idplan.push(idsss)
     },
     getplan() {
+      // this.lastsonplanid = 0
       console.log('getplangetplangetplangetplan - 111')
       let cookiePlanType = Cookies.get('CurrentPlanType')
       if (cookiePlanType !== undefined) {
@@ -696,8 +698,8 @@ export default {
         this.lastsonplanid = cookiePlanId
         this.sonplanjump(cookiePlanId)
       }
-      Cookies.remove('CurrentPlanType')
-      Cookies.remove('CurrentPlanId')
+      // Cookies.remove('CurrentPlanType')
+      // Cookies.remove('CurrentPlanId')
       this.messageWhenNoItems = '正在加载数据'
       this.searchPlanTips = '正在查询计划'
       const param = {
@@ -836,6 +838,7 @@ export default {
 
         if (this.lastsonplanid !== 0) {
           console.log('传输过来了数据', this.lastsonplanid)
+          console.log('传输过来了数据 this.activities', this.activities)
           for (let i = 0; i < this.activities.length; i++) {
             if (this.lastsonplanid == this.activities[i].id) {
               console.log('子任务跳转过来的数据', this.activities[i])

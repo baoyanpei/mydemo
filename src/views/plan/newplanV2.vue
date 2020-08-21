@@ -397,6 +397,9 @@ export default {
     fatherid() {
       return this.$store.state.plantypeid.fatherid
     },
+    PlanAddTaskSuccess() {
+      return this.$store.state.plan.PlanAddTaskSuccess
+    },
   },
   watch: {
     project_id(curVal, oldVal) {
@@ -417,6 +420,17 @@ export default {
     plan_typeid(curVal, oldVal) {
       console.log('监听事件plan_typeid', curVal)
       this.$router.push({ path: '/indexplan' })
+    },
+    PlanAddTaskSuccess: {
+      handler: function (newVal, oldVal) {
+        console.log('PlanAddTaskSuccess ', newVal)
+
+        this.getPlanTaskShow(this.oneparentid)
+        // if (newVal.type === 1) {
+        //   this.refreshDisplay(newVal)
+        // }
+      },
+      deep: true,
     },
   },
   mounted() {

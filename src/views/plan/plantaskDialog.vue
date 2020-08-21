@@ -263,7 +263,8 @@ export default {
       props: { multiple: true },
       dingshow: false,
 
-      buileding_fowlid: '',
+      building_itemid: '',
+      buildingMap: null,
       building: [],
       getcategory_flowid: '',
       zhongyaoxing: null,
@@ -319,6 +320,7 @@ export default {
       this.planTaskForm.questions_type = ''
 
       this.didianarr = []
+      this.buildingMap = null
     },
     openedDialogHandle() {
       console.log('this.PlanTaskDialog1', this.PlanTaskDialog)
@@ -427,26 +429,30 @@ export default {
       this.$store.dispatch('GetItemInfoListByItemIDs', param).then((data) => {
         console.log('建筑模型', data)
         var aaa = []
+        this.buildingMap = new Map()
         //提出模型名字
         for (let i = 0; i < data.length; i++) {
           if (data[i].name != '') {
-            aaa.push({ label: data[i].name, value: data[i].file_id })
+            aaa.push({ label: data[i].name, value: data[i].id })
+            this.buildingMap.set(data[i].id, data[i])
           }
         }
         this.building = aaa
         console.log('建筑列表', this.building)
+        console.log('this.buildingMap', this.buildingMap)
       })
     },
     buildingchange(index) {
       //更换建筑
-      console.log('地点index', index[0])
-      this.buileding_fowlid = index[0]
+      console.log('地点 - index', index)
+      this.building_itemid = index[0]
+
       this.getdidian()
     },
     didianarrchange(index) {
       //更换地点
       this.bimopen = []
-      console.log('地点index', index[1])
+      console.log('地点index', index)
       this.bimitemid = index[1]
       console.log('aaaaaaaaaaa', this.bimitemid)
       console.log('didiandataarr123', this.didiandataarr)
@@ -454,23 +460,33 @@ export default {
         if (index[1] == this.didiandataarr[i].id) {
           this.bimopen.push(
             this.didiandataarr[i].camera_info,
-            this.didiandataarr[i].id
+            this.didiandataarr[i].id,
+            this.didiandataarr[i].name
           )
         }
       }
       console.log('bim-----', this.bimopen)
+      console.log('this.didianarr123', this.didianarr)
+      let address_id = `${this.building_itemid},${
+        this.didianarr[index[0]].floor_name
+      },${index[1]}`
+
+      let address_value = `${this.buildingMap.get(this.building_itemid).name},${
+        this.didianarr[index[0]].floor_name
+      }楼,${this.bimopen[2]}`
       this.datalistfrom.address = {
         id: 'questions_address',
         lx: 'basic',
         lable: '地点',
         type: 'text',
-        value: index[1],
+        value: address_value,
         lat: '',
         lon: '',
         address: '',
-        address_id: '',
+        address_id: address_id,
         pvid: '',
       }
+      console.log('this.datalistfrom.address', this.datalistfrom.address)
     },
     findbim() {
       console.log('this.projectid', this.bimopen)
@@ -600,12 +616,13 @@ export default {
       //地点     建筑---地点
       return new Promise((resolve, reject) => {
         const param = {
-          method: 'GetViewpointsByFileId',
-          file_id: this.buileding_fowlid,
+          method: 'GetViewPoints',
+          item_id: this.building_itemid,
           project_id: this.project_id,
+          type: 1,
         }
         this.$store
-          .dispatch('GetItemInfoListByItemIDs', param)
+          .dispatch('GetViewPoints', param)
           .then((data) => {
             console.log('地点data', data)
             this.didiandataarr = data
@@ -753,6 +770,9 @@ export default {
             // console.log('numbox__donot', this.numbox)
             // this.planindexworkid = data.work_id
             // this.smalltaskfnc()
+            this.$store
+              .dispatch('SetPlanAddTaskSuccess', {})
+              .then((result) => {})
             this.fabusuccessfnc()
             this.loading = false
           })
@@ -764,7 +784,7 @@ export default {
         confirmButtonText: '确定',
         callback: (action) => {},
       })
-      this.closeThisDialog()
+
       this.textarea = ''
       this.gettypearr = null
       this.leibieoptions = null
@@ -776,6 +796,7 @@ export default {
       this.zhongyaoxing = null
       this.plantypevalue = ''
       this.plantextarea = ''
+      this.closeThisDialog()
     },
     closeThisDialog() {
       const param = {
