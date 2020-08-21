@@ -762,6 +762,7 @@ export default {
           }
           console.log('_param - plan_start_issue', _param)
           // this.loading = false
+          // return
           this.$store.dispatch('Getplan', _param).then((data) => {
             console.log('任务发布成功', data) //work_id
             this.loading = false
