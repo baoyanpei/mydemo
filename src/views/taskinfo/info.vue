@@ -10,7 +10,7 @@
       class="task_box_big"
       :lock-scroll="true"
       :close-on-click-modal="false"
-      @open="openPersonFacePercentDetailDialogHandle"
+      @open="openTaskInfoDetailDialogHandle"
       :visible.sync="taskInfoDialog.show"
       title="任务详情"
       @close="closeDialog"
@@ -324,7 +324,7 @@ export default {
       },
       set: function (newValue) {
         this.$store.state.project.taskInfoDialog = newValue
-        console.log(newValue)
+        console.log('taskInfoDialog - set', newValue)
       },
     },
     taskInfoChanged() {
@@ -346,14 +346,11 @@ export default {
       deep: true,
     },
   },
-  mounted() {
-    if (this.project_id !== null) {
-    }
-  },
+  mounted() {},
   methods: {
-    openPersonFacePercentDetailDialogHandle() {
+    openTaskInfoDetailDialogHandle() {
       //打开窗口
-      this.getpersonlist()
+      this.getPersonList()
       this.getalltaskperson()
       this.getpersonprogress()
       let p = new Promise((resolve, reject) => {
@@ -407,7 +404,7 @@ export default {
         console.log('yongyou', this.allpersonbox)
       })
     },
-    getpersonlist() {
+    getPersonList() {
       //人员列表信息接口
       const param = {
         method: 'query_person_list',
