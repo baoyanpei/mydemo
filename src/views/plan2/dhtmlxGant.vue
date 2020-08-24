@@ -88,6 +88,7 @@ export default {
         links: [
           { id: 1, source: 1, target: 2, type: '0' },
           { id: 2, source: 2, target: 3, type: '0' },
+          { id: 3, source: 1, target: 3, type: '0' },
         ],
       },
       messages: [],
