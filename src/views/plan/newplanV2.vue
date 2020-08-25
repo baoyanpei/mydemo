@@ -765,6 +765,7 @@ export default {
             console.log('this.numboxthis.numboxthis.numbox', this.numbox)
             this.planshow = false
             this.planshow2 = true
+            this.isNewPlan = false
           })
         }
       })

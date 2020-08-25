@@ -750,6 +750,7 @@ export default {
             type: 'text',
             value: moment().format('YYYY-MM-DD HH:mm:ss'), //'2019-11-05 20:16:37',
           }
+          this.datalistfrom.parent_id = this.plan_id.toString()
           const _param = {
             method: 'plan_start_issue',
             project_id: this.project_id,

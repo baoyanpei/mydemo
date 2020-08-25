@@ -530,7 +530,6 @@ const project = {
     },
     SetInfoDialog({ commit, rootState }, param) {
       return new Promise((resolve, reject) => {
-        console.log(param);
         commit("SET_INFO_DIALOG", param);
         resolve();
       });
