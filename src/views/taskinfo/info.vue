@@ -349,16 +349,17 @@ export default {
   mounted() {},
   methods: {
     openTaskInfoDetailDialogHandle() {
+      console.log('taskInfoDialog', this.taskInfoDialog)
       //打开窗口
       this.getPersonList()
-      this.getalltaskperson()
-      this.getpersonprogress()
+      this.getFlowUsers()
+      this.getNodesUsers()
       let p = new Promise((resolve, reject) => {
         this.selectcomment() //显示评论
         resolve('success')
       })
       p.then((result) => {
-        this.taskspecificinfo() //填充数组
+        this.getFlowWork() //填充数组
       })
     },
     closeDialog() {
@@ -371,7 +372,7 @@ export default {
       this.imgbanner = []
       console.log('this.commentsbox1', this.commentsbox1)
     },
-    getalltaskperson() {
+    getFlowUsers() {
       const param = {
         method: 'get_flow_users',
         project_id: this.project_id,
@@ -417,7 +418,7 @@ export default {
         })
         .catch(() => {})
     },
-    getpersonprogress() {
+    getNodesUsers() {
       //获取多个流程实例各节点操作的用户名列表
       const param = {
         method: 'get_nodes_users',
@@ -452,7 +453,7 @@ export default {
         })
         .catch(() => {})
     },
-    taskspecificinfo() {
+    getFlowWork() {
       //任务详细信息
       return new Promise((resolve, reject) => {
         const _param = {
@@ -469,6 +470,7 @@ export default {
           this.btnsubid = data.subjectionId
           this.btnworkid = data.workId
           this.formdata = data.flowButtons
+          console.log('this.formdata 123', this.formdata)
           // 输入框的显示与不显示判断
           // if(this.person_info.person.name!==""){
           //   if(this.taskInfoDialog.data.header===this.person_info.person.name){
@@ -631,7 +633,7 @@ export default {
         console.log('---------<><><><><><', this.pinglunarr)
         console.log('显示评论列表', this.commentsbox2)
       })
-      await this.taskspecificinfo()
+      await this.getFlowWork()
     },
     postcomment() {
       //上传评论
@@ -890,7 +892,7 @@ export default {
     },
     tijiaofnc(index) {
       //提交按钮函数
-      console.log('index', index, this.formdata)
+      console.log('tijiaofnc - index', index, this.formdata)
       this.pushdata = []
       this.gettime()
       if (index.buttonName == '提交质量检测') {
@@ -926,7 +928,7 @@ export default {
         this.todotextarea = '' //输入框文本为空
         this.fileList = [] //上传按钮清空
         this.$router.go(0)
-        // this.taskspecificinfo()//重新获取数据并且填充页面
+        // this.getFlowWork()//重新获取数据并且填充页面
         loading.close()
       })
     },
