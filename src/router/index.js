@@ -187,6 +187,16 @@ export const constantRouterMap = [
         }
       },
       {
+        path: "construction",
+        component: () => import("@/views/safety/construction"),
+        name: "construction",
+        meta: {
+          title: "construction",
+          icon: "dashboard",
+          noCache: true
+        }
+      },
+      {
         path: "xjgl",
         component: () => import("@/views/safety/index"),
         name: "xjgl",
