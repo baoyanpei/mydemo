@@ -217,7 +217,7 @@
             type="textarea"
             resize="none"
             :rows="3"
-            placeholder="请输入内容"
+            placeholder="请输入内容."
             v-model="todotextarea"
             style="width: 100%;display: block;margin-bottom: 10px;"
           ></el-input>
@@ -238,13 +238,43 @@
             >只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
         </div>
+        <el-row :gutter="10" class="worklog-area">
+          <div class="worklog-left">
+            <el-input
+              type="textarea"
+              resize="none"
+              :rows="3"
+              placeholder="请输入上报进度的内容"
+              v-model="worklogContent"
+              style="width: 100%;"
+            ></el-input>
+          </div>
+          <div class="worklog-right" title="添加附件">
+            <el-upload
+              class="upload-demo"
+              action="https://xcx.tddata.net/upload"
+              :on-success="successupload"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :file-list="fileList"
+            >
+              <font-awesome-icon icon="paperclip" size="3x" class="paperclip" />
+              <div slot="tip" class="el-upload__tip" style="opacity: 0;font-size: 1px">&nbsp;</div>
+            </el-upload>
+          </div>
+        </el-row>
+        <el-row :gutter="10" class="worklog-file-upload-area"></el-row>
         <el-row :gutter="10" v-show="claimbtn">
-          <el-col v-for="item in this.formdata" :span="item.spannum" :key="item.actionData.workId">
+          <el-col
+            v-for="item in this.flowButtons"
+            :span="item.spannum"
+            :key="item.actionData.workId"
+          >
             <div
-              class="grid-content bg-purple"
-              :class="{'buttonred':(item.buttonName==='不合格')}"
+              class="flowButton bg-purple"
+              :class="{'buttonred':(item.buttonName==='不合格'),'bg-blue':(item.buttonId==='worklog')}"
               v-loading.fullscreen.lock="fullscreenLoading"
-              @click="tijiaofnc(item)"
+              @click="flowButtonsSubmit(item)"
             >{{item.buttonName}}</div>
           </el-col>
         </el-row>
@@ -287,7 +317,7 @@ export default {
       taskinfobox: [], //整改信息整理填充进
       commentsbox1: [],
       commentsbox2: [],
-      formdata: [], //form表单返回数据
+      flowButtons: [], //form表单返回数据
       pushdata: [], //------测试盒子
       photobox: [], //-------图片盒子
       comment_nodenum: '', //评论信息节点
@@ -309,6 +339,8 @@ export default {
       personrow: 0,
       browsepersonbox: [],
       dialogVisible: false,
+
+      worklogContent: '',
     }
   },
   computed: {
@@ -348,7 +380,12 @@ export default {
   },
   mounted() {},
   methods: {
+    clearData() {
+      this.flowButtons = []
+      this.worklogContent = ''
+    },
     openTaskInfoDetailDialogHandle() {
+      this.clearData()
       console.log('taskInfoDialog', this.taskInfoDialog)
       //打开窗口
       this.getPersonList()
@@ -469,30 +506,51 @@ export default {
           this.btnformnode = data.flowNode
           this.btnsubid = data.subjectionId
           this.btnworkid = data.workId
-          this.formdata = data.flowButtons
-          console.log('this.formdata 123', this.formdata)
+          this.flowButtons = data.flowButtons
+          console.log('this.flowButtons 123', this.flowButtons)
           // 输入框的显示与不显示判断
           // if(this.person_info.person.name!==""){
           //   if(this.taskInfoDialog.data.header===this.person_info.person.name){
           //     this.todoinfoshow=true
           //   }
-          //   if(this.taskInfoDialog.data.state==='已完成'||this.formdata[0].buttonName==="质检"){
+          //   if(this.taskInfoDialog.data.state==='已完成'||this.flowButtons[0].buttonName==="质检"){
           //     this.todoinfoshow=false
           //   }
           // }
           //输入框的显示与否
+          if (
+            data.flowId === 'PlanFlow01' &&
+            data.flowNode.nodeId !== 'Node2' // Node2 计划认领
+          ) {
+            this.flowButtons.push({
+              actionData: {
+                operate: 'worklog',
+                operateClazz: 'com.horizon.wf.action.ActionWorklog',
+                operateFlag: '0',
+                operateMsg: '上报进度',
+                operateText: '上报进度',
+              },
+              buttonClass: 'com.horizon.wf.action.ActionWorklog',
+              buttonFun: '',
+              buttonId: 'worklog',
+              buttonName: '上报进度',
+              icon: '',
+            })
+          }
+
           if (data.subjectionId == '') {
             this.claimbtn = false
             this.todoinfoshow = false
           } else {
             this.claimbtn = true
-            let num = this.formdata.length
-            this.formdata.forEach((item) => {
+            let num = this.flowButtons.length
+            this.flowButtons.forEach((item) => {
               item['spannum'] = 24 / num
             })
           }
           // 文章标题图片信息
           this.imgbanner = data.form.basic[0].value
+          console.log('this.imgbanner', this.imgbanner, data.form)
           this.imgbanner.forEach((item) => {
             item['onlineurl'] =
               'https://buskey.cn/api/oa/workflow/thumbnail.jpg?f=' +
@@ -501,6 +559,7 @@ export default {
           })
           //文章音频信息   audiobox
           this.audiobox = data.form.basic[1].voicelst
+          console.log('this.audiobox', this.audiobox, data.form)
           this.audiobox.forEach((item) => {
             item['audiourl'] = 'https://buskey.cn' + item.src
           })
@@ -890,16 +949,28 @@ export default {
       }
       console.log('this.btnform', this.btnform)
     },
-    tijiaofnc(index) {
+    flowButtonsSubmit(flowButton) {
       //提交按钮函数
-      console.log('tijiaofnc - index', index, this.formdata)
+      console.log(
+        'flowButtonsSubmit - flowButton',
+        flowButton,
+        this.flowButtons
+      )
+
+      if (flowButton.buttonId === 'worklog') {
+        this.worklogSubmit()
+        return
+      }
       this.pushdata = []
       this.gettime()
-      if (index.buttonName == '提交质量检测') {
-        this.zhijianfnc(index)
+      if (flowButton.buttonName == '提交质量检测') {
+        this.zhijianfnc(flowButton)
       }
-      if (index.buttonName == '不合格' || index.buttonName == '合格') {
-        this.hegefnc(index)
+      if (
+        flowButton.buttonName == '不合格' ||
+        flowButton.buttonName == '合格'
+      ) {
+        this.hegefnc(flowButton)
       }
       const loading = this.$loading({
         lock: true,
@@ -908,7 +979,7 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)',
       })
       // console.log("project_id",this.project_id)
-      // console.log("buttonAction",index)
+      // console.log("buttonAction",flowButton)
       // console.log("form",this.btnform)
       // console.log("subjectionId",this.btnsubid)
       // console.log("workId",this.btnworkid)
@@ -916,7 +987,7 @@ export default {
       const _param = {
         method: 'submit_work',
         project_id: this.project_id,
-        buttonAction: index,
+        buttonAction: flowButton,
         form: this.btnform,
         subjectionId: this.btnsubid,
         workId: this.btnworkid,
@@ -931,6 +1002,10 @@ export default {
         // this.getFlowWork()//重新获取数据并且填充页面
         loading.close()
       })
+    },
+    worklogSubmit() {
+      // 提交工作日志
+      console.log('worklogSubmit')
     },
   },
 }

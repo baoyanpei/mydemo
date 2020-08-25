@@ -79,7 +79,8 @@ import {
   faArrowsAlt,
   faLightbulb,
   faShareSquare,
-  faTv
+  faTv,
+  faPaperclip
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -97,6 +98,7 @@ library.add(
   faTrashAlt,
   faLightbulb,
   faTv,
+  faPaperclip,
   faDesktop,
   faShareSquare,
   faMagic,
