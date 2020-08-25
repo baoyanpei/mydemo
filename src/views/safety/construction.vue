@@ -113,7 +113,7 @@ export default {
       this.getform();
     },
     deleteRow(index, dataList) {
-      window.open("https://xcx.tddata.net/" + dataList[index].url);
+      window.open(dataList[index].url);
     },
     getform() {
       const param = {
@@ -132,7 +132,7 @@ export default {
           for (let index in e) {
             this.dataList.push({
               name: index + "施工日志",
-              url: e[index].url,
+              url: "http://admin.yidebim.com" + e[index].url + "?t=download",
             });
           }
           console.log("获得数据日志打印", this.dataList);
