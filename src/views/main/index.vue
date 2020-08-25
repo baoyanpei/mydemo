@@ -1,5 +1,5 @@
 <style lang="scss">
-@import './index';
+@import "./index";
 .logobox {
   float: left;
   width: 60px;
@@ -444,45 +444,45 @@
 </template>
 
 <script>
-import '../main/main-index.css'
-import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
-import moment from 'moment'
-import { Loading } from 'element-ui'
-import { Draggable } from 'draggable-vue-directive'
-import { toggleClass } from '@/utils'
-import HuiYi from './components/huiyi'
-import HuiyiRili from './components/huiyiRili'
-import HuiyiFullCalendar from './components/huiyiFullCalendar'
-import CountInfoBoard from './components/countInfoBoard'
-import GeteArea from './components/geteArea'
+import "../main/main-index.css";
+import elDragDialog from "@/directive/el-dragDialog"; // base on element-ui
+import moment from "moment";
+import { Loading } from "element-ui";
+import { Draggable } from "draggable-vue-directive";
+import { toggleClass } from "@/utils";
+import HuiYi from "./components/huiyi";
+import HuiyiRili from "./components/huiyiRili";
+import HuiyiFullCalendar from "./components/huiyiFullCalendar";
+import CountInfoBoard from "./components/countInfoBoard";
+import GeteArea from "./components/geteArea";
 // import '@/assets/custom-theme/index.css' // the theme changed version element-ui css
-var mname = '111' //"庆阳市妇女儿童医院-摄像头定位-绑定 2017版";
-var indexi = 0
-var isboling = 0 //是否玻璃效果
+var mname = "111"; //"庆阳市妇女儿童医院-摄像头定位-绑定 2017版";
+var indexi = 0;
+var isboling = 0; //是否玻璃效果
 
-const MQTT_SERVICE = 'ws://d1.mq.tddata.net:8083/mqtt' // mqtt服务地址
-const MQTT_USERNAME = 'BIM_messager' // mqtt连接用户名
-const MQTT_PASSWORD = 'bim_msg159' // mqtt连接密码
-const CLIENT_ID = 'WebClient-' + parseInt(Math.random() * 100000)
+const MQTT_SERVICE = "ws://d1.mq.tddata.net:8083/mqtt"; // mqtt服务地址
+const MQTT_USERNAME = "BIM_messager"; // mqtt连接用户名
+const MQTT_PASSWORD = "bim_msg159"; // mqtt连接密码
+const CLIENT_ID = "WebClient-" + parseInt(Math.random() * 100000);
 
 // import $ from 'jquery'
 export default {
   directives: {
     Draggable,
-    elDragDialog
+    elDragDialog,
   },
-  name: 'Main',
+  name: "Main",
   components: {
     HuiYi,
     HuiyiRili,
     HuiyiFullCalendar,
     CountInfoBoard,
-    GeteArea
+    GeteArea,
     // VueDragResize
   },
   data() {
     return {
-      client: new Paho.MQTT.Client('d1.mq.tddata.net', 8083, CLIENT_ID),
+      client: new Paho.MQTT.Client("d1.mq.tddata.net", 8083, CLIENT_ID),
       timerReconnectMqtt: null,
       isConnectMqtt: null, //是否已经连接
       huanjingshow: true,
@@ -496,32 +496,32 @@ export default {
       tajishow: true,
       tajishow2: false,
       tajinamenum: [],
-      noise: '', //噪声
-      pm25: '', //pm2.5
-      wind: '', //风速
-      shiduh: '', //湿度
-      temp: '', //温度
-      powder: '', //粉尘
-      eleallnum: '', //电表总度数
-      todayelenum: '', //今日走电
+      noise: "", //噪声
+      pm25: "", //pm2.5
+      wind: "", //风速
+      shiduh: "", //湿度
+      temp: "", //温度
+      powder: "", //粉尘
+      eleallnum: "", //电表总度数
+      todayelenum: "", //今日走电
       waterallnum: 0, //水表总度数
       todaywaternum: 0, //今日水表走水
       carbox: [], //进出车辆表
       postdata: [], //数据筛选
-      tajidevice_id: '', //塔机id
+      tajidevice_id: "", //塔机id
       tajidatabox: [
         {
           //塔机具体参数盒子
-          height1: '',
-          height2: '',
-          fudu: '',
-          dabi: '',
-          fengsu: '',
-          huizhuan: '',
-          liju: '',
-          zhong: '',
-          tajiname: ''
-        }
+          height1: "",
+          height2: "",
+          fudu: "",
+          dabi: "",
+          fengsu: "",
+          huizhuan: "",
+          liju: "",
+          zhong: "",
+          tajiname: "",
+        },
       ],
       listbox: [],
       tajismallboxshow: true,
@@ -531,89 +531,89 @@ export default {
       dialogCJHYVisible: false,
       dialogHuiyiFullCalendar: false,
       // dialogJDHYVisible: true
-      topicUserInfo: '', //订阅用户信息
-      topicCount: '', //订阅统计消息
+      topicUserInfo: "", //订阅用户信息
+      topicCount: "", //订阅统计消息
       reconnectTimes: 0, //重连次数
       allwaterdevicedid: 0, //总水表id
       alleledevicedid: 0, //总电表id
       asasasas: true,
-      noassass:false,
-      img_src: ''
-    }
+      noassass: false,
+      img_src: "",
+    };
   },
   computed: {
     project_id() {
-      return this.$store.state.project.project_id
+      return this.$store.state.project.project_id;
     },
     showHuiyiFullCalendar: {
-      get: function() {
-        return this.$store.state.huiyi.showHuiyiFullCalendar
+      get: function () {
+        return this.$store.state.huiyi.showHuiyiFullCalendar;
       },
-      set: function(newValue) {
-        this.$store.state.huiyi.showHuiyiFullCalendar = newValue
-      }
+      set: function (newValue) {
+        this.$store.state.huiyi.showHuiyiFullCalendar = newValue;
+      },
     },
     currentProject: {
-      get: function() {
-        return this.$store.state.project.currentProject
+      get: function () {
+        return this.$store.state.project.currentProject;
       },
-      set: function(newValue) {
-        this.$store.state.project.currentProject = newValue
-      }
-    }
+      set: function (newValue) {
+        this.$store.state.project.currentProject = newValue;
+      },
+    },
   },
   created() {
-    this.client.onConnectionLost = this.onConnectionLost //注册连接断开处理事件
-    this.client.onMessageArrived = this.onMessageArrived //注册消息接收处理事件
+    this.client.onConnectionLost = this.onConnectionLost; //注册连接断开处理事件
+    this.client.onMessageArrived = this.onMessageArrived; //注册消息接收处理事件
     // this.mqttConnect()
   },
   watch: {
     project_id(curVal, oldVal) {
-      console.log('触发')
-      console.log('curVal', curVal, oldVal)
-      this.jiekoufnc()
+      console.log("触发");
+      console.log("curVal", curVal, oldVal);
+      this.jiekoufnc();
       if (oldVal === null && curVal !== null) {
-        this.mqttConnect()
+        this.mqttConnect();
       }
       if (oldVal !== null) {
-        this.unsubscribe()
+        this.unsubscribe();
       }
       if (curVal !== null) {
-        this.subscribe()
+        this.subscribe();
       }
     },
     isConnectMqtt(curVal, oldVal) {
       if (curVal === false) {
-        this.reconnectMqtt()
+        this.reconnectMqtt();
       } else {
-        this.subscribe()
-        this.reconnectTimes = 0
-        clearTimeout(this.timerReconnectMqtt)
+        this.subscribe();
+        this.reconnectTimes = 0;
+        clearTimeout(this.timerReconnectMqtt);
       }
     },
     reconnectTimes(curVal, oldVal) {
       if (oldVal > 0 && curVal === 0) {
-        this.info_system = ''
+        this.info_system = "";
       }
     },
     currentProject(curVal, oldVal) {
       if (curVal !== null) {
         console.log(
-          'this.currentProjectthis.currentProject1233333',
+          "this.currentProjectthis.currentProject1233333",
           this.currentProject
-        )
+        );
         console.log(
-          'process.env.BASE_DOMAIN_ORG_URL',
+          "process.env.BASE_DOMAIN_ORG_URL",
           process.env.BASE_DOMAIN_ORG_URL
-        )
-        this.img_src = `${process.env.BASE_DOMAIN_ORG_URL}${this.currentProject.org_id}/01.png`
+        );
+        this.img_src = `${process.env.BASE_DOMAIN_ORG_URL}${this.currentProject.org_id}/01.png`;
       }
-    }
+    },
   },
   mounted() {
-    console.log('index----mount', this.project_id)
+    console.log("index----mount", this.project_id);
     if (this.project_id !== null) {
-      this.jiekoufnc()
+      this.jiekoufnc();
     } else {
     }
   },
@@ -623,368 +623,368 @@ export default {
   methods: {
     jiekoufnc() {
       console.log(
-        '任务开始----------------------------------------------------------------------------------------'
-      )
-      this.initDevlist() //环境数据
-      this.inoutcarquery() //车辆测试
-      this.smalltaskfnc() //图片和任务信息
-      this.gettajifnc() //塔机数据
-      this.huanjingjiancefnc() //总电表
-      this.allwatergetfnc() //总水表
-      this.oneminshuaxin() //时间函数
+        "任务开始----------------------------------------------------------------------------------------"
+      );
+      this.initDevlist(); //环境数据
+      this.inoutcarquery(); //车辆测试
+      this.smalltaskfnc(); //图片和任务信息
+      this.gettajifnc(); //塔机数据
+      this.huanjingjiancefnc(); //总电表
+      this.allwatergetfnc(); //总水表
+      this.oneminshuaxin(); //时间函数
     },
     newtaskjumpfnc() {
-      this.$router.replace('/task')
+      this.$router.replace("/task");
     },
     newwulianjumpfnc() {
-      this.$router.replace('/carstatistical')
+      this.$router.replace("/carstatistical");
     },
     oneminshuaxin() {
       setTimeout(() => {
-        this.jiekoufnc()
-        console.log('时间函数测试')
-      }, 300000)
+        this.jiekoufnc();
+        console.log("时间函数测试");
+      }, 300000);
     },
     initDevlist() {
       //环境检测
-      console.log('数据', this.project_id)
+      console.log("数据", this.project_id);
       const param = {
-        method: 'query_env',
-        project_id: this.project_id
-      }
-      this.$store.dispatch('QueryDatumMeter', param).then(data => {
-        console.log('环境检测', data)
-        this.noise = data[0].noise
-        this.pm25 = data[0].pm2_5
-        this.wind = data[0].wind
-        this.shiduh = data[0].h
-        this.temp = data[0].temp
-        this.powder = data[0].power
-      })
+        method: "query_env",
+        project_id: this.project_id,
+      };
+      this.$store.dispatch("QueryDatumMeter", param).then((data) => {
+        console.log("环境检测", data);
+        this.noise = data[0].noise;
+        this.pm25 = data[0].pm2_5;
+        this.wind = data[0].wind;
+        this.shiduh = data[0].h;
+        this.temp = data[0].temp;
+        this.powder = data[0].power;
+      });
     },
     gettajifnc() {
       const param = {
-        method: 'devlist',
+        method: "devlist",
         project_id: this.project_id,
-        device_type: 13
-      }
-      this.$store.dispatch('QueryDatumMeter', param).then(data => {
-        console.log('塔机数据', data)
+        device_type: 13,
+      };
+      this.$store.dispatch("QueryDatumMeter", param).then((data) => {
+        console.log("塔机数据", data);
         if (data.length == 0) {
-          this.tajishow = false
-          this.tajishow2 = true
-          this.tajismallboxshow = false
-          this.tajitupianshow = false
-          this.tajitupianshow2 = true
+          this.tajishow = false;
+          this.tajishow2 = true;
+          this.tajismallboxshow = false;
+          this.tajitupianshow = false;
+          this.tajitupianshow2 = true;
         } else {
-          this.tajishow = true
-          this.tajishow2 = false
-          this.tajismallboxshow = true
-          this.tajitupianshow = true
-          this.tajitupianshow2 = false
-          this.tajidevice_id = data[0].device_id
-          let hei = JSON.parse(data[0].params_json)
-          this.tajidatabox[0].height1 = hei.height
-          this.tajidatabox[0].tajiname = '塔机' + 1
-          console.log('获取塔机参数id', data[0].device_id)
-          this.gettajidatafnc()
+          this.tajishow = true;
+          this.tajishow2 = false;
+          this.tajismallboxshow = true;
+          this.tajitupianshow = true;
+          this.tajitupianshow2 = false;
+          this.tajidevice_id = data[0].device_id;
+          let hei = JSON.parse(data[0].params_json);
+          this.tajidatabox[0].height1 = hei.height;
+          this.tajidatabox[0].tajiname = "塔机" + 1;
+          console.log("获取塔机参数id", data[0].device_id);
+          this.gettajidatafnc();
         }
-      })
+      });
     },
     huanjingjiancefnc() {
       const param = {
-        method: 'devlist',
+        method: "devlist",
         project_id: this.project_id,
-        device_type: 10
-      }
-      this.$store.dispatch('QueryDatumMeter', param).then(data => {
-        console.log('总电表', data[0], data)
+        device_type: 10,
+      };
+      this.$store.dispatch("QueryDatumMeter", param).then((data) => {
+        console.log("总电表", data[0], data);
         if (data.length == 0) {
-          this.dianbiaoshow = false
-          this.dianbiaoshow2 = true
+          this.dianbiaoshow = false;
+          this.dianbiaoshow2 = true;
         } else {
-          this.dianbiaoshow = true
-          this.dianbiaoshow2 = false
-          this.eleallnum = data[0].total_used
-          this.alleledevicedid = data[0].device_id
-          this.selectnownumfnc()
+          this.dianbiaoshow = true;
+          this.dianbiaoshow2 = false;
+          this.eleallnum = data[0].total_used;
+          this.alleledevicedid = data[0].device_id;
+          this.selectnownumfnc();
         }
-      })
+      });
     },
     allwatergetfnc() {
       const param = {
-        method: 'devlist',
+        method: "devlist",
         project_id: this.project_id,
-        device_type: 11
-      }
-      this.$store.dispatch('QueryDatumMeter', param).then(data => {
-        console.log('总水表', data[0], data)
+        device_type: 11,
+      };
+      this.$store.dispatch("QueryDatumMeter", param).then((data) => {
+        console.log("总水表", data[0], data);
         if (data.length == 0) {
-          this.shuibiaoshow = false
-          this.shuibiaoshow2 = true
+          this.shuibiaoshow = false;
+          this.shuibiaoshow2 = true;
         } else {
-          this.shuibiaoshow = true
-          this.shuibiaoshow2 = false
-          this.waterallnum = data[0].total_used
-          this.allwaterdevicedid = data[0].device_id
-          this.selectnownumtaterfnc()
+          this.shuibiaoshow = true;
+          this.shuibiaoshow2 = false;
+          this.waterallnum = data[0].total_used;
+          this.allwaterdevicedid = data[0].device_id;
+          this.selectnownumtaterfnc();
         }
-      })
+      });
     },
     selectnownumfnc() {
-      let time = new Date()
-      let year = time.getFullYear()
-      var month = time.getMonth() + 1 //得到月份
-      var date = time.getDate() //得到日期
-      var hour = time.getHours() //得到小时
-      var minu = time.getMinutes() //得到分钟
-      var sec = time.getSeconds() //得到秒 2020-04-02 00:00:00
+      let time = new Date();
+      let year = time.getFullYear();
+      var month = time.getMonth() + 1; //得到月份
+      var date = time.getDate(); //得到日期
+      var hour = time.getHours(); //得到小时
+      var minu = time.getMinutes(); //得到分钟
+      var sec = time.getSeconds(); //得到秒 2020-04-02 00:00:00
       if (month < 10) {
-        month = '0' + month
+        month = "0" + month;
       }
       if (date < 10) {
-        date = '0' + date
+        date = "0" + date;
       }
       if (hour < 10) {
-        hour = '0' + hour
+        hour = "0" + hour;
       }
       if (minu < 10) {
-        minu = '0' + minu
+        minu = "0" + minu;
       }
       if (sec < 10) {
-        sec = '0' + sec
+        sec = "0" + sec;
       }
-      let starttime = year + '-' + month + '-' + date + ' ' + '00:00:00'
+      let starttime = year + "-" + month + "-" + date + " " + "00:00:00";
       let endtime =
-        year + '-' + month + '-' + date + ' ' + hour + ':' + minu + ':' + sec
+        year + "-" + month + "-" + date + " " + hour + ":" + minu + ":" + sec;
       const param = {
-        method: 'query_hours',
+        method: "query_hours",
         project_id: this.project_id,
         meter_id: this.alleledevicedid,
         bt: starttime,
-        et: endtime
-      }
-      this.$store.dispatch('QueryDatumMeter', param).then(data => {
-        console.log('总电表详情', data)
+        et: endtime,
+      };
+      this.$store.dispatch("QueryDatumMeter", param).then((data) => {
+        console.log("总电表详情", data);
         if (data.length == 0) {
-          this.todayelenum = 0
+          this.todayelenum = 0;
         } else {
-          let newarr = []
+          let newarr = [];
           for (let i = 0; i < data.length; i++) {
-            newarr.push(data[i].used)
+            newarr.push(data[i].used);
           }
-          let num = 0
+          let num = 0;
           for (let i = 0; i < newarr.length; i++) {
-            num += newarr[i]
+            num += newarr[i];
           }
-          this.todayelenum = Math.round(num)
+          this.todayelenum = Math.round(num);
         }
-      })
+      });
     },
     selectnownumtaterfnc() {
-      let time = new Date()
-      let year = time.getFullYear()
-      var month = time.getMonth() + 1 //得到月份
-      var date = time.getDate() //得到日期
-      var hour = time.getHours() //得到小时
-      var minu = time.getMinutes() //得到分钟
-      var sec = time.getSeconds() //得到秒 2020-04-02 00:00:00
+      let time = new Date();
+      let year = time.getFullYear();
+      var month = time.getMonth() + 1; //得到月份
+      var date = time.getDate(); //得到日期
+      var hour = time.getHours(); //得到小时
+      var minu = time.getMinutes(); //得到分钟
+      var sec = time.getSeconds(); //得到秒 2020-04-02 00:00:00
       if (month < 10) {
-        month = '0' + month
+        month = "0" + month;
       }
       if (date < 10) {
-        date = '0' + date
+        date = "0" + date;
       }
       if (hour < 10) {
-        hour = '0' + hour
+        hour = "0" + hour;
       }
       if (minu < 10) {
-        minu = '0' + minu
+        minu = "0" + minu;
       }
       if (sec < 10) {
-        sec = '0' + sec
+        sec = "0" + sec;
       }
-      let starttime = year + '-' + month + '-' + date + ' ' + '00:00:00'
+      let starttime = year + "-" + month + "-" + date + " " + "00:00:00";
       let endtime =
-        year + '-' + month + '-' + date + ' ' + hour + ':' + minu + ':' + sec
+        year + "-" + month + "-" + date + " " + hour + ":" + minu + ":" + sec;
       const param = {
-        method: 'query_hours',
+        method: "query_hours",
         project_id: this.project_id,
         meter_id: this.allwaterdevicedid,
         bt: starttime,
-        et: endtime
-      }
-      this.$store.dispatch('QueryDatumMeter', param).then(data => {
-        console.log('总水表详情', data)
+        et: endtime,
+      };
+      this.$store.dispatch("QueryDatumMeter", param).then((data) => {
+        console.log("总水表详情", data);
         if (data.length == 0) {
-          this.todaywaternum = 0
+          this.todaywaternum = 0;
         } else {
-          let newarr = []
+          let newarr = [];
           for (let i = 0; i < data.length; i++) {
-            newarr.push(data[i].used)
+            newarr.push(data[i].used);
           }
-          let num = 0
+          let num = 0;
           for (let i = 0; i < newarr.length; i++) {
-            num += newarr[i]
+            num += newarr[i];
           }
-          this.todaywaternum = Math.round(num)
+          this.todaywaternum = Math.round(num);
         }
-      })
+      });
     },
     gettajidatafnc() {
       const param = {
-        method: 'query_crane2',
+        method: "query_crane2",
         project_id: this.project_id,
-        devid: this.tajidevice_id
-      }
-      this.$store.dispatch('QueryDatumMeter', param).then(data => {
-        this.tajidatabox[0].height2 = data[0].height
-        this.tajidatabox[0].dabi = data[0].dip_angle
-        this.tajidatabox[0].fengsu = data[0].wind
-        this.tajidatabox[0].huizhuan = data[0].rotate
-        this.tajidatabox[0].fudu = data[0].extent
-        this.tajidatabox[0].liju = data[0].torque_percent
-        this.tajidatabox[0].zhong = data[0].weight
-        console.log('塔机具体数据', data[0])
-      })
+        devid: this.tajidevice_id,
+      };
+      this.$store.dispatch("QueryDatumMeter", param).then((data) => {
+        this.tajidatabox[0].height2 = data[0].height;
+        this.tajidatabox[0].dabi = data[0].dip_angle;
+        this.tajidatabox[0].fengsu = data[0].wind;
+        this.tajidatabox[0].huizhuan = data[0].rotate;
+        this.tajidatabox[0].fudu = data[0].extent;
+        this.tajidatabox[0].liju = data[0].torque_percent;
+        this.tajidatabox[0].zhong = data[0].weight;
+        console.log("塔机具体数据", data[0]);
+      });
     },
     inoutcarquery() {
-      console.log('车辆测试')
+      console.log("车辆测试");
       const param = {
-        method: 'query_vehicle_logs',
+        method: "query_vehicle_logs",
         project_id: this.project_id,
-        limit_row: 3
-      }
-      this.$store.dispatch('Inoutcarquery', param).then(
-        data => {
-          this.carbox = data.data
-          this.asasasas = true
-          this.noassass=false
-          console.log('进出车辆日志', this.carbox)
+        limit_row: 3,
+      };
+      this.$store.dispatch("Inoutcarquery", param).then(
+        (data) => {
+          this.carbox = data.data;
+          this.asasasas = true;
+          this.noassass = false;
+          console.log("进出车辆日志", this.carbox);
         },
         () => {
-          this.asasasas = false
-          this.noassass=true
+          this.asasasas = false;
+          this.noassass = true;
         }
-      )
+      );
     },
     smalltaskfnc() {
-      this.taskbox = []
+      this.taskbox = [];
       const _param = {
-        method: 'get_todo_list',
+        method: "get_todo_list",
         project_id: this.project_id,
-        qtype: 'TodoList,BackLog,MatterRead'
-      }
-      this.$store.dispatch('GetAllInstList', _param).then(data => {
-        this.taskbox.push(data[0], data[1], data[2])
-        console.log('我的任务', this.taskbox)
-        this.taskbox.forEach(item => {
-          if (item.flowId == 'PlanFlow01') {
-            item['first'] = '计划'
+        qtype: "TodoList,BackLog,MatterRead",
+      };
+      this.$store.dispatch("GetAllInstList", _param).then((data) => {
+        this.taskbox.push(data[0], data[1], data[2]);
+        console.log("我的任务", this.taskbox);
+        this.taskbox.forEach((item) => {
+          if (item.flowId == "PlanFlow01") {
+            item["first"] = "计划";
           }
-          if (item.flowId == 'ProblemFindSolve01') {
-            item['first'] = '任务'
+          if (item.flowId == "ProblemFindSolve01") {
+            item["first"] = "任务";
           }
-          if (item.flowId == 'Meeting01') {
-            item['first'] = '会议'
+          if (item.flowId == "Meeting01") {
+            item["first"] = "会议";
           }
-          if (item.flowId == 'Documents01') {
-            item['first'] = '资料'
+          if (item.flowId == "Documents01") {
+            item["first"] = "资料";
           }
-          if (item.flowId == 'Notice01') {
-            item['first'] = '通知'
+          if (item.flowId == "Notice01") {
+            item["first"] = "通知";
           }
-          if (item.flowId == 'SafetyInspection01') {
-            item['first'] = '安全巡检'
+          if (item.flowId == "SafetyInspection01") {
+            item["first"] = "安全巡检";
           }
-          item['imgurl'] =
-            'https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id=' +
+          item["imgurl"] =
+            "https://buskey.cn/api/oa/workflow/thumbnail.jpg?work_id=" +
             item.workId +
-            '&w=220'
-        })
-        console.log('任务数据', this.taskbox)
-        this.firstdatascreenfnc()
-      })
+            "&w=220";
+        });
+        console.log("任务数据", this.taskbox);
+        this.firstdatascreenfnc();
+      });
     },
     firstdatascreenfnc() {
-      this.postdata = []
-      this.taskbox.forEach(item => {
-        this.postdata.push(item.workId)
-      })
-      this.secondtaskfnc()
+      this.postdata = [];
+      this.taskbox.forEach((item) => {
+        this.postdata.push(item.workId);
+      });
+      this.secondtaskfnc();
     },
     secondtaskfnc() {
       //任务模块第二数据接口
       const _param = {
-        method: 'get_nodes_users_list',
+        method: "get_nodes_users_list",
         project_id: this.project_id,
-        work_ids: this.postdata
-      }
-      this.$store.dispatch('Allpersondata', _param).then(data => {
-        this.listbox = data.data
-        console.log('第二接口数据', this.listbox)
-        let map1 = new Map()
+        work_ids: this.postdata,
+      };
+      this.$store.dispatch("Allpersondata", _param).then((data) => {
+        this.listbox = data.data;
+        console.log("第二接口数据", this.listbox);
+        let map1 = new Map();
         for (var i in this.listbox) {
-          map1.set(i, this.listbox[i]) //添加key值
+          map1.set(i, this.listbox[i]); //添加key值
         }
-        this.taskbox.forEach(item => {
-          let workId = item.workId
-          item['obj'] = map1.get(workId)
+        this.taskbox.forEach((item) => {
+          let workId = item.workId;
+          item["obj"] = map1.get(workId);
           if (map1.get(workId).info != undefined) {
-            item['value'] = map1.get(workId).info.priority //任务星级
-            item['state'] = map1.get(workId).info.status //任务状态
-            item['statecolor'] = map1.get(workId).info.status_color //任务颜色
-            item['originator'] = map1.get(workId).Start[0].userName //发起人名字
+            item["value"] = map1.get(workId).info.priority; //任务星级
+            item["state"] = map1.get(workId).info.status; //任务状态
+            item["statecolor"] = map1.get(workId).info.status_color; //任务颜色
+            item["originator"] = map1.get(workId).Start[0].userName; //发起人名字
             if (item.obj.Node2 != undefined) {
-              item['firstname'] = item.obj.Start[0].userName
-              item['header'] = item.obj.Node2[0].userName //负责人
-              item['person_id2'] = item.obj.Node2[0].userId //负责人ID
+              item["firstname"] = item.obj.Start[0].userName;
+              item["header"] = item.obj.Node2[0].userName; //负责人
+              item["person_id2"] = item.obj.Node2[0].userId; //负责人ID
             }
           }
-        })
-        console.log('这个是map', this.taskbox)
-      })
+        });
+        console.log("这个是map", this.taskbox);
+      });
     },
-    openFullScreen: function(text) {
+    openFullScreen: function (text) {
       this.loadingFull = this.$loading({
         lock: true,
         text: text,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
     },
-    closeFullScreen: function() {
-      this.loadingFull.close()
+    closeFullScreen: function () {
+      this.loadingFull.close();
     },
     handleDrag() {
       // this.$refs.select.blur()
     },
     newtaskdetailsfnc(index) {
-      console.log('任务详情', index)
+      console.log("任务详情", index);
       const param = {
         show: true,
-        data: index
-      }
+        data: index,
+      };
       this.$store
-        .dispatch('SetInfoDialog', param)
+        .dispatch("SetInfoDialog", param)
         .then(() => {})
-        .catch(() => {})
+        .catch(() => {});
     },
     mqttConnect() {
       this.client.connect({
         userName: MQTT_USERNAME,
         password: MQTT_PASSWORD,
         onSuccess: this.onConnect,
-        onFailure: this.onFailure
-      }) //连接服务器并注册连接成功处理事件
+        onFailure: this.onFailure,
+      }); //连接服务器并注册连接成功处理事件
     },
     onConnectionLost(responseObject) {
-      console.log('onConnectionLost', responseObject)
-      this.isConnectMqtt = false
-      this.info_system = '通讯断开...'
+      console.log("onConnectionLost", responseObject);
+      this.isConnectMqtt = false;
+      this.info_system = "通讯断开...";
       if (responseObject.errorCode !== 0) {
-        console.log('onConnectionLost:' + responseObject.errorMessage)
-        console.log('连接已断开')
+        console.log("onConnectionLost:" + responseObject.errorMessage);
+        console.log("连接已断开");
       }
     },
     onMessageArrived(message) {
@@ -993,43 +993,43 @@ export default {
       // console.log("收到消息:" + message.destinationName + message.payloadString);
 
       if (message.destinationName === this.topicCount) {
-        this.mqttUserCount(message.payloadString)
+        this.mqttUserCount(message.payloadString);
       } else if (
         message.destinationName ===
-        'BIM/door/' + this.project_id + '/cmd'
+        "BIM/door/" + this.project_id + "/cmd"
       ) {
-        console.log('msg', message.destinationName + message.payloadString)
+        console.log("msg", message.destinationName + message.payloadString);
       } else {
-        this.$refs.gateArea.receiveData(message)
+        this.$refs.gateArea.receiveData(message);
       }
     },
     onConnect() {
       // console.log('onConnected')
-      this.isConnectMqtt = true
+      this.isConnectMqtt = true;
     },
     onFailure(eee) {
-      this.isConnectMqtt = false
-      this.info_system = '通讯断开...'
-      console.log('onFailure', eee)
+      this.isConnectMqtt = false;
+      this.info_system = "通讯断开...";
+      console.log("onFailure", eee);
     },
     reconnectMqtt() {
-      console.log('reconnectMqtt')
+      console.log("reconnectMqtt");
       this.timerReconnectMqtt = setTimeout(() => {
         if (this.isConnectMqtt === false) {
-          this.mqttConnect()
-          this.reconnectTimes++
-          this.info_system = `重新开始进行通讯连接${this.reconnectTimes}...`
+          this.mqttConnect();
+          this.reconnectTimes++;
+          this.info_system = `重新开始进行通讯连接${this.reconnectTimes}...`;
         }
-        this.reconnectMqtt()
-      }, 5 * 1000)
+        this.reconnectMqtt();
+      }, 5 * 1000);
     },
     mqttUserCount(data) {
-      const _data = JSON.parse(data)
+      const _data = JSON.parse(data);
       // console.log('mqttUserCount-mqttUserCount', _data)
-      this.subscribe()
-      this.count_data = _data
+      this.subscribe();
+      this.count_data = _data;
       if (this.$refs.count_info !== undefined) {
-        this.$refs.count_info.updateData(_data)
+        this.$refs.count_info.updateData(_data);
       }
 
       /*
@@ -1040,78 +1040,78 @@ export default {
     },
     personInoutDialogHandle() {
       const param = {
-        show: true
-      }
+        show: true,
+      };
       this.$store
-        .dispatch('SetPersonInoutDialog', param)
+        .dispatch("SetPersonInoutDialog", param)
         .then(() => {})
-        .catch(() => {})
+        .catch(() => {});
     },
     personNowInDialogHandle() {
       const param = {
-        show: true
-      }
+        show: true,
+      };
       this.$store
-        .dispatch('SetPersonNowInDialog', param)
+        .dispatch("SetPersonNowInDialog", param)
         .then(() => {})
-        .catch(() => {})
+        .catch(() => {});
     },
     personListDialogHandle() {
-      console.log('人员信息')
+      console.log("人员信息");
       const param = {
-        show: true
-      }
+        show: true,
+      };
       this.$store
-        .dispatch('SetPersonListDialog', param)
+        .dispatch("SetPersonListDialog", param)
         .then(() => {})
-        .catch(() => {})
+        .catch(() => {});
     },
     ceshi() {
-      console.log('测试')
+      console.log("测试");
       const param = {
-        show: true
-      }
+        show: true,
+      };
       this.$store
-        .dispatch('ceshipro', param)
+        .dispatch("ceshipro", param)
         .then(() => {})
-        .catch(() => {})
+        .catch(() => {});
     },
     personFullCalendarHandle() {
       const param = {
-        show: true
-      }
+        show: true,
+      };
       this.$store
-        .dispatch('SetPersonFullCalenderDialog', param)
+        .dispatch("SetPersonFullCalenderDialog", param)
         .then(() => {})
-        .catch(() => {})
+        .catch(() => {});
     },
     publishHandle() {
       const param = {
-        show: true
-      }
+        show: true,
+      };
       this.$store
-        .dispatch('SetPublishDialog', param)
+        .dispatch("SetPublishDialog", param)
         .then(() => {})
-        .catch(() => {})
+        .catch(() => {});
     },
     subscribe() {
       if (this.isConnectMqtt === true && this.project_id !== null) {
-        this.topicUserInfo = `BIM/door/${this.project_id}/#` //订阅用户信息
-        this.topicCount = `BIM/door/${this.project_id}/count` //订阅统计消息
+        this.topicUserInfo = `BIM/door/${this.project_id}/#`; //订阅用户信息
+        this.topicCount = `BIM/door/${this.project_id}/count`; //订阅统计消息
         // BIM/door/10001/count
-        this.client.subscribe(this.topicUserInfo) //订阅主题
-        this.client.subscribe(this.topicCount) //订阅主题
+        this.client.subscribe(this.topicUserInfo); //订阅主题
+        this.client.subscribe(this.topicCount); //订阅主题
         // console.log('订阅成功！')
       }
     },
     unsubscribe() {
-      if (this.isConnectMqtt === true && this.topicUserInfo !== '') {
+      if (this.isConnectMqtt === true && this.topicUserInfo !== "") {
         // 取消老的订阅
-        this.client.unsubscribe(this.topicUserInfo) //订阅主题
-        this.client.unsubscribe(this.topicCount) //订阅主题
+        this.client.unsubscribe(this.topicUserInfo); //订阅主题
+        this.client.unsubscribe(this.topicCount); //订阅主题
         // console.log('取消订阅成功！')
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>

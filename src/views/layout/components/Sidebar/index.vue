@@ -41,9 +41,9 @@
         <font-awesome-icon icon="network-wired" />
         <span slot="title">物联设备</span>
       </el-menu-item>
-      <el-menu-item index="/safety-inspection">
+      <el-menu-item index="/construction">
         <font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />
-        <span slot="title">巡检管理</span>
+        <span slot="title">日志打印</span>
       </el-menu-item>
       <!--<el-menu-item index="/equipmentManagement">-->
         <!--&lt;!&ndash;<font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />&ndash;&gt;-->

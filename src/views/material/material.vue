@@ -25,7 +25,7 @@
       </div>
       <div v-if="this.zwShow == 1" class="zwShow">该资料暂未上传附件</div>
       <div style="font-size:20px;margin-bottom:10px">图片和视频</div>
-      <span v-for="(item,index) in getFlowWorkImg" :key="index">
+      <div v-for="(item,index) in getFlowWorkImg" :key="index" style="width:300px;display:inline">
         <el-image
           v-if="item.lx == 'image'"
           style="width: 300px; height: 300px;margin-bottom:20px"
@@ -35,7 +35,7 @@
         <video v-if="item.lx == 'video'" controls>
           <source :src="'https://xcx.tddata.net'+item.video" type="video/mp4" />
         </video>
-      </span>
+      </div>
       <div v-if="this.imgShow == 1" class="zwShow">该资料暂未上传图片和视频</div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="projectdialog = false">确 定</el-button>
