@@ -393,6 +393,18 @@
       }
       border-right: 1px solid #eeeeee;
       z-index: 10;
+      .el-form-item {
+        margin-bottom: 0px;
+      }
+      .el-form-item__error {
+        color: #f56c6c;
+        font-size: 12px;
+        line-height: 26px;
+        padding-top: 4px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+      }
     }
 
     .worklog-right {

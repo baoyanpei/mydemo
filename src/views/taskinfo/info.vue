@@ -240,14 +240,19 @@
         </div>
         <el-row :gutter="10" class="worklog-area">
           <div class="worklog-left">
-            <el-input
-              type="textarea"
-              resize="none"
-              :rows="3"
-              placeholder="请输入上报进度的内容"
-              v-model="worklogContent"
-              style="width: 100%;"
-            ></el-input>
+            <el-form ref="worklogForm" :model="worklogForm" label-width="0px">
+              <el-form-item prop="worklogContent" :rules="ruleWorklogContent">
+                <el-input
+                  name="worklogContent"
+                  type="textarea"
+                  resize="none"
+                  :rows="3"
+                  placeholder="请输入上报进度的内容"
+                  v-model="worklogForm.worklogContent"
+                  style="width: 100%;"
+                ></el-input>
+              </el-form-item>
+            </el-form>
           </div>
           <div class="worklog-right" title="添加附件">
             <el-upload
@@ -287,7 +292,21 @@
 export default {
   name: 'info',
   data() {
+    const validateWorklogContent = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入上报进度的内容'))
+      } else {
+        callback()
+      }
+    }
     return {
+      ruleWorklogContent: [
+        {
+          required: true,
+          trigger: 'blur',
+          validator: validateWorklogContent,
+        },
+      ],
       commentshow: false,
       commentvalue: '评论',
       progressbox: [],
@@ -340,7 +359,10 @@ export default {
       browsepersonbox: [],
       dialogVisible: false,
 
-      worklogContent: '',
+      // worklogContent: '',
+      worklogForm: {
+        worklogContent: '',
+      },
     }
   },
   computed: {
@@ -382,7 +404,7 @@ export default {
   methods: {
     clearData() {
       this.flowButtons = []
-      this.worklogContent = ''
+      this.worklogForm.worklogContent = ''
     },
     openTaskInfoDetailDialogHandle() {
       this.clearData()
@@ -1006,6 +1028,10 @@ export default {
     worklogSubmit() {
       // 提交工作日志
       console.log('worklogSubmit')
+      this.$refs.worklogForm.validate((valid) => {
+        if (valid) {
+        }
+      })
     },
   },
 }
