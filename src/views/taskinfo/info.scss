@@ -172,7 +172,8 @@
   /*}*/
   .task_box_big {
     // max-height: 700px;
-    // overflow-y: scroll;
+    max-height: calc(100vh - 100px);
+    overflow-y: scroll;
   }
   //el-upload-list el-upload-list--picture
   /*待处理信息*/
@@ -377,7 +378,10 @@
   .greenword {
     color: #1abc9c;
   }
-
+  .main-content-area {
+    height: 500px;
+    overflow-y: auto;
+  }
   .worklog-area {
     min-height: 75px;
     border: 1px solid #eeeeee;
@@ -385,12 +389,16 @@
     padding: 0px;
     margin-left: 0px !important;
     margin-right: 0px !important;
+    textarea {
+      border: 1px solid #ffffff;
+    }
+    .el-textarea__inner {
+      padding: 6px 15px;
+    }
     .worklog-left {
       position: absolute;
       width: 92%;
-      .el-textarea__inner {
-        border: 0px solid #ffffff;
-      }
+
       border-right: 1px solid #eeeeee;
       z-index: 10;
       .el-form-item {
@@ -400,10 +408,10 @@
         color: #f56c6c;
         font-size: 12px;
         line-height: 26px;
-        padding-top: 4px;
+        // padding-top: 4px;
         position: absolute;
-        top: 100%;
-        left: 0;
+        top: 45px;
+        left: 5px;
       }
     }
 

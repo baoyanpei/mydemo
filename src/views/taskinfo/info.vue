@@ -5,7 +5,7 @@
 <template>
   <div class="detailed_information">
     <el-dialog
-      top="0.5vh"
+      top="3vh"
       width="770px"
       class="task_box_big"
       :lock-scroll="true"
@@ -49,6 +49,7 @@
         </div>
         <!--<span>{{taskInfoDialog.data}}</span>-->
         <!--状态-->
+        <!-- <div class="main-content-area"> -->
         <div class="statebox222">
           <div class="status_box" v-for="item in this.progressbox">
             <div class="yuan" :class="{'green':item.aaa!=='aaa'}">{{item.index}}</div>
@@ -92,6 +93,7 @@
           ></el-input>
           <input type="button" class="comments_btn" :value="commentvalue" @click="commentfnc()" />
         </div>
+
         <!--整改模块-->
         <div class="rectification" v-for="item in this.taskinfobox">
           <!--整改信息-->
@@ -211,6 +213,8 @@
             </div>
           </div>
         </div>
+        <!-- </div> -->
+
         <!--待处理信息模块-->
         <div class="todoinfo" v-show="todoinfoshow">
           <el-input
@@ -289,6 +293,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   name: 'info',
   data() {
@@ -405,6 +410,9 @@ export default {
     clearData() {
       this.flowButtons = []
       this.worklogForm.worklogContent = ''
+      if (this.$refs.worklogForm !== undefined) {
+        this.$refs.worklogForm.resetFields()
+      }
     },
     openTaskInfoDetailDialogHandle() {
       this.clearData()
@@ -570,6 +578,7 @@ export default {
               item['spannum'] = 24 / num
             })
           }
+          console.log('this.claimbtn', this.claimbtn)
           // 文章标题图片信息
           this.imgbanner = data.form.basic[0].value
           console.log('this.imgbanner', this.imgbanner, data.form)
@@ -1030,6 +1039,64 @@ export default {
       console.log('worklogSubmit')
       this.$refs.worklogForm.validate((valid) => {
         if (valid) {
+          // let id =
+          let unixTimeStamp = moment().unix()
+          console.log('unixTimeStamp', unixTimeStamp)
+          const genRandom = (min, max) =>
+            ((Math.random() * (max - min + 1)) | 0) + min
+          let _random = genRandom(10, 99)
+          console.log('btnform', this.btnform)
+          let _count = 0
+          let _modify_check = this.btnform.modify_check
+          if (_modify_check.length > 0) {
+            _count = _modify_check[_modify_check.length - 1].count
+          }
+          console.log('_count_count', _count)
+          let form = {
+            id: `${unixTimeStamp}${_random}`,
+            lx: 'modify，代表是执行的日志，check可能以后表示质检日志',
+            count: 1,
+            content: '执行内容',
+            // images: [
+            //   {
+            //     lx: 'video',
+            //     src: '/static/images/bofang.png',
+            //     video: '/static/upfiles/20200820/2020082010qvu07.mp4',
+            //   },
+            //   {
+            //     lx: 'image',
+            //     src: '/static/upfiles/20200820/2020082010mzjnx.png',
+            //   },
+            //   {
+            //     lx: 'image',
+            //     src: '/static/upfiles/20200820/2020082010hs07w.png',
+            //   },
+            //   {
+            //     lx: 'image',
+            //     src: '/static/upfiles/20200820/2020082010hb680.jpg',
+            //   },
+            // ],
+            // files: [
+            //   {
+            //     name: 'CECS01-2004 呋喃树脂防腐蚀工程技术规程.pdf',
+            //     path: '/static/upfiles/20200820/2020082010g7ruv.pdf',
+            //   },
+            // ],
+            // voices: [
+            //   {
+            //     src: '/static/upfiles/20200820/2020082010yitpw.mp3',
+            //     time: '1.10',
+            //   },
+            // ],
+          }
+          const param = {
+            method: 'worklog',
+            project_id: this.project_id,
+            work_id: this.taskInfoDialog.data.workId,
+            work_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+            form: form,
+          }
+          console.log('paramparam', param)
         }
       })
     },
