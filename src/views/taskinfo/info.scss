@@ -249,6 +249,82 @@
     height: auto;
     clear: both;
   }
+
+  .worklog-info-area {
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+    margin-top: 10px;
+    .title-area {
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      .title {
+        display: block;
+        float: left;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .date {
+        display: block;
+        float: right;
+        margin-right: 15px;
+        font-size: 12px;
+        color: #999999;
+      }
+    }
+    .name-area {
+      // margin-top: 10px;
+      width: 100%;
+      height: 40px;
+      margin-top: 5px;
+      margin-left: 5px;
+      .name_circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        float: left;
+        background-color: #e7e7e7;
+        margin-right: 10px;
+        text-align: center;
+        line-height: 30px;
+        font-size: 14px;
+      }
+      .fullname {
+        float: left;
+        display: block;
+        line-height: 30px;
+        font-size: 14px;
+        color: #999999;
+      }
+    }
+    .worklog-image__preview {
+      padding-left: 5px;
+    }
+    .worklog-content {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 20px;
+      margin-left: 5px;
+      font-weight: 500;
+    }
+
+    .worklog-files {
+      padding: 10px;
+      .file-info {
+        padding: 1px 0px;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 20px;
+        a {
+          color: #000000;
+        }
+        a:hover {
+          color: #1dc6f2;
+        }
+      }
+    }
+  }
+
   .zhenggai {
     border: 1px solid #e5e5e5;
     padding: 10px;

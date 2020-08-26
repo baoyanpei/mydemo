@@ -95,9 +95,41 @@
         </div>
 
         <!--整改模块-->
-        <div class="rectification" v-for="item in this.taskinfobox">
+        <div class="rectification" v-for="(item,index) in this.taskinfobox" :key="index">
+          <div class="worklog-info-area" v-for="(worklogItem,index) in item.worklog" :key="index">
+            <div class="title-area">
+              <span class="title">施工进度</span>
+              <span class="date">{{worklogItem.work_date}}</span>
+            </div>
+            <!--人名字-->
+            <div class="name-area">
+              <div class="name_circle">{{worklogItem.creator_name.slice(0, 1)}}</div>
+              <span class="fullname">{{worklogItem.creator_name}}</span>
+            </div>
+            <div class="worklog-image__preview">
+              <el-image
+                v-for="(imageItem,index) in worklogItem.form.images"
+                :key="index"
+                style="width: 150px; height: 150px; margin-right: 5px;"
+                :src="worklogItem.form.images[index].thumbnail_link"
+                :preview-src-list="worklogItem.form.allImageOriUrlList"
+              ></el-image>
+            </div>
+            <!--整改信息文字-->
+            <div class="worklog-content">{{worklogItem.form.content}}</div>
+            <div class="worklog-files">
+              <div
+                class="file-info"
+                v-for="(fileItem,index) in worklogItem.form.files"
+                :key="index"
+              >
+                <a :href="getFileAHref(fileItem.ori_link)" target="_blank">{{fileItem.name}}</a>
+              </div>
+            </div>
+          </div>
+
           <!--整改信息-->
-          <div class="zhenggai">
+          <div class="zhenggai" v-if="item[0] !==undefined">
             <div class="rectification_infobox">
               <span
                 style="line-height: 40px;display: block;float: left;font-size: 20px"
@@ -366,6 +398,7 @@ export default {
       dialogVisible: false,
 
       // worklogContent: '',
+      worklogList: [], // 所有的工作日志
       worklogForm: {
         worklogContent: '',
       },
@@ -418,6 +451,10 @@ export default {
       if (this.$refs.worklogForm !== undefined) {
         this.$refs.worklogForm.resetFields()
       }
+
+      this.worklogList = []
+      this.WorklogUploadFileList = []
+      this.worklogCurrentFileList = []
     },
     openTaskInfoDetailDialogHandle() {
       this.clearData()
@@ -430,9 +467,10 @@ export default {
         this.selectcomment() //显示评论
         resolve('success')
       })
-      p.then((result) => {
+      p.then(async (result) => {
+        this.worklogList = await this.getWorklogQueryWorks()
+        console.log('this.worklogListthis.worklogList', this.worklogList)
         this.getFlowWork() //填充数组
-        this.getWorklogQueryWorks()
       })
     },
     closeDialog() {
@@ -691,6 +729,50 @@ export default {
             obj['index2'] = obj[__index2]
             // console.log("objjjjjjjjjjj",obj)
           })
+          console.log('taskinfobox 213123', this.taskinfobox)
+          let moreWorkLogList = []
+          this.worklogList.forEach((logItem) => {
+            if (logItem.form.count <= this.taskinfobox.length) {
+              for (let i = 0; i < this.taskinfobox.length; i++) {
+                let task = this.taskinfobox[i]
+                if (i + 1 === logItem.form.count) {
+                  if (task.worklog === undefined) {
+                    task.worklog = []
+                  }
+                  let allImageOriUrlList = []
+                  if (logItem.form.images !== undefined) {
+                    logItem.form.images.forEach((image) => {
+                      console.log('imageimage', image)
+                      let _oriUrl = `https://buskey.cn${image.src}`
+                      image['ori_link'] = _oriUrl
+                      image[
+                        'thumbnail_link'
+                      ] = `https://buskey.cn/api/oa/workflow/thumbnail.jpg?f=${image.src}&w=150`
+                      allImageOriUrlList.push(_oriUrl)
+                    })
+                  }
+                  if (logItem.form.files !== undefined) {
+                    logItem.form.files.forEach((fileInfo) => {
+                      console.log('fileInfo', fileInfo)
+                      let _oriUrl = `https://buskey.cn${fileInfo.path}`
+                      fileInfo['ori_link'] = _oriUrl
+                    })
+                  }
+                  logItem.form['allImageOriUrlList'] = allImageOriUrlList
+                  task.worklog.push(logItem)
+                }
+              }
+            } else {
+              moreWorkLogList.push(logItem)
+            }
+          })
+          if (moreWorkLogList.length > 0) {
+            this.taskinfobox.push({
+              worklog: moreWorkLogList,
+            })
+          }
+          console.log('moreWorkLogList', moreWorkLogList)
+          console.log('taskinfobox 33333333', this.taskinfobox)
         })
         resolve()
       })
@@ -1057,14 +1139,17 @@ export default {
       })
     },
     getWorklogQueryWorks() {
-      const param = {
-        method: 'worklog_query_works',
-        project_id: this.project_id,
-        work_id: this.taskInfoDialog.data.workId,
-      }
+      return new Promise((resolve, reject) => {
+        const param = {
+          method: 'worklog_query_works',
+          project_id: this.project_id,
+          work_id: this.taskInfoDialog.data.workId,
+        }
 
-      this.$store.dispatch('GetWorklogQueryWorks', param).then((works) => {
-        console.log('GetWorklogQueryWorks', works)
+        this.$store.dispatch('GetWorklogQueryWorks', param).then((works) => {
+          console.log('GetWorklogQueryWorks', works)
+          resolve(works)
+        })
       })
     },
     worklogSubmit() {
@@ -1180,6 +1265,9 @@ export default {
           }*/
         }
       })
+    },
+    getFileAHref(val) {
+      return val
     },
   },
 }
