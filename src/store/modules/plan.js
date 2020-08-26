@@ -1,5 +1,4 @@
-import Cookies from "js-cookie";
-import hasPermissionToOperation from "@/utils/permissionUrl"; // 权限判断函数
+import { worklog, worklog_query_works } from "@/api/plan";
 
 const plan = {
   state: {
@@ -41,6 +40,30 @@ const plan = {
       return new Promise((resolve, reject) => {
         commit("SET_PLAN_ADD_TASK_SUCCESS", param);
         resolve();
+      });
+    },
+    // 写入工作日志
+    SetWorklog({ commit }, param) {
+      return new Promise((resolve, reject) => {
+        worklog(param)
+          .then(response => {
+            //   commit('SET_PROJECT_PERSON_LIST', response.data)
+            resolve(response.data);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+    },
+    GetWorklogQueryWorks({ commit }, param) {
+      return new Promise((resolve, reject) => {
+        worklog_query_works(param)
+          .then(response => {
+            resolve(response.data);
+          })
+          .catch(error => {
+            reject(error);
+          });
       });
     }
   }

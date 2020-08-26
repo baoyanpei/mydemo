@@ -262,10 +262,10 @@
             <el-upload
               class="upload-demo"
               action="https://xcx.tddata.net/upload"
-              :on-success="successupload"
+              :on-success="WorklogSuccessUpload"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
-              :file-list="fileList"
+              :file-list="WorklogUploadFileList"
             >
               <font-awesome-icon icon="paperclip" size="3x" class="paperclip" />
               <div slot="tip" class="el-upload__tip" style="opacity: 0;font-size: 1px">&nbsp;</div>
@@ -294,6 +294,7 @@
 
 <script>
 import moment from 'moment'
+import lodash from 'lodash'
 export default {
   name: 'info',
   data() {
@@ -368,6 +369,8 @@ export default {
       worklogForm: {
         worklogContent: '',
       },
+      WorklogUploadFileList: [],
+      worklogCurrentFileList: [],
     }
   },
   computed: {
@@ -409,6 +412,8 @@ export default {
   methods: {
     clearData() {
       this.flowButtons = []
+      this.worklogUploadSrc = []
+      this.WorklogUploadFileList = []
       this.worklogForm.worklogContent = ''
       if (this.$refs.worklogForm !== undefined) {
         this.$refs.worklogForm.resetFields()
@@ -427,6 +432,7 @@ export default {
       })
       p.then((result) => {
         this.getFlowWork() //填充数组
+        this.getWorklogQueryWorks()
       })
     },
     closeDialog() {
@@ -591,9 +597,12 @@ export default {
           //文章音频信息   audiobox
           this.audiobox = data.form.basic[1].voicelst
           console.log('this.audiobox', this.audiobox, data.form)
-          this.audiobox.forEach((item) => {
-            item['audiourl'] = 'https://buskey.cn' + item.src
-          })
+          if (this.audiobox !== undefined) {
+            this.audiobox.forEach((item) => {
+              item['audiourl'] = 'https://buskey.cn' + item.src
+            })
+          }
+
           this.TaskdetailsBox = data.form.modify_check
           this.taskinfobox = []
           console.log('this.TaskdetailsBox', this.TaskdetailsBox)
@@ -838,6 +847,19 @@ export default {
       }
       console.log(this.photosrc)
     },
+    WorklogSuccessUpload(response, file, fileList) {
+      //图片样式更改
+      console.log('WorklogSuccessUpload-图片信息返回', response, file, fileList)
+      // this.worklogUploadSrc.push(response.filename)
+      // if (
+      //   this.worklogUploadSrc.length > 0 &&
+      //   this.worklogUploadSrc.length <= 3
+      // ) {
+      //   //todoinfo
+      // }
+      this.worklogCurrentFileList = fileList
+      console.log('this.worklogCurrentFileList', this.worklogCurrentFileList)
+    },
     handleRemove(file, fileList) {
       console.log('文件地址2', file, fileList)
     },
@@ -1034,6 +1056,17 @@ export default {
         loading.close()
       })
     },
+    getWorklogQueryWorks() {
+      const param = {
+        method: 'worklog_query_works',
+        project_id: this.project_id,
+        work_id: this.taskInfoDialog.data.workId,
+      }
+
+      this.$store.dispatch('GetWorklogQueryWorks', param).then((works) => {
+        console.log('GetWorklogQueryWorks', works)
+      })
+    },
     worklogSubmit() {
       // 提交工作日志
       console.log('worklogSubmit')
@@ -1052,51 +1085,99 @@ export default {
             _count = _modify_check[_modify_check.length - 1].count
           }
           console.log('_count_count', _count)
+          console.log(
+            'this.worklogCurrentFileList',
+            this.worklogCurrentFileList
+          )
+          let formlid = `${unixTimeStamp}${_random}`
+          formlid = parseInt(formlid)
           let form = {
-            id: `${unixTimeStamp}${_random}`,
-            lx: 'modify，代表是执行的日志，check可能以后表示质检日志',
-            count: 1,
-            content: '执行内容',
-            // images: [
-            //   {
-            //     lx: 'video',
-            //     src: '/static/images/bofang.png',
-            //     video: '/static/upfiles/20200820/2020082010qvu07.mp4',
-            //   },
-            //   {
-            //     lx: 'image',
-            //     src: '/static/upfiles/20200820/2020082010mzjnx.png',
-            //   },
-            //   {
-            //     lx: 'image',
-            //     src: '/static/upfiles/20200820/2020082010hs07w.png',
-            //   },
-            //   {
-            //     lx: 'image',
-            //     src: '/static/upfiles/20200820/2020082010hb680.jpg',
-            //   },
-            // ],
-            // files: [
-            //   {
-            //     name: 'CECS01-2004 呋喃树脂防腐蚀工程技术规程.pdf',
-            //     path: '/static/upfiles/20200820/2020082010g7ruv.pdf',
-            //   },
-            // ],
-            // voices: [
-            //   {
-            //     src: '/static/upfiles/20200820/2020082010yitpw.mp3',
-            //     time: '1.10',
-            //   },
-            // ],
+            id: formlid,
+            lx: 'modify', // modify，代表是执行的日志，check可能以后表示质检日志
+            count: _count,
+            content: this.worklogForm.worklogContent,
+            images: [],
+            files: [],
+            voices: [],
           }
+
+          this.worklogCurrentFileList.forEach((item) => {
+            console.log('itemitem1-2', item)
+            const nameArray = item.name.split('.')
+            let _extFile = ''
+            if (nameArray.length >= 2) {
+              _extFile = nameArray[nameArray.length - 1].toLowerCase()
+            }
+
+            console.log('_extFile', _extFile)
+            const picExtArray = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'mp4']
+            let extIndex = lodash.indexOf(picExtArray, _extFile) // 检查是否为图片
+            console.log('extIndex', extIndex)
+            if (extIndex >= 0) {
+              form.images.push({
+                lx: 'image',
+                src: item.response.filename, //'/static/upfiles/20200820/2020082010mzjnx.png',
+              })
+            } else {
+              form.files.push({
+                name: item.response.url, //'CECS01-2004 呋喃树脂防腐蚀工程技术规程.pdf',
+                path: item.response.filename, //'/static/upfiles/20200820/2020082010g7ruv.pdf',
+              })
+            }
+            // if _extFile.indexOf()
+          })
+
           const param = {
             method: 'worklog',
             project_id: this.project_id,
             work_id: this.taskInfoDialog.data.workId,
-            work_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+            work_date: moment().format('YYYY-MM-DD'),
             form: form,
+            form_lid: formlid,
           }
           console.log('paramparam', param)
+          this.$store.dispatch('SetWorklog', param).then((result) => {
+            console.log('SetWorklog-result', result)
+          })
+
+          /*
+          demo = {
+            id: '15982555864825',
+            lx: 'modify，代表是执行的日志，check可能以后表示质检日志',
+            count: 1,
+            content: '执行内容',
+            images: [
+              {
+                lx: 'video',
+                src: '/static/images/bofang.png',
+                video: '/static/upfiles/20200820/2020082010qvu07.mp4',
+              },
+              {
+                lx: 'image',
+                src: '/static/upfiles/20200820/2020082010mzjnx.png',
+              },
+              {
+                lx: 'image',
+                src: '/static/upfiles/20200820/2020082010hs07w.png',
+              },
+              {
+                lx: 'image',
+                src: '/static/upfiles/20200820/2020082010hb680.jpg',
+              },
+            ],
+            files: [
+              {
+                name: 'CECS01-2004 呋喃树脂防腐蚀工程技术规程.pdf',
+                path: '/static/upfiles/20200820/2020082010g7ruv.pdf',
+              },
+            ],
+            voices: [
+              {
+                src: '/static/upfiles/20200820/2020082010yitpw.mp3',
+                time: '1.10',
+              },
+            ],
+          }*/
         }
       })
     },

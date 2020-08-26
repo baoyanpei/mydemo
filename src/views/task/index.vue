@@ -1055,8 +1055,10 @@ export default {
       //发布任务
       let namebox = ''
       for (let i = 0; i < this.fabu_people.length; i++) {
-        namebox = namebox + '@' + this.fabu_people[i].name
+        namebox = namebox + '@' + this.fabu_people[i].name + ','
       }
+      console.log('this.datalistfrom123', this.datalistfrom)
+      console.log('this.textareaindex', this.textareaindex)
       this.datalistfrom.title = namebox + this.textareaindex
       this.datalistfrom.receiver = this.fabu_people
       console.log('发布任务', namebox + this.textareaindex)
@@ -1065,7 +1067,7 @@ export default {
         method: 'start_issue',
         project_id: this.project_id,
         questions_type: this.fabuquestions_type,
-        title: namebox + '发布任务标题',
+        title: this.datalistfrom.title,
         flow_id: this.fabufncflowid,
         priority: this.fabustartvalue,
         form: this.datalistfrom,
@@ -1081,10 +1083,10 @@ export default {
       this.$alert('发布成功', '', {
         confirmButtonText: '确定',
         callback: (action) => {
-          this.$message({
-            type: 'info',
-            message: `action: ${action}`,
-          })
+          // this.$message({
+          //   type: 'info',
+          //   message: `action: ${action}`,
+          // })
         },
       })
       this.textareaindex = ''
