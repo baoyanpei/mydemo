@@ -751,6 +751,20 @@ export default {
             value: moment().format('YYYY-MM-DD HH:mm:ss'), //'2019-11-05 20:16:37',
           }
           this.datalistfrom.parent_id = this.plan_id.toString()
+          this.datalistfrom.basic.push({
+            id: 'questions_remark',
+            lx: 'basic',
+            lable: '问题描述',
+            type: 'multi_text',
+            value: this.planTaskForm.taskContent,
+          })
+          this.datalistfrom.basic.push({
+            id: 'questions_type',
+            lable: '类型',
+            lx: 'basic',
+            type: 'text',
+            value: this.planTaskForm.questions_type, //'施工'
+          })
           const _param = {
             method: 'plan_start_issue',
             project_id: this.project_id,
@@ -768,20 +782,7 @@ export default {
             parent_id: this.plan_id,
             struct_id: this.structid,
           }
-          this.datalistfrom.basic.push({
-            id: 'questions_remark',
-            lx: 'basic',
-            lable: '问题描述',
-            type: 'multi_text',
-            value: this.planTaskForm.taskContent,
-          })
-          this.datalistfrom.basic.push({
-            id: 'questions_type',
-            lable: '类型',
-            lx: 'basic',
-            type: 'text',
-            value: this.planTaskForm.questions_type, //'施工'
-          })
+
           console.log('_param - plan_start_issue', _param)
           // this.loading = false
           // return

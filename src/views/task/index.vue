@@ -589,14 +589,14 @@ export default {
             type: 'files',
             value: [],
           },
-          {
-            id: 'questions_remark',
-            lx: 'basic',
-            lable: '问题描述',
-            type: 'multi_text',
-            value: '',
-            voicelst: '',
-          },
+          // {
+          //   id: 'questions_remark',
+          //   lx: 'basic',
+          //   lable: '问题描述',
+          //   type: 'multi_text',
+          //   value: '',
+          //   voicelst: '',
+          // },
         ],
         time: '',
         address: '',
@@ -1062,7 +1062,21 @@ export default {
       this.datalistfrom.title = namebox + this.textareaindex
       this.datalistfrom.receiver = this.fabu_people
       console.log('发布任务', namebox + this.textareaindex)
-      this.fabusuccessfnc()
+      // this.fabusuccessfnc()
+      this.datalistfrom.basic.push({
+        id: 'questions_remark',
+        lx: 'basic',
+        lable: '问题描述',
+        type: 'multi_text',
+        value: this.textareaindex,
+      })
+      this.datalistfrom.basic.push({
+        id: 'questions_type',
+        lable: '类型',
+        lx: 'basic',
+        type: 'text',
+        value: this.fabuquestions_type, //'施工'
+      })
       const _param = {
         method: 'start_issue',
         project_id: this.project_id,
@@ -1074,6 +1088,7 @@ export default {
         subjectionId: '',
         nosend: 1,
       }
+      console.log('发布 - param', _param)
       this.$store.dispatch('GetAllInstList', _param).then((data) => {
         console.log('任务发布成功', data)
         this.fabusuccessfnc()
@@ -1113,11 +1128,16 @@ export default {
       for (let i = 0; i < this.projectPersonList.length; i++) {
         for (let j = 0; j < newarr.length; j++) {
           if (this.projectPersonList[i].person_id == newarr[j]) {
-            this.fabu_people.push(this.projectPersonList[i])
+            // this.fabu_people.push(this.projectPersonList[i])
+            let _person = this.projectPersonList[i]
+            this.fabu_people.push({ name: _person.name, id: _person.person_id })
+
             console.log('dsadsadsadasdasdas', this.projectPersonList[i])
           }
         }
       }
+
+      console.log('this.fabu_people 123', this.fabu_people)
     },
     handleChangegettypearr(index) {
       //更换类别
