@@ -239,14 +239,14 @@ export default {
             type: 'files',
             value: [],
           },
-          {
-            id: 'questions_remark',
-            lx: 'basic',
-            lable: '问题描述',
-            type: 'multi_text',
-            value: '',
-            voicelst: '',
-          },
+          // {
+          //   id: 'questions_remark',
+          //   lx: 'basic',
+          //   lable: '问题描述',
+          //   type: 'multi_text',
+          //   value: '',
+          //   voicelst: '',
+          // },
         ],
         time: '',
         address: '',
@@ -768,7 +768,20 @@ export default {
             parent_id: this.plan_id,
             struct_id: this.structid,
           }
-
+          this.datalistfrom.basic.push({
+            id: 'questions_remark',
+            lx: 'basic',
+            lable: '问题描述',
+            type: 'multi_text',
+            value: this.planTaskForm.taskContent,
+          })
+          this.datalistfrom.basic.push({
+            id: 'questions_type',
+            lable: '类型',
+            lx: 'basic',
+            type: 'text',
+            value: this.planTaskForm.questions_type, //'施工'
+          })
           console.log('_param - plan_start_issue', _param)
           // this.loading = false
           // return
