@@ -274,7 +274,7 @@
             >只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
         </div>
-        <el-row :gutter="10" class="worklog-area">
+        <el-row :gutter="10" class="worklog-area" v-if="isShowWorklogArea">
           <div class="worklog-left">
             <el-form ref="worklogForm" :model="worklogForm" label-width="0px">
               <el-form-item prop="worklogContent" :rules="ruleWorklogContent">
@@ -404,6 +404,8 @@ export default {
       },
       WorklogUploadFileList: [],
       worklogCurrentFileList: [],
+
+      isShowWorklogArea: false,
     }
   },
   computed: {
@@ -447,6 +449,8 @@ export default {
       this.flowButtons = []
       this.worklogUploadSrc = []
       this.WorklogUploadFileList = []
+      this.isShowWorklogArea = false
+      this.todoinfoshow = true
       this.worklogForm.worklogContent = ''
       if (this.$refs.worklogForm !== undefined) {
         this.$refs.worklogForm.resetFields()
@@ -596,6 +600,7 @@ export default {
             data.flowId === 'PlanFlow01' &&
             data.flowNode.nodeId !== 'Node2' // Node2 计划认领
           ) {
+            this.isShowWorklogArea = true
             this.flowButtons.push({
               actionData: {
                 operate: 'worklog',
