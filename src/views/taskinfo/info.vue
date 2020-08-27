@@ -305,7 +305,7 @@
           </div>
         </el-row>
         <el-row :gutter="10" class="worklog-file-upload-area"></el-row>
-        <el-row :gutter="10" v-show="claimbtn">
+        <el-row :gutter="10" v-show="claimbtn || this.isShowWorklogArea">
           <el-col
             v-for="item in this.flowButtons"
             :span="item.spannum"
@@ -313,7 +313,7 @@
           >
             <div
               class="flowButton bg-purple"
-              :class="{'buttonred':(item.buttonName==='不合格'),'bg-blue':(item.buttonId==='worklog')}"
+              :class="{'buttonred':(item.buttonId==='reject'),'bg-blue':(item.buttonId==='worklog')}"
               v-loading.fullscreen.lock="fullscreenLoading"
               @click="flowButtonsSubmit(item)"
             >{{item.buttonName}}</div>
@@ -600,7 +600,11 @@ export default {
             data.flowId === 'PlanFlow01' &&
             data.flowNode.nodeId !== 'Node2' // Node2 计划认领
           ) {
+            console.log('this.flowButtons - 333', this.flowButtons)
             this.isShowWorklogArea = true
+            if (this.flowButtons === '') {
+              this.flowButtons = []
+            }
             this.flowButtons.push({
               actionData: {
                 operate: 'worklog',
@@ -621,11 +625,16 @@ export default {
             this.claimbtn = false
             this.todoinfoshow = false
           } else {
-            this.claimbtn = true
-            let num = this.flowButtons.length
-            this.flowButtons.forEach((item) => {
-              item['spannum'] = 24 / num
-            })
+            if (this.flowButtons === '') {
+              this.todoinfoshow = false
+              this.claimbtn = false
+            } else {
+              this.claimbtn = true
+              let num = this.flowButtons.length
+              this.flowButtons.forEach((item) => {
+                item['spannum'] = 24 / num
+              })
+            }
           }
           console.log('this.claimbtn', this.claimbtn)
           // 文章标题图片信息
@@ -713,7 +722,8 @@ export default {
             }
             item['zjpl'] = this.pinglunarr[this.taskinfobox.indexOf(item)]
             item['name'] = data.person_name
-            item['firstname'] = this.taskInfoDialog.data.header.slice(0, 1)
+            console.log('this.taskInfoDialog.data111', data)
+            item['firstname'] = data.person_name.slice(0, 1)
           })
           this.taskinfobox.forEach((obj) => {
             let _index = 'modify-' + (this.taskinfobox.indexOf(obj) + 1)
@@ -983,7 +993,7 @@ export default {
           days = '星期日'
           break
       }
-      this.nowtimedate = year + '-' + month + '-' + day + '  ' + days
+      this.nowtimedate = year + '-' + month + '-' + day + ' ' + days
       this.nowtimetime =
         year +
         '-' +
@@ -999,7 +1009,7 @@ export default {
       console.log(this.nowtimetime)
     },
     zhijianfnc(index) {
-      var zjnum = this.btnform.modify_check.length / 6 + 1
+      var zjnum = this.btnform.modify_check.length / 3 + 1
       console.log('这是提交质检按钮', zjnum, index)
       for (let i in this.photosrc) {
         this.photobox.push({
@@ -1007,6 +1017,9 @@ export default {
           src: this.photosrc[i],
         })
       }
+
+      this.btnform.modify_count = this.btnform.modify_count + 1
+
       this.pushdata.push(
         {
           count: zjnum,
@@ -1044,7 +1057,8 @@ export default {
     },
     hegefnc(index) {
       console.log('这是不合格按钮和合格按钮', index.buttonName)
-      var zjnum = (this.btnform.modify_check.length + 3) / 6
+      // var zjnum = (this.btnform.modify_check.length + 3) / 6
+      var zjnum = this.btnform.modify_check.length / 3 + 1
       console.log('这是不合格按钮', zjnum)
       for (let i in this.photosrc) {
         this.photobox.push({
@@ -1052,6 +1066,7 @@ export default {
           src: this.photosrc[i],
         })
       }
+      this.btnform.check_count = this.btnform.check_count + 1
       this.pushdata.push(
         {
           btid: 'reject',
@@ -1103,13 +1118,14 @@ export default {
       }
       this.pushdata = []
       this.gettime()
-      if (flowButton.buttonName == '提交质量检测') {
+      console.log('flowButtonflowButton', flowButton)
+      // if (flowButton.buttonName == '提交质量检测') {
+      if (flowButton.buttonId == 'submit') {
         this.zhijianfnc(flowButton)
       }
-      if (
-        flowButton.buttonName == '不合格' ||
-        flowButton.buttonName == '合格'
-      ) {
+      // if (flowButton.buttonName == '不合格' || flowButton.buttonName == '合格') {
+      if (flowButton.buttonId == 'reject') {
+        // || flowButton.buttonName == '合格'
         this.hegefnc(flowButton)
       }
       const loading = this.$loading({
@@ -1133,6 +1149,10 @@ export default {
         workId: this.btnworkid,
         flowNode: this.btnformnode,
       }
+      console.log('taskInfoDialog.data.state111', this.taskInfoDialog.data)
+      console.log('submit_work param', _param)
+      // loading.close()
+      // return
       this.$store.dispatch('GetAllInstList', _param).then((data) => {
         console.log('按钮提交数据成功', data)
         console.log('2222222222222222222222222', this.btnsubid)
@@ -1174,15 +1194,16 @@ export default {
           if (_modify_check.length > 0) {
             _count = _modify_check[_modify_check.length - 1].count
           }
+          _count = _count + 1
           console.log('_count_count', _count)
           console.log(
             'this.worklogCurrentFileList',
             this.worklogCurrentFileList
           )
-          let formlid = `${unixTimeStamp}${_random}`
-          formlid = parseInt(formlid)
+          let _id = `${unixTimeStamp}000${_random}`
+          // _id = parseInt(_id)
           let form = {
-            id: formlid,
+            id: _id,
             lx: 'modify', // modify，代表是执行的日志，check可能以后表示质检日志
             count: _count,
             content: this.worklogForm.worklogContent,
@@ -1223,9 +1244,9 @@ export default {
             work_id: this.taskInfoDialog.data.workId,
             work_date: moment().format('YYYY-MM-DD'),
             form: form,
-            form_lid: formlid,
+            form_lid: _count.toString(),
           }
-          console.log('paramparam', param)
+          console.log('worklog-submit-param', param)
           this.$store.dispatch('SetWorklog', param).then((result) => {
             console.log('SetWorklog-result', result)
           })
