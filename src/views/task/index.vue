@@ -1518,6 +1518,7 @@ export default {
           }
         }
         this.boxinfo1 = box
+        loading.close()
         console.log('这是events', this.events)
       })
     },
