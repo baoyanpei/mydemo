@@ -459,9 +459,14 @@ export default {
       this.worklogList = []
       this.WorklogUploadFileList = []
       this.worklogCurrentFileList = []
+
+      this.taskinfobox = []
+      this.commentsbox1 = []
+      this.commentsbox2 = []
+      this.pinglunarr = []
+      this.imgbanner = []
     },
-    openTaskInfoDetailDialogHandle() {
-      this.clearData()
+    init() {
       console.log('taskInfoDialog', this.taskInfoDialog)
       //打开窗口
       this.getPersonList()
@@ -477,8 +482,14 @@ export default {
         this.getFlowWork() //填充数组
       })
     },
+    openTaskInfoDetailDialogHandle() {
+      this.clearData()
+      this.init()
+    },
     closeDialog() {
+      this.clearData()
       //关闭窗口事件
+      /*
       console.log('关闭成功')
       this.taskinfobox = []
       this.commentsbox1 = []
@@ -486,6 +497,7 @@ export default {
       this.pinglunarr = []
       this.imgbanner = []
       console.log('this.commentsbox1', this.commentsbox1)
+      */
     },
     getFlowUsers() {
       const param = {
@@ -1158,9 +1170,11 @@ export default {
         console.log('2222222222222222222222222', this.btnsubid)
         this.todotextarea = '' //输入框文本为空
         this.fileList = [] //上传按钮清空
-        this.$router.go(0)
+        // this.$router.go(0)
         // this.getFlowWork()//重新获取数据并且填充页面
         loading.close()
+        this.clearData()
+        this.init()
       })
     },
     getWorklogQueryWorks() {
@@ -1249,6 +1263,8 @@ export default {
           console.log('worklog-submit-param', param)
           this.$store.dispatch('SetWorklog', param).then((result) => {
             console.log('SetWorklog-result', result)
+            this.clearData()
+            this.init()
           })
 
           /*
