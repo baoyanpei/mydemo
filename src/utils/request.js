@@ -16,9 +16,11 @@ const service = axios.create({
 // const _userid = 'admin_web'
 // request interceptor
 service.interceptors.request.use(
+
   config => {
-    // console.log("configconfig", config)
+   console.log("configconfig000011", config)
     config.headers = {
+
       'Content-Type': 'application/json'
     }
 

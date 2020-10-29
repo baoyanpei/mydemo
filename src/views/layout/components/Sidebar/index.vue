@@ -20,50 +20,55 @@
         <span slot="title">首页</span>
       </el-menu-item>
 
-      <el-menu-item index="/task">
+      <el-menu-item index="/costmgt">
         <font-awesome-icon icon="calendar-alt" />
-        <span slot="title">任务列表</span>
+        <span slot="title">材料管理</span>
       </el-menu-item>
 
-      <el-menu-item index="/kqtj">
-        <font-awesome-icon icon="chart-bar" />
-        <span slot="title">统计分析</span>
-      </el-menu-item>
-      <!-- <el-menu-item index="/gztz">
-        <font-awesome-icon icon="calendar-alt" />
-        <span slot="title">工资台帐</span>
-      </el-menu-item>-->
-      <!-- <el-menu-item index="/lot/index">
-        <font-awesome-icon icon="network-wired" />
-        <span slot="title">物联设备</span>
-      </el-menu-item>-->
-      <el-menu-item index="/loT6/index">
-        <font-awesome-icon icon="network-wired" />
-        <span slot="title">物联设备</span>
-      </el-menu-item>
-      <el-menu-item index="/construction">
-        <font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />
-        <span slot="title">日志打印</span>
-      </el-menu-item>
+         <el-menu-item index="/task">
+             <font-awesome-icon icon="calendar-alt" />
+             <span slot="title">任务列表</span>
+           </el-menu-item>
+
+        <el-menu-item index="/kqtj">
+             <font-awesome-icon icon="chart-bar" />
+             <span slot="title">统计分析</span>
+           </el-menu-item>
+          <el-menu-item index="/gztz">
+             <font-awesome-icon icon="calendar-alt" />
+             <span slot="title">工资台帐</span>
+           </el-menu-item>
+          <el-menu-item index="/lot/index">
+             <font-awesome-icon icon="network-wired" />
+             <span slot="title">物联设备</span>
+           </el-menu-item>
+         <el-menu-item index="/loT6/index">
+             <font-awesome-icon icon="network-wired" />
+             <span slot="title">物联设备</span>
+           </el-menu-item>
+          <el-menu-item index="/construction">
+             <font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />
+             <span slot="title">日志打印</span>
+           </el-menu-item>
       <!--<el-menu-item index="/equipmentManagement">-->
         <!--&lt;!&ndash;<font-awesome-icon icon="calendar-check" style="width:16px;font-size: 18px;" />&ndash;&gt;-->
         <!--<span slot="title">设备管理</span>-->
       <!--</el-menu-item>-->
-      <el-menu-item index="/modelSelect/index">
+<!--      <el-menu-item index="/modelSelect/index">
         <font-awesome-icon icon="map-marked" />
         <span slot="title">BIM管理</span>
-      </el-menu-item>
-      <el-menu-item index="/indexplan">
-        <!--<i class="el-icon-notebook-1" style="width:16px;font-size: 18px;"></i>-->
+      </el-menu-item>-->
+   <!--   <el-menu-item index="/indexplan">
+        &lt;!&ndash;<i class="el-icon-notebook-1" style="width:16px;font-size: 18px;"></i>&ndash;&gt;
         <font-awesome-icon icon="network-wired" />
         <span slot="title">计划管理</span>
       </el-menu-item>
       <el-menu-item index="/material">
         <font-awesome-icon icon="calendar-alt" />
         <span slot="title">资料管理</span>
-      </el-menu-item>
-      <!--
-      <el-menu-item index="/main1">
+      </el-menu-item>-->
+
+   <!-- <el-menu-item index="/main1">
         <i class="el-icon-location"></i>
         <span slot="title">空间定位1</span>
       </el-menu-item>
@@ -98,8 +103,8 @@
       <el-menu-item index="4" disabled>
         <i class="el-icon-setting"></i>
         <span slot="title">项目数据</span>
-      </el-menu-item>
-      -->
+      </el-menu-item>-->
+
     </el-menu>
 
     <!-- <el-menu
@@ -157,3 +162,8 @@ export default {
   },
 }
 </script>
+
+<style scope>
+
+
+</style>

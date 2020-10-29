@@ -24,7 +24,7 @@ import componentLibrary from "./modules/componentLibrary";
 import device from "./modules/device"; // 物联网设备
 import logs from "./modules/logs"; // 物联网
 import plan from "./modules/plan"; // 计划
-
+import costMgt from "./modules/costmgt"; // 材料管理
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -51,7 +51,8 @@ const store = new Vuex.Store({
     componentLibrary,
     device,
     logs,
-    plan
+    plan,
+    costMgt
   },
   getters
 });

@@ -49,9 +49,7 @@ const datum = {
       })
     },
     // 小时记录
-    QueryDatumMeterHours({
-      commit
-    }, param) {
+    QueryDatumMeterHours({commit}, param) {
       return new Promise((resolve, reject) => {
         queryDatumMeterHours(param).then(response => {
           //   commit('SET_PROJECT_PERSON_LIST', response.data)

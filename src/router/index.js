@@ -167,6 +167,56 @@ export const constantRouterMap = [
         }
       },
       {
+        path: "costmgt",
+        component: () =>import('@/views/costmgt'),
+        name: "costmgt",
+        meta: {
+          title: "costmgt",
+          icon: "dashboard",
+          noCache: true
+        }
+      },
+      {
+        path: "costmgt/input",
+        component: () =>import('@/views/costmgt/input'),
+        name: "input",
+        meta: {
+          title: "input",
+          icon: "dashboard",
+          noCache: true
+        }
+      },
+      {
+        path: "costmgt/output",
+        component: () =>import('@/views/costmgt/output'),
+        name: "input",
+        meta: {
+          title: "input",
+          icon: "dashboard",
+          noCache: true
+        }
+      },
+      {
+        path: "costmgt/queryCost",
+        component: () =>import('@/views/costmgt/queryCost'),
+        name: "input",
+        meta: {
+          title: "queryCost",
+          icon: "dashboard",
+          noCache: true
+        }
+      },
+      {
+        path: "costmgt/remainCost",
+        component: () =>import('@/views/costmgt/remainCost'),
+        name: "input",
+        meta: {
+          title: "queryCost",
+          icon: "dashboard",
+          noCache: true
+        }
+      },
+      {
         path: "equipmentManagement",
         component: () => import("@/views/equipment/index"),
         name: "equipmentManagement",
