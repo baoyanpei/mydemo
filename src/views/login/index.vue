@@ -267,8 +267,7 @@ export default {
       redirect_uri: 'http://admin.man.yidebim.com/',
       state: 'qrcode',
       style: '',
-      href:
-        'data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHsKICBkaXNwbGF5OiBub25lOwp9CgouaW1wb3dlckJveCAucXJjb2RlIHsKICB3aWR0aDogMTYwcHg7CiAgYm9yZGVyOiAwcHg7Cn0KCi5pbXBvd2VyQm94IC5zdGF0dXNfdHh0LAouaW1wb3dlckJveCAuc3RhdHVzIHAgewogIGNvbG9yOiB3aGl0ZTsKfQo=',
+      href: 'data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlIHsKICBkaXNwbGF5OiBub25lOwp9CgouaW1wb3dlckJveCAucXJjb2RlIHsKICB3aWR0aDogMTYwcHg7CiAgYm9yZGVyOiAwcHg7Cn0KCi5pbXBvd2VyQm94IC5zdGF0dXNfdHh0LAouaW1wb3dlckJveCAuc3RhdHVzIHAgewogIGNvbG9yOiB3aGl0ZTsKfQo=',
     })
   },
   destroyed() {
